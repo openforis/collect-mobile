@@ -1,0 +1,15 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat">
+    </style>
+
+    <style name="BreadCrumbs">
+        <item name="background">@drawable/abc_ic_ab_back_holo_dark</item>
+    </style>
+
+    <style name="BreadcrumbSelectedNode">
+        <item name="android:textSize">@dimen/abc_action_bar_title_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

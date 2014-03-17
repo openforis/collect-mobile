@@ -1,0 +1,140 @@
+Move keyToDefinitionId to separate Definition subtype
+
+Needed for demo
+---------------
+
+Text when multiplicity but no items
+
+Node status
+
+Remove spell check on auto-complete attributes
+
+
+--------------------------------------
+
+Don't show scrollbar when scrolling breadcrumbs problematically
+
+UiCodeAdapter
+    Use CodeListService to search for items given a query - complete code list not needed
+
+Don't import/load survey on main thread
+
+Load CodeListManager.loadValidItems too slow
+Speed up cluster selection
+
+Entity name show up twice  - plot/soil/layers
+
+Introduce node specific definition?
+    UiCodeAttributeDefinition
+        Include all parent definition ids
+        Max code list size
+
+Clean schema
+    Reuse Tanzania?
+        Better labels
+        Make multiple attribute into single
+        Name for entities without key
+        Implement taxon
+
+    New schema?
+
+Auto-complete code list levels with many entries
+    Lookup size of code list level
+
+Components for all attributes
+    Boolean
+
+----------------------------------------
+
+Get rid of ActionBarSherlock
+    http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1
+
+Clean up UI model - confusing
+    UiNode.init()
+    UiNode.register()
+    UiSurvey.addRecord()
+    UiRecord with and without placeholder in constructor
+
+Attributes with multiple
+    code -> checkboxes
+    text -> multiple text fields on screen
+    date, time ?
+
+Taxon
+
+Name of entities (with multiplicity) without any key (time study)
+
+Include unit, precision for integer and real attributes
+
+Default attribute value
+
+Show validation errors for attributes
+
+Attribute states: N/A, blank
+
+Code lists: Qualifier - the other option
+
+Code lists: Prevent unique constraint violation - disable options
+    When attribute is key, disable values selected in other attributes with same definition id
+        Who keeps track on the set of selected values for a definition?
+    Checkboxes?
+
+Handle relevant/irrelevant nodes
+
+Validation error notification menu
+Support more validation errors
+Prevent from adding too many entities/attributes
+
+Remove entity/attribute when multiple
+
+How to distinguish between unsaved "default value" and a saved value? Prevent saving default value
+    Problem with date picker, time picker etc.
+
+Use styles, not hard-coded padding etc.
+
+Next attribute button
+    What should happen in the multi-entity case? Should next go back to NodeAttribute?
+
+Attribute details popover
+    Show the parents, and values of parents
+
+Indicate in attribute list if attribute is simple attribute, single or multiple node attribute
+    Different icons
+
+In attribute/entity list, let each item have a "status ball"
+    green - filled
+    yellow - incomplete
+    red - validation error
+
+Lock button
+
+Figure out how to get log output from physical device
+Measure times
+
+
+----------------------------------------------------------------
+
+Risks
+-----
+Attributes with multiple values
+
+Relevant nodes
+
+Code list size
+
+Unique constraints on codes - who keeps track of the set of selected values?
+
+----------------------------------------------------------------
+
+http://viewpagerindicator.com/
+https://github.com/JakeWharton/Android-ViewPagerIndicator
+
+https://github.com/FasterXML/StaxMate
+
+GPS?
+
+http://stackoverflow.com/questions/2169649/get-pick-an-image-from-androids-built-in-gallery-app-programmatically
+http://developer.android.com/guide/topics/media/camera.html
+
+Get rid of Sherlock
+http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1

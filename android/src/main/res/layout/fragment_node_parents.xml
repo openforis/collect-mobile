@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView
+            android:id="@+id/node_parents_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+        <LinearLayout
+                android:id="@+id/node_parents_container"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                style="@style/BreadCrumbs">
+
+
+        </LinearLayout>
+    </org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView>
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/default_line_indicator_selected_color"/>
+</LinearLayout>

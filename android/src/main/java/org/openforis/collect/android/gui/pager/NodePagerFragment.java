@@ -27,7 +27,6 @@ public class NodePagerFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        setHasOptionsMenu(true);
         surveyService = ServiceLocator.surveyService();
         return inflater.inflate(R.layout.fragment_node_pager, container, false);
     }
@@ -36,14 +35,6 @@ public class NodePagerFragment extends Fragment {
         fragmentsByNode = createDetailFragments();
         setupPager(view);
     }
-
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        NodeDetailFragment selectedFragment = selectedFragment();
-//        if (selectedFragment == null)
-//            return;
-//        selectedFragment.onCreateOptionsMenu(menu, inflater);
-//    }
 
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -78,8 +69,6 @@ public class NodePagerFragment extends Fragment {
     }
 
     public void onNodeSelected(UiNode previous, UiNode selected) {
-//        if (isInitializing())
-//            return;
         NodeDetailFragment deselectedFragment = fragmentsByNode.get(previous);
         if (deselectedFragment != null)
             deselectedFragment.onDeselect();
@@ -102,9 +91,6 @@ public class NodePagerFragment extends Fragment {
 
         final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
         indicator.setViewPager(pager);
-//        if (AndroidVersion.greaterThen10())
-//            pager.setPageTransformer(true, new ZoomOutPageTransformer());
-
         int selectedIndex = selectedNode().getIndexInParent();
         ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             public void onPageSelected(int position) {
@@ -125,9 +111,6 @@ public class NodePagerFragment extends Fragment {
         indicator.setOnPageChangeListener(pageChangeListener);
         indicator.setCurrentItem(selectedIndex);
         fragmentsByNode.get(selectedNode()).onSelect();
-
-//        pageChangeListener.onPageSelected(selectedIndex);
-//        pageChangeListener.onPageScrollStateChanged(ViewPager.SCROLL_STATE_IDLE);
     }
 
     private UiInternalNode pagerNode() {

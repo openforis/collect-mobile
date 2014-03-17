@@ -12,7 +12,5 @@ import java.util.Set;
 public interface SurveyListener {
     void onNodeSelected(UiNode previous, UiNode selected);
 
-    void onAttributeChanged(UiAttribute attribute);
-
-    void onValidationError(Set<UiValidationError> validationErrors);
+    void onAttributeChanged(UiAttribute attribute, Set<UiValidationError> validationErrors);
 }

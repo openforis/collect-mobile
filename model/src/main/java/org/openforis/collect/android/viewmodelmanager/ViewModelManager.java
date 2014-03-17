@@ -4,6 +4,7 @@ import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -33,6 +34,8 @@ public class ViewModelManager {
     }
 
     public void addRecord(UiRecord record) {
+        record.updateStatusOfNodeAndDescendants(); // TODO: This should sbe done at record.init()? Ugly anyway
+        record.updateStatusOfParents();
         selectedSurvey.addRecord(record);
         repo.insertRecord(record);
         selectedRecord = record;
@@ -46,6 +49,8 @@ public class ViewModelManager {
     }
 
     public void addEntity(final UiEntity entity) {
+        entity.updateStatusOfNodeAndDescendants(); // TODO: This should sbe done at record.init()? Ugly anyway
+        entity.updateStatusOfParents();
         Timer.time(ViewModelRepository.class, "insertEntity", new Runnable() {
             public void run() {
                 repo.insertEntity(entity);
@@ -77,7 +82,8 @@ public class ViewModelManager {
         return selectedNode;
     }
 
-    public void updateAttribute(UiAttribute attribute) {
+    public void updateAttribute(UiAttribute attribute, Set<UiValidationError> validationErrors) {
+        attribute.updateStatus(validationErrors);
         repo.updateAttribute(attribute);
     }
 

@@ -32,6 +32,6 @@ public class UiValidationError {
     }
 
     public enum Level {
-        ERROR, WARNING
+        WARNING, ERROR
     }
 }

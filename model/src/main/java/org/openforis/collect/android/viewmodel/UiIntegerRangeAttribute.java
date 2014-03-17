@@ -27,6 +27,10 @@ public class UiIntegerRangeAttribute extends UiAttribute {
         this.to = to;
     }
 
+    public boolean isEmpty() {
+        return from == null || to == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (from == null ? "Unspecified" : from) + "-" + (to == null ? "Unspecified" : to);
     }

@@ -12,6 +12,10 @@ public class UiDateAttribute extends UiAttribute {
         super(id, definition);
     }
 
+    public boolean isEmpty() {
+        return date == null;
+    }
+
     public synchronized Date getDate() {
         return date;
     }

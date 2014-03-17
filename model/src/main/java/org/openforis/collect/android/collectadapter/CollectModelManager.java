@@ -126,12 +126,11 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     @SuppressWarnings("unchecked")
-    public void updateAttribute(UiAttribute uiAttribute, SurveyListener listener) {
+    public Set<UiValidationError> updateAttribute(UiAttribute uiAttribute) {
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        notifyValidationError(uiAttribute, nodeChangeSet, listener);
-        notifyAttributeChanged(uiAttribute, listener);
+        return new NodeChangeSetParser(nodeChangeSet, uiAttribute).parseErrors();
     }
 
     public void recordSelected(UiRecord uiRecord) {
@@ -186,16 +185,5 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         if (versions == null || versions.isEmpty())
             return null;
         return versions.get(versions.size() - 1).getName();
-    }
-
-    private void notifyAttributeChanged(UiAttribute uiAttribute, SurveyListener listener) {
-        if (listener != null)
-            listener.onAttributeChanged(uiAttribute);
-    }
-
-    private void notifyValidationError(UiAttribute uiAttribute, NodeChangeSet nodeChangeSet, SurveyListener listener) {
-        Set<UiValidationError> errors = new NodeChangeSetParser(nodeChangeSet, uiAttribute).parseErrors();
-        if (listener != null && !errors.isEmpty())
-            listener.onValidationError(errors);
     }
 }

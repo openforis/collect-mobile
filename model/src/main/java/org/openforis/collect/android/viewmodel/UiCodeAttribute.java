@@ -18,6 +18,10 @@ public class UiCodeAttribute extends UiAttribute {
         return code;
     }
 
+    public boolean isEmpty() {
+        return code == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (code == null ? "Unspecified" : code); // TODO: How to translate "Unspecified"? Put this logic in GUI
     }

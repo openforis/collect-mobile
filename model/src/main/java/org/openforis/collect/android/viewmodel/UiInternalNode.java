@@ -74,6 +74,32 @@ public class UiInternalNode extends UiNode {
         return labels;
     }
 
+    public void updateStatusOfNodeAndDescendants() {
+        int statusOrdinal = determineChildrenMaxStatus();
+        Status status = Status.values()[statusOrdinal];
+        setStatus(status);
+    }
+
+    private int determineChildrenMaxStatus() {
+        int status = 0;
+        int maxStatus = Status.values().length - 1;
+        for (UiNode child : children) {
+            int childStatus;
+            if (child instanceof UiInternalNode) {
+                UiInternalNode internalNodeChild = (UiInternalNode) child;
+                internalNodeChild.updateStatusOfNodeAndDescendants();
+                childStatus = internalNodeChild.getStatus().ordinal();
+            } else
+                childStatus = child.getStatus().ordinal();
+            if (childStatus > status) {
+                status = childStatus;
+                if (status == maxStatus)
+                    return maxStatus;
+            }
+        }
+        return status;
+    }
+
     public String toString() {
         return getLabel();
     }

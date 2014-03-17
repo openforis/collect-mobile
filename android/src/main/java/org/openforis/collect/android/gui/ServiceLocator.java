@@ -15,7 +15,6 @@ import org.openforis.collect.android.viewmodel.UiSurvey;
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
-import org.openforis.collect.android.viewmodelmanager.ViewModelRepository;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
@@ -26,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
 /**
  * @author Daniel Wiell
@@ -76,7 +77,7 @@ public class ServiceLocator {
         );
         return new CollectModelBackedSurveyService(
                 new ViewModelManager(
-                        new ViewModelRepository(collectModelManager, new DataSourceNodeRepository(nodeDatabase))
+                        new DatabaseViewModelRepository(collectModelManager, new DataSourceNodeRepository(nodeDatabase))
                 ),
                 collectModelManager
         );

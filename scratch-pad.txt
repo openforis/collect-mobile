@@ -1,4 +1,19 @@
-Move keyToDefinitionId to separate Definition subtype
+UiNode.status
+    OK
+    EMPTY
+    VALIDATION_WARNING
+    VALIDATION_ERROR
+
+UiAttribute
+    boolean hasValue()
+
+
+Loading record
+Adding record
+Adding entity
+Updating attribute
+
+
 
 Needed for demo
 ---------------
@@ -12,7 +27,11 @@ Remove spell check on auto-complete attributes
 
 --------------------------------------
 
-Don't show scrollbar when scrolling breadcrumbs problematically
+Enumerated entity - attributes show up twice in entity String representation
+
+Move keyToDefinitionId to separate Definition subtype
+
+Don't show scrollbar when scrolling breadcrumbs programmatically
 
 UiCodeAdapter
     Use CodeListService to search for items given a query - complete code list not needed
@@ -138,3 +157,16 @@ http://developer.android.com/guide/topics/media/camera.html
 
 Get rid of Sherlock
 http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1
+
+
+
+
+
+
+
+
+IDEAS
+-----
+
+>    next attribute
+>>|  next attribute with warning/error

@@ -18,6 +18,10 @@ public class UiDoubleAttribute extends UiAttribute {
         this.value = value;
     }
 
+    public boolean isEmpty() {
+        return value == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (value == null ? "Unspecified" : value);
     }

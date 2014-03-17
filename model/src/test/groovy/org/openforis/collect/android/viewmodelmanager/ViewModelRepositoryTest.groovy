@@ -5,6 +5,8 @@ import org.openforis.collect.android.IdGenerator
 import org.openforis.collect.android.viewmodel.*
 import spock.lang.Specification
 
+import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.*
+
 /**
  * @author Daniel Wiell
  */
@@ -12,7 +14,7 @@ class ViewModelRepositoryTest extends Specification {
 
     def nodes = new DefinitionProviderStub()
     def database = new NodeTestDatabase()
-    def repo = new ViewModelRepository(nodes, new DataSourceNodeRepository(database))
+    def repo = new DatabaseViewModelRepository(nodes, new DataSourceNodeRepository(database))
 
     def cleanup() {
         database.reset()

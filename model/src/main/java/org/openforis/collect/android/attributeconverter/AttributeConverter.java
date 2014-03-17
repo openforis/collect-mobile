@@ -43,7 +43,9 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
     }
 
     public static NodeDto toDto(UiAttribute attribute) {
-        return getConverter(attribute.getClass()).dto(attribute);
+        NodeDto dto = getConverter(attribute.getClass()).dto(attribute);
+        dto.status = attribute.getStatus().name();
+        return dto;
     }
 
     public static Value toValue(UiAttribute uiAttribute) {

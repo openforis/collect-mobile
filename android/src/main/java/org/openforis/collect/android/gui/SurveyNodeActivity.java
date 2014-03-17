@@ -70,11 +70,13 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         selectedNode = selected;
     }
 
-    public void onAttributeChanged(UiAttribute attribute) {
+    public void onAttributeChanged(UiAttribute attribute, Set<UiValidationError> validationErrors) {
         nodePagerFragment.onAttributeChange(attribute);
+        if (!validationErrors.isEmpty())
+            onValidationError(validationErrors);
     }
 
-    public void onValidationError(Set<UiValidationError> validationErrors) {
+    private void onValidationError(Set<UiValidationError> validationErrors) {
         // TODO: Implement...
         StringBuilder s = new StringBuilder();
         for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {

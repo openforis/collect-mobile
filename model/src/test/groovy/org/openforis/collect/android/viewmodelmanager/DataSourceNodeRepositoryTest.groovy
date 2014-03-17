@@ -16,7 +16,7 @@ class DataSourceNodeRepositoryTest extends Specification {
     }
 
     def 'Can insert nodes'() {
-        def rootEntity = new NodeDto(id: 1, definitionId: 'definition id', surveyId: 2, recordId: 3, recordCollectionName: 'name', type: RECORD)
+        def rootEntity = new NodeDto(id: 1, status: 'OK', definitionId: 'definition id', surveyId: 2, recordId: 3, recordCollectionName: 'name', type: RECORD)
         when:
         repo.insert([rootEntity])
         def nodes = repo.recordNodes(3)

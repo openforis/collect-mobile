@@ -21,6 +21,10 @@ public class UiFileAttribute extends UiAttribute {
         this.file = file;
     }
 
+    public boolean isEmpty() {
+        return file == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (file == null ? "Unspecified" : file);
     }

@@ -14,6 +14,7 @@ public class NodeDatabaseSchemaChangeLog {
         return asList(
                 new SchemaChange("CREATE TABLE ofc_view_model(\n" +
                         "id INTEGER PRIMARY KEY NOT NULL,\n" +
+                        "status TEXT NOT NULL,\n" +
                         "parent_id INTEGER,\n" +
                         "parent_entity_id INTEGER,\n" +
                         "definition_id TEXT NOT NULL,\n" +

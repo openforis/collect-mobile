@@ -9,10 +9,12 @@ public abstract class UiNode {
     private final int id;
     private final Definition definition;
     private UiInternalNode parent;
+    private Status status;
 
     public UiNode(int id, Definition definition) {
         this.id = id;
         this.definition = definition;
+        status = Status.OK;
     }
 
     public final void init() {
@@ -42,6 +44,33 @@ public abstract class UiNode {
 
     public UiInternalNode getParent() {
         return parent;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+
+    public void updateStatusOfNodeAndParents(UiNode.Status status) {
+        setStatus(status);
+        updateStatusOfParents();
+    }
+
+    public void updateStatusOfParents() {
+        UiInternalNode parentNode = getParent();
+        if (parentNode == null)
+            return;
+        UiNode.Status newParentStatus = UiNode.Status.values()[0];
+        for (UiNode child : parentNode.getChildren()) {
+            if (child.getStatus().ordinal() > newParentStatus.ordinal())
+                newParentStatus = child.getStatus();
+        }
+        if (newParentStatus != parentNode.getStatus())
+            parentNode.updateStatusOfNodeAndParents(newParentStatus);
     }
 
     public List<String> getSiblingLabels() {
@@ -104,5 +133,9 @@ public abstract class UiNode {
 
     public int hashCode() {
         return id;
+    }
+
+    public static enum Status {
+        OK, EMPTY, VALIDATION_WARNING, VALIDATION_ERROR
     }
 }

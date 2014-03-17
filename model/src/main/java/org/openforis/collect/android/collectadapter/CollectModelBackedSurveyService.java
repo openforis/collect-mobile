@@ -1,11 +1,12 @@
 package org.openforis.collect.android.collectadapter;
 
-import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.SurveyListener;
+import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -76,8 +77,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public void updateAttribute(UiAttribute attribute) {
-        collectModelManager.updateAttribute(attribute, listener);
-        viewModelManager.updateAttribute(attribute);
+        Set<UiValidationError> validationErrors = collectModelManager.updateAttribute(attribute);
+        viewModelManager.updateAttribute(attribute, validationErrors);
+        if (listener != null)
+            listener.onAttributeChanged(attribute, validationErrors);
     }
 
     public void setListener(SurveyListener listener) {

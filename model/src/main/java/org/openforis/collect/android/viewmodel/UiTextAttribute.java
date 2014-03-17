@@ -19,6 +19,10 @@ public class UiTextAttribute extends UiAttribute {
         this.text = text;
     }
 
+    public boolean isEmpty() {
+        return text == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (text == null ? "Unspecified" : text);
     }

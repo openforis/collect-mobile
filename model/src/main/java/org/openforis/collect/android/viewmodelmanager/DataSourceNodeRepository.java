@@ -35,13 +35,13 @@ public class DataSourceNodeRepository implements NodeRepository {
             public Void execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "INSERT INTO ofc_view_model(\n" +
-                        "   parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
+                        "   status, parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
                         "   record_key_attribute, node_type,\n" +
                         "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "   val_boolean, val_int, val_int_from, val_int_to,\n" +
                         "   val_double, val_double_from, val_double_to, val_x, val_y, val_taxon_code,\n" +
                         "   val_taxon_scientific_name, val_file, id)\n" +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 for (NodeDto node : nodes) {
                     bind(ps, node);
                     ps.addBatch();
@@ -57,7 +57,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
+                        "SELECT id, status, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
                         "       record_collection_name, record_key_attribute, node_type,\n" +
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
@@ -83,7 +83,7 @@ public class DataSourceNodeRepository implements NodeRepository {
             public Void execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "UPDATE ofc_view_model\n" +
-                        "SET parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
+                        "SET status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
                         "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
                         "    val_minute = ?, val_code_value = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
                         "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?,\n" +
@@ -104,7 +104,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
+                        "SELECT id, status, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
                         "       record_key_attribute, node_type,\n" +
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
@@ -133,6 +133,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     private NodeDto toNode(ResultSet rs) throws SQLException {
         NodeDto n = new NodeDto();
         n.id = rs.getInt("id");
+        n.status = rs.getString("status");
         n.parentId = getInteger("parent_id", rs);
         n.parentEntityId = getInteger("parent_entity_id", rs);
         n.definitionId = rs.getString("definition_id");
@@ -194,6 +195,7 @@ public class DataSourceNodeRepository implements NodeRepository {
 
     private void bind(PreparedStatement ps, NodeDto node) throws SQLException {
         int i = 0;
+        ps.setString(++i, node.status);
         setIntOrNull(++i, node.parentId, ps);
         setIntOrNull(++i, node.parentEntityId, ps);
         ps.setString(++i, node.definitionId);

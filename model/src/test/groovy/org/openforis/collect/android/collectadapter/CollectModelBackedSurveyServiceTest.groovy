@@ -4,8 +4,10 @@ import org.openforis.collect.android.viewmodel.*
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository
 import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager
-import org.openforis.collect.android.viewmodelmanager.ViewModelRepository
 import spock.lang.Specification
+
+import static org.openforis.collect.android.viewmodel.UiNode.Status.EMPTY
+import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository
 
 /**
  * @author Daniel Wiell
@@ -16,9 +18,9 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     def collectModelManager = TestCollectModelFactory.collectModelManager(database)
     @Delegate
     IdmBuilder builder = new IdmBuilder()
-    def survey = new CollectModelBackedSurveyService(
+    def surveyService = new CollectModelBackedSurveyService(
             new ViewModelManager(
-                    new ViewModelRepository(
+                    new DatabaseViewModelRepository(
                             collectModelManager,
                             new DataSourceNodeRepository(database)
                     )
@@ -32,7 +34,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
     def 'Can import survey from IDM XML stream'() {
         when:
-        def uiSurvey = survey.importSurvey(idm)
+        def uiSurvey = surveyService.importSurvey(idm)
 
         then:
         uiSurvey.label == 'Project label'
@@ -41,10 +43,10 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     }
 
     def 'Can load previously imported survey'() {
-        def importedUiSurvey = survey.importSurvey(idm)
+        def importedUiSurvey = surveyService.importSurvey(idm)
 
         when:
-        def loadedUiSurvey = survey.loadSurvey(importedUiSurvey.name)
+        def loadedUiSurvey = surveyService.loadSurvey(importedUiSurvey.name)
 
         then:
         loadedUiSurvey.label == 'Project label'
@@ -54,14 +56,14 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
 
     def 'Loading a never imported survey returns null'() {
-        expect: survey.loadSurvey('never-imported') == null
+        expect: surveyService.loadSurvey('never-imported') == null
     }
 
     def 'Can add record'() {
-        def uiSurvey = survey.importSurvey(idm)
+        def uiSurvey = surveyService.importSurvey(idm)
 
         when:
-        def uiRecord = survey.addRecord('entity-name')
+        def uiRecord = surveyService.addRecord('entity-name')
 
         then:
         uiSurvey.childCount == 1
@@ -78,13 +80,13 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     }
 
     def 'Can add entity'() {
-        survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         UiEntityCollection uiEntityCollection = findUiEntityCollection('multiple-entity-name', uiRecord)
-        survey.selectNode(uiEntityCollection.id)
+        surveyService.selectNode(uiEntityCollection.id)
 
         when:
-        def uiEntity = survey.addEntity()
+        def uiEntity = surveyService.addEntity()
 
         then:
         uiEntityCollection.childCount == 1
@@ -96,18 +98,31 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         uiEntity.getChildAt(1) instanceof UiEntityCollection
     }
 
-
-    def 'Can add deeply nested entity'() {
-        survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+    def 'When adding entity, status of entity and descendant nodes are updated'() {
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         UiEntityCollection uiEntityCollection = findUiEntityCollection('multiple-entity-name', uiRecord)
-        survey.selectNode(uiEntityCollection.id)
-        def uiEntity = survey.addEntity()
-        UiEntityCollection nestedEntityCollection = findUiEntityCollection('deeply-nested-entity-name', uiEntity)
-        survey.selectNode(nestedEntityCollection.id)
+        surveyService.selectNode(uiEntityCollection.id)
 
         when:
-        def nestedEntity = survey.addEntity()
+        def uiEntity = surveyService.addEntity()
+
+        then:
+        uiEntity.status == EMPTY
+        uiEntity.firstChild.status == EMPTY
+    }
+
+    def 'Can add deeply nested entity'() {
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
+        UiEntityCollection uiEntityCollection = findUiEntityCollection('multiple-entity-name', uiRecord)
+        surveyService.selectNode(uiEntityCollection.id)
+        def uiEntity = surveyService.addEntity()
+        UiEntityCollection nestedEntityCollection = findUiEntityCollection('deeply-nested-entity-name', uiEntity)
+        surveyService.selectNode(nestedEntityCollection.id)
+
+        when:
+        def nestedEntity = surveyService.addEntity()
 
         then:
         nestedEntityCollection.childCount == 1
@@ -120,36 +135,76 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
 
     def 'Can update an attribute'() {
-        def importedSurvey = survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+        def importedSurvey = surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         def attribute = findUiTextAttribute('attribute-name', uiRecord)
         attribute.text = 'Updated text'
 
-        when: survey.updateAttribute(attribute)
+        when: surveyService.updateAttribute(attribute)
 
         then:
-        survey.loadSurvey(importedSurvey.name)
-        def loadedRecord = survey.selectRecord(uiRecord.getId())
+        surveyService.loadSurvey(importedSurvey.name)
+        def loadedRecord = surveyService.selectRecord(uiRecord.getId())
         def loadedAttribute = findUiTextAttribute('attribute-name', loadedRecord)
         loadedAttribute.text == 'Updated text'
     }
 
+    def 'When setting the value of an empty attribute, it changes state from EMPTY to OK'() {
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
+        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        attribute.text = 'non-empty value'
+        assert attribute.status == EMPTY
+
+        when: surveyService.updateAttribute(attribute)
+
+        then:
+        attribute.status == UiNode.Status.OK
+    }
+
+
+    def 'When adding a record, status of record and descendant nodes are updated'() {
+        surveyService.importSurvey(idm)
+
+        when:
+        def uiRecord = surveyService.addRecord('entity-name')
+
+        then:
+        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        attribute.status == EMPTY
+        attribute.getParent().status == EMPTY
+        uiRecord.status == EMPTY
+    }
+
+    def 'When selecting a record, status of record nodes is up-to-date'() {
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
+
+        when:
+        def selectedRecord = surveyService.selectRecord(uiRecord.id)
+
+        then:
+        def attribute = findUiTextAttribute('attribute-name', selectedRecord)
+        attribute.status == EMPTY
+        attribute.getParent().status == EMPTY
+        selectedRecord.status == EMPTY
+    }
 
     def 'Can lookup node'() {
-        survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         def rootEntity = uiRecord.getFirstChild()
 
         when:
-        def lookedUpRootEntity = survey.lookupNode(rootEntity.getId())
+        def lookedUpRootEntity = surveyService.lookupNode(rootEntity.getId())
 
         then: lookedUpRootEntity.is rootEntity
     }
 
 
     def 'Can get key attributes from record'() {
-        survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         def expectedKeyAttribute = findUiTextAttribute('attribute-name', uiRecord)
 
         expect:
@@ -158,28 +213,27 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
 
     def 'Record placeholders contains attributes keys'() {
-        def importedSurvey = survey.importSurvey(idm)
-        survey.addRecord('entity-name')
+        def importedSurvey = surveyService.importSurvey(idm)
+        surveyService.addRecord('entity-name')
 
         when:
-        def loadedSurvey = survey.loadSurvey(importedSurvey.name)
+        def loadedSurvey = surveyService.loadSurvey(importedSurvey.name)
 
         then:
         def recordPlaceholder = loadedSurvey.firstChild.firstChild
         recordPlaceholder.getKeyAttributes().size() == 1
     }
 
-
     def 'Record placeholder key attributes are updated when actual attributes are updated'() {
-        def importedSurvey = survey.importSurvey(idm)
-        def uiRecord = survey.addRecord('entity-name')
+        def importedSurvey = surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
         def recordPlaceholder = importedSurvey.firstChild.firstChild as UiRecord.Placeholder
         assert recordPlaceholder.keyAttributes.first().text == null
         def attribute = findUiTextAttribute('attribute-name', uiRecord)
         attribute.text = 'Updated text'
 
         when:
-        survey.updateAttribute(attribute)
+        surveyService.updateAttribute(attribute)
 
         then:
         recordPlaceholder.keyAttributes.first().text == 'Updated text'
@@ -222,5 +276,4 @@ class CollectModelBackedSurveyServiceTest extends Specification {
             return node.children.collect { findNode(it, constraint) }.find()
         return null
     }
-
 }

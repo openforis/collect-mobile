@@ -27,6 +27,10 @@ public class UiCoordinateAttribute extends UiAttribute {
         this.y = y;
     }
 
+    public boolean isEmpty() {
+        return x == null || y == null;
+    }
+
     public String toString() {
         return getLabel() + ": " + (x == null ? "Unspecified" : x) + ", " + (y == null ? "Unspecified" : y);
     }

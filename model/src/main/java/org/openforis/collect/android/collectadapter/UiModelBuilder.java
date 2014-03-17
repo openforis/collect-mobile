@@ -132,7 +132,10 @@ class UiModelBuilder {
 
         private UiNode createUiAttribute(AttributeDefinition attributeDefinition, Entity parentEntity) {
             Attribute attribute = (Attribute) childNode(parentEntity, attributeDefinition);
-            return instantiateUiAttribute(attribute);
+            UiAttribute uiAttribute = instantiateUiAttribute(attribute);
+            if (uiAttribute.isEmpty())
+                uiAttribute.setStatus(UiNode.Status.EMPTY);
+            return uiAttribute;
         }
 
         private UiNode createUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {

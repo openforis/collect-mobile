@@ -2,6 +2,7 @@ package org.openforis.collect.android.collectadapter
 
 import org.openforis.collect.android.viewmodel.UiAttribute
 import org.openforis.collect.android.viewmodel.UiInternalNode
+import org.openforis.collect.android.viewmodel.UiNode
 import org.openforis.collect.android.viewmodel.UiRecord
 import org.openforis.collect.android.viewmodel.UiRecordCollection
 import org.openforis.collect.model.CollectRecord
@@ -47,6 +48,21 @@ class ModelConverterTest extends Specification {
         root.childCount == 1
         def attribute = root.firstChild as UiAttribute
         attribute.label == 'Attribute label'
+    }
+
+
+    def 'Attribute without default value is in state EMPTY'() {
+        def collectSurvey = importSurvey()
+        def collectRecord = addRecord('entity-name', collectSurvey)
+        def uiSurvey = modelConverter(collectSurvey).toUiSurvey()
+
+        when:
+        def uiRecord = modelConverter(collectSurvey).toUiRecord(collectRecord, uiSurvey)
+
+        then:
+        def root = uiRecord.firstChild as UiInternalNode
+        def attribute = root.firstChild as UiAttribute
+        attribute.status == UiNode.Status.EMPTY
     }
 
     // TODO: Fix...

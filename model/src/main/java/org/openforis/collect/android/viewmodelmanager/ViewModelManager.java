@@ -43,6 +43,8 @@ public class ViewModelManager {
 
     public UiRecord selectRecord(int recordId) {
         selectedRecord = repo.recordById(selectedSurvey, recordId);
+        selectedRecord.updateStatusOfNodeAndDescendants();
+        selectedRecord.updateStatusOfParents(); // TODO: This should sbe done at record.init()? Ugly anyway
         if (selectedRecord == null)
             throw new IllegalStateException("No record found with id " + recordId);
         return selectedRecord;
@@ -83,8 +85,13 @@ public class ViewModelManager {
     }
 
     public void updateAttribute(UiAttribute attribute, Set<UiValidationError> validationErrors) {
+        UiNode.Status oldRecordStatus = attribute.getUiRecord().getStatus();
         attribute.updateStatus(validationErrors);
-        repo.updateAttribute(attribute);
+        UiNode.Status newRecordStatus = attribute.getUiRecord().getStatus();
+        if (oldRecordStatus == newRecordStatus)
+            repo.updateAttribute(attribute);
+        else
+            repo.updateAttribute(attribute, newRecordStatus);
     }
 
     private void addRecordPlaceholders(UiSurvey uiSurvey) {

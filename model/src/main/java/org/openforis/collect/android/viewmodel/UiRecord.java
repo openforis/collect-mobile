@@ -19,6 +19,11 @@ public class UiRecord extends UiEntity {
         setParent(recordCollection);
     }
 
+    public void updateStatusOfNodeAndParents(Status status) {
+        setStatus(status);
+        getParent().getChildById(getId()).setStatus(status); // Update record placeholder status
+    }
+
     public void register(UiNode node) {
         super.register(node);
         nodeById.put(node.getId(), node);
@@ -42,11 +47,12 @@ public class UiRecord extends UiEntity {
         private List<UiAttribute> keyAttributes;
 
         private Placeholder(UiRecord record) {
-            this(record.getId(), record.getParent().getDefinition().name, record.getDefinition(), record.getKeyAttributes());
+            this(record.getId(), record.getStatus(), record.getParent().getDefinition().name, record.getDefinition(), record.getKeyAttributes());
         }
 
-        public Placeholder(int id, String recordCollectionName, Definition definition, List<UiAttribute> keyAttributes) {
+        public Placeholder(int id, Status status, String recordCollectionName, Definition definition, List<UiAttribute> keyAttributes) {
             super(id, definition);
+            this.setStatus(status);
             this.recordCollectionName = recordCollectionName;
             this.keyAttributes = new ArrayList<UiAttribute>(keyAttributes);
         }

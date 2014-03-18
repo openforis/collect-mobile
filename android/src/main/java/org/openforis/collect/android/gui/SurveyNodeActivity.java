@@ -74,6 +74,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         nodePagerFragment.onAttributeChange(attribute);
         if (!validationErrors.isEmpty())
             onValidationError(validationErrors);
+        support.onAttributeChanged(attribute);
     }
 
     private void onValidationError(Set<UiValidationError> validationErrors) {
@@ -193,13 +194,19 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private interface LayoutDependentSupport {
-        void onCreate(Bundle savedState);
+    private abstract class  LayoutDependentSupport {
+        abstract void onCreate(Bundle savedState);
 
-        void onNodeSelected(UiNode previous, UiNode selected);
+        void onNodeSelected(UiNode previous, UiNode selected) {
+
+        }
+
+        void onAttributeChanged(UiAttribute attribute) {
+
+        }
     }
 
-    private class SinglePaneSurveySupport implements LayoutDependentSupport {
+    private class SinglePaneSurveySupport extends LayoutDependentSupport {
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_single_pane_node);
 
@@ -213,13 +220,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                         .add(R.id.attribute_detail_pager_container, nodePagerFragment)
                         .commit();
         }
-
-        public void onNodeSelected(UiNode previous, UiNode selected) {
-            // Do nothing
-        }
     }
 
-    private class TwoPaneSurveySupport implements LayoutDependentSupport {
+    private class TwoPaneSurveySupport extends LayoutDependentSupport {
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_two_pane_node);
             getSupportFragmentManager().beginTransaction()
@@ -228,9 +231,17 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         }
 
         public void onNodeSelected(UiNode previous, UiNode selected) {
-            final ListFragment nodeListFragment = (ListFragment) getSupportFragmentManager().findFragmentById(R.id.attribute_list);
+            final ListFragment nodeListFragment = listFragment();
             if (nodeListFragment != null)
                 setNodeSelected(selected, nodeListFragment);
+        }
+
+        void onAttributeChanged(UiAttribute attribute) {
+            listFragment().getListView().invalidateViews();
+        }
+
+        private ListFragment listFragment() {
+            return (ListFragment) getSupportFragmentManager().findFragmentById(R.id.attribute_list);
         }
 
         private void setNodeSelected(UiNode selected, ListFragment nodeListFragment) {

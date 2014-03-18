@@ -73,12 +73,6 @@ public abstract class UiNode {
             parentNode.updateStatusOfNodeAndParents(newParentStatus);
     }
 
-    public List<String> getSiblingLabels() {
-        if (parent == null)
-            throw new IllegalStateException("Parent is null");
-        return parent.getChildrenLabels();
-    }
-
     public int getSiblingCount() {
         if (parent == null)
             throw new IllegalStateException("Parent is null");

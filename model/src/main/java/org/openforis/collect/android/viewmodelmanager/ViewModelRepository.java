@@ -24,6 +24,8 @@ public interface ViewModelRepository {
 
     void updateAttribute(UiAttribute attribute);
 
+    void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus);
+
 
     public static class DatabaseViewModelRepository implements ViewModelRepository {
         private final DefinitionProvider definitionProvider;
@@ -51,6 +53,7 @@ public interface ViewModelRepository {
                 placeholders.add(
                         new UiRecord.Placeholder(
                                 recordNode.id,
+                                UiNode.Status.valueOf(recordNode.status),
                                 recordNode.recordCollectionName,
                                 definitionProvider.getById(recordNode.definitionId),
                                 getRecordKeyAttributes(nodeCollection, recordNode)
@@ -78,7 +81,11 @@ public interface ViewModelRepository {
         }
 
         public void updateAttribute(UiAttribute attribute) {
-            repo.update(uiAttributeToDto(attribute));
+            repo.update(uiAttributeToDto(attribute), null);
+        }
+
+        public void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus) {
+            repo.update(uiAttributeToDto(attribute), recordStatus.name());
         }
 
         private UiRecord toRecord(UiSurvey survey, Collection nodeCollection) {

@@ -66,23 +66,8 @@ public class UiInternalNode extends UiNode {
             addChild(child);
     }
 
-    public List<String> getChildrenLabels() {
-        List<String> labels = new ArrayList<String>();
-        for (UiNode child : children) {
-            labels.add(child.getLabel());
-        }
-        return labels;
-    }
-
     public void updateStatusOfNodeAndDescendants() {
-        int statusOrdinal = determineChildrenMaxStatus();
-        Status status = Status.values()[statusOrdinal];
-        setStatus(status);
-    }
-
-    private int determineChildrenMaxStatus() {
-        int status = 0;
-        int maxStatus = Status.values().length - 1;
+        int maxStatus = 0;
         for (UiNode child : children) {
             int childStatus;
             if (child instanceof UiInternalNode) {
@@ -91,13 +76,11 @@ public class UiInternalNode extends UiNode {
                 childStatus = internalNodeChild.getStatus().ordinal();
             } else
                 childStatus = child.getStatus().ordinal();
-            if (childStatus > status) {
-                status = childStatus;
-                if (status == maxStatus)
-                    return maxStatus;
+            if (childStatus > maxStatus) {
+                maxStatus = childStatus;
             }
         }
-        return status;
+        setStatus(Status.values()[maxStatus]);
     }
 
     public String toString() {

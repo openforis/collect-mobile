@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;

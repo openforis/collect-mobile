@@ -11,6 +11,10 @@ public class UiRecordCollection extends UiInternalNode {
         register(this);
     }
 
+    public void setStatus(Status status) {
+        // TODO: We ignore the status of the record collection initially - terribly ugly - fix!
+    }
+
     public boolean excludeWhenNavigating() {
         return true;
     }

@@ -1,31 +1,6 @@
-UiNode.status
-    OK
-    EMPTY
-    VALIDATION_WARNING
-    VALIDATION_ERROR
-
-UiAttribute
-    boolean hasValue()
-
-
-Loading record
-Adding record
-Adding entity
-Updating attribute
-
-
-
-Needed for demo
----------------
+Set status to OK whenever an attribute is irrelevant
 
 Text when multiplicity but no items
-
-Node status
-
-Remove spell check on auto-complete attributes
-
-
---------------------------------------
 
 Enumerated entity - attributes show up twice in entity String representation
 

@@ -11,7 +11,7 @@ public interface NodeRepository {
 
     NodeDto.Collection recordNodes(int recordId);
 
-    void update(NodeDto node);
+    void update(NodeDto node, String recordStatus);
 
     NodeDto.Collection surveyRecords(int surveyId);
 }

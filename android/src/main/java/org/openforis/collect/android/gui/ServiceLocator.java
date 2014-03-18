@@ -84,7 +84,7 @@ public class ServiceLocator {
     }
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Context context) {
-        new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
+//        new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
 
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
         CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),

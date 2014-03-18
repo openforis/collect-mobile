@@ -20,6 +20,9 @@ class ViewModelManagerTest extends Specification {
     def manager = new ViewModelManager(repo)
 
     def setup() {
+        def collection = new UiRecordCollection(nextId(), new Definition(valueOf(nextId()), 'name', 'label'))
+        def record = new UiRecord(nextId(), new Definition(valueOf(nextId()), 'name', 'label'), collection)
+        record.addChild(entity)
         repo.surveyRecords(_) >> []
         entity.addChild(attribute)
     }
@@ -41,7 +44,7 @@ class ViewModelManagerTest extends Specification {
 
         then:
         attribute.status == VALIDATION_WARNING
-        1 * repo.updateAttribute(attribute)
+        1 * repo.updateAttribute(attribute, _)
     }
 
 
@@ -50,7 +53,7 @@ class ViewModelManagerTest extends Specification {
 
         then:
         attribute.status == VALIDATION_ERROR
-        1 * repo.updateAttribute(attribute)
+        1 * repo.updateAttribute(attribute, _)
     }
 
 

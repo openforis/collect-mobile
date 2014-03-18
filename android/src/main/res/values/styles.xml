@@ -4,6 +4,17 @@
     <style name="AppTheme" parent="@style/Theme.AppCompat">
     </style>
 
+    <!--<style name="NodeList">-->
+        <!--<item name="android:layout_width">match_parent</item>-->
+        <!--<item name="android:layout_height">wrap_content</item>-->
+        <!--<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>-->
+        <!--<item name="android:gravity">center_vertical</item>-->
+        <!--&lt;!&ndash;<item name="android:paddingStart">8dip</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:paddingEnd">8dip</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:background">@android:drawable/activated_background_holo_dark</item>&ndash;&gt;-->
+        <!--<item name="android:minHeight">?android:attr/listPreferredItemHeight</item>-->
+    <!--</style>-->
+
     <style name="BreadCrumbs">
         <item name="background">@drawable/abc_ic_ab_back_holo_dark</item>
     </style>

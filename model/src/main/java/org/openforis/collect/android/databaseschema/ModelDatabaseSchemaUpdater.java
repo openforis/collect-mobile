@@ -39,7 +39,6 @@ public class ModelDatabaseSchemaUpdater {
         initData(db); // TODO: Remove...
     }
 
-
     private static void initData(Database modelDatabase) {
         modelDatabase.execute(new ConnectionCallback<Object>() {
             public Object execute(Connection connection) throws SQLException {

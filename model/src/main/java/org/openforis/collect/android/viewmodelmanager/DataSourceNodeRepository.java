@@ -78,26 +78,40 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void update(final NodeDto node) {
+    public void update(final NodeDto node, final String recordStatus) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("" +
-                        "UPDATE ofc_view_model\n" +
-                        "SET status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
-                        "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
-                        "    val_minute = ?, val_code_value = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
-                        "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?,\n" +
-                        "    val_y = ?, val_taxon_code = ?, val_taxon_scientific_name = ?,\n" +
-                        "    val_file = ?\n" +
-                        "WHERE id = ?");
-                bind(ps, node);
-                int rowsUpdated = ps.executeUpdate();
-                if (rowsUpdated != 1)
-                    throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
-                ps.close();
+                updateAttribute(connection, node);
+                if (recordStatus != null)
+                    updateRecordStatus(connection, node.recordId, recordStatus);
                 return null;
             }
         });
+    }
+
+    private void updateRecordStatus(Connection connection, int recordId, String recordStatus) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("UPDATE ofc_view_model SET status =? WHERE id = ?");
+        ps.setString(1, recordStatus);
+        ps.setInt(2, recordId);
+        ps.executeUpdate();
+        ps.close();
+    }
+
+    private void updateAttribute(Connection connection, NodeDto node) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("" +
+                "UPDATE ofc_view_model\n" +
+                "SET status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
+                "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
+                "    val_minute = ?, val_code_value = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
+                "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?,\n" +
+                "    val_y = ?, val_taxon_code = ?, val_taxon_scientific_name = ?,\n" +
+                "    val_file = ?\n" +
+                "WHERE id = ?");
+        bind(ps, node);
+        int rowsUpdated = ps.executeUpdate();
+        if (rowsUpdated != 1)
+            throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
+        ps.close();
     }
 
     public NodeDto.Collection surveyRecords(final int surveyId) {

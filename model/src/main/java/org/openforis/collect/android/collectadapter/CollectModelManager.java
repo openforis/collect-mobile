@@ -2,8 +2,8 @@ package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.DefinitionProvider;
+import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.SurveyException;
-import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.persistence.Database;
@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+// TODO: Break this up
 
 /**
  * @author Daniel Wiell
@@ -117,12 +119,27 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
             public UiEntity call() throws Exception {
                 Entity parentEntity = recordNodes.getEntityById(uiEntityCollection.getParentEntityId());
                 NodeChangeSet changeSet = recordManager.addEntity(parentEntity, uiEntityCollection.getName());
+                // TODO: Validation errors?
                 Entity entity = extractAddedEntity(changeSet);
                 UiEntity uiEntity = modelConverter.toUiEntity(selectedSurvey, entity, uiEntityCollection);
                 recordNodes.add(entity);
                 return uiEntity;
             }
         });
+    }
+
+    public UiAttribute addAttribute(UiAttributeCollection uiAttributeCollection) {
+        Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
+        UiAttributeCollectionDefinition definition = uiAttributeCollection.getDefinition();
+        String attributeName = definition.attributeDefinition.name;
+
+        Value value = null; // TODO: Default value
+        NodeChangeSet changeSet = recordManager.addAttribute(parentEntity, attributeName, value, null, null);
+        // TODO: Validation errors?
+        Attribute attribute = extractAddedAttribute(changeSet);
+        attribute.setId(IdGenerator.nextId()); // TODO: Not right place to do this - use converter?
+        recordNodes.add(attribute);
+        return AttributeConverter.toUiAttribute(definition, attribute);
     }
 
     @SuppressWarnings("unchecked")
@@ -176,6 +193,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         for (NodeChange<?> nodeChange : changeSet.getChanges()) {
             if (nodeChange instanceof EntityAddChange)
                 return ((EntityAddChange) nodeChange).getNode();
+        }
+        throw new IllegalStateException("No " + EntityAddChange.class.getName() + " found in change set");
+    }
+
+    private Attribute extractAddedAttribute(NodeChangeSet changeSet) {
+        for (NodeChange<?> nodeChange : changeSet.getChanges()) {
+            if (nodeChange instanceof AttributeAddChange)
+                return ((AttributeAddChange) nodeChange).getNode();
         }
         throw new IllegalStateException("No " + EntityAddChange.class.getName() + " found in change set");
     }

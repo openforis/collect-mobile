@@ -121,11 +121,10 @@ public interface ViewModelRepository {
                 case ENTITY_COLLECTION:
                     return new UiEntityCollection(nodeDto.id, nodeDto.parentEntityId, definition);
                 case ATTRIBUTE_COLLECTION:
-                    return new UiAttributeCollection(nodeDto.id, definition);
+                    return new UiAttributeCollection(nodeDto.id, nodeDto.parentEntityId, (UiAttributeCollectionDefinition) definition);
                 default:
                     return AttributeConverter.toUiAttribute(nodeDto, definition);
             }
-
         }
 
         private List<NodeDto> toNodeDtoList(UiNode uiNode) {
@@ -147,6 +146,8 @@ public interface ViewModelRepository {
                 return uiEntityToDto((UiEntity) uiNode);
             if (uiNode instanceof UiEntityCollection)
                 return uiEntityCollectionToDto((UiEntityCollection) uiNode);
+            if (uiNode instanceof UiAttributeCollection)
+                return uiAttributeCollectionToDto((UiAttributeCollection) uiNode);
             if (uiNode instanceof UiInternalNode)
                 return uiNodeToDto(uiNode);
             if (uiNode instanceof UiAttribute)
@@ -157,6 +158,12 @@ public interface ViewModelRepository {
         private NodeDto uiEntityCollectionToDto(UiEntityCollection uiEntityCollection) {
             NodeDto dto = uiNodeToDto(uiEntityCollection);
             dto.parentEntityId = uiEntityCollection.getParentEntityId();
+            return dto;
+        }
+
+        private NodeDto uiAttributeCollectionToDto(UiAttributeCollection uiAttributeCollection) {
+            NodeDto dto = uiNodeToDto(uiAttributeCollection);
+            dto.parentEntityId = uiAttributeCollection.getParentEntityId();
             return dto;
         }
 

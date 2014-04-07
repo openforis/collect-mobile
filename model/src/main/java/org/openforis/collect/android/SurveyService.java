@@ -3,7 +3,6 @@ package org.openforis.collect.android;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * @author Daniel Wiell
@@ -26,6 +25,10 @@ public interface SurveyService {
     UiNode lookupNode(int nodeId);
 
     UiNode selectedNode();
+
+    UiAttribute addAttribute();
+
+    void updateAttributeCollection(UiAttributeCollection attributeCollection);
 
     void updateAttribute(UiAttribute attribute);
 

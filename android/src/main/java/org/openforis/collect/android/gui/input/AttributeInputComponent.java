@@ -10,18 +10,18 @@ import org.openforis.collect.android.viewmodel.*;
 /**
  * @author Daniel Wiell
  */
-public abstract class InputComponent<T extends UiAttribute> {
+public abstract class AttributeInputComponent<T extends UiAttribute> {
     private final T attribute;
     private final Context context;
     protected final SurveyService surveyService;
 
-    protected InputComponent(T attribute, Context context) {
+    protected AttributeInputComponent(T attribute, Context context) {
         this.attribute = attribute;
         this.context = context;
         this.surveyService = ServiceLocator.surveyService();
     }
 
-    public abstract View getView();
+    public abstract  View getView();
 
     public abstract void updateAttribute();
 
@@ -48,7 +48,7 @@ public abstract class InputComponent<T extends UiAttribute> {
         return context;
     }
 
-    public static InputComponent create(UiAttribute attribute, Context context) {
+    public static AttributeInputComponent create(UiAttribute attribute, Context context) {
         if (attribute instanceof UiTextAttribute)
             return new TextComponent((UiTextAttribute) attribute, context);
         if (attribute instanceof UiIntegerAttribute)
@@ -68,7 +68,7 @@ public abstract class InputComponent<T extends UiAttribute> {
 //            throw new IllegalStateException("Unexpected attribute type: " + attribute.getClass());
     }
 
-    private static class DummyInputComponent extends InputComponent {
+    private static class DummyInputComponent extends AttributeInputComponent {
         @SuppressWarnings("unchecked")
         public DummyInputComponent(UiAttribute attribute, Context context) {
             super(attribute, context);

@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 
@@ -29,8 +29,8 @@ dependencies {
     compile('com.viewpagerindicator:library:2.4.2-SNAPSHOT') {
         exclude group: 'com.google.android'
     }
-    compile 'com.android.support:support-v4:19.0.+'
-    compile 'com.android.support:appcompat-v7:19.0.+'
+    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:appcompat-v7:19.+'
 
     compile(project(":model")) {
         exclude group: 'org.jooq'

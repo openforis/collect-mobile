@@ -69,6 +69,12 @@ public class ViewModelManager {
         return node;
     }
 
+    public UiAttributeCollection selectedAttributeCollection() {
+        if (!(selectedNode instanceof UiAttributeCollection))
+            throw new IllegalStateException("Selected node is not an attribute collection: " + selectedNode);
+        return (UiAttributeCollection) selectedNode;
+    }
+
     public UiEntityCollection selectedEntityCollection() {
         if (!(selectedNode instanceof UiEntityCollection))
             throw new IllegalStateException("Selected node is not an entity collection: " + selectedNode);

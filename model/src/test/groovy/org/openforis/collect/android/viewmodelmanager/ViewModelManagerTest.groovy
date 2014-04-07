@@ -23,6 +23,9 @@ class ViewModelManagerTest extends Specification {
         def collection = new UiRecordCollection(nextId(), new Definition(valueOf(nextId()), 'name', 'label'))
         def record = new UiRecord(nextId(), new Definition(valueOf(nextId()), 'name', 'label'), collection)
         record.addChild(entity)
+        def survey = new UiSurvey(nextId(), new Definition(valueOf(nextId()), 'name', 'label'))
+        survey.addChild(collection)
+        survey.addRecord(record)
         repo.surveyRecords(_) >> []
         entity.addChild(attribute)
     }

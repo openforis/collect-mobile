@@ -21,8 +21,7 @@ class BooleanConverter extends AttributeConverter<BooleanAttribute, UiBooleanAtt
     }
 
     protected UiBooleanAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(nodeDto.id, definition
-        );
+        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(nodeDto.id, definition);
         uiAttribute.setValue(nodeDto.booleanValue);
         return uiAttribute;
     }

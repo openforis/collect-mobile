@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.input.InputComponent;
+import org.openforis.collect.android.gui.input.AttributeInputComponent;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -16,7 +16,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * @author Daniel Wiell
  */
 public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
-    private InputComponent inputComponent;
+    private AttributeInputComponent inputComponent;
 
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
@@ -24,8 +24,8 @@ public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
         ((TextView) rootView.findViewById(R.id.attribute_label)).setText(node().getLabel());
         TextView nodeLabel = (TextView) rootView.findViewById(R.id.attribute_label);
         nodeLabel.setText(node().getLabel());
-        inputComponent = InputComponent.create(node(), getActivity());
-        addInputField(rootView);
+        inputComponent = AttributeInputComponent.create(node(), getActivity());
+        addInputComponentToView(rootView);
         return rootView;
     }
 
@@ -49,7 +49,7 @@ public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
             inputComponent.onAttributeChange(attribute);
     }
 
-    private void addInputField(View rootView) {
+    private void addInputComponentToView(View rootView) {
         ViewGroup attributeInputContainer = (ViewGroup) rootView.findViewById(R.id.attribute_input_container);
         View view = inputComponent.getView();
         view.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));

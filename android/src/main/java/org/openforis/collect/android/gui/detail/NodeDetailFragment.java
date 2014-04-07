@@ -98,12 +98,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     public void onSelected() {
-        boolean keyboardShown = isKeyboardShown();
         View view = getDefaultFocusedView();
-//        if (view == null && keyboardShown)
         if (view == null)
             hideKeyboard(getView());
-        else if (view != null) {
+        else {
             if (view instanceof EditText)
                 showKeyboard(view);
             else {
@@ -140,21 +138,12 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
 
     private void showKeyboard(View view) {
-//        if (!isKeyboardShown()) {
         view.requestFocus();
         inputMethodManager().showSoftInput(view, InputMethodManager.SHOW_FORCED);
-//        }
-//        else
-//            view.requestFocus();
     }
 
     private void hideKeyboard(View view) {
-//        if (isKeyboardShown())
         inputMethodManager().hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private boolean isKeyboardShown() {
-        return inputMethodManager().isAcceptingText();
     }
 
     private InputMethodManager inputMethodManager() {

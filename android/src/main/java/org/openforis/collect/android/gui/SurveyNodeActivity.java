@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -11,12 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -89,7 +93,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
-    @SuppressWarnings("UnusedParameters")
     public void nextAttribute(MenuItem item) {// TODO: Implement this properly - should not only navigate siblings
         UiNode node = selectedNode;
         ViewPager pager = nodePager();
@@ -100,14 +103,25 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             System.out.println("Should navigate to next node");
     }
 
-    @SuppressWarnings("UnusedParameters")
     public void navigateDown(View view) {
         navigateDown();
     }
 
-    @SuppressWarnings("UnusedParameters")
     public void navigateDown(MenuItem item) {
         navigateDown();
+    }
+
+    // TODO: Temporary, for demo
+    public void export(MenuItem item) {
+        File storageDir = Environment.getExternalStorageDirectory();
+        File collectDir = new File(storageDir, "Collect");
+
+        try {
+            FileUtils.copyFileToDirectory(getDatabasePath("model"), collectDir);
+            FileUtils.copyFileToDirectory(getDatabasePath("nodes"), collectDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void navigateTo(int nodeId) {
@@ -194,7 +208,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private abstract class  LayoutDependentSupport {
+    private abstract class LayoutDependentSupport {
         abstract void onCreate(Bundle savedState);
 
         void onNodeSelected(UiNode previous, UiNode selected) {

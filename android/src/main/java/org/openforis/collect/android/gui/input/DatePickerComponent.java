@@ -18,7 +18,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 /**
  * @author Daniel Wiell
  */
-class DatePickerComponent extends InputComponent<UiDateAttribute> {
+class DatePickerComponent extends AttributeInputComponent<UiDateAttribute> {
     private final DatePicker datePicker;
 
     DatePickerComponent(UiDateAttribute attribute, Context context) {

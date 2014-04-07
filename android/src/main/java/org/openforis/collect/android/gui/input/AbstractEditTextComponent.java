@@ -12,7 +12,7 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
 /**
  * @author Daniel Wiell
  */
-abstract class AbstractEditTextComponent<T extends UiAttribute> extends InputComponent<T> {
+abstract class AbstractEditTextComponent<T extends UiAttribute> extends AttributeInputComponent<T> {
     private final EditText editText;
 
     AbstractEditTextComponent(T attribute, Context context) {

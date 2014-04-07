@@ -19,6 +19,7 @@ public class NodeDto {
     public int recordId;
     public boolean recordKeyAttribute;
     public Type type;
+    public Type attributeType;
     public String text;
     public Date date;
     public Integer hour;

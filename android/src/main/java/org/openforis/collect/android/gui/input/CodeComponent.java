@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
-import android.text.InputType;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,7 +21,7 @@ import java.util.Map;
 /**
  * @author Daniel Wiell
  */
-class CodeComponent extends InputComponent<UiCodeAttribute> {
+class CodeComponent extends AttributeInputComponent<UiCodeAttribute> {
     private static final int RADIO_GROUP_MAX_SIZE = 20;
     private final ViewGroup view;
     private final CodeListService codeListService;

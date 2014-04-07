@@ -139,7 +139,7 @@ class UiModelBuilder {
         }
 
         private UiNode createUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {
-            UiAttributeCollection uiAttributeCollection = instantiateUiAttributeCollection(attributeDefinition);
+            UiAttributeCollection uiAttributeCollection = instantiateUiAttributeCollection(attributeDefinition, parentEntity);
             List<Node<? extends NodeDefinition>> childAttributes = parentEntity.getAll(attributeDefinition.getName());
             for (Node<? extends NodeDefinition> childAttribute : childAttributes)
                 uiAttributeCollection.addChild(instantiateUiAttribute((Attribute) childAttribute));
@@ -179,7 +179,7 @@ class UiModelBuilder {
             return survey.getUIOptions().getAssignedTab(nodeDefinition);
         }
 
-        private UITab tab(Node node) {
+        private UITab tab(Node<EntityDefinition> node) {
             return tab(node.getDefinition());
         }
 
@@ -240,8 +240,12 @@ class UiModelBuilder {
             return new UiInternalNode(IdGenerator.nextId(), definitions.tabDefinition(tab));
         }
 
-        private UiAttributeCollection instantiateUiAttributeCollection(AttributeDefinition attributeDefinition) {
-            return new UiAttributeCollection(IdGenerator.nextId(), definitions.toCollectionDefinition(attributeDefinition));
+        private UiAttributeCollection instantiateUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {
+            return new UiAttributeCollection(
+                    IdGenerator.nextId(),
+                    parentEntity.getId(),
+                    (UiAttributeCollectionDefinition) definitions.toCollectionDefinition(attributeDefinition)
+            );
         }
 
         private UiEntityCollection instantiateUiEntityCollection(EntityDefinition entityDefinition, Entity parentEntity) {

@@ -1,3 +1,5 @@
+Parent entity id in UiEntityCollection and UiAttributeCollection part of their Definition?
+
 Set status to OK whenever an attribute is irrelevant
 
 Text when multiplicity but no items
@@ -134,7 +136,10 @@ Get rid of Sherlock
 http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1
 
 
-
+http://www.infoq.com/presentations/Android-Protips
+    ActivityState, ViewHolder pattern
+    46:00 Hide soft keyboard
+    48:00 Can handle intent (camera?)
 
 
 

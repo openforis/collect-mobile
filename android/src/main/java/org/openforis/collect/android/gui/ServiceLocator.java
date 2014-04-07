@@ -3,7 +3,9 @@ package org.openforis.collect.android.gui;
 import android.content.Context;
 import android.os.Environment;
 import liquibase.database.core.AndroidSQLiteDatabase;
+import org.apache.commons.io.FileUtils;
 import org.openforis.collect.android.CodeListService;
+import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
@@ -21,10 +23,7 @@ import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
@@ -38,12 +37,28 @@ public class ServiceLocator {
 
     public static void init(Context applicationContext) {
         if (surveyService == null) {
+            boolean initialized = setupDatabases(applicationContext);
             AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, "model");
-            collectModelManager = createCollectModelManager(modelDatabase, applicationContext);
+            if (!initialized)
+                new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
+
+            collectModelManager = createCollectModelManager(modelDatabase);
             surveyService = createSurveyService(applicationContext, collectModelManager);
             loadOrImportSurvey(surveyService);
             taxonService = createTaxonService(modelDatabase);
         }
+    }
+
+    private static boolean setupDatabases(Context context) {
+        File model = context.getDatabasePath("model");
+        boolean initialized = true;
+        if (!model.exists())
+            initialized = importOrSetupModelDatabase(context);
+
+        File nodes = context.getDatabasePath("nodes");
+        if (!nodes.exists())
+            importNodesDatabase(context);
+        return initialized;
     }
 
     public static SurveyService surveyService() {
@@ -59,11 +74,38 @@ public class ServiceLocator {
     }
 
     private static void loadOrImportSurvey(SurveyService surveyService) {
-        UiSurvey uiSurvey = surveyService.loadSurvey("survey");
-//        UiSurvey uiSurvey = surveyService.loadSurvey("naforma1");
-//        UiSurvey uiSurvey = surveyService.loadSurvey("http://www.openforis.org/idm/naforma1");
+        String surveyName = "survey";
+        UiSurvey uiSurvey = surveyService.loadSurvey(surveyName);
         if (uiSurvey == null)
             surveyService.importSurvey(idmXmlStream());
+    }
+
+    private static void importNodesDatabase(Context context) {
+        File nodes = new File(collectDir(), "nodes");
+        if (nodes.exists())
+            try {
+                FileUtils.copyFile(nodes, context.getDatabasePath("nodes"));
+            } catch (IOException e) {
+                throw new SurveyException(e);
+            }
+    }
+
+    private static boolean importOrSetupModelDatabase(Context context) {
+        File model = new File(collectDir(), "model");
+        if (model.exists()) {
+            try {
+                FileUtils.copyFile(model, context.getDatabasePath("model"));
+            } catch (IOException e) {
+                throw new SurveyException(e);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static File collectDir() {
+        File storageDir = Environment.getExternalStorageDirectory();
+        return new File(storageDir, "Collect");
     }
 
 
@@ -83,9 +125,7 @@ public class ServiceLocator {
         );
     }
 
-    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Context context) {
-//        new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
-
+    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
         CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
                 externalCodeListProvider
@@ -119,8 +159,7 @@ public class ServiceLocator {
     }
 
     private static File getIdmFile() {
-        File storageDir = Environment.getExternalStorageDirectory();
-        File collectDir = new File(storageDir, "Collect");
+        File collectDir = collectDir();
         if (!collectDir.exists())
             if (!collectDir.mkdir())
                 throw new IllegalStateException("Failed to create dir: " + collectDir);

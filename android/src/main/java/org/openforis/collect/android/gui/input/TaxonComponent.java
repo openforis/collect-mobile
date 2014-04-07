@@ -17,7 +17,7 @@ import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 /**
  * @author Daniel Wiell
  */
-class TaxonComponent extends InputComponent<UiTaxonAttribute> { // TODO: Refactor - remove duplication from CodeComponent
+class TaxonComponent extends AttributeInputComponent<UiTaxonAttribute> { // TODO: Refactor - remove duplication from CodeComponent
     private final ViewGroup view;
     private final AutoCompleteTextView autoComplete;
     private UiTaxon selectedTaxon;

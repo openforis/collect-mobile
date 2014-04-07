@@ -1,6 +1,8 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
 import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.metamodel.ui.UITabSet;
@@ -52,9 +54,10 @@ public class Definitions {
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
-        addDefinition(createDefinition(nodeDefinition));
+        Definition definition = createDefinition(nodeDefinition);
+        addDefinition(definition);
         if (nodeDefinition.isMultiple())
-            addDefinition(createCollectionDefinition(nodeDefinition));
+            addDefinition(createCollectionDefinition(nodeDefinition, definition));
 
         if (nodeDefinition instanceof EntityDefinition)
             for (NodeDefinition childDefinition : ((EntityDefinition) nodeDefinition).getChildDefinitions())
@@ -73,7 +76,14 @@ public class Definitions {
             return new Definition(id, name, label, keyOfDefinitionId);
     }
 
-    private Definition createCollectionDefinition(NodeDefinition nodeDefinition) {
+    private Definition createCollectionDefinition(NodeDefinition nodeDefinition, Definition childDefinition) {
+        if (nodeDefinition instanceof AttributeDefinition)
+            return new UiAttributeCollectionDefinition(
+                    collectionNodeDefinitionId(nodeDefinition),
+                    nodeDefinition.getName(),
+                    collectionLabel(nodeDefinition),
+                    AttributeConverter.getUiAttributeType(nodeDefinition),
+                    childDefinition);
         return new Definition(
                 collectionNodeDefinitionId(nodeDefinition),
                 nodeDefinition.getName(),

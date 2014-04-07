@@ -30,7 +30,7 @@ class RecordNodes {
         }
     }
 
-    private void add(Node node) {
+    public void add(Node node) {
         if (node instanceof Entity)
             add((Entity) node);
         else

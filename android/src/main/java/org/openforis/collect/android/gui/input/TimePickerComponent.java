@@ -14,7 +14,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 /**
  * @author Daniel Wiell
  */
-class TimePickerComponent extends InputComponent<UiTimeAttribute> {
+class TimePickerComponent extends AttributeInputComponent<UiTimeAttribute> {
     private final TimePicker timePicker;
 
     TimePickerComponent(UiTimeAttribute attribute, Context context) {

@@ -90,6 +90,35 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         throw new IllegalStateException("Unexpected attribute type: " + definition);
     }
 
+
+    public static Class<? extends UiAttribute> getUiAttributeType(NodeDefinition definition) {
+        if (definition instanceof TextAttributeDefinition)
+            return UiTextAttribute.class;
+        if (definition instanceof DateAttributeDefinition)
+            return UiDateAttribute.class;
+        if (definition instanceof TimeAttributeDefinition)
+            return UiTaxonAttribute.class;
+        if (definition instanceof CodeAttributeDefinition)
+            return UiCodeAttribute.class;
+        if (definition instanceof CoordinateAttributeDefinition)
+            return UiCodeAttribute.class;
+        if (definition instanceof FileAttributeDefinition)
+            return UiFileAttribute.class;
+        if (definition instanceof TaxonAttributeDefinition)
+            return UiTaxonAttribute.class;
+        if (definition instanceof BooleanAttributeDefinition)
+            return UiBooleanAttribute.class;
+        if (definition instanceof NumberAttributeDefinition && ((NumberAttributeDefinition) definition).isInteger())
+            return UiIntegerAttribute.class;
+        if (definition instanceof NumberAttributeDefinition && ((NumberAttributeDefinition) definition).isReal())
+            return UiDoubleAttribute.class;
+        if (definition instanceof RangeAttributeDefinition && ((RangeAttributeDefinition) definition).isInteger())
+            return UiIntegerRangeAttribute.class;
+        if (definition instanceof RangeAttributeDefinition && ((RangeAttributeDefinition) definition).isReal())
+            return UiDoubleRangeAttribute.class;
+        throw new IllegalStateException("Unexpected attribute type: " + definition);
+    }
+
     private static AttributeConverter getConverter(Class type) {
         if (UiTextAttribute.class.isAssignableFrom(type))
             return new TextConverter();

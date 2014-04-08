@@ -98,7 +98,7 @@ class ModelConverterTest extends Specification {
             project('Project label')
             schema {
                 entity('entity-name', 'Entity label') {
-                    text('attribute-name', 'Attribute label')
+                    text('uiAttribute-name', 'Attribute label')
                 }
             }
         }

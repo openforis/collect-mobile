@@ -94,7 +94,7 @@ class MobileExternalCodeListProviderTest extends Specification {
             }
             schema {
                 entity('foo', 'Bar') {
-                    text('attribute name', 'The label')
+                    text('uiAttribute name', 'The label')
                 }
             }
         }

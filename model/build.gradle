@@ -5,9 +5,6 @@ buildscript {
             url "http://www.openforis.org/nexus/content/groups/public/"
         }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
-    }
 }
 
 apply plugin: 'java'

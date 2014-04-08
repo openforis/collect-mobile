@@ -147,7 +147,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        return new NodeChangeSetParser(nodeChangeSet, uiAttribute).parseErrors();
+        return new NodeChangeSetParser(nodeChangeSet, attribute, uiAttribute).parseErrors();
     }
 
     public void recordSelected(UiRecord uiRecord) {

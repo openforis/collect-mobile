@@ -14,23 +14,6 @@ public class UiValidationError {
         return level;
     }
 
-    public static class RequiredAttributeMissing extends UiValidationError {
-        private final UiAttribute attribute;
-
-        public RequiredAttributeMissing(Level level, UiAttribute attribute) {
-            super(level);
-            this.attribute = attribute;
-        }
-
-        public UiAttribute getAttribute() {
-            return attribute;
-        }
-
-        public String toString() {
-            return attribute.getLabel() + " is required";
-        }
-    }
-
     public enum Level {
         WARNING, ERROR
     }

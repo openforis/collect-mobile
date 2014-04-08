@@ -1,6 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -53,7 +53,6 @@ public abstract class UiNode {
     public void setStatus(Status status) {
         this.status = status;
     }
-
 
     public void updateStatusOfNodeAndParents(UiNode.Status status) {
         setStatus(status);

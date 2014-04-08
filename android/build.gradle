@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.apache.commons:commons-lang3:3.3.1'
     compile('com.viewpagerindicator:library:2.4.2-SNAPSHOT') {
         exclude group: 'com.google.android'
     }
@@ -61,7 +62,7 @@ dependencies {
 }
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.2"
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
         minSdkVersion 10

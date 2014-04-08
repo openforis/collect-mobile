@@ -6,11 +6,21 @@ import java.util.Set;
  * @author Daniel Wiell
  */
 public abstract class UiAttribute extends UiNode {
+    private Set<UiValidationError> validationErrors;
+
     public UiAttribute(int id, Definition definition) {
         super(id, definition);
     }
 
     public abstract boolean isEmpty();
+
+    public Set<UiValidationError> getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void setValidationErrors(Set<UiValidationError> validationErrors) {
+        this.validationErrors = validationErrors;
+    }
 
     public void updateStatus(Set<UiValidationError> validationErrors) {
         UiNode.Status oldStatus = getStatus();
@@ -34,6 +44,7 @@ public abstract class UiAttribute extends UiNode {
         }
         return newStatus;
     }
+
 
     private UiValidationError.Level getValidationErrorLevel(Set<UiValidationError> validationErrors) {
         UiValidationError.Level level = UiValidationError.Level.values()[0];

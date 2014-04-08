@@ -6,6 +6,7 @@ import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -58,7 +59,18 @@ public class CollectModelBackedSurveyService implements SurveyService {
             return previousNode; // Do nothing if already selected
         UiNode selectedNode = viewModelManager.selectNode(nodeId);
         notifyNodeSelected(previousNode, selectedNode);
+        if (selectedNode instanceof UiAttribute)
+            lazilyInitValidationErrors((UiAttribute) selectedNode);
         return selectedNode;
+    }
+
+    private void lazilyInitValidationErrors(UiAttribute attribute) {
+        if (attribute.getValidationErrors() == null) {
+            Set<UiValidationError> validationErrors = attribute.getStatus() == UiNode.Status.OK
+                    ? Collections.<UiValidationError>emptySet()
+                    : collectModelManager.updateAttribute(attribute); // TODO: Not semantically an update.
+            attribute.setValidationErrors(validationErrors);
+        }
     }
 
     public UiNode selectedNode() {
@@ -79,7 +91,6 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public UiAttribute addAttribute() {
         UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
         UiAttribute attribute = collectModelManager.addAttribute(attributeCollection);
-        // TODO: Create the attribute elsewhere, save it, etc...
         attributeCollection.addChild(attribute);
         updateAttribute(attribute);
         return attribute;
@@ -93,6 +104,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public void updateAttribute(UiAttribute attribute) {
         Set<UiValidationError> validationErrors = collectModelManager.updateAttribute(attribute);
+        attribute.setValidationErrors(validationErrors);
         viewModelManager.updateAttribute(attribute, validationErrors);
         if (listener != null)
             listener.onAttributeChanged(attribute, validationErrors);

@@ -17,6 +17,8 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.Set;
+
 
 /**
  * @author Daniel Wiell
@@ -172,5 +174,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (node instanceof UiInternalNode)
             return new InternalNodeDetailFragment();
         throw new IllegalStateException("Unexpected node type: " + node.getClass());
+    }
+
+    public void onValidationError(Set<UiValidationError> validationErrors) {
+        // Ignore by default
     }
 }

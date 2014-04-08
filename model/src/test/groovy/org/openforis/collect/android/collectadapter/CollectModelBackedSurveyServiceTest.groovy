@@ -137,7 +137,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     def 'Can update an attribute'() {
         def importedSurvey = surveyService.importSurvey(idm)
         def uiRecord = surveyService.addRecord('entity-name')
-        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.text = 'Updated text'
 
         when: surveyService.updateAttribute(attribute)
@@ -145,14 +145,14 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         then:
         surveyService.loadSurvey(importedSurvey.name)
         def loadedRecord = surveyService.selectRecord(uiRecord.getId())
-        def loadedAttribute = findUiTextAttribute('attribute-name', loadedRecord)
+        def loadedAttribute = findUiTextAttribute('uiAttribute-name', loadedRecord)
         loadedAttribute.text == 'Updated text'
     }
 
     def 'When setting the value of an empty attribute, it changes state from EMPTY to OK'() {
         surveyService.importSurvey(idm)
         def uiRecord = surveyService.addRecord('entity-name')
-        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.text = 'non-empty value'
         assert attribute.status == EMPTY
 
@@ -170,7 +170,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def uiRecord = surveyService.addRecord('entity-name')
 
         then:
-        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.status == EMPTY
         attribute.getParent().status == EMPTY
         uiRecord.status == EMPTY
@@ -184,7 +184,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def selectedRecord = surveyService.selectRecord(uiRecord.id)
 
         then:
-        def attribute = findUiTextAttribute('attribute-name', selectedRecord)
+        def attribute = findUiTextAttribute('uiAttribute-name', selectedRecord)
         attribute.status == EMPTY
         attribute.getParent().status == EMPTY
         selectedRecord.status == EMPTY
@@ -205,7 +205,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     def 'Can get key attributes from record'() {
         surveyService.importSurvey(idm)
         def uiRecord = surveyService.addRecord('entity-name')
-        def expectedKeyAttribute = findUiTextAttribute('attribute-name', uiRecord)
+        def expectedKeyAttribute = findUiTextAttribute('uiAttribute-name', uiRecord)
 
         expect:
         uiRecord.keyAttributes == [expectedKeyAttribute]
@@ -229,7 +229,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def uiRecord = surveyService.addRecord('entity-name')
         def recordPlaceholder = importedSurvey.firstChild.firstChild as UiRecord.Placeholder
         assert recordPlaceholder.keyAttributes.first().text == null
-        def attribute = findUiTextAttribute('attribute-name', uiRecord)
+        def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.text = 'Updated text'
 
         when:
@@ -257,11 +257,11 @@ class CollectModelBackedSurveyServiceTest extends Specification {
             project('Project label')
             schema {
                 entity('entity-name', 'Entity label') {
-                    text('attribute-name', 'Attribute label', [key: true])
+                    text('uiAttribute-name', 'Attribute label', [key: true])
                     entity('multiple-entity-name', 'Multiple entity label', [multiple: true]) {
-                        text('attribute-name2', 'Attribute label2')
+                        text('uiAttribute-name2', 'Attribute label2')
                         entity('deeply-nested-entity-name', 'Deeply nested entity label', [multiple: true]) {
-                            text('attribute-name3', 'Attribute label3')
+                            text('uiAttribute-name3', 'Attribute label3')
                         }
                     }
                 }

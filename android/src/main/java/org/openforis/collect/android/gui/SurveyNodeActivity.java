@@ -90,6 +90,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             if (iterator.hasNext())
                 s.append('\n');
         }
+        nodePagerFragment.onValidationError(validationErrors);
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 

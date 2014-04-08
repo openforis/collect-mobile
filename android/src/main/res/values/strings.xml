@@ -9,7 +9,7 @@
     <string name="action_lock_node">Lock</string>
     <string name="action_node_details">Details</string>
     <string name="action_node_list">List</string>
-    <string name="action_next_attribute">Next attribute</string>
+    <string name="action_next_attribute">Next uiAttribute</string>
     <string name="action_settings">Settings</string>
 
 </resources>

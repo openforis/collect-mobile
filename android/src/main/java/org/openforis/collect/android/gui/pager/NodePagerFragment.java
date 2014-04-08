@@ -13,10 +13,12 @@ import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -76,6 +78,12 @@ public class NodePagerFragment extends Fragment {
         NodeDetailFragment selectedFragment = fragmentsByNode.get(selected);
         if (selectedFragment != null)
             selectedFragment.onSelect();
+    }
+
+    public void onValidationError(Set<UiValidationError> validationErrors) {
+        for (NodeDetailFragment fragment : fragmentsByNode.values()) {
+            fragment.onValidationError(validationErrors);
+        }
     }
 
     public void onAttributeChange(UiAttribute attribute) {

@@ -25,7 +25,7 @@ class CollectModelManagerTest extends Specification {
         def collectSurvey = manager.importSurvey idmXmlStream {
             schema {
                 entity('foo', 'Bar') {
-                    text('attribute name', 'The label')
+                    text('uiAttribute name', 'The label')
                 }
             }
         }

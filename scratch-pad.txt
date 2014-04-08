@@ -1,4 +1,8 @@
-Parent entity id in UiEntityCollection and UiAttributeCollection part of their Definition?
+Validation error - input component must know the error/message
+    When loading record, validate attributes with errors/warnings?
+        Could be slow, do this lazily when node is selected
+
+Refactor input component
 
 Set status to OK whenever an attribute is irrelevant
 
@@ -20,30 +24,7 @@ Speed up cluster selection
 
 Entity name show up twice  - plot/soil/layers
 
-Introduce node specific definition?
-    UiCodeAttributeDefinition
-        Include all parent definition ids
-        Max code list size
-
-Clean schema
-    Reuse Tanzania?
-        Better labels
-        Make multiple attribute into single
-        Name for entities without key
-        Implement taxon
-
-    New schema?
-
-Auto-complete code list levels with many entries
-    Lookup size of code list level
-
-Components for all attributes
-    Boolean
-
-----------------------------------------
-
-Get rid of ActionBarSherlock
-    http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1
+Show attribute/entity description
 
 Clean up UI model - confusing
     UiNode.init()
@@ -64,8 +45,6 @@ Include unit, precision for integer and real attributes
 
 Default attribute value
 
-Show validation errors for attributes
-
 Attribute states: N/A, blank
 
 Code lists: Qualifier - the other option
@@ -75,13 +54,11 @@ Code lists: Prevent unique constraint violation - disable options
         Who keeps track on the set of selected values for a definition?
     Checkboxes?
 
-Handle relevant/irrelevant nodes
-
 Validation error notification menu
-Support more validation errors
+
 Prevent from adding too many entities/attributes
 
-Remove entity/attribute when multiple
+Remove record/entity/attribute
 
 How to distinguish between unsaved "default value" and a saved value? Prevent saving default value
     Problem with date picker, time picker etc.

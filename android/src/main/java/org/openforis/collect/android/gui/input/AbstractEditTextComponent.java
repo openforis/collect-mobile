@@ -7,7 +7,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.android.viewmodel.AttributeValidationError;
 import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiValidationError;
+
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -25,6 +29,7 @@ abstract class AbstractEditTextComponent<T extends UiAttribute> extends Attribut
     }
 
     public void updateAttribute() {
+        editText.setError(null);
         String newValue = editText.getText().toString();
         if (StringUtils.isEmpty(newValue)) newValue = null;
         if (hasChanged(attribute(), newValue)) {
@@ -67,5 +72,25 @@ abstract class AbstractEditTextComponent<T extends UiAttribute> extends Attribut
         editText.setSingleLine();
         onEditTextCreated(editText);
         return editText;
+    }
+
+    public void onSelected() {
+        Set<? extends UiValidationError> validationErrors = attribute().getValidationErrors();
+        if (!validationErrors.isEmpty()) // TODO: Get rid of AttributeValidationError - there can be no other validation errors
+            setValidationError((Set<AttributeValidationError>) validationErrors);
+    }
+
+    public void onValidationError(Set<AttributeValidationError> validationErrors) {
+        super.onValidationError(validationErrors);
+        // TODO: This should not be passed when validation is done, but checked every time it's loaded?
+        // The validation message must be stored, and shown at other times too.
+        setValidationError(validationErrors);
+    }
+
+    private void setValidationError(Set<AttributeValidationError> validationErrors) {
+        StringBuilder message = new StringBuilder();
+        for (AttributeValidationError validationError : validationErrors)
+            message.append(validationError);
+        editText.setError(message);
     }
 }

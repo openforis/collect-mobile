@@ -151,7 +151,7 @@ class ViewModelRepositoryTest extends Specification {
         }
 
         UiTextAttribute addTextAttribute(UiEntity entity) {
-            def definition = definition('text-attribute', 'Text Attribute')
+            def definition = definition('text-uiAttribute', 'Text Attribute')
             def attribute = new UiTextAttribute(IdGenerator.nextId(), definition)
             entity.addChild(attribute)
             return attribute

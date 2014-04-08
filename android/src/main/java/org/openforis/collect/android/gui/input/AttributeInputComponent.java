@@ -7,6 +7,8 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.Set;
+
 /**
  * @author Daniel Wiell
  */
@@ -21,7 +23,7 @@ public abstract class AttributeInputComponent<T extends UiAttribute> {
         this.surveyService = ServiceLocator.surveyService();
     }
 
-    public abstract  View getView();
+    public abstract View getView();
 
     public abstract void updateAttribute();
 
@@ -66,6 +68,14 @@ public abstract class AttributeInputComponent<T extends UiAttribute> {
         else
             return new DummyInputComponent(attribute, context); // TODO: Remove once all are implemented
 //            throw new IllegalStateException("Unexpected attribute type: " + attribute.getClass());
+    }
+
+    public void onValidationError(Set<AttributeValidationError> validationErrors) {
+        // Empty by default
+    }
+
+    public void onSelected() {
+        // Empty by default
     }
 
     private static class DummyInputComponent extends AttributeInputComponent {

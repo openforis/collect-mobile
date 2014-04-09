@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
@@ -21,7 +20,7 @@ import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -74,24 +73,24 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         selectedNode = selected;
     }
 
-    public void onAttributeChanged(UiAttribute attribute, Set<UiValidationError> validationErrors) {
+    public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
         nodePagerFragment.onAttributeChange(attribute);
-        if (!validationErrors.isEmpty())
-            onValidationError(validationErrors);
+        if (!validationErrorsByAttribute.isEmpty())
+            onValidationError(validationErrorsByAttribute);
         support.onAttributeChanged(attribute);
     }
 
-    private void onValidationError(Set<UiValidationError> validationErrors) {
-        // TODO: Implement...
-        StringBuilder s = new StringBuilder();
-        for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
-            UiValidationError error = iterator.next();
-            s.append(error.toString());
-            if (iterator.hasNext())
-                s.append('\n');
-        }
-        nodePagerFragment.onValidationError(validationErrors);
-        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    private void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
+        // TODO: Implement.
+//        StringBuilder s = new StringBuilder();
+//        for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
+//            UiValidationError error = iterator.next();
+//            s.append(error.toString());
+//            if (iterator.hasNext())
+//                s.append('\n');
+//        }
+//        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+        nodePagerFragment.onValidationError(validationErrorsByAttribute);
     }
 
     public void nextAttribute(MenuItem item) {// TODO: Implement this properly - should not only navigate siblings

@@ -80,8 +80,8 @@ public class NodeListAdapter extends BaseAdapter {
     private int iconResource(UiNode node) {
         switch (node.getStatus()) {
             case OK:
-                return 0;
             case EMPTY:
+                return 0;
             case VALIDATION_WARNING:
                 return R.drawable.yellow_circle;
             case VALIDATION_ERROR:

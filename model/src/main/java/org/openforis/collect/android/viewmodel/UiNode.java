@@ -1,7 +1,5 @@
 package org.openforis.collect.android.viewmodel;
 
-import java.util.Set;
-
 /**
  * @author Daniel Wiell
  */
@@ -129,6 +127,11 @@ public abstract class UiNode {
     }
 
     public static enum Status {
-        OK, EMPTY, VALIDATION_WARNING, VALIDATION_ERROR
+        OK, EMPTY, VALIDATION_WARNING, VALIDATION_ERROR;
+
+
+        public boolean isWorseThen(Status status) {
+            return ordinal() > status.ordinal();
+        }
     }
 }

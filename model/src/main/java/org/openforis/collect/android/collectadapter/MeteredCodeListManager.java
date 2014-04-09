@@ -53,14 +53,6 @@ public class MeteredCodeListManager extends CodeListManager {
         });
     }
 
-    public ExternalCodeListItem loadExternalParentItem(final ExternalCodeListItem item) {
-        return time("loadExternalParentItem", new Callable<ExternalCodeListItem>() {
-            public ExternalCodeListItem call() throws Exception {
-                return delegate.loadExternalParentItem(item);
-            }
-        });
-    }
-
     public <T extends CodeListItem> List<T> loadItems(final CodeList list, final int level) {
         return time("loadItems", new Callable<List<T>>() {
             public List<T> call() throws Exception {

@@ -4,6 +4,7 @@ import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -90,9 +91,13 @@ public class ViewModelManager {
         return selectedNode;
     }
 
-    public void updateAttribute(UiAttribute attribute, Set<UiValidationError> validationErrors) {
+    public void updateAttribute(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> validationErrors) {
         UiNode.Status oldRecordStatus = attribute.getUiRecord().getStatus();
-        attribute.updateStatus(validationErrors);
+        for (UiAttribute attributeWithValidationError : validationErrors.keySet()) {
+            Set<UiValidationError> errors = validationErrors.get(attributeWithValidationError);
+            attributeWithValidationError.setValidationErrors(errors);
+            attributeWithValidationError.updateStatus(errors);
+        }
         UiNode.Status newRecordStatus = attribute.getUiRecord().getStatus();
         if (oldRecordStatus == newRecordStatus)
             repo.updateAttribute(attribute);

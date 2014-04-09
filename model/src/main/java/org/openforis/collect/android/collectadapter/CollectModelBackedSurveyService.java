@@ -7,6 +7,7 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -66,10 +67,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private void lazilyInitValidationErrors(UiAttribute attribute) {
         if (attribute.getValidationErrors() == null) {
-            Set<UiValidationError> validationErrors = attribute.getStatus() == UiNode.Status.OK
-                    ? Collections.<UiValidationError>emptySet()
-                    : collectModelManager.updateAttribute(attribute); // TODO: Not semantically an update.
-            attribute.setValidationErrors(validationErrors);
+            Map<UiAttribute, Set<UiValidationError>> validationErrors = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
+                    ? collectModelManager.updateAttribute(attribute) // TODO: Not semantically an update.
+                    : Collections.<UiAttribute, Set<UiValidationError>>emptyMap();
+            attribute.setValidationErrors(validationErrors.get(attribute));
         }
     }
 
@@ -103,8 +104,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public void updateAttribute(UiAttribute attribute) {
-        Set<UiValidationError> validationErrors = collectModelManager.updateAttribute(attribute);
-        attribute.setValidationErrors(validationErrors);
+        Map<UiAttribute, Set<UiValidationError>> validationErrors = collectModelManager.updateAttribute(attribute);
         viewModelManager.updateAttribute(attribute, validationErrors);
         if (listener != null)
             listener.onAttributeChanged(attribute, validationErrors);

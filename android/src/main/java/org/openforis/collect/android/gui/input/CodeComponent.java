@@ -192,6 +192,7 @@ class CodeComponent extends AttributeInputComponent<UiCodeAttribute> {
 
         CodeRadioGroupList() {
             radioGroup = new RadioGroup(context());
+            // TODO: Save when selection is changed
             asyncInitOptions();
         }
 

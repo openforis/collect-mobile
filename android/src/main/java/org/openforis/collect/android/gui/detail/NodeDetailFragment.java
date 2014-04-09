@@ -17,6 +17,7 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -176,7 +177,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         throw new IllegalStateException("Unexpected node type: " + node.getClass());
     }
 
-    public void onValidationError(Set<UiValidationError> validationErrors) {
+    public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
         // Ignore by default
     }
 }

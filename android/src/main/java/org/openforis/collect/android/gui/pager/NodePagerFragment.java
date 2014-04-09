@@ -80,9 +80,9 @@ public class NodePagerFragment extends Fragment {
             selectedFragment.onSelect();
     }
 
-    public void onValidationError(Set<UiValidationError> validationErrors) {
+    public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
         for (NodeDetailFragment fragment : fragmentsByNode.values()) {
-            fragment.onValidationError(validationErrors);
+            fragment.onValidationError(validationErrorsByAttribute);
         }
     }
 

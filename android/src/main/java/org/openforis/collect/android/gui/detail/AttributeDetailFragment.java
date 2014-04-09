@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.input.AttributeInputComponent;
-import org.openforis.collect.android.viewmodel.AttributeValidationError;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -67,17 +66,8 @@ public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
         attributeInputContainer.addView(view);
     }
 
-    public void onValidationError(Set<UiValidationError> validationErrors) {
-        UiAttribute attribute = node();
-        Set<AttributeValidationError> attributeValidationErrors = new HashSet<AttributeValidationError>();
-        for (UiValidationError validationError : validationErrors) {
-            if (validationError instanceof AttributeValidationError) {
-                AttributeValidationError attributeValidationError = (AttributeValidationError) validationError;
-                if (attributeValidationError.getAttribute().equals(attribute))
-                    attributeValidationErrors.add(attributeValidationError);
-            }
-        }
-        if (!attributeValidationErrors.isEmpty())
-            inputComponent.onValidationError(attributeValidationErrors);
+    public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
+        if (inputComponent != null)
+            inputComponent.onValidationError(validationErrorsByAttribute);
     }
 }

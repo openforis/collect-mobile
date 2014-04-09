@@ -27,6 +27,7 @@ import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -143,7 +144,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     @SuppressWarnings("unchecked")
-    public Set<UiValidationError> updateAttribute(UiAttribute uiAttribute) {
+    public Map<UiAttribute, Set<UiValidationError>> updateAttribute(UiAttribute uiAttribute) {
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);

@@ -1,3 +1,5 @@
+Update attribute - validation result of related attributes, are they validated properly?
+
 Validation error - input component must know the error/message
     When loading record, validate attributes with errors/warnings?
         Could be slow, do this lazily when node is selected

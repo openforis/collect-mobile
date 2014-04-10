@@ -20,6 +20,7 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 
@@ -130,8 +131,13 @@ public class ServiceLocator {
         CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
                 externalCodeListProvider
         );
-        SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, externalCodeListProvider, modelDatabase);
+
+        CollectValidator validator = new CollectValidator();
+        validator.setCodeListManager(codeListManager);
+        SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
         RecordManager recordManager = new MeteredRecordManager(codeListManager, surveyManager);
+        validator.setRecordManager(recordManager);
+
         return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);
     }
 

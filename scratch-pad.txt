@@ -1,12 +1,10 @@
-Update attribute - validation result of related attributes, are they validated properly?
-
-Validation error - input component must know the error/message
-    When loading record, validate attributes with errors/warnings?
-        Could be slow, do this lazily when node is selected
+Validate attributes when adding record/entity
+    so required attributes show up red
 
 Refactor input component
 
 Set status to OK whenever an attribute is irrelevant
+
 
 Text when multiplicity but no items
 

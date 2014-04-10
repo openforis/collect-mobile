@@ -8,8 +8,8 @@ import org.openforis.collect.model.AttributeChange;
 import org.openforis.collect.model.EntityChange;
 import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
+import org.openforis.collect.model.validation.SpecifiedValidator;
 import org.openforis.collect.model.validation.ValidationMessageBuilder;
-import org.openforis.idm.metamodel.validation.CodeValidator;
 import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 import org.openforis.idm.metamodel.validation.ValidationResults;
@@ -38,10 +38,10 @@ class NodeChangeSetParser {
 
     public Map<UiAttribute, Set<UiValidationError>> parseErrors() {
         Map<UiAttribute, Set<UiValidationError>> validationErrors = attributeValidationErrors();
-        UiValidationError requiredAttributeMissing = requiredAttributeMissing();
+        UiValidationError requiredAttributeMissing = requiredAttributeMissing(); // TODO: Need to include required validation for related attributes too
         if (requiredAttributeMissing != null)
             addValidationError(requiredAttributeMissing, validationErrors);
-        return validationErrors;
+        return validationErrors; // TODO: Need to contain attribute, and related attributes in map
     }
 
     private UiValidationError requiredAttributeMissing() {
@@ -64,9 +64,12 @@ class NodeChangeSetParser {
             if (nodeChange instanceof AttributeChange) {
                 AttributeChange attributeChange = (AttributeChange) nodeChange;
                 UiAttribute uiAttribute = getUiAttribute(attributeChange);
+                if (!errorsByAttribute.containsKey(uiAttribute))
+                    errorsByAttribute.put(uiAttribute, new HashSet<UiValidationError>());
                 ValidationResults validationResults = attributeChange.getValidationResults();
                 for (ValidationResult validationResult : validationResults.getFailed()) {
-                    addValidationError(uiAttribute, validationResult, errorsByAttribute);
+                    if (!ignored(validationResult))
+                        addValidationError(toValidationError(uiAttribute, validationResult), errorsByAttribute);
                 }
             }
         }
@@ -74,8 +77,7 @@ class NodeChangeSetParser {
     }
 
     private boolean ignored(ValidationResult validationResult) {
-        // TODO: Is this correct? We might have entered a code, changed the parent value, and have a non-existing value...
-        return validationResult.getValidator() instanceof CodeValidator; // Ignore code validation - no way to enter incorrect codes
+        return validationResult.getValidator() instanceof SpecifiedValidator;
     }
 
     private UiAttribute getUiAttribute(AttributeChange attributeChange) {
@@ -86,17 +88,8 @@ class NodeChangeSetParser {
         return uiAttribute;
     }
 
-    private void addValidationError(UiAttribute uiAttribute, ValidationResult validationResult, Map<UiAttribute, Set<UiValidationError>> errorsByAttribute) {
-        Set<UiValidationError> errors = errorsByAttribute.get(uiAttribute);
-        if (errors == null) {
-            errors = new HashSet<UiValidationError>();
-            errorsByAttribute.put(uiAttribute, errors);
-        }
-        if (!ignored(validationResult))
-            errors.add(toValidationError(uiAttribute, validationResult));
-    }
-
     private void addValidationError(UiValidationError validationError, Map<UiAttribute, Set<UiValidationError>> errorsByAttribute) {
+        UiAttribute uiAttribute = validationError.getAttribute();
         Set<UiValidationError> errors = errorsByAttribute.get(uiAttribute);
         if (errors == null) {
             errors = new HashSet<UiValidationError>();

@@ -34,7 +34,8 @@ class ViewModelManagerTest extends Specification {
         attribute.status = EMPTY
         attribute.text = 'Non-empty value'
 
-        when: manager.updateAttribute(attribute, Collections.emptySet())
+        when:
+        manager.updateAttribute(attribute, validationErrors(attribute))
 
         then:
         attribute.status == OK
@@ -43,16 +44,24 @@ class ViewModelManagerTest extends Specification {
 
 
     def 'When updating an attribute with validation warnings, status is changed to VALIDATION_WARNING'() {
-        when: manager.updateAttribute(attribute, [new UiValidationError(WARNING)] as Set)
+        when:
+        manager.updateAttribute(attribute, validationErrors(attribute, WARNING))
 
         then:
         attribute.status == VALIDATION_WARNING
         1 * repo.updateAttribute(attribute, _)
     }
 
+    private def validationErrors(UiTextAttribute uiAttribute, UiValidationError.Level... levels) {
+        def errors = levels.collect { new UiValidationError(it as String, it, uiAttribute) } as Set
+        def validationErrorsByAttribute = [(uiAttribute): errors]
+        validationErrorsByAttribute
+    }
+
 
     def 'When updating an attribute with validation warnings and errors, status is changed to VALIDATION_ERROR'() {
-        when: manager.updateAttribute(attribute, [new UiValidationError(WARNING), new UiValidationError(ERROR)] as Set)
+        when:
+        manager.updateAttribute(attribute, validationErrors(attribute, WARNING, ERROR))
 
         then:
         attribute.status == VALIDATION_ERROR
@@ -63,7 +72,9 @@ class ViewModelManagerTest extends Specification {
     def 'When updating an attribute and status changes, status of parent nodes are updated'() {
         assert entity.status == OK
 
-        when: manager.updateAttribute(attribute, [new UiValidationError(WARNING)] as Set)
-        then: entity.status == VALIDATION_WARNING
+        when:
+        manager.updateAttribute(attribute, validationErrors(attribute, WARNING))
+        then:
+        entity.status == VALIDATION_WARNING
     }
 }

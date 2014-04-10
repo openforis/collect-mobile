@@ -2,16 +2,14 @@ package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.persistence.Database;
-import org.openforis.collect.manager.CodeListManager;
-import org.openforis.collect.manager.SamplingDesignManager;
-import org.openforis.collect.manager.SpeciesManager;
-import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.manager.*;
 import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.manager.validation.SurveyValidator;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.SurveySummary;
 import org.openforis.collect.model.User;
+import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyImportException;
 import org.openforis.collect.persistence.SurveyWorkDao;
@@ -34,9 +32,9 @@ import java.util.concurrent.Callable;
 public class MeteredSurveyManager extends SurveyManager {
     private final SurveyManager delegate;
 
-    public MeteredSurveyManager(CodeListManager codeListManager, ExternalCodeListProvider externalCodeListProvider, Database database) {
+    public MeteredSurveyManager(CodeListManager codeListManager, Validator validator, ExternalCodeListProvider externalCodeListProvider, Database database) {
         delegate = new SurveyManager();
-        CollectSurveyContext collectSurveyContext = new CollectSurveyContext(new ExpressionFactory(), new Validator());
+        CollectSurveyContext collectSurveyContext = new CollectSurveyContext(new ExpressionFactory(), validator);
         collectSurveyContext.setExternalCodeListProvider(externalCodeListProvider);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveyContext(collectSurveyContext);

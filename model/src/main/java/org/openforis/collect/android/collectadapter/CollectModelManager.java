@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-// TODO: Break this up
-
 /**
  * @author Daniel Wiell
  */
@@ -120,7 +118,6 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
             public UiEntity call() throws Exception {
                 Entity parentEntity = recordNodes.getEntityById(uiEntityCollection.getParentEntityId());
                 NodeChangeSet changeSet = recordManager.addEntity(parentEntity, uiEntityCollection.getName());
-                // TODO: Validation errors?
                 Entity entity = extractAddedEntity(changeSet);
                 UiEntity uiEntity = modelConverter.toUiEntity(selectedSurvey, entity, uiEntityCollection);
                 recordNodes.add(entity);
@@ -134,9 +131,8 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         UiAttributeCollectionDefinition definition = uiAttributeCollection.getDefinition();
         String attributeName = definition.attributeDefinition.name;
 
-        Value value = null; // TODO: Default value
+        Value value = null; // TODO: Set the default value
         NodeChangeSet changeSet = recordManager.addAttribute(parentEntity, attributeName, value, null, null);
-        // TODO: Validation errors?
         Attribute attribute = extractAddedAttribute(changeSet);
         attribute.setId(IdGenerator.nextId()); // TODO: Not right place to do this - use converter?
         recordNodes.add(attribute);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -31,7 +32,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
 
     AutoCompleteCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, Context context) {
         super(attribute, codeListService, surveyService, context);
-        autoComplete = new AutoCompleteTextView(context);
+        autoComplete = new ClearableAutoCompleteTextView(context);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {

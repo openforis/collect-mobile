@@ -3,6 +3,7 @@ package org.openforis.collect.android;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -28,7 +29,10 @@ public interface SurveyService {
 
     UiAttribute addAttribute();
 
+    // TODO: Delete
+    @Deprecated
     void updateAttributeCollection(UiAttributeCollection attributeCollection);
+    void updateAttributes(Set<UiAttribute> attributes);
 
     void updateAttribute(UiAttribute attribute);
 

@@ -91,6 +91,10 @@ public class ViewModelManager {
         return selectedNode;
     }
 
+    public void addAttribute(UiAttribute attribute) {
+        repo.insertAttribute(attribute);
+    }
+
     public void updateAttribute(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> validationErrors) {
         UiNode.Status oldRecordStatus = attribute.getUiRecord().getStatus();
         for (UiAttribute attributeWithValidationError : validationErrors.keySet()) {

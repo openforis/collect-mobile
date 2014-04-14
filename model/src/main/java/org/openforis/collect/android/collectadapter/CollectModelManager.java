@@ -128,11 +128,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
 
     public UiAttribute addAttribute(UiAttributeCollection uiAttributeCollection) {
         Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
-        UiAttributeCollectionDefinition definition = uiAttributeCollection.getDefinition();
-        String attributeName = definition.attributeDefinition.name;
+        Definition definition = uiAttributeCollection.getDefinition().attributeDefinition;
 
         Value value = null; // TODO: Set the default value
-        NodeChangeSet changeSet = recordManager.addAttribute(parentEntity, attributeName, value, null, null);
+        NodeChangeSet changeSet = recordManager.addAttribute(parentEntity, definition.name, value, null, null);
         Attribute attribute = extractAddedAttribute(changeSet);
         attribute.setId(IdGenerator.nextId()); // TODO: Not right place to do this - use converter?
         recordNodes.add(attribute);

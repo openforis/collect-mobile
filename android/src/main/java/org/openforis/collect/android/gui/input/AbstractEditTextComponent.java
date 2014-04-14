@@ -75,14 +75,12 @@ abstract class AbstractEditTextComponent<T extends UiAttribute> extends Attribut
 
     public void onSelected() {
         Set<UiValidationError> validationErrors = attribute().getValidationErrors();
-        if (validationErrors != null && !validationErrors.isEmpty()) // TODO: Get rid of AttributeValidationError - there can be no other validation errors
+        if (validationErrors != null && !validationErrors.isEmpty())
             setValidationError(validationErrors);
     }
 
     public void onValidationError(Set<UiValidationError> validationErrors) {
         super.onValidationError(validationErrors);
-        // TODO: This should not be passed when validation is done, but checked every time it's loaded?
-        // The validation message must be stored, and shown at other times too.
         setValidationError(validationErrors);
     }
 

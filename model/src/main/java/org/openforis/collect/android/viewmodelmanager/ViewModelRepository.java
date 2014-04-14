@@ -6,6 +6,7 @@ import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.openforis.collect.android.viewmodelmanager.NodeDto.Collection;
@@ -21,6 +22,8 @@ public interface ViewModelRepository {
     List<UiRecord.Placeholder> surveyRecords(int surveyId);
 
     void insertEntity(UiEntity entity);
+
+    void insertAttribute(UiAttribute attribute);
 
     void updateAttribute(UiAttribute attribute);
 
@@ -78,6 +81,10 @@ public interface ViewModelRepository {
                     repo.insert(nodes);
                 }
             });
+        }
+
+        public void insertAttribute(UiAttribute attribute) {
+            repo.insert(Arrays.asList(uiAttributeToDto(attribute)));
         }
 
         public void updateAttribute(UiAttribute attribute) {

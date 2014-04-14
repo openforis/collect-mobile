@@ -5,6 +5,7 @@
     <string name="button_select">Edit</string>
 
     <string name="action_add_entity">Add entity</string>
+    <string name="action_add_node">Add</string>
     <string name="action_edit_node">Edit</string>
     <string name="action_lock_node">Lock</string>
     <string name="action_node_details">Details</string>

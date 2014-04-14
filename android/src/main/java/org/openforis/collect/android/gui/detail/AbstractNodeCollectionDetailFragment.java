@@ -22,7 +22,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        View addEntity = view.findViewById(R.id.action_add_entity);
+        View addEntity = view.findViewById(R.id.action_add_node);
         if (addEntity != null) {
             addEntity.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

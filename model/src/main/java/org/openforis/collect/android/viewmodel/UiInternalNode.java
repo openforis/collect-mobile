@@ -40,6 +40,10 @@ public class UiInternalNode extends UiNode {
         return child;
     }
 
+    public boolean containsChildWithId(int id) {
+        return childById.containsKey(id);
+    }
+
     public int getChildIndex(int id) {
         for (int i = 0; i < children.size(); i++) {
             UiNode child = children.get(i);

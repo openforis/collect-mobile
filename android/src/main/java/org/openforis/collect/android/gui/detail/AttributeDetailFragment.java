@@ -25,8 +25,8 @@ public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_attribute_detail, container, false);
-        ((TextView) rootView.findViewById(R.id.attribute_label)).setText(node().getLabel());
-        TextView nodeLabel = (TextView) rootView.findViewById(R.id.attribute_label);
+        ((TextView) rootView.findViewById(R.id.node_label)).setText(node().getLabel());
+        TextView nodeLabel = (TextView) rootView.findViewById(R.id.node_label);
         nodeLabel.setText(node().getLabel());
         inputComponent = AttributeInputComponent.create(node(), getActivity());
         addInputComponentToView(rootView);
@@ -60,7 +60,7 @@ public class AttributeDetailFragment extends NodeDetailFragment<UiAttribute> {
     }
 
     private void addInputComponentToView(View rootView) {
-        ViewGroup attributeInputContainer = (ViewGroup) rootView.findViewById(R.id.attribute_input_container);
+        ViewGroup attributeInputContainer = (ViewGroup) rootView.findViewById(R.id.input_container);
         View view = inputComponent.getView();
         view.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
         attributeInputContainer.addView(view);

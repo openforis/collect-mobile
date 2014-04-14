@@ -74,9 +74,10 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         uiRecord.childCount == 1
         def tab = uiRecord.firstChild as UiInternalNode
         tab.label == 'Tab'
-        tab.childCount == 2
+        tab.childCount == 3
         tab.getChildAt(0) instanceof UiTextAttribute
         tab.getChildAt(1) instanceof UiEntityCollection
+        tab.getChildAt(2) instanceof UiAttributeCollection
     }
 
     def 'Can add entity'() {
@@ -240,6 +241,22 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     }
 
 
+    def 'Can add attribute to attribute collection'() {
+        surveyService.importSurvey(idm)
+        def uiRecord = surveyService.addRecord('entity-name')
+        def attributeCollection = findNode(uiRecord) {
+            it.name == 'uiAttributeCollection-name'
+        }
+        surveyService.selectNode(attributeCollection.id)
+
+        when:
+        def attribute = surveyService.addAttribute()
+
+        then:
+        attribute.definition.id.isNumber()
+    }
+
+
     private UiEntityCollection findUiEntityCollection(name, UiNode uiNode) {
         findNode(uiNode) {
             it.name == name && it instanceof UiEntityCollection
@@ -264,6 +281,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
                             text('uiAttribute-name3', 'Attribute label3')
                         }
                     }
+                    text('uiAttributeCollection-name', 'Attribute Collection label', [multiple: true])
                 }
             }
         }

@@ -43,7 +43,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = createView(inflater, container, savedInstanceState);
-        ((TextView) rootView.findViewById(R.id.attribute_label)).setText(node.getLabel());
+
+        String label = node.getLabel() + " "; // Extra space to provide some space to an eventual validation error icon
+        ((TextView) rootView.findViewById(R.id.node_label)).setText(label);
         return rootView;
     }
 
@@ -164,10 +166,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private static NodeDetailFragment createInstance(UiNode node) {
-        if (node instanceof UiAttribute)
-            return new AttributeDetailFragment();
-        if (node instanceof UiAttributeCollection)
-            return new AttributeCollectionDetailFragment();
+        if (node instanceof UiAttribute || node instanceof UiAttributeCollection)
+            return new SavableNodeDetailFragment();
         if (node instanceof UiEntityCollection)
             return new EntityCollectionDetailFragment();
         if (node instanceof UiRecordCollection)

@@ -27,7 +27,7 @@ public class TextCollectionComponent extends AttributeCollectionInputComponent<U
         super(inflater, context);
         this.attributeCollection = attributeCollection;
         rootView = inflate(R.layout.attribute_collection_detail);
-        final View addAttribute = rootView.findViewById(R.id.action_add_attribute);
+        final View addAttribute = rootView.findViewById(R.id.action_add_node);
         addAttribute.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 UiTextAttribute attribute = (UiTextAttribute) surveyService.addAttribute();

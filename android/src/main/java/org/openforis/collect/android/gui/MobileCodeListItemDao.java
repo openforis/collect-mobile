@@ -3,17 +3,24 @@ package org.openforis.collect.android.gui;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.AndroidDatabaseCallback;
 import org.openforis.idm.metamodel.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.openforis.collect.persistence.jooq.tables.OfcCodeList.OFC_CODE_LIST;
 
 // TODO: Rewrite this using DataSource
 public class MobileCodeListItemDao extends org.openforis.collect.persistence.CodeListItemDao {
+    // TODO: Proper caching...
+    private final Map<String, List<PersistedCodeListItem>> childItemCache = new ConcurrentHashMap<String, List<PersistedCodeListItem>>();
+    private final Map<String, PersistedCodeListItem> itemCache = new ConcurrentHashMap<String, PersistedCodeListItem>();
     private final AndroidDatabase database;
 
     public MobileCodeListItemDao(AndroidDatabase database) {
@@ -24,9 +31,16 @@ public class MobileCodeListItemDao extends org.openforis.collect.persistence.Cod
 
     @Override
     protected List<PersistedCodeListItem> loadChildItems(final CodeList codeList, Integer parentItemId, ModelVersion version) {
-        long startTime = System.currentTimeMillis();
-        List<PersistedCodeListItem> result = loadCodeListItems(codeList, parentItemId);
-        Log.e("Mobile DAO", "Total time: " + (System.currentTimeMillis() - startTime));
+        String key = codeList.getId() + "|" + parentItemId;
+        List<PersistedCodeListItem> result = childItemCache.get(key);
+        if (result == null) {
+            long startTime = System.currentTimeMillis();
+            result = loadCodeListItems(codeList, parentItemId);
+            Log.e("Mobile DAO", "Total time: " + (System.currentTimeMillis() - startTime) + " - listId: " + codeList.getId() + ", parentListId: " + parentItemId);
+            childItemCache.put(key, result);
+        } else {
+            Log.e("Mobile DAO", "child items cache hit - listId: " + codeList.getId() + ", parentListId: " + parentItemId);
+        }
         return result;
     }
 
@@ -39,18 +53,59 @@ public class MobileCodeListItemDao extends org.openforis.collect.persistence.Cod
                         + " and " + OFC_CODE_LIST.PARENT_ID + constraint(parentItemId)
                         + " order by " + OFC_CODE_LIST.SORT_ORDER, null);
                 try {
-                PersistedCodeListItem entity;
-                List<PersistedCodeListItem> result = new ArrayList<PersistedCodeListItem>();
-                if (cursor.moveToFirst())
-                    do {
-                        entity = createCodeListItem(cursor, codeList);
-                        result.add(entity);
-                    } while (cursor.moveToNext());
-                return result;
+                    PersistedCodeListItem entity;
+                    List<PersistedCodeListItem> result = new ArrayList<PersistedCodeListItem>();
+                    if (cursor.moveToFirst())
+                        do {
+                            entity = createCodeListItem(cursor, codeList);
+                            result.add(entity);
+                        } while (cursor.moveToNext());
+                    return result;
                 } finally {
                     if (cursor != null)
                         cursor.close();
                 }
+            }
+        });
+    }
+
+    public List<PersistedCodeListItem> loadChildItems(final PersistedCodeListItem item, final ModelVersion version) {
+        return time("loadChildItems", new Callable<List<PersistedCodeListItem>>() {
+            public List<PersistedCodeListItem> call() throws Exception {
+                return MobileCodeListItemDao.super.loadChildItems(item, version);
+            }
+        });
+    }
+
+    public PersistedCodeListItem loadItem(final CodeList codeList, final Integer parentItemId, final String code, final ModelVersion version) {
+        return time("loadItem", new Callable<PersistedCodeListItem>() {
+            public PersistedCodeListItem call() throws Exception {
+                String key = codeList.getId() + "|" + parentItemId + "|" + code;
+                PersistedCodeListItem item = itemCache.get(key);
+                if (item == null) {
+                    item = MobileCodeListItemDao.super.loadItem(codeList, parentItemId, code, version);
+                    if (item != null) // TODO: Ugly!
+                        itemCache.put(key, item);
+                } else {
+                    Log.e("Mobile DAO", "item cache hit - listId: " + codeList.getId() + ", parentItemId: " + parentItemId + ", code: " + code);
+                }
+                return item;
+            }
+        });
+    }
+
+    public PersistedCodeListItem loadItem(final CodeList codeList, final String code, final ModelVersion version) {
+        return time("loadItem", new Callable<PersistedCodeListItem>() {
+            public PersistedCodeListItem call() throws Exception {
+                String key = codeList.getId() + "|" + null + "|" + code;
+                PersistedCodeListItem item = itemCache.get(key);
+                if (item == null) {
+                    item = MobileCodeListItemDao.super.loadItem(codeList, code, version);
+                    itemCache.put(key, item);
+                } else {
+                    Log.e("Mobile DAO", "item cache hit - listId: " + codeList.getId() + ", code: " + code);
+                }
+                return item;
             }
         });
     }
@@ -113,4 +168,12 @@ public class MobileCodeListItemDao extends org.openforis.collect.persistence.Cod
         }
     }
 
+
+    private <T> T time(String methodName, Callable<T> action) {
+        return Timer.time(MobileCodeListItemDao.class, methodName, action);
+    }
+
+    private void time(String methodName, Runnable action) {
+        Timer.time(MobileCodeListItemDao.class, methodName, action);
+    }
 }

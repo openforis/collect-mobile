@@ -94,7 +94,7 @@ public class MeteredCodeListManager extends CodeListManager {
     }
 
     public List<CodeListItem> loadValidItems(final Entity parent, final CodeAttributeDefinition def) {
-        return Timer.time(MeteredCodeListManager.class, "loadValidItems", new Callable<List<CodeListItem>>() {
+        return Timer.time(CodeListManager.class, "loadValidItems", new Callable<List<CodeListItem>>() {
             public List<CodeListItem> call() {
                 return delegate.loadValidItems(parent, def);
             }

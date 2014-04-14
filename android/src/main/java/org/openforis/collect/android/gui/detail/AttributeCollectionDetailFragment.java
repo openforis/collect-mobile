@@ -24,10 +24,9 @@ public class AttributeCollectionDetailFragment extends NodeDetailFragment<UiAttr
     public View createView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
         inputComponent = AttributeCollectionInputComponent.create(node(), inflater, getActivity());
-
         View rootView = inputComponent.getRootView();
-        ((TextView) rootView.findViewById(R.id.attribute_label)).setText(node().getLabel());
-        TextView nodeLabel = (TextView) rootView.findViewById(R.id.attribute_label);
+        ((TextView) rootView.findViewById(R.id.node_label)).setText(node().getLabel());
+        TextView nodeLabel = (TextView) rootView.findViewById(R.id.node_label);
         nodeLabel.setText(node().getLabel());
         addInputComponentToView(rootView);
         return rootView;
@@ -54,7 +53,7 @@ public class AttributeCollectionDetailFragment extends NodeDetailFragment<UiAttr
     }
 
     private void addInputComponentToView(View rootView) {
-        ViewGroup attributeInputContainer = (ViewGroup) rootView.findViewById(R.id.attribute_input_container);
+        ViewGroup attributeInputContainer = (ViewGroup) rootView.findViewById(R.id.input_container);
         View view = inputComponent.getView();
         view.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
         attributeInputContainer.addView(view);

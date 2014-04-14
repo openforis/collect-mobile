@@ -92,11 +92,25 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public UiAttribute addAttribute() {
         UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
         UiAttribute attribute = collectModelManager.addAttribute(attributeCollection);
+
+        // TODO: Move this section to viewModelManager
         attributeCollection.addChild(attribute);
+        attribute.init(); // TODO: Ugly!!!
+        attribute.updateStatusOfParents(); // TODO: Ugly!!!!
+        viewModelManager.addAttribute(attribute);
         updateAttribute(attribute);
         return attribute;
     }
 
+    public void updateAttributes(Set<UiAttribute> attributes) {
+        if (attributes == null)
+            return;
+        for (UiAttribute attribute : attributes) {
+            updateAttribute(attribute);  // TODO: Do this in transaction?
+        }
+    }
+    // TODO: Remove
+    @Deprecated
     public void updateAttributeCollection(UiAttributeCollection attributeCollection) {
         for (UiNode attribute : attributeCollection.getChildren())
             updateAttribute((UiAttribute) attribute); // TODO: Do this in transaction?

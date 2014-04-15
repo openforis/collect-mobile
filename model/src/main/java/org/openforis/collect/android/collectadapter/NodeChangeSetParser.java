@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
@@ -25,37 +26,19 @@ import java.util.Set;
  */
 class NodeChangeSetParser {
     private final NodeChangeSet nodeChangeSet;
-    private final Attribute attribute;
-    private final UiAttribute uiAttribute;
+    private final UiRecord uiRecord;
     private final MessageSource errorMessageSource = new ResourceBundleMessageSource();
     private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(errorMessageSource);
 
-    public NodeChangeSetParser(NodeChangeSet nodeChangeSet, Attribute attribute, UiAttribute uiAttribute) {
+    public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord) {
         this.nodeChangeSet = nodeChangeSet;
-        this.attribute = attribute;
-        this.uiAttribute = uiAttribute;
+        this.uiRecord = uiRecord;
     }
 
     public Map<UiAttribute, Set<UiValidationError>> parseErrors() {
         Map<UiAttribute, Set<UiValidationError>> validationErrors = attributeValidationErrors();
-        UiValidationError requiredAttributeMissing = requiredAttributeMissing(); // TODO: Need to include required validation for related attributes too
-        if (requiredAttributeMissing != null)
-            addValidationError(requiredAttributeMissing, validationErrors);
-        return validationErrors; // TODO: Need to contain attribute, and related attributes in map
-    }
-
-    private UiValidationError requiredAttributeMissing() {
-        for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
-            if (nodeChange instanceof EntityChange) {
-                EntityChange entityChange = (EntityChange) nodeChange;
-                ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
-                if (validationResultFlag != null && !validationResultFlag.isOk()) {
-                    String message = errorMessageSource.getMessage("validation.requiredField");
-                    return new UiValidationError(message, level(validationResultFlag), uiAttribute);
-                }
-            }
-        }
-        return null;
+        addRequiredAttributeMissingErrors(validationErrors);
+        return validationErrors;
     }
 
     private Map<UiAttribute, Set<UiValidationError>> attributeValidationErrors() {
@@ -69,12 +52,29 @@ class NodeChangeSetParser {
                 ValidationResults validationResults = attributeChange.getValidationResults();
                 for (ValidationResult validationResult : validationResults.getFailed()) {
                     if (!ignored(validationResult))
-                        addValidationError(toValidationError(uiAttribute, validationResult), errorsByAttribute);
+                        addValidationError(toValidationError(attributeChange.getNode(), uiAttribute, validationResult), errorsByAttribute);
                 }
             }
         }
         return errorsByAttribute;
     }
+
+    private UiValidationError addRequiredAttributeMissingErrors(Map<UiAttribute, Set<UiValidationError>> validationErrors) {
+        for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
+            if (nodeChange instanceof EntityChange) {
+                EntityChange entityChange = (EntityChange) nodeChange;
+                for (UiAttribute uiAttribute : validationErrors.keySet()) {
+                    ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
+                    if (validationResultFlag != null && !validationResultFlag.isOk()) {
+                        String message = errorMessageSource.getMessage("validation.requiredField");
+                        addValidationError(new UiValidationError(message, level(validationResultFlag), uiAttribute), validationErrors);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
     private boolean ignored(ValidationResult validationResult) {
         return validationResult.getValidator() instanceof SpecifiedValidator;
@@ -82,7 +82,7 @@ class NodeChangeSetParser {
 
     private UiAttribute getUiAttribute(AttributeChange attributeChange) {
         Integer attributeId = attributeChange.getNode().getId();
-        UiAttribute uiAttribute = (UiAttribute) this.uiAttribute.getUiRecord().lookupNode(attributeId);
+        UiAttribute uiAttribute = (UiAttribute) uiRecord.lookupNode(attributeId);
         if (uiAttribute == null)
             throw new IllegalStateException("Attribute with id " + attributeId + " not found");
         return uiAttribute;
@@ -98,7 +98,7 @@ class NodeChangeSetParser {
         errors.add(validationError);
     }
 
-    private UiValidationError toValidationError(UiAttribute uiAttribute, ValidationResult validationResult) {
+    private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
         String message = validationMessageBuilder.getValidationMessage(attribute, validationResult);
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }

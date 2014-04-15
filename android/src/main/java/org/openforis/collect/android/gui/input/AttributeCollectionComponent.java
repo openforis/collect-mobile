@@ -33,8 +33,6 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
 
     protected abstract void setValidationError(UiAttribute attribute, Set<UiValidationError> validationErrors);
 
-    protected abstract void resetValidationErrors();
-
     /**
      * Updates the {@code UiAttributeCollection} {@code UiAttribute} values that are different from the user input.
      *

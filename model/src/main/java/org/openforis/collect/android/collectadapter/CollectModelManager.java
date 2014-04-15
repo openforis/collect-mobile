@@ -26,6 +26,7 @@ import org.openforis.idm.model.Value;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -143,7 +144,32 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        return new NodeChangeSetParser(nodeChangeSet, attribute, uiAttribute).parseErrors();
+        // TODO: This shouldn't be called errors, it contains the updates
+        Map<UiAttribute, Set<UiValidationError>> errors = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).parseErrors();
+        if (uiAttribute instanceof UiCodeAttribute)
+            updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, errors.keySet());
+        return errors;
+    }
+
+    /**
+     * Update children attribute codes with correct label.
+     */
+    private void updateChildrenCodeAttributes(UiCodeAttribute uiCodeAttribute, Collection<UiAttribute> uiAttributes) {
+        int parentDefinitionId = Integer.parseInt(uiCodeAttribute.getDefinition().id);
+        for (UiAttribute uiAttribute : uiAttributes) {
+            if (uiAttribute instanceof UiCodeAttribute) {
+                CodeAttributeDefinition nodeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(uiAttribute.getDefinition().id));
+                CodeAttributeDefinition parentDefinition = nodeDefinition.getParentCodeAttributeDefinition();
+                if (parentDefinition != null && parentDefinition.getId() == parentDefinitionId) {
+                    CodeAttribute childCodeAttribute = recordNodes.getCodeAttribute(uiAttribute.getId());
+                    CodeListItem item = codeListManager.loadItemByAttribute(childCodeAttribute);
+                    if (item != null) {
+                        UiCode updatedCode = new UiCode(item.getCode(), item.getLabel());
+                        ((UiCodeAttribute) uiAttribute).setCode(updatedCode);
+                    }
+                }
+            }
+        }
     }
 
     public void recordSelected(UiRecord uiRecord) {

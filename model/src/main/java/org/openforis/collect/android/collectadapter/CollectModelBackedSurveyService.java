@@ -109,6 +109,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
             updateAttribute(attribute);  // TODO: Do this in transaction?
         }
     }
+
     // TODO: Remove
     @Deprecated
     public void updateAttributeCollection(UiAttributeCollection attributeCollection) {
@@ -119,9 +120,12 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public void updateAttribute(UiAttribute attribute) {
         Map<UiAttribute, Set<UiValidationError>> validationErrors = collectModelManager.updateAttribute(attribute);
-        viewModelManager.updateAttribute(attribute, validationErrors);
-        if (listener != null)
-            listener.onAttributeChanged(attribute, validationErrors);
+        // TODO: Do this in transaction
+        for (UiAttribute uiAttribute : validationErrors.keySet()) {
+            viewModelManager.updateAttribute(uiAttribute, validationErrors);
+            if (listener != null)
+                listener.onAttributeChanged(uiAttribute, validationErrors);
+        }
     }
 
     public void setListener(SurveyListener listener) {

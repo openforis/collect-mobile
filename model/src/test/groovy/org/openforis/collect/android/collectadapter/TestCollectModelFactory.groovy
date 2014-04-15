@@ -7,6 +7,7 @@ import org.openforis.collect.manager.RecordManager
 import org.openforis.collect.manager.SurveyManager
 import org.openforis.collect.model.CollectSurvey
 import org.openforis.collect.model.CollectSurveyContext
+import org.openforis.collect.model.validation.CollectValidator
 import org.openforis.idm.metamodel.CodeList
 import org.openforis.idm.metamodel.CodeListItem
 import org.openforis.idm.metamodel.validation.Validator
@@ -29,14 +30,18 @@ class TestCollectModelFactory {
         return surveyManager(new CodeListManagerStub())
     }
 
-    public static SurveyManager surveyManager(CodeListManager codeListManager) {
+    public static SurveyManager surveyManager(CodeListManager codeListManager, Validator validator = new Validator()) {
         def manager = new SurveyManager()
         manager.surveyDao = new SurveyDaoStub()
-        CollectSurveyContext context = new CollectSurveyContext(new ExpressionFactory(), new Validator());
+        CollectSurveyContext context = new CollectSurveyContext(new ExpressionFactory(), validator);
         manager.surveyDao.surveyContext = context;
         manager.collectSurveyContext = context;
         manager.codeListManager = codeListManager
         return manager
+    }
+
+    public static Validator collectValidator(CodeListManager codeListManager, RecordManager recordManager) {
+        new CollectValidator(codeListManager: codeListManager, recordManager: recordManager)
     }
 
     private static class CodeListManagerStub extends CodeListManager {

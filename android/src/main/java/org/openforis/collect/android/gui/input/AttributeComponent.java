@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -81,10 +80,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     public final void saveNode() {
-        if (updateAttributeIfChanged()) {
-            resetValidationErrors();
-            notifyAboutAttributeChange();
-        }
+        updateAttributeIfChanged();
     }
 
     public final void validateNode() {

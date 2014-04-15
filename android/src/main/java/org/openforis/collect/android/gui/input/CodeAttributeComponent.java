@@ -38,7 +38,6 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             if (newParentCode == parentCode) return;
             if (newParentCode == null || !newParentCode.equals(parentCode)) {
                 parentCode = newParentCode;
-                notifyAboutAttributeChange();
                 initOptions();
             }
         }

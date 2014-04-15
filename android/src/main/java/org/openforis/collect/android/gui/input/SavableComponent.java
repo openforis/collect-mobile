@@ -48,6 +48,8 @@ public abstract class SavableComponent {
 
     public abstract void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute);
 
+    protected abstract void resetValidationErrors();
+
 
     public final void onSelect() {
         selected = true;
@@ -56,6 +58,7 @@ public abstract class SavableComponent {
 
     public final void onDeselect() {
         selected = false;
+        resetValidationErrors();
         saveNode();
     }
 

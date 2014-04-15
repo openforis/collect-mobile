@@ -56,7 +56,8 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
 
     def 'Loading a never imported survey returns null'() {
-        expect: surveyService.loadSurvey('never-imported') == null
+        expect:
+        surveyService.loadSurvey('never-imported') == null
     }
 
     def 'Can add record'() {
@@ -141,7 +142,8 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.text = 'Updated text'
 
-        when: surveyService.updateAttribute(attribute)
+        when:
+        surveyService.updateAttribute(attribute)
 
         then:
         surveyService.loadSurvey(importedSurvey.name)
@@ -157,7 +159,8 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         attribute.text = 'non-empty value'
         assert attribute.status == EMPTY
 
-        when: surveyService.updateAttribute(attribute)
+        when:
+        surveyService.updateAttribute(attribute)
 
         then:
         attribute.status == UiNode.Status.OK
@@ -199,7 +202,8 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         when:
         def lookedUpRootEntity = surveyService.lookupNode(rootEntity.getId())
 
-        then: lookedUpRootEntity.is rootEntity
+        then:
+        lookedUpRootEntity.is rootEntity
     }
 
 

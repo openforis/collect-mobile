@@ -97,6 +97,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     private void setText(String text) {
+        if (text.equals(autoComplete.getText().toString()))
+            return;
         // Hack to prevent pop-up from opening when setting text
         // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
         UiCodeAdapter adapter = (UiCodeAdapter) autoComplete.getAdapter();

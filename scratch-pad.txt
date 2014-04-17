@@ -1,3 +1,6 @@
+Re-implement RecordDao using the node database?
+    Needed for uniqueness checks
+
 More components
     Time and date as EditText with pop-up
 

@@ -42,11 +42,23 @@ public class ServiceLocator {
             if (!initialized)
                 new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
 
-            collectModelManager = createCollectModelManager(modelDatabase);
-            surveyService = createSurveyService(applicationContext, collectModelManager);
+            AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
+
+            collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
+            surveyService = createSurveyService(collectModelManager, nodeDatabase);
             loadOrImportSurvey(surveyService);
             taxonService = createTaxonService(modelDatabase);
         }
+    }
+
+    private static AndroidDatabase createNodeDatabase(Context applicationContext) {
+        return new AndroidDatabase(
+                        new NodeSchemaChangeLog(
+                                new NodeDatabaseSchemaChangeLog().changes()
+                        ),
+                        applicationContext,
+                        "nodes"
+                );
     }
 
     private static boolean setupDatabases(Context context) {
@@ -109,23 +121,16 @@ public class ServiceLocator {
     }
 
 
-    public static CollectModelBackedSurveyService createSurveyService(Context context, CollectModelManager collectModelManager) {
-        AndroidDatabase nodeDatabase = new AndroidDatabase(
-                new NodeSchemaChangeLog(
-                        new NodeDatabaseSchemaChangeLog().changes()
-                ),
-                context,
-                "nodes"
-        );
+    public static CollectModelBackedSurveyService createSurveyService(CollectModelManager collectModelManager, Database database) {
         return new CollectModelBackedSurveyService(
                 new ViewModelManager(
-                        new DatabaseViewModelRepository(collectModelManager, new DataSourceNodeRepository(nodeDatabase))
+                        new DatabaseViewModelRepository(collectModelManager, new DataSourceNodeRepository(database))
                 ),
                 collectModelManager
         );
     }
 
-    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase) {
+    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
         CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
                 externalCodeListProvider
@@ -134,6 +139,7 @@ public class ServiceLocator {
         MeteredValidator validator = new MeteredValidator(codeListManager);
         SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
         RecordManager recordManager = new MeteredRecordManager(codeListManager, surveyManager);
+        recordManager.setRecordDao(new MobileRecordDao(nodeDatabase));
         validator.setRecordManager(recordManager);
 
         return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);

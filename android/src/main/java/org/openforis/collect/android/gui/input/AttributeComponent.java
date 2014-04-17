@@ -80,7 +80,9 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     public final void saveNode() {
-        updateAttributeIfChanged();
+        resetValidationErrors(); // TODO: Will reset even if attribute hasn't changed
+        if (updateAttributeIfChanged())
+            notifyAboutAttributeChange();
     }
 
     public final void validateNode() {

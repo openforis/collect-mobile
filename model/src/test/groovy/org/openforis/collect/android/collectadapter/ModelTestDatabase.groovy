@@ -30,8 +30,8 @@ class ModelTestDatabase implements Database {
         delete from ofc_config;
         delete from ofc_application_info;
         '''
-    private static final String INIT_URL = 'jdbc:h2:mem:model;MODE=PostgreSQL;DB_CLOSE_DELAY=-1'
-    private static final String URL = 'jdbc:h2:mem:model;SCHEMA=collect;MODE=PostgreSQL;DB_CLOSE_DELAY=-1'
+    private static final String INIT_URL = 'jdbc:h2:mem:model;MODE=PostgreSQL;REFERENTIAL_INTEGRITY=false;DB_CLOSE_DELAY=-1'
+    private static final String URL = 'jdbc:h2:mem:model;SCHEMA=collect;MODE=PostgreSQL;REFERENTIAL_INTEGRITY=false;DB_CLOSE_DELAY=-1'
 
     private static boolean initialized
     private static DataSource dataSource
@@ -68,7 +68,7 @@ class ModelTestDatabase implements Database {
     }
 
     Sql getSql() {
-        def sql = new Sql(new JdbcDataSource(url: 'jdbc:h2:mem:model;SCHEMA=collect;MODE=PostgreSQL;DB_CLOSE_DELAY=-1', user: 'sa', password: 'sa'))
+        def sql = new Sql(new JdbcDataSource(url: 'jdbc:h2:mem:model;SCHEMA=collect;MODE=PostgreSQL;REFERENTIAL_INTEGRITY=false;DB_CLOSE_DELAY=-1', user: 'sa', password: 'sa'))
         return sql
     }
 
@@ -101,8 +101,12 @@ class ModelTestDatabase implements Database {
             return postgresDatabase.getDefaultDatabaseProductName()
         }
 
+        String getDefaultSchemaName() {
+            return 'collect'
+        }
+
         protected String getConnectionSchemaName() {
-            return "COLLECT";
+            return 'collect'
         }
     }
 }

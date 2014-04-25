@@ -36,8 +36,11 @@ class DateConverter extends AttributeConverter<DateAttribute, UiDateAttribute> {
     }
 
     public Value value(UiDateAttribute uiAttribute) {
+        java.util.Date date = uiAttribute.getDate();
+        if (date == null)
+            return new Date(null, null, null);
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(uiAttribute.getDate());
+        calendar.setTime(date);
         return new Date(
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH) + 1,

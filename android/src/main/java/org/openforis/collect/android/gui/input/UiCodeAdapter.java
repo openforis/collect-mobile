@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
-import org.openforis.collect.R;
 import org.openforis.collect.android.viewmodel.UiCode;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.List;
  * @author Daniel Wiell
  */
 class UiCodeAdapter extends ArrayAdapter<UiCode> {
-//    private static final int LAYOUT_RESOURCE_ID = R.layout.listview_code;
+    //    private static final int LAYOUT_RESOURCE_ID = R.layout.listview_code;
 //    private static final int LAYOUT_RESOURCE_ID = android.R.layout.simple_list_item_1;
     private static final int LAYOUT_RESOURCE_ID = android.R.layout.simple_dropdown_item_1line;
     private final Context context;
@@ -99,7 +98,7 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
     }
 
     private boolean matches(UiCode code, String query) {
-        return matches(query, code.getValue()) || matches(query, code.getLabel()) ||  matches(query, code.toString());
+        return matches(query, code.getValue()) || matches(query, code.getLabel()) || matches(query, code.toString());
     }
 
     private boolean matches(String query, String s) {

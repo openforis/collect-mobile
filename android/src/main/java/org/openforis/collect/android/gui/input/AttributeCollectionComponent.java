@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import org.openforis.collect.R;
@@ -19,7 +19,7 @@ import java.util.Set;
 public abstract class AttributeCollectionComponent extends SavableComponent {
     protected final UiAttributeCollection attributeCollection;
 
-    protected AttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, Context context) {
+    protected AttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         super(surveyService, context);
         this.attributeCollection = attributeCollection;
     }

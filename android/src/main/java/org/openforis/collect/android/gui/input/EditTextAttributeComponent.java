@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -9,9 +9,6 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiValidationError;
-
-import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -19,7 +16,7 @@ import java.util.Set;
 public abstract class EditTextAttributeComponent<T extends UiAttribute> extends AttributeComponent<T> {
     private final EditText editText;
 
-    protected EditTextAttributeComponent(T attribute, SurveyService surveyService, Context context) {
+    protected EditTextAttributeComponent(T attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         editText = createEditText();
     }

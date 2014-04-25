@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -15,14 +16,14 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     private static final int RADIO_GROUP_MAX_SIZE = 20;
     private UiCode parentCode;
 
-    protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, Context context) {
+    protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         this.codeListService = codeListService;
     }
 
     protected final CodeListService codeListService;
 
-    public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, Context context) {
+    public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();
         int maxCodeListSize = codeListService.getMaxCodeListSize(attribute);
         if (maxCodeListSize <= RADIO_GROUP_MAX_SIZE)

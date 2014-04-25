@@ -24,8 +24,6 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
 //            CodeList codeList = attribute.getDefinition().getList();
 //            String label = codeList.getItem(value).getLabel();
             String label = null; // TODO: Need to get the label somehow
-            // This will in practice only be called when created an enumerated property
-            // In this case, couldn't we expect the item to be added to the NodeDefinition?
             uiAttribute.setCode(new UiCode(value, label));
         }
         return uiAttribute;

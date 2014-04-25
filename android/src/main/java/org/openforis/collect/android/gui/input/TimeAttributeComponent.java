@@ -1,67 +1,100 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
-import android.view.KeyEvent;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
+import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiTimeAttribute;
-import org.openforis.collect.android.viewmodel.UiValidationError;
 
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * @author Daniel Wiell
  */
-public class TimeAttributeComponent extends AttributeComponent<UiTimeAttribute> {
+public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAttribute> {
+    private static Pattern TIME_PATTERN = Pattern.compile("(\\d?\\d):(\\d?\\d)");
     private final LinearLayout view;
-    private final TextView selectedTimeView;
+    private TextView selectedTimeView;
 
-    protected TimeAttributeComponent(UiTimeAttribute attribute, SurveyService surveyService, Context context) {
+    protected TimeAttributeComponent(UiTimeAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         view = new LinearLayout(context);
-        view.setOrientation(LinearLayout.VERTICAL);
-        selectedTimeView = createSelectedTimeView();
-        selectedTimeView.setFocusable(true);
         view.addView(selectedTimeView);
+        view.addView(createButton());
+        view.setOrientation(LinearLayout.HORIZONTAL);
     }
 
-    protected boolean updateAttributeIfChanged() {
-        return false;
+    protected boolean hasChanged(String newValue) {
+        if (newValue == null)
+            return !attribute.isEmpty();
+        return !newValue.equals(attributeValue());
+    }
+
+    protected String attributeValue() {
+        return attribute.format();
+    }
+
+    protected void updateAttributeValue(String newValue) {
+        Matcher matcher = TIME_PATTERN.matcher(newValue);
+        if (matcher.find()) {
+            int hour = Integer.parseInt(matcher.group(1));
+            int minute = Integer.parseInt(matcher.group(2));
+            attribute.setTime(hour, minute);
+        } else {
+            attribute.setTime(null, null);
+            selectedTimeView.setText("");
+        }
+    }
+
+    protected void onEditTextCreated(EditText input) {
+        selectedTimeView = input;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        selectedTimeView.setLayoutParams(params);
     }
 
     protected View toInputView() {
         return view;
     }
 
-    public View getDefaultFocusedView() {
-        return selectedTimeView;
-    }
+    private View createButton() {
+        ImageButton button = new ImageButton(context);
+        view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        button.setImageResource(R.drawable.ic_action_time);
+//
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                saveNode();
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(context.getSupportFragmentManager(), "timePicker");
 
-    private TextView createSelectedTimeView() {
-        TextView selectedTimeView = new TextView(context);
-        selectedTimeView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    saveNode();
             }
         });
-        selectedTimeView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE)
-                    saveNode();
-                return false;
-            }
-        });
-        selectedTimeView.setText(attributeStringValue());
-        selectedTimeView.setSingleLine();
-        return selectedTimeView;
+        return button;
     }
 
-    private String attributeStringValue() {
-        return attribute.getHour() + ":" + attribute.getMinute();
+    private void selectTime(int hour, int minute) {
+        selectedTimeView.setText(UiTimeAttribute.format(hour, minute));
+    }
+
+    private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int hour = attribute.getHour() == null ? 0 : attribute.getHour();
+            int minute = attribute.getMinute() == null ? 0 : attribute.getMinute();
+            return new TimePickerDialog(getActivity(), this, hour, minute, true);
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            selectTime(hourOfDay, minute);
+            saveNode();
+        }
     }
 }

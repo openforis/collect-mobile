@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -22,10 +23,10 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public abstract class SavableComponent {
     private boolean selected;
     protected final SurveyService surveyService;
-    protected final Context context;
+    protected final FragmentActivity context;
     protected final Handler uiHandler = new Handler(); // Handler to post actions to UI thread.
 
-    protected SavableComponent(SurveyService surveyService, Context context) {
+    protected SavableComponent(SurveyService surveyService, FragmentActivity context) {
         this.surveyService = surveyService;
         this.context = context;
     }
@@ -78,7 +79,7 @@ public abstract class SavableComponent {
         }
     }
 
-    public static <T extends UiNode> SavableComponent create(T node, SurveyService surveyService, Context context) {
+    public static <T extends UiNode> SavableComponent create(T node, SurveyService surveyService, FragmentActivity context) {
         if (node instanceof UiAttribute)
             return createAttributeComponent((UiAttribute) node, surveyService, context);
         if (node instanceof UiAttributeCollection)
@@ -86,7 +87,7 @@ public abstract class SavableComponent {
         throw new IllegalStateException("Unexpected node type: " + node.getClass());
     }
 
-    private static AttributeComponent createAttributeComponent(UiAttribute attribute, SurveyService surveyService, Context context) {
+    private static AttributeComponent createAttributeComponent(UiAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         if (attribute instanceof UiTextAttribute)
             return new TextAttributeComponent((UiTextAttribute) attribute, surveyService, context);
         if (attribute instanceof UiIntegerAttribute)
@@ -105,7 +106,7 @@ public abstract class SavableComponent {
         throw new IllegalStateException("Unexpected attribute type: " + attribute.getClass());
     }
 
-    private static SavableComponent createAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, Context context) {
+    private static SavableComponent createAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         Class<? extends UiAttribute> attributeType = attributeCollection.getDefinition().attributeType;
         if (attributeType.isAssignableFrom(UiTextAttribute.class))
             return new TextAttributeCollectionComponent(attributeCollection, surveyService, context);

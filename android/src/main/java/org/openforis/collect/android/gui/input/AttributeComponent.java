@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import org.openforis.collect.R;
@@ -22,7 +22,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
 
     protected AttributeComponent(T attribute,
                                  SurveyService surveyService,
-                                 Context context) {
+                                 FragmentActivity context) {
         super(surveyService, context);
         this.attribute = attribute;
     }

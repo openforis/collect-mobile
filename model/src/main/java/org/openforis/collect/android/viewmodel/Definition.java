@@ -23,4 +23,8 @@ public class Definition {
     public boolean isKeyOf(UiNode uiNode) {
         return keyOfDefinitionId != null && Integer.valueOf(uiNode.getDefinition().id).equals(keyOfDefinitionId);
     }
+
+    public String toString() {
+        return name;
+    }
 }

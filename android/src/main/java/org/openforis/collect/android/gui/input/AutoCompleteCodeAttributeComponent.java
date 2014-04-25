@@ -1,7 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -30,7 +30,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
 
-    AutoCompleteCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, Context context) {
+    AutoCompleteCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
         autoComplete = new ClearableAutoCompleteTextView(context);
         autoComplete.setThreshold(1);

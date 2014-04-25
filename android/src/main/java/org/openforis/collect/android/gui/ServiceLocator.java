@@ -53,12 +53,12 @@ public class ServiceLocator {
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {
         return new AndroidDatabase(
-                        new NodeSchemaChangeLog(
-                                new NodeDatabaseSchemaChangeLog().changes()
-                        ),
-                        applicationContext,
-                        "nodes"
-                );
+                new NodeSchemaChangeLog(
+                        new NodeDatabaseSchemaChangeLog().changes()
+                ),
+                applicationContext,
+                "nodes"
+        );
     }
 
     private static boolean setupDatabases(Context context) {

@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.RadioButton;
@@ -22,7 +23,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private final RadioGroup radioGroup;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    RadioCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, Context context) {
+    RadioCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
         radioGroup = new RadioGroup(context);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

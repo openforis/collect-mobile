@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
@@ -13,7 +13,7 @@ import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
  * @author Daniel Wiell
  */
 public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubleAttribute> {
-    public DoubleAttributeComponent(UiDoubleAttribute attribute, SurveyService surveyService, Context context) {
+    public DoubleAttributeComponent(UiDoubleAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
     }
 

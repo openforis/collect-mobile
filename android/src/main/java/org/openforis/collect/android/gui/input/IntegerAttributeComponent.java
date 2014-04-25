@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.widget.EditText;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +11,7 @@ import org.openforis.collect.android.viewmodel.UiIntegerAttribute;
  * @author Daniel Wiell
  */
 public class IntegerAttributeComponent extends EditTextAttributeComponent<UiIntegerAttribute> {
-    public IntegerAttributeComponent(UiIntegerAttribute attribute, SurveyService surveyService, Context context) {
+    public IntegerAttributeComponent(UiIntegerAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
     }
 

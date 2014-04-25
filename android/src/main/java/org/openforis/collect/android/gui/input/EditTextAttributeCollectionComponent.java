@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import org.openforis.collect.android.SurveyService;
@@ -18,7 +18,7 @@ public abstract class EditTextAttributeCollectionComponent extends AttributeColl
     private final Map<UiAttribute, EditTextAttributeComponent> attributeComponentByAttribute = new LinkedHashMap<UiAttribute, EditTextAttributeComponent>();
     private final LinearLayout view;
 
-    protected EditTextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, Context context) {
+    protected EditTextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, surveyService, context);
         view = new LinearLayout(context);
         view.setOrientation(LinearLayout.VERTICAL);
@@ -71,7 +71,7 @@ public abstract class EditTextAttributeCollectionComponent extends AttributeColl
 }
 
 class TextAttributeCollectionComponent extends EditTextAttributeCollectionComponent {
-    TextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, Context context) {
+    TextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, surveyService, context);
     }
 

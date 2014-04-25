@@ -17,7 +17,9 @@ class CodeListTest extends Specification {
     def listener = new Listener()
     def nodeDatabase = new NodeTestDatabase()
     def modelDatabase = new ModelTestDatabase()
+
     CollectModelBackedSurveyService surveyService
+
     UiRecord uiRecord
     UiCodeAttribute parentAttribute
     UiCodeAttribute childAttribute

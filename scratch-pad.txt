@@ -1,5 +1,5 @@
-Re-implement RecordDao using the node database?
-    Needed for uniqueness checks
+Label of code attributes when adding record/entity is null
+    CodeConverter
 
 More components
     Time and date as EditText with pop-up
@@ -7,12 +7,14 @@ More components
 Radio buttons - none selected option?
     So it value is unknown, user can reset the component
 
-
 Remove record/entity/attribute
 
 Validation when adding record/entity
 
-Irrelevant attributes
+Re-implement RecordDao using the node database?
+    Needed for uniqueness checks
+
+Irrelevant nodes
 
 ----------------------------
 
@@ -133,8 +135,6 @@ GPS?
 http://stackoverflow.com/questions/2169649/get-pick-an-image-from-androids-built-in-gallery-app-programmatically
 http://developer.android.com/guide/topics/media/camera.html
 
-Get rid of Sherlock
-http://androidgreeve.blogspot.it/2014/03/working-with-android-actionbarcompact.html?m=1
 
 
 http://www.infoq.com/presentations/Android-Protips
@@ -151,3 +151,6 @@ IDEAS
 
 >    next attribute
 >>|  next attribute with warning/error
+
+ic_action_event
+ic_action_go_to_today

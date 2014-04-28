@@ -59,7 +59,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         return editText.getText() == null ? null : editText.getText().toString();
     }
 
-    private EditText createEditText() {
+    protected EditText createEditText() {
         EditText editText = new EditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {

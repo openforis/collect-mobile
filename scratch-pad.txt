@@ -1,10 +1,6 @@
-Node description, prompt, pattern message
-
-Label of code attributes when adding record/entity is null
-    CodeConverter
-        Solve this when rendering the an enumerated entity collection? Ugly but should work.
-
-More components
+Input components
+    Taxon
+    Coordinate srs id
     Boolean
     Multiple code
     Units of numbers
@@ -17,11 +13,18 @@ Radio buttons - none selected option?
 Remove record/entity/attribute
 
 Validation when adding record/entity
+Unique validation working?
 
 Re-implement RecordDao using the node database?
     Needed for uniqueness checks
 
 Irrelevant nodes
+
+Node pattern message
+
+Label of code attributes when adding record/entity is null
+    CodeConverter
+        Solve this when rendering the an enumerated entity collection? Ugly but should work.
 
 ----------------------------
 

@@ -103,8 +103,8 @@ public abstract class SavableComponent {
             return new CoordinateAttributeComponent((UiCoordinateAttribute) attribute, surveyService, context);
         if (attribute instanceof UiDateAttribute)
             return new DateAttributeComponent((UiDateAttribute) attribute, surveyService, context);
-//        if (attribute instanceof UiTaxonAttribute)
-//            return new TaxonComponent((UiTaxonAttribute) attribute, context);
+        if (attribute instanceof UiTaxonAttribute)
+            return new TaxonAttributeComponent((UiTaxonAttribute) attribute, surveyService, context);
         // TODO: Other attribute types
 //        throw new IllegalStateException("Unexpected attribute type: " + attribute.getClass());
         return new DummyAttributeComponent(attribute, surveyService, context);

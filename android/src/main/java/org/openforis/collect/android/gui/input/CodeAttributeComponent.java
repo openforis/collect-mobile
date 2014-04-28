@@ -12,15 +12,14 @@ import org.openforis.collect.android.viewmodel.UiCodeAttribute;
  * @author Daniel Wiell
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
-    private static final int RADIO_GROUP_MAX_SIZE = 20;
+    public static final int RADIO_GROUP_MAX_SIZE = 20;
     private UiCode parentCode;
+    protected final CodeListService codeListService;
 
     protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         this.codeListService = codeListService;
     }
-
-    protected final CodeListService codeListService;
 
     public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();

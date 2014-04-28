@@ -1,8 +1,9 @@
+When changing an attribute, update relevance on dependent attributes
+
 Input components
-    Taxon
-    Coordinate srs id
     Boolean
     Multiple code
+    Coordinate srs id
     Units of numbers
     Integer range
     Double range

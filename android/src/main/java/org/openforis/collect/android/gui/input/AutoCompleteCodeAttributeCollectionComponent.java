@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.input;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -14,24 +15,22 @@ import java.util.Set;
 /**
  * @author Daniel Wiell
  */
-public abstract class EditTextAttributeCollectionComponent extends AttributeCollectionComponent {
-    private final Map<UiAttribute, EditTextAttributeComponent> attributeComponentByAttribute = new LinkedHashMap<UiAttribute, EditTextAttributeComponent>();
+class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollectionComponent {
+    private final Map<UiAttribute, CodeAttributeComponent> attributeComponentByAttribute = new LinkedHashMap<UiAttribute, CodeAttributeComponent>();
     private final LinearLayout view;
 
-    protected EditTextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
-        super(attributeCollection, surveyService, context);
+    AutoCompleteCodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+        super(attributeCollection, codeListService, surveyService, context);
         view = new LinearLayout(context);
         view.setOrientation(LinearLayout.VERTICAL);
         for (UiNode child : attributeCollection.getChildren())
-            addAttributeToComponent((UiTextAttribute) child);
+            addAttributeToComponent((UiCodeAttribute) child);
     }
 
-    protected abstract EditTextAttributeComponent createAttributeComponent(UiTextAttribute attribute);
-
-    protected final View.OnClickListener onAddAttribute() {
+    protected View.OnClickListener onAddAttribute() {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                UiTextAttribute attribute = (UiTextAttribute) surveyService.addAttribute();
+                UiCodeAttribute attribute = (UiCodeAttribute) surveyService.addAttribute();
                 addAttributeToComponent(attribute);
                 setValidationError(attribute, attribute.getValidationErrors());
             }
@@ -43,7 +42,7 @@ public abstract class EditTextAttributeCollectionComponent extends AttributeColl
     }
 
     protected final void setValidationError(UiAttribute attribute, Set<UiValidationError> validationErrors) {
-        EditTextAttributeComponent attributeComponent = attributeComponentByAttribute.get(attribute);
+        AttributeComponent attributeComponent = attributeComponentByAttribute.get(attribute);
         if (attributeComponent != null) // While we're adding an attribute, it's not in the map yet
             attributeComponent.setValidationError(validationErrors);
     }
@@ -61,21 +60,15 @@ public abstract class EditTextAttributeCollectionComponent extends AttributeColl
         return changedAttributes;
     }
 
-    private void addAttributeToComponent(UiTextAttribute attribute) {
-        EditTextAttributeComponent attributeComponent = createAttributeComponent(attribute);
+    private void addAttributeToComponent(UiCodeAttribute attribute) {
+        CodeAttributeComponent attributeComponent = createAttributeComponent(attribute);
         attributeComponentByAttribute.put(attribute, attributeComponent);
         View inputView = attributeComponent.toInputView();
         view.addView(inputView);
         focus(inputView);
     }
-}
 
-class TextAttributeCollectionComponent extends EditTextAttributeCollectionComponent {
-    TextAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
-        super(attributeCollection, surveyService, context);
-    }
-
-    protected TextAttributeComponent createAttributeComponent(UiTextAttribute attribute) {
-        return new TextAttributeComponent(attribute, surveyService, context);
+    protected CodeAttributeComponent createAttributeComponent(UiCodeAttribute attribute) {
+        return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
     }
 }

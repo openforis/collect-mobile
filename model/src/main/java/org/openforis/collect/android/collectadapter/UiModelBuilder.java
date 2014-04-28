@@ -140,6 +140,7 @@ class UiModelBuilder {
 
         private UiNode createUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {
             UiAttributeCollection uiAttributeCollection = instantiateUiAttributeCollection(attributeDefinition, parentEntity);
+            setRelevance(parentEntity, uiAttributeCollection);
             List<Node<? extends NodeDefinition>> childAttributes = parentEntity.getAll(attributeDefinition.getName());
             for (Node<? extends NodeDefinition> childAttribute : childAttributes)
                 uiAttributeCollection.addChild(instantiateUiAttribute((Attribute) childAttribute));
@@ -169,6 +170,7 @@ class UiModelBuilder {
 
         private UiEntityCollection createUiEntityCollection(EntityDefinition entityDefinition, Entity parentEntity) {
             UiEntityCollection uiEntityCollection = instantiateUiEntityCollection(entityDefinition, parentEntity);
+            setRelevance(parentEntity, uiEntityCollection);
             List<Node<? extends NodeDefinition>> childrenEntities = parentEntity.getAll(entityDefinition.getName());
             for (Node<? extends NodeDefinition> childrenEntity : childrenEntities)
                 addUiEntity((Entity) childrenEntity, uiEntityCollection);
@@ -220,7 +222,21 @@ class UiModelBuilder {
 
         private UiEntity instantiateUiEntity(Entity entity) {
             entity.setId(IdGenerator.nextId());
-            return new UiEntity(entity.getId(), definitions.toDefinition(entity));
+            UiEntity uiEntity = new UiEntity(entity.getId(), definitions.toDefinition(entity));
+            setRelevance(entity.getParent(), uiEntity);
+            return uiEntity;
+        }
+
+        private void setRelevance(Entity parentEntity, UiEntity uiEntity) {
+            uiEntity.setRelevant(parentEntity.isRelevant(uiEntity.getName()));
+        }
+
+        private void setRelevance(Entity parentEntity, UiEntityCollection uiEntityCollection) {
+            uiEntityCollection.setRelevant(parentEntity.isRelevant(uiEntityCollection.getName()));
+        }
+
+        private void setRelevance(Entity parentEntity, UiAttributeCollection uiAttributeCollection) {
+            uiAttributeCollection.setRelevant(parentEntity.isRelevant(uiAttributeCollection.getName()));
         }
 
         private UiAttribute instantiateUiAttribute(Attribute attribute) {

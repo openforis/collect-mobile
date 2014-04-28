@@ -172,6 +172,12 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         }
     }
 
+    public void removeAttribute(UiAttribute uiAttribute) {
+        Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
+        recordManager.deleteNode(attribute);
+        recordNodes.remove(uiAttribute.getId());
+    }
+
     public void recordSelected(UiRecord uiRecord) {
         CollectRecord record = modelConverter.toCollectRecord(uiRecord, selectedSurvey);
         recordNodes = new RecordNodes(record);
@@ -187,6 +193,16 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         return modelConverter.toUiCodes(items);
     }
 
+    public List<UiCode> codeList(UiAttributeCollection uiAttributeCollection) {
+        if (!uiAttributeCollection.getDefinition().isOfAttributeType(UiCodeAttribute.class))
+            throw new IllegalStateException("uiAttributeCollection " + uiAttributeCollection + " expected to have UiAttributeCollection attribute type");
+        Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
+        Definition definition = uiAttributeCollection.getDefinition().attributeDefinition;
+        CodeAttributeDefinition codeAttributeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
+        List<CodeListItem> items = codeListManager.loadValidItems(parentEntity, codeAttributeDefinition);
+        return modelConverter.toUiCodes(items);
+    }
+
     public boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute) {
         if (!(attribute instanceof UiCodeAttribute))
             return false;
@@ -198,6 +214,11 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     public int getMaxCodeListSize(UiCodeAttribute uiAttribute) {
         CodeAttribute attribute = recordNodes.getCodeAttribute(uiAttribute.getId());
         return codeListSizeEvaluator.size(attribute.getDefinition());
+    }
+
+
+    public int getMaxCodeListSize(Definition definition) {
+        return codeListSizeEvaluator.size((CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id)));
     }
 
     private AttributeDefinition getDefinition(UiAttribute uiAttribute) {

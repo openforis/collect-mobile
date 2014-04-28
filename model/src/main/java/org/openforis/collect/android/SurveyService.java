@@ -29,12 +29,13 @@ public interface SurveyService {
 
     UiAttribute addAttribute();
 
-    // TODO: Delete
-    @Deprecated
-    void updateAttributeCollection(UiAttributeCollection attributeCollection);
+    UiCodeAttribute addCodeAttribute(UiCode code);
+
     void updateAttributes(Set<UiAttribute> attributes);
 
     void updateAttribute(UiAttribute attribute);
+
+    void removeAttribute(UiAttribute attribute);
 
     void setListener(SurveyListener listener);
 }

@@ -22,9 +22,11 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
 
     protected abstract T attribute(U uiAttribute, NodeDefinition definition);
 
-    protected NodeDto createDto(UiAttribute uiAttribute) {
+    protected final NodeDto createDto(UiAttribute uiAttribute) {
         NodeDto dto = new NodeDto();
         dto.id = uiAttribute.getId();
+        dto.relevant = uiAttribute.isRelevant();
+        dto.status = uiAttribute.getStatus().name();
         dto.definitionId = uiAttribute.getDefinition().id;
         dto.parentId = uiAttribute.getParent() == null ? null : uiAttribute.getParent().getId();
         dto.surveyId = uiAttribute.getUiSurvey().getId();
@@ -35,17 +37,19 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
     }
 
     public static <D extends Definition> UiAttribute toUiAttribute(D definition, Attribute attribute) {
-        return getConverter(attribute).uiAttribute(definition, attribute);
+        UiAttribute uiAttribute = getConverter(attribute).uiAttribute(definition, attribute);
+        uiAttribute.setRelevant(attribute.getParent().isRelevant(attribute.getName()));
+        return uiAttribute;
     }
 
     public static UiNode toUiAttribute(NodeDto nodeDto, Definition definition) {
-        return getConverter(nodeDto.type.uiNodeClass).uiAttribute(nodeDto, definition);
+        UiAttribute uiAttribute = getConverter(nodeDto.type.uiNodeClass).uiAttribute(nodeDto, definition);
+        uiAttribute.setRelevant(nodeDto.relevant);
+        return uiAttribute;
     }
 
     public static NodeDto toDto(UiAttribute attribute) {
-        NodeDto dto = getConverter(attribute.getClass()).dto(attribute);
-        dto.status = attribute.getStatus().name();
-        return dto;
+        return getConverter(attribute.getClass()).dto(attribute);
     }
 
     public static Value toValue(UiAttribute uiAttribute) {

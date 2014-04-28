@@ -8,6 +8,7 @@ public abstract class UiNode {
     private final Definition definition;
     private UiInternalNode parent;
     private Status status;
+    private boolean relevant = true;
 
     public UiNode(int id, Definition definition) {
         this.id = id;
@@ -50,6 +51,14 @@ public abstract class UiNode {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean isRelevant() {
+        return relevant;
+    }
+
+    public void setRelevant(boolean relevant) {
+        this.relevant = relevant;
     }
 
     public void updateStatusOfNodeAndParents(UiNode.Status status) {

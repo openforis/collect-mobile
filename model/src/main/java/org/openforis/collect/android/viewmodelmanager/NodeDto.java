@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class NodeDto {
     public int id;
+    public boolean relevant;
     public String status;
     public Integer parentId;
     public Integer parentEntityId;

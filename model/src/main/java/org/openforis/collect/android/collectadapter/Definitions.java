@@ -1,6 +1,5 @@
 package org.openforis.collect.android.collectadapter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
@@ -34,16 +33,16 @@ public class Definitions {
         String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
         addDefinition(
                 new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null)
-            );
-    List<EntityDefinition> rootEntityDefinitions = collectSurvey.getSchema().getRootEntityDefinitions();
+        );
+        List<EntityDefinition> rootEntityDefinitions = collectSurvey.getSchema().getRootEntityDefinitions();
 
-    for (EntityDefinition entityDefinition : rootEntityDefinitions)
-    addNodeDefinition(entityDefinition);
+        for (EntityDefinition entityDefinition : rootEntityDefinitions)
+            addNodeDefinition(entityDefinition);
 
-    for (UITabSet tabSet : collectSurvey.getUIOptions().getTabSets())
+        for (UITabSet tabSet : collectSurvey.getUIOptions().getTabSets())
             for (UITab tab : tabSet.getTabs())
-    addTabDefinition(tab);
-}
+                addTabDefinition(tab);
+    }
 
     private void addTabDefinition(UITab tab) {
         addDefinition(

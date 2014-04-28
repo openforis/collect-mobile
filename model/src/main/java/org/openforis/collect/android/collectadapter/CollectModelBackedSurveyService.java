@@ -89,6 +89,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return entity;
     }
 
+    public UiCodeAttribute addCodeAttribute(UiCode code) {  // TODO: Ugly. Do in transaction, redundant updating...
+        UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
+        attribute.setCode(code);
+        updateAttribute(attribute);
+        return attribute;
+    }
+
     public UiAttribute addAttribute() {
         UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
         UiAttribute attribute = collectModelManager.addAttribute(attributeCollection);
@@ -100,6 +107,12 @@ public class CollectModelBackedSurveyService implements SurveyService {
         viewModelManager.addAttribute(attribute);
         updateAttribute(attribute);
         return attribute;
+    }
+
+    public void removeAttribute(UiAttribute attribute) {
+        collectModelManager.removeAttribute(attribute);
+        viewModelManager.removeNode(attribute);
+        // TODO: Implement...
     }
 
     public void updateAttributes(Set<UiAttribute> attributes) {

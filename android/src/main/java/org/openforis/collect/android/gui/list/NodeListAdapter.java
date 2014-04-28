@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.list;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +65,8 @@ public class NodeListAdapter extends BaseAdapter {
 
         UiNode node = nodes.get(position);
         holder.text.setText(getText(node));
+        if (!node.isRelevant())
+            holder.text.setTextColor(Color.parseColor("#636363"));
         holder.status.setImageResource(iconResource(node)); // TODO: Change depending on type
 
         return row;

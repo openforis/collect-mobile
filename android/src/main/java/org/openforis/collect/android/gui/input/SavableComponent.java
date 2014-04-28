@@ -105,27 +105,25 @@ public abstract class SavableComponent {
             return new DateAttributeComponent((UiDateAttribute) attribute, surveyService, context);
         if (attribute instanceof UiTaxonAttribute)
             return new TaxonAttributeComponent((UiTaxonAttribute) attribute, surveyService, context);
-        // TODO: Other attribute types
-//        throw new IllegalStateException("Unexpected attribute type: " + attribute.getClass());
-        return new DummyAttributeComponent(attribute, surveyService, context);
+        return new UnsupportedAttributeComponent(attribute, surveyService, context);
     }
 
     private static SavableComponent createAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         Class<? extends UiAttribute> attributeType = attributeCollection.getDefinition().attributeType;
         if (attributeType.isAssignableFrom(UiTextAttribute.class))
             return new TextAttributeCollectionComponent(attributeCollection, surveyService, context);
-        // TODO: Other attribute types in collection
-//        throw new IllegalStateException("Attribute collection contains attributes of unexpected type: " + attributeType);
-        return new DummyAttributeCollectionComponent(surveyService, context);
+        if (attributeType.isAssignableFrom(UiCodeAttribute.class))
+            return CodeAttributeCollectionComponent.create(attributeCollection, surveyService, context);
+        return new UnsupportedAttributeCollectionComponent(attributeCollection, surveyService, context);
     }
 
-    private static class DummyAttributeCollectionComponent extends SavableComponent {
+    private static class UnsupportedAttributeCollectionComponent extends SavableComponent {
         private final TextView view;
 
-        private DummyAttributeCollectionComponent(SurveyService surveyService, FragmentActivity context) {
+        private UnsupportedAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
             super(surveyService, context);
             view = new TextView(context);
-            view.setText("Unsupported type");
+            view.setText("Unsupported attribute collection type: " + attributeCollection.getDefinition().attributeType.getSimpleName());
         }
 
         public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
@@ -157,13 +155,13 @@ public abstract class SavableComponent {
         }
     }
 
-    private static class DummyAttributeComponent extends AttributeComponent {
+    private static class UnsupportedAttributeComponent extends AttributeComponent<UiAttribute> {
         private final TextView view;
 
-        private DummyAttributeComponent(UiAttribute attribute, SurveyService surveyService, FragmentActivity context) {
+        private UnsupportedAttributeComponent(UiAttribute attribute, SurveyService surveyService, FragmentActivity context) {
             super(attribute, surveyService, context);
             view = new TextView(context);
-            view.setText("Unsupported type");
+            view.setText("Unsupported attribute type: " + attribute.getClass().getSimpleName());
         }
 
         protected boolean updateAttributeIfChanged() {

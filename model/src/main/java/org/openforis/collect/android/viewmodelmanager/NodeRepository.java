@@ -14,4 +14,6 @@ public interface NodeRepository {
     void update(NodeDto node, String recordStatus);
 
     NodeDto.Collection surveyRecords(int surveyId);
+
+    void removeAll(List<Integer> ids);
 }

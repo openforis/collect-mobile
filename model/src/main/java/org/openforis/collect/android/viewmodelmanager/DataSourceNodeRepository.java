@@ -35,15 +35,31 @@ public class DataSourceNodeRepository implements NodeRepository {
             public Void execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "INSERT INTO ofc_view_model(\n" +
-                        "   status, parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
+                        "   relevant, status, parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
                         "   record_key_attribute, node_type,\n" +
                         "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "   val_boolean, val_int, val_int_from, val_int_to,\n" +
                         "   val_double, val_double_from, val_double_to, val_x, val_y, val_taxon_code,\n" +
                         "   val_taxon_scientific_name, val_file, id)\n" +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 for (NodeDto node : nodes) {
                     bind(ps, node);
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+                ps.close();
+                return null;
+            }
+        });
+    }
+
+
+    public void removeAll(final List<Integer> ids) {
+        database.execute(new ConnectionCallback<Void>() {
+            public Void execute(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM ofc_view_model WHERE id = ?");
+                for (int id : ids) {
+                    ps.setInt(1, id);
                     ps.addBatch();
                 }
                 ps.executeBatch();
@@ -57,7 +73,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, status, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
+                        "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
                         "       record_collection_name, record_key_attribute, node_type,\n" +
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
@@ -100,7 +116,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     private void updateAttribute(Connection connection, NodeDto node) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("" +
                 "UPDATE ofc_view_model\n" +
-                "SET status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
+                "SET relevant = ?, status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
                 "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
                 "    val_minute = ?, val_code_value = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
                 "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?,\n" +
@@ -118,7 +134,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, status, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
+                        "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
                         "       record_key_attribute, node_type,\n" +
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
@@ -147,6 +163,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     private NodeDto toNode(ResultSet rs) throws SQLException {
         NodeDto n = new NodeDto();
         n.id = rs.getInt("id");
+        n.relevant = rs.getBoolean("relevant");
         n.status = rs.getString("status");
         n.parentId = getInteger("parent_id", rs);
         n.parentEntityId = getInteger("parent_entity_id", rs);
@@ -209,6 +226,7 @@ public class DataSourceNodeRepository implements NodeRepository {
 
     private void bind(PreparedStatement ps, NodeDto node) throws SQLException {
         int i = 0;
+        ps.setBoolean(++i, node.relevant);
         ps.setString(++i, node.status);
         setIntOrNull(++i, node.parentId, ps);
         setIntOrNull(++i, node.parentEntityId, ps);

@@ -37,6 +37,10 @@ class RecordNodes {
             put(node);
     }
 
+    public void remove(int nodeId) {
+        nodeById.remove(nodeId);
+    }
+
     private void put(Node node) {
         if (node.getId() == null)
             throw new IllegalStateException("Node id is null: " + node);

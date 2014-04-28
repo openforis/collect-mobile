@@ -114,4 +114,8 @@ public class ViewModelManager {
         for (UiRecord.Placeholder record : recordPlaceholders)
             uiSurvey.lookupRecordCollection(record.getRecordCollectionName()).addChild(record);
     }
+
+    public void removeNode(UiNode node) {
+        repo.removeNode(node);
+    }
 }

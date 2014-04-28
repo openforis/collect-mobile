@@ -7,6 +7,7 @@ import org.openforis.collect.android.viewmodel.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.openforis.collect.android.viewmodelmanager.NodeDto.Collection;
@@ -28,6 +29,8 @@ public interface ViewModelRepository {
     void updateAttribute(UiAttribute attribute);
 
     void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus);
+
+    void removeNode(UiNode node);
 
 
     public static class DatabaseViewModelRepository implements ViewModelRepository {
@@ -93,6 +96,19 @@ public interface ViewModelRepository {
 
         public void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus) {
             repo.update(uiAttributeToDto(attribute), recordStatus.name());
+        }
+
+        public void removeNode(UiNode node) {
+            repo.removeAll(toIds(node));
+        }
+
+        private List<Integer> toIds(UiNode node) {
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(node.getId());
+            if (node instanceof UiInternalNode)
+                for (UiNode childNode : ((UiInternalNode) node).getChildren())
+                    ids.addAll(toIds(childNode));
+            return ids;
         }
 
         private UiRecord toRecord(UiSurvey survey, Collection nodeCollection) {

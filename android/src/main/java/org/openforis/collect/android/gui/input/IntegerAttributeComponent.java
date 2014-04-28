@@ -15,10 +15,6 @@ public class IntegerAttributeComponent extends EditTextAttributeComponent<UiInte
         super(attribute, surveyService, context);
     }
 
-    protected boolean hasChanged(String newValue) {
-        return !StringUtils.equals(attributeValue(), newValue);
-    }
-
     protected String attributeValue() {
         return attribute.getValue() == null ? "" : attribute.getValue().toString();
     }

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -16,12 +15,13 @@ import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.viewmodel.UiDateAttribute;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static org.openforis.collect.android.viewmodel.UiDateAttribute.format;
+import static org.openforis.collect.android.viewmodel.UiDateAttribute.parse;
 
 /**
  * @author Daniel Wiell
@@ -36,12 +36,6 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         view.addView(selectedDateView);
         view.addView(createButton());
         view.setOrientation(LinearLayout.HORIZONTAL);
-    }
-
-    protected boolean hasChanged(String newValue) {
-        if (newValue == null)
-            return attribute.getDate() != null;
-        return !newValue.equals(attributeValue());
     }
 
     protected String attributeValue() {
@@ -86,15 +80,6 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         });
         return button;
     }
-
-    private String format(Date date) {
-        return new SimpleDateFormat(UiDateAttribute.DATE_PATTERN).format(date);
-    }
-
-    private Date parse(String newValue) throws ParseException {
-        return new SimpleDateFormat(UiDateAttribute.DATE_PATTERN).parse(newValue);
-    }
-
 
     private class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         public Dialog onCreateDialog(Bundle savedInstanceState) {

@@ -44,9 +44,18 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = createView(inflater, container, savedInstanceState);
 
-        String label = node.getLabel() + " "; // Extra space to provide some space to an eventual validation error icon
-        ((TextView) rootView.findViewById(R.id.node_label)).setText(label);
+        setOrRemoveText(rootView, R.id.node_label, node.getLabel() + " ");
+        setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
+        setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
         return rootView;
+    }
+
+    private void setOrRemoveText(View rootView, int textViewId, String text) {
+        TextView textView = (TextView) rootView.findViewById(textViewId);
+        if (text == null)
+            ((ViewManager) textView.getParent()).removeView(textView);
+        else
+            textView.setText(text);
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {

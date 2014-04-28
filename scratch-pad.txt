@@ -1,8 +1,15 @@
+Node description, prompt, pattern message
+
 Label of code attributes when adding record/entity is null
     CodeConverter
+        Solve this when rendering the an enumerated entity collection? Ugly but should work.
 
 More components
-    Time and date as EditText with pop-up
+    Boolean
+    Multiple code
+    Units of numbers
+    Integer range
+    Double range
 
 Radio buttons - none selected option?
     So it value is unknown, user can reset the component
@@ -30,7 +37,6 @@ Validate attributes when adding record/entity, so required attributes show up re
     Manage required validation our self? Add required flag on AttributeDefinition, and check if empty?
 
 Set status to OK whenever an attribute is irrelevant
-
 
 Text when multiplicity but no items
 

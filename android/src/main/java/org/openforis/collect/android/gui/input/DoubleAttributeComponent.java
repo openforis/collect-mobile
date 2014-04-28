@@ -17,10 +17,6 @@ public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubl
         super(attribute, surveyService, context);
     }
 
-    protected boolean hasChanged(String newValue) {
-        return !StringUtils.equals(attributeValue(), newValue);
-    }
-
     protected String attributeValue() {
         return attribute.getValue() == null ? "" : attribute.getValue().toString();
     }

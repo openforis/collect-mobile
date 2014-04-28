@@ -8,16 +8,21 @@ public class Definition {
     public final String name; // TODO: Needed?
     public final String label;
     public final Integer keyOfDefinitionId;
+    public final String description;
+    public final String prompt;
+
 
     public Definition(String id, String name, String label) {
-        this(id, name, label, null);
+        this(id, name, label, null, null, null);
     }
 
-    public Definition(String id, String name, String label, Integer keyOfDefinitionId) {
+    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description, String prompt) {
         this.id = id;
         this.name = name;
         this.label = label;
         this.keyOfDefinitionId = keyOfDefinitionId;
+        this.description = description;
+        this.prompt = prompt;
     }
 
     public boolean isKeyOf(UiNode uiNode) {

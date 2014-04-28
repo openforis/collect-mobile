@@ -15,10 +15,6 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
         super(attribute, surveyService, context);
     }
 
-    protected boolean hasChanged(String newValue) {
-        return !StringUtils.equals(newValue, attribute.getText());
-    }
-
     protected String attributeValue() {
         return attribute.getText();
     }

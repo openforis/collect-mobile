@@ -31,7 +31,11 @@ public class UiCoordinateAttribute extends UiAttribute {
         return x == null || y == null;
     }
 
+    public String format() {
+        return (x == null ? "Unspecified" : x) + ", " + (y == null ? "Unspecified" : y);
+    }
+
     public String toString() {
-        return getLabel() + ": " + (x == null ? "Unspecified" : x) + ", " + (y == null ? "Unspecified" : y);
+        return getLabel() + ": " + format();
     }
 }

@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
 import android.view.View;

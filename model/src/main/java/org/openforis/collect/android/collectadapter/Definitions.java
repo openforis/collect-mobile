@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
@@ -30,18 +31,19 @@ public class Definitions {
     private void addSurveyDefinitions() {
         List<LanguageSpecificText> labels = collectSurvey.getProjectNames();
         String label = labels.isEmpty() ? "Survey" : labels.get(0).getText();
+        String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
         addDefinition(
-                new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label)
-        );
-        List<EntityDefinition> rootEntityDefinitions = collectSurvey.getSchema().getRootEntityDefinitions();
+                new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null)
+            );
+    List<EntityDefinition> rootEntityDefinitions = collectSurvey.getSchema().getRootEntityDefinitions();
 
-        for (EntityDefinition entityDefinition : rootEntityDefinitions)
-            addNodeDefinition(entityDefinition);
+    for (EntityDefinition entityDefinition : rootEntityDefinitions)
+    addNodeDefinition(entityDefinition);
 
-        for (UITabSet tabSet : collectSurvey.getUIOptions().getTabSets())
+    for (UITabSet tabSet : collectSurvey.getUIOptions().getTabSets())
             for (UITab tab : tabSet.getTabs())
-                addTabDefinition(tab);
-    }
+    addTabDefinition(tab);
+}
 
     private void addTabDefinition(UITab tab) {
         addDefinition(
@@ -71,9 +73,10 @@ public class Definitions {
         Integer keyOfDefinitionId = getKeyOfDefinitionId(nodeDefinition);
         if (nodeDefinition instanceof TaxonAttributeDefinition)
             return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
-                    ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy());
+                    ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
+                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition));
         else
-            return new Definition(id, name, label, keyOfDefinitionId);
+            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition));
     }
 
     private Definition createCollectionDefinition(NodeDefinition nodeDefinition, Definition childDefinition) {
@@ -88,7 +91,9 @@ public class Definitions {
                 collectionNodeDefinitionId(nodeDefinition),
                 nodeDefinition.getName(),
                 collectionLabel(nodeDefinition),
-                getKeyOfDefinitionId(nodeDefinition)
+                getKeyOfDefinitionId(nodeDefinition),
+                nodeDescription(nodeDefinition),
+                nodePrompt(nodeDefinition)
         );
     }
 
@@ -161,5 +166,22 @@ public class Definitions {
 
     private String label(UITab tab) {
         return tab.getLabels().get(0).getText(); // TODO: Take language and type into account
+    }
+
+    private String nodeDescription(NodeDefinition nodeDefinition) {
+        return normalizeWhiteSpace(nodeDefinition.getDescription()); // TODO: Take language into account
+    }
+
+    private String nodePrompt(NodeDefinition nodeDefinition) {
+        List<Prompt> prompts = nodeDefinition.getPrompts(); // TODO: Take language and type into account
+        if (prompts == null || prompts.isEmpty())
+            return null;
+        return normalizeWhiteSpace(prompts.get(0).getText());
+    }
+
+    private String normalizeWhiteSpace(String s) {
+        if (s == null)
+            return null;
+        return s.replaceAll("[\\s]+", " ");
     }
 }

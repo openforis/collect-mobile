@@ -21,8 +21,6 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         editText = createEditText();
     }
 
-    protected abstract boolean hasChanged(String newValue);
-
     protected abstract String attributeValue();
 
     protected abstract void updateAttributeValue(String newValue);
@@ -49,6 +47,12 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     public final View getDefaultFocusedView() {
         return editText;
+    }
+
+    private boolean hasChanged(String newValue) {
+        if (newValue == null)
+            return !attribute.isEmpty();
+        return !StringUtils.equals(attributeValue(), newValue);
     }
 
     private String getEditTextString() {

@@ -33,12 +33,6 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         view.setOrientation(LinearLayout.HORIZONTAL);
     }
 
-    protected boolean hasChanged(String newValue) {
-        if (newValue == null)
-            return !attribute.isEmpty();
-        return !newValue.equals(attributeValue());
-    }
-
     protected String attributeValue() {
         return attribute.format();
     }

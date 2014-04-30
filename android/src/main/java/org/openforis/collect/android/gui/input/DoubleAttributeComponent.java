@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
-import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 
@@ -19,6 +18,16 @@ public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubl
 
     protected String attributeValue() {
         return attribute.getValue() == null ? "" : attribute.getValue().toString();
+    }
+
+    protected boolean hasChanged(String newValue) {
+        boolean changed = super.hasChanged(newValue);
+        try {
+            if (changed && attribute.getValue() != null && newValue != null)
+                changed = !attribute.getValue().equals(Double.parseDouble(newValue));
+        } catch (NumberFormatException ignore) {
+        }
+        return changed;
     }
 
     protected void updateAttributeValue(String newValue) {

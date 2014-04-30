@@ -35,37 +35,39 @@ class ViewModelManagerTest extends Specification {
         attribute.text = 'Non-empty value'
 
         when:
-        manager.updateAttribute(attribute, validationErrors(attribute))
+        manager.updateAttribute(attribute, attributeChanges(attribute))
 
         then:
         attribute.status == OK
-        1 * repo.updateAttribute(attribute)
+        1 * repo.updateAttribute(attribute, _)
     }
 
 
     def 'When updating an attribute with validation warnings, status is changed to VALIDATION_WARNING'() {
         when:
-        manager.updateAttribute(attribute, validationErrors(attribute, WARNING))
+        manager.updateAttribute(attribute, attributeChanges(attribute, WARNING))
 
         then:
         attribute.status == VALIDATION_WARNING
-        1 * repo.updateAttribute(attribute, _)
+        1 * repo.updateAttribute(attribute, _, _)
     }
 
-    private def validationErrors(UiTextAttribute uiAttribute, UiValidationError.Level... levels) {
+    private def attributeChanges(UiTextAttribute uiAttribute, UiValidationError.Level... levels) {
         def errors = levels.collect { new UiValidationError(it as String, it, uiAttribute) } as Set
-        def validationErrorsByAttribute = [(uiAttribute): errors]
-        validationErrorsByAttribute
+        def attributeChange = new UiAttributeChange()
+        attributeChange.validationErrors = errors
+        attributeChange.statusChange = true
+        return [(uiAttribute): attributeChange]
     }
 
 
     def 'When updating an attribute with validation warnings and errors, status is changed to VALIDATION_ERROR'() {
         when:
-        manager.updateAttribute(attribute, validationErrors(attribute, WARNING, ERROR))
+        manager.updateAttribute(attribute, attributeChanges(attribute, WARNING, ERROR))
 
         then:
         attribute.status == VALIDATION_ERROR
-        1 * repo.updateAttribute(attribute, _)
+        1 * repo.updateAttribute(attribute, _, _)
     }
 
 
@@ -73,7 +75,7 @@ class ViewModelManagerTest extends Specification {
         assert entity.status == OK
 
         when:
-        manager.updateAttribute(attribute, validationErrors(attribute, WARNING))
+        manager.updateAttribute(attribute, attributeChanges(attribute, WARNING))
         then:
         entity.status == VALIDATION_WARNING
     }

@@ -49,7 +49,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         return editText;
     }
 
-    private boolean hasChanged(String newValue) {
+    protected boolean hasChanged(String newValue) {
         if (newValue == null)
             return !attribute.isEmpty();
         return !StringUtils.equals(attributeValue(), newValue);

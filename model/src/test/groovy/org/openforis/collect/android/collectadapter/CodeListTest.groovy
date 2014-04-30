@@ -94,15 +94,12 @@ class CodeListTest extends Specification {
     Set<UiValidationError> errors(UiAttribute attribute) {
         def attributeChangeEvents = listener.attributeChangeEvents
         return attributeChangeEvents.collect {
-            it.errorsByAttribute[attribute]
+            it.attributeChanges[attribute]?.validationErrors
         }.findAll()
     }
 
-    Map<UiAttribute, UiValidationError> errors() {
-        listener.attributeChangeEvents.collect {
-            it.errorsByAttribute.findAll { it.value }
-        }.findAll().sum()
-
+    List<UiValidationError> errors() {
+        listener.attributeChangeEvents.collect { it.validationErrors }.findAll()
     }
 
     UiCode uiCode(String code) {
@@ -176,8 +173,8 @@ class CodeListTest extends Specification {
             selectNodeEvents.add(previous: previous, selected: selected)
         }
 
-        void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> errorsByAttribute) {
-            attributeChangeEvents.add(attribute: attribute, errorsByAttribute: errorsByAttribute)
+        void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+            attributeChangeEvents.add(attribute: attribute, attributeChanges: attributeChanges)
         }
     }
 }

@@ -140,15 +140,20 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     @SuppressWarnings("unchecked")
-    public Map<UiAttribute, Set<UiValidationError>> updateAttribute(UiAttribute uiAttribute) {
-        Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
-        Value value = AttributeConverter.toValue(uiAttribute);
-        NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        // TODO: This shouldn't be called errors, it contains the updates
-        Map<UiAttribute, Set<UiValidationError>> errors = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).parseErrors();
-        if (uiAttribute instanceof UiCodeAttribute)
-            updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, errors.keySet());
-        return errors;
+    public Map<UiAttribute, UiAttributeChange> updateAttribute(final UiAttribute uiAttribute) {
+        // TODO: Remove timing
+        return Timer.time(CollectModelManager.class, "updateAttribute(" + uiAttribute + ")", new Callable<Map<UiAttribute, UiAttributeChange>>() {
+            public Map<UiAttribute, UiAttributeChange> call() throws Exception {
+                Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
+                Value value = AttributeConverter.toValue(uiAttribute);
+                NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
+                // TODO: This shouldn't be called attributeChanges, it contains the updates
+                Map<UiAttribute, UiAttributeChange> attributeChanges = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
+                if (uiAttribute instanceof UiCodeAttribute)
+                    updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, attributeChanges.keySet());
+                return attributeChanges;
+            }
+        });
     }
 
     /**

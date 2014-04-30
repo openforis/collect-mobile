@@ -1,12 +1,17 @@
-When changing an attribute, update relevance on dependent attributes
+Irrelevant nodes
+    Overlay node details when irrelevant
 
 Input components
     Boolean
-    Multiple code
     Coordinate srs id
     Units of numbers
     Integer range
     Double range
+
+Enumerated entity
+    Attribute names sometimes show up twice in entity String representation
+        Household Survey/General/Control information
+    Code label not loaded when code never been set, but defaulted
 
 Radio buttons - none selected option?
     So it value is unknown, user can reset the component
@@ -14,12 +19,11 @@ Radio buttons - none selected option?
 Remove record/entity/attribute
 
 Validation when adding record/entity
+
 Unique validation working?
 
-Re-implement RecordDao using the node database?
-    Needed for uniqueness checks
-
-Irrelevant nodes
+Re-implement RecordDao using the node database
+    Needed for record key uniqueness checks
 
 Node pattern message
 
@@ -29,18 +33,12 @@ Label of code attributes when adding record/entity is null
 
 ----------------------------
 
+Large code lists - search db
+
+----------------------------
+
 Setting region is slow
     added temporary caching - fix properly
-    try to override more methods in CodeListDao
-
-
-When changing record key attribute (Measurement in Cluster Details)
-    Check for uniqueness is made - RecordManager uses RecordDao do do this
-
-Validate attributes when adding record/entity, so required attributes show up red
-    Manage required validation our self? Add required flag on AttributeDefinition, and check if empty?
-
-Set status to OK whenever an attribute is irrelevant
 
 Text when multiplicity but no items
 

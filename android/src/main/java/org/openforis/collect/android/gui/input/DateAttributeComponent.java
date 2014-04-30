@@ -93,7 +93,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
             int day = c.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
-            if (AndroidVersion.greaterThen10())
+            if (AndroidVersion.greaterThan10())
                 configureForNewerAndroids(dialog);
 
             return dialog;

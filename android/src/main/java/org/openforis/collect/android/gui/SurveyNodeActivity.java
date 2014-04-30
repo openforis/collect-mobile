@@ -21,7 +21,6 @@ import org.openforis.collect.android.viewmodel.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -73,24 +72,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         selectedNode = selected;
     }
 
-    public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-        nodePagerFragment.onAttributeChange(attribute);
-        if (!validationErrorsByAttribute.isEmpty())
-            onValidationError(validationErrorsByAttribute);
+    public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        nodePagerFragment.onAttributeChange(attribute, attributeChanges);
         support.onAttributeChanged(attribute);
-    }
-
-    private void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-        // TODO: Implement.
-//        StringBuilder s = new StringBuilder();
-//        for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
-//            UiValidationError error = iterator.next();
-//            s.append(error.toString());
-//            if (iterator.hasNext())
-//                s.append('\n');
-//        }
-//        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
-        nodePagerFragment.onValidationError(validationErrorsByAttribute);
     }
 
     public void nextAttribute(MenuItem item) {// TODO: Implement this properly - should not only navigate siblings

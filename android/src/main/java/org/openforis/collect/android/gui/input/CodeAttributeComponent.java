@@ -46,7 +46,6 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         UiCode newCode = selectedCode();
         if (hasChanged(newCode)) {
             attribute.setCode(newCode);
-            notifyAboutAttributeChange();
             return true;
         }
         return false;

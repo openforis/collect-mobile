@@ -5,10 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiAttributeCollection;
-import org.openforis.collect.android.viewmodel.UiNode;
-import org.openforis.collect.android.viewmodel.UiValidationError;
+import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,8 +37,13 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
      */
     protected abstract Set<UiAttribute> updateChangedAttributes();
 
-    public void onAttributeChange(UiAttribute attribute) {
-        // Do nothing by default
+    public final void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        for (UiAttribute changedAttribute : attributeChanges.keySet())
+            if (isInAttributeCollection(changedAttribute)) {
+                Set<UiValidationError> validationErrors = attributeChanges.get(changedAttribute).validationErrors;
+                if (validationErrors != null)
+                    setValidationError(attribute, validationErrors);
+            }
     }
 
     public int getViewResource() {
@@ -75,15 +77,6 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
     public final void validateNode() {
         for (UiNode uiNode : attributeCollection.getChildren())
             validateAttribute((UiAttribute) uiNode);
-    }
-
-    public final void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-        for (UiAttribute attribute : validationErrorsByAttribute.keySet())
-            if (isInAttributeCollection(attribute)) {
-                Set<UiValidationError> validationErrors = validationErrorsByAttribute.get(attribute);
-                if (validationErrors != null)
-                    setValidationError(attribute, validationErrors);
-            }
     }
 
     private boolean isInAttributeCollection(UiAttribute attribute) {

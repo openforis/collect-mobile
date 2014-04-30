@@ -30,7 +30,7 @@ public abstract class UiAttribute extends UiNode {
         }
     }
 
-    private UiNode.Status determineStatus(Set<UiValidationError> validationErrors) {
+    public UiNode.Status determineStatus(Set<UiValidationError> validationErrors) {
         UiNode.Status newStatus;
         if (validationErrors.isEmpty())
             newStatus = isEmpty()

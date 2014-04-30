@@ -8,6 +8,7 @@ import org.openforis.collect.android.util.persistence.Database;
 import java.io.File;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
@@ -94,15 +95,31 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void update(final NodeDto node, final String recordStatus) {
+    public void update(final NodeDto node, final List<Map<String, Object>> statusChanges, final String recordStatus) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 updateAttribute(connection, node);
                 if (recordStatus != null)
                     updateRecordStatus(connection, node.recordId, recordStatus);
+                updateStatusChanges(connection, statusChanges);
                 return null;
             }
         });
+    }
+
+    private void updateStatusChanges(Connection connection, List<Map<String, Object>> statusChanges) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("" +
+                "UPDATE ofc_view_model\n" +
+                "SET relevant = ?, status = ?\n" +
+                "WHERE id = ?");
+        for (Map<String, Object> statusChange : statusChanges) {
+            ps.setBoolean(1, (Boolean) statusChange.get("relevant"));
+            ps.setString(2, (String) statusChange.get("status"));
+            ps.setInt(3, (Integer) statusChange.get("id"));
+            ps.addBatch();
+        }
+        ps.executeBatch();
+        ps.close();
     }
 
     private void updateRecordStatus(Connection connection, int recordId, String recordStatus) throws SQLException {

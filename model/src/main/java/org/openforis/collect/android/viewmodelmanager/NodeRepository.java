@@ -1,6 +1,7 @@
 package org.openforis.collect.android.viewmodelmanager;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
@@ -11,7 +12,7 @@ public interface NodeRepository {
 
     NodeDto.Collection recordNodes(int recordId);
 
-    void update(NodeDto node, String recordStatus);
+    void update(NodeDto node, List<Map<String, Object>> statusChanges, String recordStatus);
 
     NodeDto.Collection surveyRecords(int surveyId);
 

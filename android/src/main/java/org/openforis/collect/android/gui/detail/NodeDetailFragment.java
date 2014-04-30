@@ -1,8 +1,10 @@
 package org.openforis.collect.android.gui.detail;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
@@ -10,6 +12,8 @@ import android.support.v4.view.MenuItemCompat;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -18,7 +22,6 @@ import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -27,9 +30,12 @@ import java.util.Set;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
+    private static final int RELEVANT_OVERLAY_COLOR = Color.parseColor("#00000000");
+    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
     private boolean selected;
 
     private T node;
+    private ViewGroup overlay;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +53,20 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(rootView, R.id.node_label, node.getLabel() + " ");
         setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
-        return rootView;
+
+        FrameLayout frameLayout = new FrameLayout(getActivity());
+        frameLayout.addView(rootView);
+        frameLayout.addView(createOverlay());
+        return frameLayout;
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private View createOverlay() {
+        overlay = new LinearLayout(getActivity());
+        overlay.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        updateOverlay();
+        return overlay;
     }
 
     private void setOrRemoveText(View rootView, int textViewId, String text) {
@@ -60,6 +79,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         if (selected)
             onSelected();
     }
@@ -97,8 +117,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAttributeChange(UiAttribute attribute) {
-        // Empty default implementation
+    public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        updateOverlay();
     }
 
     public void onDeselect() {
@@ -129,15 +149,19 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return null;
     }
 
+    protected abstract View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+
+
+    protected T node() {
+        return node;
+    }
+
 
     private void showAttributeListPopup() {
         NodeListDialogFragment dialogFragment = new NodeListDialogFragment();
         dialogFragment.setRetainInstance(true);
         dialogFragment.show(getFragmentManager(), null);
     }
-
-    protected abstract View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
-
     @SuppressWarnings("unchecked")
     private T lookupNode(int recordId, int nodeId) {
         SurveyService surveyService = ServiceLocator.surveyService();
@@ -146,10 +170,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return (T) surveyService.lookupNode(nodeId);
     }
 
-    protected T node() {
-        return node;
+    private void updateOverlay() {
+        if (node != null && overlay != null)
+            overlay.setBackgroundColor(node.isRelevant() ? RELEVANT_OVERLAY_COLOR : IRRELEVANT_OVERLAY_COLOR);
     }
-
 
     private void showKeyboard(View view) {
         view.requestFocus();
@@ -184,9 +208,5 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (node instanceof UiInternalNode)
             return new InternalNodeDetailFragment();
         throw new IllegalStateException("Unexpected node type: " + node.getClass());
-    }
-
-    public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-        // Ignore by default
     }
 }

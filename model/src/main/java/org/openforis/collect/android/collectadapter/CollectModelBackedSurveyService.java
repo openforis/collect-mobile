@@ -67,10 +67,12 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private void lazilyInitValidationErrors(UiAttribute attribute) {
         if (attribute.getValidationErrors() == null) {
-            Map<UiAttribute, Set<UiValidationError>> validationErrors = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
+            Map<UiAttribute, UiAttributeChange> attributeChanges = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
                     ? collectModelManager.updateAttribute(attribute) // TODO: Not semantically an update.
-                    : Collections.<UiAttribute, Set<UiValidationError>>emptyMap();
-            attribute.setValidationErrors(validationErrors.get(attribute));
+                    : Collections.<UiAttribute, UiAttributeChange>emptyMap();
+            UiAttributeChange attributeChange = attributeChanges.get(attribute);
+            if (attributeChange != null)
+                attribute.setValidationErrors(attributeChange.validationErrors);
         }
     }
 
@@ -123,22 +125,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
         }
     }
 
-    // TODO: Remove
-    @Deprecated
-    public void updateAttributeCollection(UiAttributeCollection attributeCollection) {
-        for (UiNode attribute : attributeCollection.getChildren())
-            updateAttribute((UiAttribute) attribute); // TODO: Do this in transaction?
-        // Push to viewModelManager? Separate notification (listener.onAttributeChanged)?
-    }
-
-    public void updateAttribute(UiAttribute attribute) {
-        Map<UiAttribute, Set<UiValidationError>> validationErrors = collectModelManager.updateAttribute(attribute);
+    public void updateAttribute(UiAttribute attributeToUpdate) {
+        Map<UiAttribute, UiAttributeChange> attributeChanges = collectModelManager.updateAttribute(attributeToUpdate);
         // TODO: Do this in transaction
-        for (UiAttribute uiAttribute : validationErrors.keySet()) {
-            viewModelManager.updateAttribute(uiAttribute, validationErrors);
-            if (listener != null)
-                listener.onAttributeChanged(uiAttribute, validationErrors);
-        }
+        viewModelManager.updateAttribute(attributeToUpdate, attributeChanges);
+        if (listener != null)
+            for (UiAttribute uiAttribute : attributeChanges.keySet())
+                listener.onAttributeChanged(uiAttribute, attributeChanges);
     }
 
     public void setListener(SurveyListener listener) {

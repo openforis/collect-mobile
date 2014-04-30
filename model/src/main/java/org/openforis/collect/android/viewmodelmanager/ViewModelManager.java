@@ -3,9 +3,10 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -95,18 +96,30 @@ public class ViewModelManager {
         repo.insertAttribute(attribute);
     }
 
-    public void updateAttribute(UiAttribute attribute, Map<UiAttribute, Set<UiValidationError>> validationErrors) {
+    public void updateAttribute(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        // TODO: Update status and relevance of all related attributes, if it changed
+        // TODO: We want attribute change events, not just validation errors
         UiNode.Status oldRecordStatus = attribute.getUiRecord().getStatus();
-        for (UiAttribute attributeWithValidationError : validationErrors.keySet()) {
-            Set<UiValidationError> errors = validationErrors.get(attributeWithValidationError);
-            attributeWithValidationError.setValidationErrors(errors);
-            attributeWithValidationError.updateStatus(errors);
+        List<Map<String, Object>> statusChanges = new ArrayList<Map<String, Object>>();
+        for (final UiAttribute changedAttribute : attributeChanges.keySet()) {
+            UiAttributeChange attributeChange = attributeChanges.get(changedAttribute);
+            changedAttribute.setValidationErrors(attributeChange.validationErrors);
+            if (attributeChange.relevanceChange || attributeChange.statusChange) {
+                changedAttribute.updateStatus(attributeChange.validationErrors);
+                if (attributeChange.relevanceChange)
+                    changedAttribute.setRelevant(!changedAttribute.isRelevant());
+                statusChanges.add(new HashMap<String, Object>() {{
+                    put("id", changedAttribute.getId());
+                    put("status", changedAttribute.getStatus().name());
+                    put("relevant", changedAttribute.isRelevant());
+                }});
+            }
         }
         UiNode.Status newRecordStatus = attribute.getUiRecord().getStatus();
         if (oldRecordStatus == newRecordStatus)
-            repo.updateAttribute(attribute);
+            repo.updateAttribute(attribute, statusChanges);
         else
-            repo.updateAttribute(attribute, newRecordStatus);
+            repo.updateAttribute(attribute, statusChanges, newRecordStatus);
     }
 
     private void addRecordPlaceholders(UiSurvey uiSurvey) {

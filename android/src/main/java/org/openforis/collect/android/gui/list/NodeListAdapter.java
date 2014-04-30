@@ -48,7 +48,7 @@ public class NodeListAdapter extends BaseAdapter {
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
-            if (AndroidVersion.greaterThen10()) {
+            if (AndroidVersion.greaterThan10()) {
                 TypedValue typedValue = new TypedValue();
                 context.getTheme().resolveAttribute(android.R.attr.activatedBackgroundIndicator, typedValue, true);
                 row.setBackgroundResource(typedValue.resourceId);
@@ -66,8 +66,10 @@ public class NodeListAdapter extends BaseAdapter {
         UiNode node = nodes.get(position);
         holder.text.setText(getText(node));
         if (!node.isRelevant())
-            holder.text.setTextColor(Color.parseColor("#636363"));
-        holder.status.setImageResource(iconResource(node)); // TODO: Change depending on type
+            holder.text.setTextColor(Color.parseColor("#636363")); // TODO: Don't hard-code colors
+        else
+            holder.text.setTextColor(Color.parseColor("#FFFFFF"));
+        holder.status.setImageResource(iconResource(node));
 
         return row;
     }

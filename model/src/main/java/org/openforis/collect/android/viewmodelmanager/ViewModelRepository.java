@@ -5,10 +5,7 @@ import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.openforis.collect.android.viewmodelmanager.NodeDto.Collection;
 
@@ -26,9 +23,9 @@ public interface ViewModelRepository {
 
     void insertAttribute(UiAttribute attribute);
 
-    void updateAttribute(UiAttribute attribute);
+    void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges);
 
-    void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus);
+    void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges, UiNode.Status recordStatus);
 
     void removeNode(UiNode node);
 
@@ -90,12 +87,12 @@ public interface ViewModelRepository {
             repo.insert(Arrays.asList(uiAttributeToDto(attribute)));
         }
 
-        public void updateAttribute(UiAttribute attribute) {
-            repo.update(uiAttributeToDto(attribute), null);
+        public void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges) {
+            repo.update(uiAttributeToDto(attribute), statusChanges, null);
         }
 
-        public void updateAttribute(UiAttribute attribute, UiNode.Status recordStatus) {
-            repo.update(uiAttributeToDto(attribute), recordStatus.name());
+        public void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges, UiNode.Status recordStatus) {
+            repo.update(uiAttributeToDto(attribute), statusChanges, recordStatus.name());
         }
 
         public void removeNode(UiNode node) {

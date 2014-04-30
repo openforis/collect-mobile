@@ -75,7 +75,7 @@ class ViewModelRepositoryTest extends Specification {
         attribute.text = 'Updated'
 
         when:
-        repo.updateAttribute(attribute)
+        repo.updateAttribute(attribute, [])
         def loadedRecord = repo.recordById(nodes.survey, record.id)
 
         then:

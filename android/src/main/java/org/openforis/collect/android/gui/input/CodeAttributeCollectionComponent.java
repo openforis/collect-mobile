@@ -1,19 +1,10 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
-import android.util.SparseArray;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
-import org.openforis.collect.android.viewmodel.*;
-
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 
 /**
  * @author Daniel Wiell
@@ -28,7 +19,7 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
 
     public static CodeAttributeCollectionComponent create(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();
-        int maxCodeListSize = codeListService.getMaxCodeListSize(attributeCollection.getDefinition().attributeDefinition);  // TODO: Different implementations depending on  list size
+        int maxCodeListSize = codeListService.getMaxCodeListSize(attributeCollection.getDefinition().attributeDefinition);
         if (maxCodeListSize <= CodeAttributeComponent.RADIO_GROUP_MAX_SIZE)
             return new CheckboxCodeAttributeCollectionComponent(attributeCollection, codeListService, surveyService, context);
         return new AutoCompleteCodeAttributeCollectionComponent(attributeCollection, codeListService, surveyService, context);

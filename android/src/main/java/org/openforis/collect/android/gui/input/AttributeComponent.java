@@ -6,6 +6,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiAttributeChange;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Map;
@@ -61,8 +62,15 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
      */
     protected abstract boolean updateAttributeIfChanged();
 
-    public void onAttributeChange(UiAttribute attribute) {
+    protected void onAttributeChange(UiAttribute attribute) {
         // Do nothing by default
+    }
+
+    public final void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        onAttributeChange(attribute);
+        UiAttributeChange attributeChange = attributeChanges.get(attribute);
+        if (attributeChange != null)
+            setValidationError(attributeChange.validationErrors);
     }
 
     protected final void notifyAboutAttributeChange() {
@@ -87,12 +95,6 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
 
     public final void validateNode() {
         Set<UiValidationError> validationErrors = attribute.getValidationErrors();
-        if (validationErrors != null)
-            setValidationError(validationErrors);
-    }
-
-    public final void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-        Set<UiValidationError> validationErrors = validationErrorsByAttribute.get(attribute);
         if (validationErrors != null)
             setValidationError(validationErrors);
     }

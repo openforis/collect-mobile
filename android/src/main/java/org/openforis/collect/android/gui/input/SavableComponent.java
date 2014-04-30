@@ -13,7 +13,6 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
-import java.util.Set;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -46,9 +45,7 @@ public abstract class SavableComponent {
 
     public abstract void validateNode();
 
-    public abstract void onAttributeChange(UiAttribute attribute);
-
-    public abstract void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute);
+    public abstract void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges);
 
     protected abstract void resetValidationErrors();
 
@@ -126,10 +123,6 @@ public abstract class SavableComponent {
             view.setText("Unsupported attribute collection type: " + attributeCollection.getDefinition().attributeType.getSimpleName());
         }
 
-        public void onValidationError(Map<UiAttribute, Set<UiValidationError>> validationErrorsByAttribute) {
-
-        }
-
         public int getViewResource() {
             return R.layout.fragment_attribute_detail;
         }
@@ -146,7 +139,7 @@ public abstract class SavableComponent {
 
         }
 
-        public void onAttributeChange(UiAttribute attribute) {
+        public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
 
         }
 

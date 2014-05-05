@@ -1,5 +1,21 @@
-Irrelevant nodes
-    Overlay node details when irrelevant
+Remove record/entity/attribute
+Conversion
+
+Integer/Double Unit
+Boolean
+Range
+
+--------
+
+Relevance of internal nodes
+    Relevant if any child nodes are relevant
+
+Checkbox
+    We can actually get validation error on AttributeCollection
+        Checking too many boxes
+        But, there is an empty attribute created by default
+    When making irrelevant then relevant, wrong checks
+    Required label not showing up when required but none checked
 
 Input components
     Boolean

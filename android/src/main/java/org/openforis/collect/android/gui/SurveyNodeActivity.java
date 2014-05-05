@@ -135,8 +135,11 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     private void navigateDown() {
         if (selectedNode instanceof UiInternalNode) {
+            UiInternalNode node = (UiInternalNode) selectedNode;
+            if (node.getChildCount() == 0)
+                return; // TODO: Handle case where tab contains no children
             startActivity(
-                    createSelectNodeIntent(((UiInternalNode) selectedNode).getFirstChild())
+                    createSelectNodeIntent(node.getFirstChild())
             );
         }
     }

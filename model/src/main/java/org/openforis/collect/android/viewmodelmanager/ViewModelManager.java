@@ -129,6 +129,7 @@ public class ViewModelManager {
     }
 
     public void removeNode(UiNode node) {
+        node.removeFromParent();
         repo.removeNode(node);
     }
 }

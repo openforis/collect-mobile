@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
+import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
@@ -168,19 +169,13 @@ public class Definitions {
     }
 
     private String nodeDescription(NodeDefinition nodeDefinition) {
-        return normalizeWhiteSpace(nodeDefinition.getDescription()); // TODO: Take language into account
+        return StringUtils.normalizeWhiteSpace(nodeDefinition.getDescription()); // TODO: Take language into account
     }
 
     private String nodePrompt(NodeDefinition nodeDefinition) {
         List<Prompt> prompts = nodeDefinition.getPrompts(); // TODO: Take language and type into account
         if (prompts == null || prompts.isEmpty())
             return null;
-        return normalizeWhiteSpace(prompts.get(0).getText());
-    }
-
-    private String normalizeWhiteSpace(String s) {
-        if (s == null)
-            return null;
-        return s.replaceAll("[\\s]+", " ");
+        return StringUtils.normalizeWhiteSpace(prompts.get(0).getText());
     }
 }

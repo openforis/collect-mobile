@@ -36,7 +36,7 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
     }
 
     public Value value(UiCoordinateAttribute uiAttribute) {
-        return new Coordinate(uiAttribute.getX(), uiAttribute.getY(), null); // TODO: srsId needed?
+        return new Coordinate(uiAttribute.getX(), uiAttribute.getY(), "EPSG:32717"); // TODO: Don't hard code srsId
     }
 
     protected CoordinateAttribute attribute(UiCoordinateAttribute uiAttribute, NodeDefinition definition) {

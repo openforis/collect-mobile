@@ -81,9 +81,16 @@ class UiModelBuilder {
 
         private List<UiNode> createUiNodesForTabs(List<UITab> tabs, Entity parentEntity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
-            for (UITab tab : tabs)
-                nodes.add(createUiNodeForTab(tab, parentEntity));
+            for (UITab tab : tabs) {
+                UiNode tabNode = createUiNodeForTab(tab, parentEntity);
+                if (!isEmptyInternalNode(tabNode))
+                    nodes.add(tabNode);
+            }
             return nodes;
+        }
+
+        private boolean isEmptyInternalNode(UiNode tabNode) {
+            return tabNode instanceof UiInternalNode && ((UiInternalNode) tabNode).getChildCount() == 0;
         }
 
         private UiNode createUiNodeForTab(UITab tab, Entity parentEntity) {

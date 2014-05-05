@@ -29,6 +29,11 @@ public class UiRecord extends UiEntity {
         nodeById.put(node.getId(), node);
     }
 
+    public void unregister(UiNode node) {
+        super.unregister(node);
+        nodeById.remove(node.getId());
+    }
+
     public UiNode lookupNode(int nodeId) {
         return nodeById.get(nodeId); // TODO: Throw exception if not found?
     }

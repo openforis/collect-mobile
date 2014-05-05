@@ -4,6 +4,7 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
+import org.openforis.collect.android.util.persistence.PreparedStatementHelper;
 
 import java.io.File;
 import java.sql.*;
@@ -242,55 +243,35 @@ public class DataSourceNodeRepository implements NodeRepository {
     }
 
     private void bind(PreparedStatement ps, NodeDto node) throws SQLException {
-        int i = 0;
-        ps.setBoolean(++i, node.relevant);
-        ps.setString(++i, node.status);
-        setIntOrNull(++i, node.parentId, ps);
-        setIntOrNull(++i, node.parentEntityId, ps);
-        ps.setString(++i, node.definitionId);
-        ps.setInt(++i, node.surveyId);
-        ps.setInt(++i, node.recordId);
-        ps.setString(++i, node.recordCollectionName);
-        ps.setBoolean(++i, node.recordKeyAttribute);
-        ps.setInt(++i, node.type.id);
-        ps.setString(++i, node.text);
-        setIntOrNull(++i, node.date == null ? null : node.date.getTime(), ps);
-        setIntOrNull(++i, node.hour, ps);
-        setIntOrNull(++i, node.minute, ps);
-        ps.setString(++i, node.codeValue);
-        ps.setString(++i, node.codeLabel);
-        setBooleanOrNull(++i, node.booleanValue, ps);
-        setIntOrNull(++i, node.intValue, ps);
-        setIntOrNull(++i, node.intFrom, ps);
-        setIntOrNull(++i, node.intTo, ps);
-        setDoubleOrNull(++i, node.doubleValue, ps);
-        setDoubleOrNull(++i, node.doubleFrom, ps);
-        setDoubleOrNull(++i, node.doubleTo, ps);
-        setDoubleOrNull(++i, node.x, ps);
-        setDoubleOrNull(++i, node.y, ps);
-        ps.setString(++i, node.taxonCode);
-        ps.setString(++i, node.taxonScientificName);
-        setStringOrNull(++i, node.file == null ? null : node.file.getAbsolutePath(), ps);
-        ps.setInt(++i, node.id);
-    }
-
-    private void setIntOrNull(int i, Number value, PreparedStatement ps) throws SQLException {
-        if (value == null) ps.setNull(i, Types.INTEGER);
-        else ps.setLong(i, value.longValue());
-    }
-
-    private void setDoubleOrNull(int i, Double value, PreparedStatement ps) throws SQLException {
-        if (value == null) ps.setNull(i, Types.REAL);
-        else ps.setDouble(i, value);
-    }
-
-    private void setBooleanOrNull(int i, Boolean value, PreparedStatement ps) throws SQLException {
-        if (value == null) ps.setNull(i, Types.BOOLEAN);
-        else ps.setBoolean(i, value);
-    }
-
-    private void setStringOrNull(int i, String value, PreparedStatement ps) throws SQLException {
-        if (value == null) ps.setNull(i, Types.VARCHAR);
-        else ps.setString(i, value);
+        PreparedStatementHelper psh = new PreparedStatementHelper(ps);
+        psh.setBoolean(node.relevant);
+        psh.setString(node.status);
+        psh.setIntOrNull(node.parentId);
+        psh.setIntOrNull(node.parentEntityId);
+        psh.setString(node.definitionId);
+        psh.setInt(node.surveyId);
+        psh.setInt(node.recordId);
+        psh.setString(node.recordCollectionName);
+        psh.setBoolean(node.recordKeyAttribute);
+        psh.setInt(node.type.id);
+        psh.setString(node.text);
+        psh.setLongOrNull(node.date == null ? null : node.date.getTime());
+        psh.setIntOrNull(node.hour);
+        psh.setIntOrNull(node.minute);
+        psh.setString(node.codeValue);
+        psh.setString(node.codeLabel);
+        psh.setBooleanOrNull(node.booleanValue);
+        psh.setIntOrNull(node.intValue);
+        psh.setIntOrNull(node.intFrom);
+        psh.setIntOrNull(node.intTo);
+        psh.setDoubleOrNull(node.doubleValue);
+        psh.setDoubleOrNull(node.doubleFrom);
+        psh.setDoubleOrNull(node.doubleTo);
+        psh.setDoubleOrNull(node.x);
+        psh.setDoubleOrNull(node.y);
+        psh.setString(node.taxonCode);
+        psh.setString(node.taxonScientificName);
+        psh.setStringOrNull(node.file == null ? null : node.file.getAbsolutePath());
+        psh.setInt(node.id);
     }
 }

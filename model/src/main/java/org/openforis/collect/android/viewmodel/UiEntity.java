@@ -28,4 +28,12 @@ public class UiEntity extends UiInternalNode {
             keyAttributeIds.add(node.getId());
         }
     }
+
+    public void unregister(UiNode node) {
+        super.unregister(node);
+        if (node instanceof UiAttribute && node.getDefinition().isKeyOf(this)) {
+            keyAttributes.remove(node);
+            keyAttributeIds.remove(node.getId());
+        }
+    }
 }

@@ -14,9 +14,25 @@ public class UiInternalNode extends UiNode {
         super(id, definition);
     }
 
+    public boolean isRelevant() { // TODO: Not intuitive, should be done elsewhere, so GUI can be notified
+        boolean relevant = super.isRelevant();
+        if (relevant && !children.isEmpty()) { // Is relevant only if there is a relevant child
+            for (UiNode child : children)
+                if (child.isRelevant())
+                    return true;
+            return false;
+        }
+        return relevant;
+    }
+
     public void register(UiNode node) {
         if (getParent() != null)
             getParent().register(node);
+    }
+
+    public void unregister(UiNode node) {
+        if (getParent() != null)
+            getParent().unregister(node);
     }
 
     public List<UiNode> getChildren() {
@@ -89,5 +105,11 @@ public class UiInternalNode extends UiNode {
 
     public String toString() {
         return getLabel();
+    }
+
+    public void removeChild(UiNode node) {
+        childById.remove(node.getId());
+        children.remove(node);
+        unregister(node);
     }
 }

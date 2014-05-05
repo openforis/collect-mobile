@@ -1,6 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
 import org.apache.commons.lang3.Validate;
+import org.openforis.collect.android.util.StringUtils;
 
 /**
  * @author Daniel Wiell
@@ -12,7 +13,7 @@ public class UiCode {
     public UiCode(String value, String label) {
         Validate.notEmpty(value, "value is required");
         this.value = value;
-        this.label = label;
+        this.label = StringUtils.normalizeWhiteSpace(label);
     }
 
     public String getValue() {

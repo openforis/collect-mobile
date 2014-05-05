@@ -135,6 +135,11 @@ public abstract class UiNode {
         return id;
     }
 
+    public void removeFromParent() {
+        if (parent != null)
+            parent.removeChild(this);
+    }
+
     public static enum Status {
         OK, EMPTY, VALIDATION_WARNING, VALIDATION_ERROR;
 

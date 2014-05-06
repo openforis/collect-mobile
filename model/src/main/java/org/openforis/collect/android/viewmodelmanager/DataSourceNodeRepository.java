@@ -20,6 +20,12 @@ public class DataSourceNodeRepository implements NodeRepository {
     public DataSourceNodeRepository(Database database) {
         this.database = database;
         IdGenerator.setLastId(lastId());
+        database.execute(new ConnectionCallback<Object>() {
+            public Object execute(Connection connection) throws SQLException {
+                connection.createStatement().execute("delete from ofc_view_model");
+                return null;
+            }
+        });
     }
 
     private int lastId() {
@@ -65,6 +71,18 @@ public class DataSourceNodeRepository implements NodeRepository {
                     ps.addBatch();
                 }
                 ps.executeBatch();
+                ps.close();
+                return null;
+            }
+        });
+    }
+
+    public void removeRecord(final int recordId) {
+        database.execute(new ConnectionCallback<Void>() {
+            public Void execute(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement("DELETE FROM ofc_view_model WHERE record_id = ?");
+                ps.setInt(1, recordId);
+                ps.executeUpdate();
                 ps.close();
                 return null;
             }

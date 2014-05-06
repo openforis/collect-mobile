@@ -14,15 +14,9 @@ apply plugin: 'android'
 
 repositories {
     mavenLocal()
-    maven {
-        url "http://www.openforis.org/nexus/content/groups/public/"
-    }
-    maven {
-        url "http://www.openforis.org/nexus/content/repositories/snapshots/"
-    }
-    maven {
-        url "https://github.com/dahlgren/vpi-aar/raw/master"
-    }
+    maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+    maven { url "http://www.openforis.org/nexus/content/repositories/snapshots/" }
+    maven { url "https://github.com/dahlgren/vpi-aar/raw/master" }
 }
 
 dependencies {
@@ -30,6 +24,9 @@ dependencies {
     compile('com.viewpagerindicator:library:2.4.2-SNAPSHOT') {
         exclude group: 'com.google.android'
     }
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'de.timroes.android:EnhancedListView:0.3.2@aar'
+
     compile 'com.android.support:support-v4:19.+'
     compile 'com.android.support:appcompat-v7:19.+'
 

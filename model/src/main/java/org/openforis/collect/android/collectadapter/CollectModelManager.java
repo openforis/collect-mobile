@@ -19,17 +19,13 @@ import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.ModelVersion;
-import org.openforis.idm.model.Attribute;
-import org.openforis.idm.model.CodeAttribute;
-import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Value;
+import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -181,6 +177,12 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         recordManager.deleteNode(attribute);
         recordNodes.remove(uiAttribute.getId());
+    }
+
+    public void removeEntity(int entityId) {
+        Node node = recordNodes.getEntityById(entityId);
+        recordManager.deleteNode(node);
+        recordNodes.remove(entityId);
     }
 
     public void recordSelected(UiRecord uiRecord) {

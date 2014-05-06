@@ -15,6 +15,7 @@ import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class NodeListAdapter extends BaseAdapter {
 
     public NodeListAdapter(Context context, UiInternalNode parentNode) {
         this.context = context;
-        this.nodes = parentNode.getChildren();
+        this.nodes = new ArrayList<UiNode>(parentNode.getChildren());
     }
 
     public UiNode getItem(int position) {
@@ -94,6 +95,22 @@ public class NodeListAdapter extends BaseAdapter {
             default:
                 throw new IllegalStateException("Unexpected node status: " + node.getStatus());
         }
+    }
+
+    public void insert(int position, UiNode node) {
+        nodes.add(position, node);
+        notifyDataSetChanged();
+//        parentNode.addChild(position, node);
+//        node.init();
+
+    }
+
+    public void remove(int position) {
+        UiNode node = nodes.get(position);
+//        node.removeFromParent();
+//        node.getParent().unregister(node);
+        nodes.remove(position);
+        notifyDataSetChanged();
     }
 
     private static class NodeHolder {

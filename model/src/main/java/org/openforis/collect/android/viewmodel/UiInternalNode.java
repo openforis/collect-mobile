@@ -40,7 +40,11 @@ public class UiInternalNode extends UiNode {
     }
 
     public void addChild(UiNode node) {
-        children.add(node);
+        addChild(children.size(), node);
+    }
+
+    public void addChild(int position, UiNode node) {
+        children.add(position, node);
         childById.put(node.getId(), node);
         node.setParent(this);
     }

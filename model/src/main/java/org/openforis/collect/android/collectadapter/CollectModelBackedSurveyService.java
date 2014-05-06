@@ -111,10 +111,28 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return attribute;
     }
 
-    public void removeAttribute(UiAttribute attribute) {
+    public void removeAttribute(int attributeId) {
+        UiNode node = selectedNode().getUiRecord().lookupNode(attributeId);
+        if (!(node instanceof UiAttribute))
+            throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
+        UiAttribute attribute = (UiAttribute) node;
         collectModelManager.removeAttribute(attribute);
         viewModelManager.removeNode(attribute);
-        // TODO: Implement...
+    }
+
+    public void removeEntity(int entityId) {
+        UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
+        if (!(node instanceof UiEntity))
+            throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
+        UiEntity entity = (UiEntity) node;
+        collectModelManager.removeEntity(entity.getId());
+        viewModelManager.removeNode(entity);
+    }
+
+    public void removeRecord(int recordId) {
+        UiRecordCollection recordCollection = (UiRecordCollection) selectedNode();
+        UiRecord.Placeholder record = (UiRecord.Placeholder) recordCollection.getChildById(recordId);
+        viewModelManager.removeNode(record);
     }
 
     public void updateAttributes(Set<UiAttribute> attributes) {

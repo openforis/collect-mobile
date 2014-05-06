@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:padding="16dp"/>
 
-    <ListView
+
+    <de.timroes.android.listview.EnhancedListView
             android:paddingTop="32dp"
             android:padding="16dp"
             android:id="@+id/entity_list"

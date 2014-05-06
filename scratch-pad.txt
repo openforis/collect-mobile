@@ -167,7 +167,8 @@ http://www.infoq.com/presentations/Android-Protips
     48:00 Can handle intent (camera?)
 
 
-
+https://github.com/timroes/EnhancedListView/wiki
+https://github.com/47deg/android-swipelistview#xml-usage
 
 
 IDEAS

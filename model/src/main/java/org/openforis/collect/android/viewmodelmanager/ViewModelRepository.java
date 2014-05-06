@@ -5,7 +5,10 @@ import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.openforis.collect.android.viewmodelmanager.NodeDto.Collection;
 
@@ -96,7 +99,10 @@ public interface ViewModelRepository {
         }
 
         public void removeNode(UiNode node) {
-            repo.removeAll(toIds(node));
+            if (node instanceof UiRecord.Placeholder)
+                repo.removeRecord(node.getId());
+            else
+                repo.removeAll(toIds(node));
         }
 
         private List<Integer> toIds(UiNode node) {

@@ -103,7 +103,8 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                                 if (isChecked)
                                     attributesByCode.put(code, surveyService.addCodeAttribute(code));
                                 else {
-                                    surveyService.removeAttribute(attributesByCode.get(code));
+                                    int attributeId = attributesByCode.get(code).getId();
+                                    surveyService.removeAttribute(attributeId);
                                     attributesByCode.remove(code);
                                 }
                             }

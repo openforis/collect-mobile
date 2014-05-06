@@ -35,7 +35,11 @@ public interface SurveyService {
 
     void updateAttribute(UiAttribute attribute);
 
-    void removeAttribute(UiAttribute attribute);
+    void removeAttribute(int attributeId);
+
+    void removeEntity(int entityId);
+
+    void removeRecord(int recordId);
 
     void setListener(SurveyListener listener);
 }

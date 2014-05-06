@@ -3,13 +3,14 @@ package org.openforis.collect.android.gui.detail;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import de.timroes.android.listview.EnhancedListView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
+import org.openforis.collect.android.viewmodel.UiNode;
 
 /**
  * @author Daniel Wiell
@@ -33,6 +34,11 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         }
     }
 
+    public void onPause() {
+        super.onPause();
+        listView(getView()).discardUndo(); // Prevent node to be re-inserted
+    }
+
     public void onResume() {
         super.onResume();
         setupNodeCollection(getView());
@@ -46,20 +52,49 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     protected abstract UiInternalNode getSelectedNode(int position, T nodeCollection);
 
+    protected abstract void removeNode(UiNode node);
+
     protected SurveyService surveyService() {
         return ServiceLocator.surveyService();
     }
 
     private void setupNodeCollection(View rootView) {
-        ListView nodeListView = (ListView) rootView.findViewById(R.id.entity_list);
-        nodeListView.setAdapter(new EntityListAdapter(getActivity(), node()));
-        nodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final EntityListAdapter adapter = new EntityListAdapter(getActivity(), node());
+        EnhancedListView listView = listView(rootView);
+        listView.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
+        listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
+            public EnhancedListView.Undoable onDismiss(EnhancedListView enhancedListView, final int position) {
+                final UiNode node = adapter.getItem(position);
+                adapter.remove(position);
+                return new EnhancedListView.Undoable() {
+                    public void undo() {
+                        adapter.insert(position, node);
+                    }
+
+                    public void discard() {
+                        removeNode(node);
+                    }
+
+                    public String getTitle() {
+                        return adapter.getText(node) + " deleted";
+                    }
+                };
+            }
+        });
+        listView.enableSwipeToDismiss();
+        listView.setSwipeDirection(EnhancedListView.SwipeDirection.END);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 T nodeCollection = node();
                 UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
                 nodeNavigator().navigateTo(selectedNode.getFirstChild().getId());
             }
         });
+    }
+
+    private EnhancedListView listView(View rootView) {
+        return (EnhancedListView) rootView.findViewById(R.id.entity_list);
     }
 
     private NodeNavigator nodeNavigator() {

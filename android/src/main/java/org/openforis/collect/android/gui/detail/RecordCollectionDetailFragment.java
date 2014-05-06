@@ -17,4 +17,8 @@ public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetail
         UiNode recordPlaceholder = recordCollection.getChildAt(position);
         return surveyService().selectRecord(recordPlaceholder.getId());
     }
+
+    protected void removeNode(UiNode node) {
+        surveyService().removeRecord(node.getId());
+    }
 }

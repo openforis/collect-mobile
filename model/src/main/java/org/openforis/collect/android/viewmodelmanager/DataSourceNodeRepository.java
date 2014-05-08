@@ -20,12 +20,6 @@ public class DataSourceNodeRepository implements NodeRepository {
     public DataSourceNodeRepository(Database database) {
         this.database = database;
         IdGenerator.setLastId(lastId());
-        database.execute(new ConnectionCallback<Object>() {
-            public Object execute(Connection connection) throws SQLException {
-                connection.createStatement().execute("delete from ofc_view_model");
-                return null;
-            }
-        });
     }
 
     private int lastId() {

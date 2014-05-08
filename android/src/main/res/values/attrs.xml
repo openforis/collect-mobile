@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RightFocusedHorizontalScrollView"/>
+
+    <attr name="standardPadding" format="reference|dimension"/>
+    <attr name="standardDoublePadding" format="reference|dimension"/>
+    <attr name="relevantTextColor" format="reference|color"/>
+    <attr name="irrelevantTextColor" format="reference|color"/>
+    <attr name="titleIndicatorColor" format="reference|color"/>
+
+    <attr name="breadcrumbButton" format="reference"/>
+    <attr name="nextIcon" format="reference"/>
+    <attr name="goToTodayIcon" format="reference"/>
+    <attr name="timeIcon" format="reference"/>
+    <attr name="viewAsListIcon" format="reference"/>
 </resources>

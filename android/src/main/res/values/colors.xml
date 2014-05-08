@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="breadcrumb_button_pressed">#808080</color>
+    <color name="dark_disabled_color">#636363</color>
+    <color name="light_title_indicator_text_color">#BBFFFFFF</color>
+    <color name="dark_title_indicator_text_color">#BB000000</color>
+    <color name="light_disabled_color">#9E9E9E</color>
 </resources>
 

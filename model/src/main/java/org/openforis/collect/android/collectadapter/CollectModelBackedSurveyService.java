@@ -30,8 +30,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return survey;
     }
 
-    public UiSurvey loadSurvey(String name) {
-        UiSurvey survey = collectModelManager.loadSurvey(name);
+    public UiSurvey loadSurvey() {
+        UiSurvey survey = collectModelManager.loadSurvey();
         if (survey != null)
             viewModelManager.selectSurvey(survey);
         return survey;

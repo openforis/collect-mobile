@@ -86,8 +86,7 @@ public class ServiceLocator {
     }
 
     private static void loadOrImportSurvey(SurveyService surveyService) {
-        String surveyName = "survey";
-        UiSurvey uiSurvey = surveyService.loadSurvey(surveyName);
+        UiSurvey uiSurvey = surveyService.loadSurvey();
         if (uiSurvey == null)
             surveyService.importSurvey(idmXmlStream());
     }

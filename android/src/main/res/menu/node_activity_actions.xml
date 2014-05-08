@@ -7,9 +7,10 @@
             android:showAsAction="never"
             app:showAsAction="never"
             android:onClick="export"/>
-    <!--<item-->
-            <!--android:id="@+id/action_settings"-->
-            <!--android:title="@string/action_settings"-->
-            <!--android:showAsAction="never"-->
-            <!--app:showAsAction="never"/>-->
+    <item
+            android:id="@+id/action_settings"
+            android:title="@string/action_settings"
+            android:showAsAction="never"
+            app:showAsAction="never"
+            android:orderInCategory="100000"/>
 </menu>

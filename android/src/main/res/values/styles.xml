@@ -2,18 +2,28 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat">
+        <item name="standardPadding">16dp</item>
+        <item name="standardDoublePadding">32dp</item>
+        <item name="relevantTextColor">@android:color/white</item>
+        <item name="irrelevantTextColor">@color/dark_disabled_color</item>
+        <item name="breadcrumbButton">@drawable/breadcrumb_button</item>
+        <item name="titleIndicatorColor">@color/light_title_indicator_text_color</item>
+        <item name="nextIcon">@drawable/ic_action_next_item</item>
+        <item name="goToTodayIcon">@drawable/ic_action_go_to_today</item>
+        <item name="timeIcon">@drawable/ic_action_time</item>
+        <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
     </style>
 
-    <!--<style name="NodeList">-->
-        <!--<item name="android:layout_width">match_parent</item>-->
-        <!--<item name="android:layout_height">wrap_content</item>-->
-        <!--<item name="android:textAppearance">?android:attr/textAppearanceMedium</item>-->
-        <!--<item name="android:gravity">center_vertical</item>-->
-        <!--&lt;!&ndash;<item name="android:paddingStart">8dip</item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="android:paddingEnd">8dip</item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="android:background">@android:drawable/activated_background_holo_dark</item>&ndash;&gt;-->
-        <!--<item name="android:minHeight">?android:attr/listPreferredItemHeight</item>-->
-    <!--</style>-->
+    <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="relevantTextColor">@android:color/black</item>
+        <item name="irrelevantTextColor">@color/light_disabled_color</item>
+        <item name="breadcrumbButton">@drawable/breadcrumb_button_light</item>
+        <item name="titleIndicatorColor">@color/dark_title_indicator_text_color</item>
+        <item name="nextIcon">@drawable/ic_action_next_item_light</item>
+        <item name="goToTodayIcon">@drawable/ic_action_go_to_today_light</item>
+        <item name="timeIcon">@drawable/ic_action_time_light</item>
+        <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
+    </style>
 
     <style name="BreadCrumbs">
         <item name="background">@drawable/abc_ic_ab_back_holo_dark</item>

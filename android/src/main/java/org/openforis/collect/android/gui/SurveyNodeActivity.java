@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ListFragment;
@@ -37,6 +39,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
+        ThemeInitializer.init(this);
         ServiceLocator.init(getApplicationContext());
         nodePagerFragment = new NodePagerFragment();
         surveyService = ServiceLocator.surveyService();
@@ -58,8 +61,17 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         if (id == android.R.id.home) {
             navigateUp();
             return true;
+        } else if (id == R.id.action_settings) {
+            settings();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void settings() {
+        Class activityClass = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
+                ? SettingsActivity.class
+                : SettingsFragmentActivity.class;
+        startActivity(new Intent(this, activityClass));
     }
 
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
@@ -124,13 +136,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     protected void onPause() {
         surveyService.setListener(null);
         super.onPause();
-    }
-
-    protected void onSaveInstanceState(Bundle outState) {
-        if (!(selectedNode instanceof UiRecordCollection)) // TODO: Ugly
-            outState.putInt(ARG_RECORD_ID, selectedNode.getUiRecord().getId());
-        outState.putInt(ARG_NODE_ID, selectedNode.getId());
-        super.onSaveInstanceState(outState);
     }
 
     private void navigateDown() {

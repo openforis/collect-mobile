@@ -3,36 +3,14 @@
 
     <item
             android:id="@+id/action_attribute_list"
-            android:icon="@drawable/ic_action_view_as_list"
+            android:icon="?attr/viewAsListIcon"
             android:title="@string/action_node_list"
             android:showAsAction="never"
             app:showAsAction="never"/>
 
-    <!--<item-->
-            <!--android:id="@+id/action_edit_entity"-->
-            <!--android:icon="@drawable/ic_action_edit"-->
-            <!--android:title="@string/action_edit_node"-->
-            <!--android:onClick="navigateDown"-->
-            <!--android:showAsAction="ifRoom"-->
-            <!--app:showAsAction="ifRoom"/>-->
-
-    <!--<item-->
-            <!--android:id="@+id/action_lock_entity"-->
-            <!--android:icon="@drawable/ic_action_secure"-->
-            <!--android:title="@string/action_lock_node"-->
-            <!--android:showAsAction="ifRoom"-->
-            <!--app:showAsAction="ifRoom"/>-->
-
-    <!--<item-->
-            <!--android:id="@+id/action_attribute_details"-->
-            <!--android:icon="@drawable/ic_action_about"-->
-            <!--android:title="@string/action_node_details"-->
-            <!--android:showAsAction="never"-->
-            <!--app:showAsAction="never"/>-->
-
     <item
             android:id="@+id/action_next_attribute"
-            android:icon="@drawable/ic_action_next_item"
+            android:icon="?attr/nextIcon"
             android:title="@string/action_next_attribute"
             android:onClick="nextAttribute"
             android:showAsAction="ifRoom"

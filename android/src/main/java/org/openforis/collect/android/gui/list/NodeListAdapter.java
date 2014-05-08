@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.list;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
@@ -25,10 +25,12 @@ public class NodeListAdapter extends BaseAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
     private final Context context;
     private final List<UiNode> nodes;
+    private Attrs attrs;
 
     public NodeListAdapter(Context context, UiInternalNode parentNode) {
         this.context = context;
         this.nodes = new ArrayList<UiNode>(parentNode.getChildren());
+        this.attrs = new Attrs(context);
     }
 
     public UiNode getItem(int position) {
@@ -67,13 +69,14 @@ public class NodeListAdapter extends BaseAdapter {
         UiNode node = nodes.get(position);
         holder.text.setText(getText(node));
         if (!node.isRelevant())
-            holder.text.setTextColor(Color.parseColor("#636363")); // TODO: Don't hard-code colors
+            holder.text.setTextColor(attrs.color(R.attr.irrelevantTextColor));
         else
-            holder.text.setTextColor(Color.parseColor("#FFFFFF"));
+            holder.text.setTextColor(attrs.color(R.attr.relevantTextColor));
         holder.status.setImageResource(iconResource(node));
 
         return row;
     }
+
 
     public String getText(UiNode node) {
         return node.getLabel();

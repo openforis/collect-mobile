@@ -25,7 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        j
+        <activity android:label="@string/app_name"
+                  android:name=".android.gui.SettingsActivity" />
+        <activity android:label="@string/app_name"
+                  android:name=".android.gui.SettingsFragmentActivity" />
     </application>
 
 </manifest>

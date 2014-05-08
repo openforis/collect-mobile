@@ -87,10 +87,15 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         }
     }
 
-    public UiSurvey loadSurvey(final String name) {
+    public UiSurvey loadSurvey() {
         CollectSurvey collectSurvey = Timer.time(SurveyDao.class, "loadSurvey", new Callable<CollectSurvey>() {
             public CollectSurvey call() throws Exception {
-                return surveyManager.getSurveyDao().load(name);
+                SurveyDao surveyDao = surveyManager.getSurveyDao();
+                List<SurveySummary> surveySummaries = surveyDao.loadSummaries();
+                if (surveySummaries == null || surveySummaries.isEmpty())
+                    return null;
+                SurveySummary surveySummary = surveySummaries.get(0);
+                return surveyDao.load(surveySummary.getName());
             }
         });
         if (collectSurvey == null)

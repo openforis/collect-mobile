@@ -1,6 +1,5 @@
-Remove record/entity/attribute
-Conversion
-
+Remove attribute from collection
+Conversion of coordinates
 Integer/Double Unit
 Boolean
 Range
@@ -169,6 +168,8 @@ http://www.infoq.com/presentations/Android-Protips
 
 https://github.com/timroes/EnhancedListView/wiki
 https://github.com/47deg/android-swipelistview#xml-usage
+
+http://www.anddev.org/applying_a_theme_to_your_application-t817.html
 
 
 IDEAS

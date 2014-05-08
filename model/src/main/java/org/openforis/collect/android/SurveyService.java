@@ -11,7 +11,7 @@ import java.util.Set;
 public interface SurveyService {
     UiSurvey importSurvey(InputStream inputStream);
 
-    UiSurvey loadSurvey(String name);
+    UiSurvey loadSurvey();
 
     boolean isRecordSelected(int recordId);
 

@@ -9,6 +9,7 @@ import android.widget.*;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 
 import java.util.ArrayList;
@@ -22,8 +23,10 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * A fragment representing the parents of a node.
  */
 public class NodeParentsFragment extends Fragment {
+    private Attrs attrs;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        attrs = new Attrs(getActivity());
         UiInternalNode node = ServiceLocator.surveyService().selectedNode().getParent();
         View view = inflater.inflate(R.layout.fragment_node_parents, container, false);
         final HorizontalScrollView scrollView = (HorizontalScrollView) view.findViewById(R.id.node_parents_scroll_view);
@@ -61,7 +64,7 @@ public class NodeParentsFragment extends Fragment {
 
     private View createSeparator() {
         ImageView imageView = new ImageView(getActivity());
-        imageView.setImageResource(R.drawable.ic_action_next_item);
+        imageView.setImageResource(attrs.resourceId(R.attr.nextIcon));
         return imageView;
     }
 
@@ -82,7 +85,7 @@ public class NodeParentsFragment extends Fragment {
                 ? createSurveyButton()
                 : createNodeButton(parentNode);
         view.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, MATCH_PARENT));
-        view.setBackgroundResource(R.drawable.breadcrumb_button);
+        view.setBackgroundResource(attrs.resourceId(R.attr.breadcrumbButton));
         view.setPadding(0, 0, 0, 0);
         view.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -95,7 +98,8 @@ public class NodeParentsFragment extends Fragment {
     private View createNodeButton(UiInternalNode parentNode) {
         Button button = new Button(getActivity());
         button.setText(parentNode.getLabel());
-        int textColor = getResources().getColor(R.color.default_title_indicator_text_color);
+
+        int textColor = attrs.color(R.attr.titleIndicatorColor);
         button.setTextColor(textColor);
         button.setMinimumWidth(1);
         return button;

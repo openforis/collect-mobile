@@ -13,7 +13,6 @@ public class UiTimeAttribute extends UiAttribute {
 
     public UiTimeAttribute(int id, Definition definition) {
         super(id, definition);
-        setCurrentTime();
     }
 
     public synchronized Integer getHour() {
@@ -33,14 +32,8 @@ public class UiTimeAttribute extends UiAttribute {
         return hour == null || minute == null;
     }
 
-    private void setCurrentTime() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        setTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-    }
-
     public String format() {
-        return isEmpty() ? "Undefined time" : format(hour, minute);
+        return isEmpty() ? "" : format(hour, minute);
     }
 
     public static String format(int hour, int minute) {
@@ -50,6 +43,6 @@ public class UiTimeAttribute extends UiAttribute {
     }
 
     public String toString() {
-        return format();
+        return isEmpty() ? "Undefined time" : format();
     }
 }

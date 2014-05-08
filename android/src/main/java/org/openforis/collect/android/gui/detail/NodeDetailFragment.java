@@ -60,6 +60,13 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return frameLayout;
     }
 
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void onResume() {
+        super.onResume();
+    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private View createOverlay() {

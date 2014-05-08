@@ -12,6 +12,7 @@ import android.widget.*;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.AndroidVersion;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiDateAttribute;
 
 import java.text.ParseException;
@@ -69,7 +70,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     private View createButton() {
         ImageButton button = new ImageButton(context);
         view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-        button.setImageResource(R.drawable.ic_action_go_to_today);
+        button.setImageResource(new Attrs(context).resourceId(R.attr.goToTodayIcon));
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveNode();

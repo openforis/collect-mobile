@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+            android:title="Collect Server URL"
+            android:key="serverUrl"
+            android:summary="Please provide the Collect Server URL"/>
+    <SwitchPreference
+            android:title="Collect Mobile theme"
+            android:defaultValue="true"
+            android:switchTextOn="Dark"
+            android:switchTextOff="Light"
+            android:summaryOn="Collect Mobile uses the dark theme."
+            android:summaryOff="Collect Mobile uses the light theme."
+            android:key="darkTheme"
+            />
+</PreferenceScreen>

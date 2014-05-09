@@ -22,6 +22,7 @@ import org.openforis.idm.model.expression.ExpressionFactory
  * @author Daniel Wiell
  */
 class TestCollectModelFactory {
+    public static final File UNUSED_EXPORT_FILE = null
     static CollectModelBackedSurveyService surveyService(NodeTestDatabase nodeDatabase, ModelTestDatabase modelDatabase) {
         def recordManager = recordManager
         def codeListManager = new CodeListManager(codeListItemDao: new CodeListItemDao(dataSource: modelDatabase.dataSource()))
@@ -34,7 +35,7 @@ class TestCollectModelFactory {
                                 new DataSourceNodeRepository(nodeDatabase)
                         )
                 ),
-                collectModelManager
+                collectModelManager, UNUSED_EXPORT_FILE
         )
     }
     static CollectModelManager collectModelManager(Database database) {

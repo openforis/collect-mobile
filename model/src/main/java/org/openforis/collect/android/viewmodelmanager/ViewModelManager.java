@@ -24,6 +24,9 @@ public class ViewModelManager {
     public UiSurvey getSelectedSurvey() {
         return selectedSurvey;
     }
+    public Integer getSelectedRecordId() {
+        return selectedRecord == null ? null : selectedRecord.getId();
+    }
 
     public boolean isRecordSelected(int recordId) {
         return selectedNode != null && selectedRecord.getId() == recordId;
@@ -44,12 +47,17 @@ public class ViewModelManager {
     }
 
     public UiRecord selectRecord(int recordId) {
-        selectedRecord = repo.recordById(selectedSurvey, recordId);
-        selectedRecord.updateStatusOfNodeAndDescendants();
-        selectedRecord.updateStatusOfParents(); // TODO: This should sbe done at record.init()? Ugly anyway
-        if (selectedRecord == null)
+        this.selectedRecord = loadRecord(recordId);
+        return loadRecord(recordId);
+    }
+
+    private UiRecord loadRecord(int recordId) {
+        UiRecord record = repo.recordById(selectedSurvey, recordId);
+        if (record == null)
             throw new IllegalStateException("No record found with id " + recordId);
-        return selectedRecord;
+        record.updateStatusOfNodeAndDescendants();
+        record.updateStatusOfParents(); // TODO: This should sbe done at record.init()? Ugly anyway
+        return record;
     }
 
     public void addEntity(final UiEntity entity) {

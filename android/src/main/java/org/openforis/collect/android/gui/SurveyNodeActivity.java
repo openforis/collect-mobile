@@ -1,10 +1,8 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -13,14 +11,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import org.apache.commons.io.FileUtils;
+import android.widget.Toast;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -107,16 +104,23 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         navigateDown();
     }
 
-    // TODO: Temporary, for demo
     public void export(MenuItem item) {
-        File storageDir = Environment.getExternalStorageDirectory();
-        File collectDir = new File(storageDir, "Collect");
+//        File storageDir = Environment.getExternalStorageDirectory();
+//        File collectDir = new File(storageDir, "Collect");
+//
+//        try {
+//            FileUtils.copyFileToDirectory(getDatabasePath("model"), collectDir);
+//            FileUtils.copyFileToDirectory(getDatabasePath("nodes"), collectDir);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        // TODO: Show progress bar - so we need some callback to know how far we got...
 
         try {
-            FileUtils.copyFileToDirectory(getDatabasePath("model"), collectDir);
-            FileUtils.copyFileToDirectory(getDatabasePath("nodes"), collectDir);
+            surveyService.exportSurvey();
         } catch (IOException e) {
-            e.printStackTrace();
+            Toast.makeText(this, "Failed to export survey: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

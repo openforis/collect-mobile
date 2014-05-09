@@ -4,7 +4,10 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
+import org.openforis.collect.model.CollectRecord;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
@@ -16,12 +19,14 @@ import java.util.Set;
 public class CollectModelBackedSurveyService implements SurveyService {
     private final ViewModelManager viewModelManager;
     private final CollectModelManager collectModelManager;
+    private final File exportFile;
 
     private SurveyListener listener;
 
-    public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager) {
+    public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager, File exportFile) {
         this.viewModelManager = viewModelManager;
         this.collectModelManager = collectModelManager;
+        this.exportFile = exportFile;
     }
 
     public UiSurvey importSurvey(InputStream inputStream) {
@@ -150,6 +155,20 @@ public class CollectModelBackedSurveyService implements SurveyService {
         if (listener != null)
             for (UiAttribute uiAttribute : attributeChanges.keySet())
                 listener.onAttributeChanged(uiAttribute, attributeChanges);
+    }
+
+    public void exportSurvey() throws IOException {
+        Integer selectedRecordId = viewModelManager.getSelectedRecordId();
+
+        new SurveyExporter(viewModelManager.getSelectedSurvey(), new SurveyExporter.CollectRecordProvider() {
+            public CollectRecord record(int recordId) {
+                selectRecord(recordId);
+                return collectModelManager.getCollectRecord(recordId);
+            }
+        }).export(exportFile);
+
+        if (selectedRecordId != null)
+            selectRecord(selectedRecordId);
     }
 
     public void setListener(SurveyListener listener) {

@@ -233,6 +233,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         return codeListSizeEvaluator.size((CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id)));
     }
 
+    public CollectRecord getCollectRecord(int recordId) {
+        Entity rootEntity = recordNodes.getEntityById(recordId);
+        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
+        collectRecord.setId(recordId);
+        collectRecord.setRootEntity(rootEntity);
+        return collectRecord;
+    }
+
     private AttributeDefinition getDefinition(UiAttribute uiAttribute) {
         int definitionId = Integer.parseInt(uiAttribute.getDefinition().id);
         return (AttributeDefinition) selectedSurvey.getSchema().getDefinitionById(definitionId);

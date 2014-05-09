@@ -17,6 +17,7 @@ import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Node;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -83,7 +84,7 @@ class NodeChangeSetParser {
     private void parseRequiredValidationError(UiAttribute uiAttribute, EntityChange entityChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = errorMessageSource.getMessage("validation.requiredField");
+            String message = errorMessageSource.getMessage(Locale.getDefault(), "validation.requiredField");
             addValidationError(new UiValidationError(message, level(validationResultFlag), uiAttribute), attributeChanges);
         }
     }
@@ -124,7 +125,7 @@ class NodeChangeSetParser {
     }
 
     private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
-        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult);
+        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.getDefault());
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }
 

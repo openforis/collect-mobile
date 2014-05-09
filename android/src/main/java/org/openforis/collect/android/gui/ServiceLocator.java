@@ -125,8 +125,12 @@ public class ServiceLocator {
                 new ViewModelManager(
                         new DatabaseViewModelRepository(collectModelManager, new DataSourceNodeRepository(database))
                 ),
-                collectModelManager
+                collectModelManager, exportFile()
         );
+    }
+
+    private static File exportFile() {
+        return new File(collectDir(), "survey_export.zip");
     }
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {

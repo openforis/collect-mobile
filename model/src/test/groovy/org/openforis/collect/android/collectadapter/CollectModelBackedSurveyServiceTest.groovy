@@ -14,6 +14,7 @@ import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository
  */
 @SuppressWarnings("GroovyUnusedDeclaration")
 class CollectModelBackedSurveyServiceTest extends Specification {
+    public static final File UNUSED_EXPORT_FILE = null
     def database = new NodeTestDatabase()
     def collectModelManager = TestCollectModelFactory.collectModelManager(database)
     @Delegate
@@ -25,7 +26,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
                             new DataSourceNodeRepository(database)
                     )
             ),
-            collectModelManager
+            collectModelManager, UNUSED_EXPORT_FILE
     )
 
     def cleanup() {

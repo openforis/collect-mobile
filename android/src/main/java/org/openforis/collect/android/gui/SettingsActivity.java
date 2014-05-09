@@ -10,6 +10,7 @@ import org.openforis.collect.R;
  * @author Daniel Wiell
  */
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    @SuppressWarnings("deprecation")
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);

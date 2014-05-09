@@ -1,8 +1,9 @@
 package org.openforis.collect.android.gui.list;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.util.TypedValue;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +52,8 @@ public class NodeListAdapter extends BaseAdapter {
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
-            if (AndroidVersion.greaterThan10()) {
-                TypedValue typedValue = new TypedValue();
-                context.getTheme().resolveAttribute(android.R.attr.activatedBackgroundIndicator, typedValue, true);
-                row.setBackgroundResource(typedValue.resourceId);
-            }
+            if (AndroidVersion.greaterThan10())
+                setBackground(row);
 
             holder = new NodeHolder();
             holder.text = (TextView) row.findViewById(R.id.nodeLabel);
@@ -75,6 +73,11 @@ public class NodeListAdapter extends BaseAdapter {
         holder.status.setImageResource(iconResource(node));
 
         return row;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setBackground(View row) {
+        row.setBackgroundResource(attrs.resourceId(android.R.attr.activatedBackgroundIndicator));
     }
 
 

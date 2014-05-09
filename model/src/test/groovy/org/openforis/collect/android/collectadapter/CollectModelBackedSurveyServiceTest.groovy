@@ -44,10 +44,10 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     }
 
     def 'Can load previously imported survey'() {
-        def importedUiSurvey = surveyService.importSurvey(idm)
+        surveyService.importSurvey(idm)
 
         when:
-        def loadedUiSurvey = surveyService.loadSurvey(importedUiSurvey.name)
+        def loadedUiSurvey = surveyService.loadSurvey()
 
         then:
         loadedUiSurvey.label == 'Project label'
@@ -56,9 +56,9 @@ class CollectModelBackedSurveyServiceTest extends Specification {
     }
 
 
-    def 'Loading a never imported survey returns null'() {
+    def 'Loading survey when none has been imported returns null'() {
         expect:
-        surveyService.loadSurvey('never-imported') == null
+        surveyService.loadSurvey() == null
     }
 
     def 'Can add record'() {
@@ -147,7 +147,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         surveyService.updateAttribute(attribute)
 
         then:
-        surveyService.loadSurvey(importedSurvey.name)
+        surveyService.loadSurvey()
         def loadedRecord = surveyService.selectRecord(uiRecord.getId())
         def loadedAttribute = findUiTextAttribute('uiAttribute-name', loadedRecord)
         loadedAttribute.text == 'Updated text'
@@ -223,7 +223,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         surveyService.addRecord('entity-name')
 
         when:
-        def loadedSurvey = surveyService.loadSurvey(importedSurvey.name)
+        def loadedSurvey = surveyService.loadSurvey()
 
         then:
         def recordPlaceholder = loadedSurvey.firstChild.firstChild

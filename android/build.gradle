@@ -34,6 +34,8 @@ dependencies {
         exclude group: 'org.jooq'
         exclude group: 'org.springframework'
         exclude group: 'commons-collections'
+        exclude group: 'commons-beanutils'
+        exclude group: 'commons-logging'
         exclude group: 'commons-jxpath'
         exclude group: 'xmlpull'
         exclude group: 'cglib'
@@ -77,5 +79,9 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
     }
 }

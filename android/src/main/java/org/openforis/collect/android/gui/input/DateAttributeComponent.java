@@ -74,7 +74,8 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveNode();
-                DialogFragment newFragment = new DatePickerFragment();
+                DatePickerFragment newFragment = new DatePickerFragment();
+                newFragment.setComponent(DateAttributeComponent.this);
                 newFragment.show(context.getSupportFragmentManager(), "datePicker");
 
             }
@@ -82,9 +83,15 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         return button;
     }
 
-    private class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        private DateAttributeComponent component;
+
+        public void setComponent(DateAttributeComponent component) {
+            this.component = component;
+        }
+
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Date date = attribute.getDate();
+            Date date = component.attribute.getDate();
             Calendar c = Calendar.getInstance();
             if (date != null)
                 c.setTime(date);
@@ -111,8 +118,8 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         public void onDateSet(DatePicker view, int year, int month, int day) {
             final Calendar c = Calendar.getInstance();
             c.set(year, month, day);
-            selectDate(c.getTime());
-            saveNode();
+            component.selectDate(c.getTime());
+            component.saveNode();
         }
     }
 }

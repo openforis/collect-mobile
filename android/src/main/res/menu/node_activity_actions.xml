@@ -3,7 +3,7 @@
     <!-- TODO: Temporary, for demo-->
     <item
             android:id="@+id/action_export"
-            android:title="Export"
+            android:title="@string/action_export"
             android:showAsAction="never"
             app:showAsAction="never"
             android:onClick="export"/>

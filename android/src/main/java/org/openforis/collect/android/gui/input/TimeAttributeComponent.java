@@ -68,7 +68,8 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveNode();
-                DialogFragment newFragment = new TimePickerFragment();
+                TimePickerFragment newFragment = new TimePickerFragment();
+                newFragment.setComponent(TimeAttributeComponent.this);
                 newFragment.show(context.getSupportFragmentManager(), "timePicker");
 
             }
@@ -80,16 +81,23 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         selectedTimeView.setText(UiTimeAttribute.format(hour, minute));
     }
 
-    private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+        private TimeAttributeComponent component;
+
+        public void setComponent(TimeAttributeComponent component) {
+            this.component = component;
+        }
+
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+            UiTimeAttribute attribute = component.attribute;
             int hour = attribute.getHour() == null ? 0 : attribute.getHour();
             int minute = attribute.getMinute() == null ? 0 : attribute.getMinute();
             return new TimePickerDialog(getActivity(), this, hour, minute, true);
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            selectTime(hourOfDay, minute);
-            saveNode();
+            component.selectTime(hourOfDay, minute);
+            component.saveNode();
         }
     }
 }

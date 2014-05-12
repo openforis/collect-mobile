@@ -13,4 +13,10 @@
             android:summaryOff="Collect Mobile uses the light theme."
             android:key="darkTheme"
             />
+    <CheckBoxPreference
+            android:title="Automatically show keyboard"
+            android:defaultValue="true"
+            android:summary="Determines if soft keyboard should automatically be shown when accessing an attribute."
+            android:key="showKeyboard"
+            />
 </PreferenceScreen>

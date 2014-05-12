@@ -1,4 +1,4 @@
-Setting to auto-display keyboard or not
+Loading code list blocks UI Thread
 Remove attribute from collection
 Conversion of coordinates
 Integer/Double Unit

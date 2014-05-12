@@ -2,10 +2,12 @@ package org.openforis.collect.android.gui.detail;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
@@ -169,6 +171,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         dialogFragment.setRetainInstance(true);
         dialogFragment.show(getFragmentManager(), null);
     }
+
     @SuppressWarnings("unchecked")
     private T lookupNode(int recordId, int nodeId) {
         SurveyService surveyService = ServiceLocator.surveyService();
@@ -183,8 +186,12 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private void showKeyboard(View view) {
-        view.requestFocus();
-        inputMethodManager().showSoftInput(view, InputMethodManager.SHOW_FORCED);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean showKeyboard = preferences.getBoolean("showKeyboard", true);
+        if (showKeyboard) {
+            view.requestFocus();
+            inputMethodManager().showSoftInput(view, InputMethodManager.SHOW_FORCED);
+        }
     }
 
     private void hideKeyboard(View view) {

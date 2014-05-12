@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        mavenLocal()
         maven {
             url "http://www.openforis.org/nexus/content/groups/public/"
         }
@@ -13,15 +12,12 @@ buildscript {
 apply plugin: 'android'
 
 repositories {
-    mavenLocal()
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
-    maven { url "http://www.openforis.org/nexus/content/repositories/snapshots/" }
-    maven { url "https://github.com/dahlgren/vpi-aar/raw/master" }
 }
 
 dependencies {
     compile 'org.apache.commons:commons-lang3:3.3.1'
-    compile('com.viewpagerindicator:library:2.4.2-SNAPSHOT') {
+    compile('com.viewpagerindicator:library:2.4.1.1') {
         exclude group: 'com.google.android'
     }
     compile 'com.nineoldandroids:library:2.4.0'
@@ -44,21 +40,21 @@ dependencies {
         exclude group: 'org.liquibase'
     }
 
-    compile('org.openforis.android:android-jxpath:1.0-Alpha3-SNAPSHOT') {
+    compile('org.openforis.android:android-jxpath:1.0-Alpha2') {
         exclude group: 'commons-beanutils'
         exclude group: 'org.eclipse.jetty.orbit'
         exclude group: 'org.apache.tomcat'
     }
-    compile 'org.openforis.android:android-spring:1.0-Alpha3-SNAPSHOT'
-    compile 'org.openforis.android:android-jooq:1.0-Alpha3-SNAPSHOT'
-//    compile 'org.openforis.android:android-sqldroid:1.0-Alpha3-SNAPSHOT'
-    compile 'org.sqldroid:sqldroid:1.0.0.RC11-SNAPSHOT'
+    compile 'org.openforis.android:android-spring:1.0-Alpha2'
+    compile 'org.openforis.android:android-jooq:1.0-Alpha2'
+    compile 'org.sqldroid:sqldroid:1.0.0.RC10.1'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'com.googlecode.openbeans:openbeans:1.0'
 
 }
+
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"

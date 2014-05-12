@@ -125,9 +125,7 @@ class NodeChangeSetParser {
     }
 
     private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
-        // TODO: New version breaks API
-        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult);
-//        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.getDefault());
+        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.getDefault());
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }
 

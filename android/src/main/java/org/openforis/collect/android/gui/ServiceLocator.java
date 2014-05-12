@@ -31,6 +31,7 @@ import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository
  * @author Daniel Wiell
  */
 public class ServiceLocator {
+    private static final String MODEL_DB = "collect.db";
     private static CollectModelManager collectModelManager;
     private static SurveyService surveyService;
     private static TaxonService taxonService;
@@ -38,7 +39,7 @@ public class ServiceLocator {
     public static void init(Context applicationContext) {
         if (surveyService == null) {
             boolean initialized = setupDatabases(applicationContext);
-            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, "model");
+            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, MODEL_DB);
             if (!initialized)
                 new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
 
@@ -62,7 +63,7 @@ public class ServiceLocator {
     }
 
     private static boolean setupDatabases(Context context) {
-        File model = context.getDatabasePath("model");
+        File model = context.getDatabasePath(MODEL_DB);
         boolean initialized = true;
         if (!model.exists())
             initialized = importOrSetupModelDatabase(context);
@@ -102,10 +103,10 @@ public class ServiceLocator {
     }
 
     private static boolean importOrSetupModelDatabase(Context context) {
-        File model = new File(collectDir(), "model");
+        File model = new File(collectDir(), MODEL_DB);
         if (model.exists()) {
             try {
-                FileUtils.copyFile(model, context.getDatabasePath("model"));
+                FileUtils.copyFile(model, context.getDatabasePath(MODEL_DB));
             } catch (IOException e) {
                 throw new SurveyException(e);
             }

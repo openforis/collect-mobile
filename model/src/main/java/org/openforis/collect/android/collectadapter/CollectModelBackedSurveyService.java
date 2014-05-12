@@ -4,7 +4,6 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
-import org.openforis.collect.model.CollectRecord;
 
 import java.io.File;
 import java.io.IOException;
@@ -160,12 +159,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public void exportSurvey() throws IOException {
         Integer selectedRecordId = viewModelManager.getSelectedRecordId();
 
-        new SurveyExporter(viewModelManager.getSelectedSurvey(), new SurveyExporter.CollectRecordProvider() {
-            public CollectRecord record(int recordId) {
+        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportFile, new CollectModelManager.ExportListener() {
+            public void beforeRecordExport(int recordId) {
                 selectRecord(recordId);
-                return collectModelManager.getCollectRecord(recordId);
             }
-        }).export(exportFile);
+        });
 
         if (selectedRecordId != null)
             selectRecord(selectedRecordId);

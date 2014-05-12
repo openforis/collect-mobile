@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -120,6 +121,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         try {
             surveyService.exportSurvey();
         } catch (IOException e) {
+            Log.e("export", "Failed  to export", e);
             Toast.makeText(this, "Failed to export survey: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }

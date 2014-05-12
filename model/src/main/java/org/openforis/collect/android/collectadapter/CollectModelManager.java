@@ -22,6 +22,7 @@ import org.openforis.idm.metamodel.ModelVersion;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -273,5 +274,19 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         if (versions == null || versions.isEmpty())
             return null;
         return versions.get(versions.size() - 1).getName();
+    }
+
+    public void exportSurvey(UiSurvey uiSurvey, java.io.File exportFile, final ExportListener exportListener) throws IOException {
+        new SurveyExporter(uiSurvey, selectedSurvey, surveyManager, new SurveyExporter.CollectRecordProvider() {
+            public CollectRecord record(int recordId) {
+                exportListener.beforeRecordExport(recordId);
+                return getCollectRecord(recordId);
+            }
+        }).export(exportFile);
+
+    }
+
+    public interface ExportListener {
+        void beforeRecordExport(int recordId);
     }
 }

@@ -10,19 +10,21 @@ public class Definition {
     public final Integer keyOfDefinitionId;
     public final String description;
     public final String prompt;
+    public final boolean required;
 
 
-    public Definition(String id, String name, String label) {
-        this(id, name, label, null, null, null);
+    public Definition(String id, String name, String label, boolean required) {
+        this(id, name, label, null, null, null, required);
     }
 
-    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description, String prompt) {
+    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description, String prompt, boolean required) {
         this.id = id;
         this.name = name;
         this.label = label;
         this.keyOfDefinitionId = keyOfDefinitionId;
         this.description = description;
         this.prompt = prompt;
+        this.required = required;
     }
 
     public boolean isKeyOf(UiNode uiNode) {

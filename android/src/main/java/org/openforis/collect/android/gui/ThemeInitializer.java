@@ -10,9 +10,13 @@ import org.openforis.collect.R;
  */
 public class ThemeInitializer {
     public static void init(Activity activity) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences preferences = getPrefs(activity);
         boolean darkTheme = preferences.getBoolean("darkTheme", true);
         int theme = darkTheme ? R.style.AppTheme : R.style.AppTheme_Light;
         activity.setTheme(theme);
+    }
+
+    private static SharedPreferences getPrefs(Activity activity) {
+        return PreferenceManager.getDefaultSharedPreferences(activity);
     }
 }

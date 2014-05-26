@@ -131,7 +131,7 @@ class ViewModelRepositoryTest extends Specification {
         }
 
         private Definition definition(String name, String label) {
-            def definition = new Definition(IdGenerator.nextId().toString(), name, label)
+            def definition = new Definition(IdGenerator.nextId().toString(), name, label, false)
             definitionById[definition.id] = definition
             definition
         }

@@ -32,6 +32,7 @@ import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository
  */
 public class ServiceLocator {
     private static final String MODEL_DB = "collect.db";
+    private static final String NODES_DB = "nodes";
     private static CollectModelManager collectModelManager;
     private static SurveyService surveyService;
     private static TaxonService taxonService;
@@ -58,7 +59,7 @@ public class ServiceLocator {
                         new NodeDatabaseSchemaChangeLog().changes()
                 ),
                 applicationContext,
-                "nodes"
+                NODES_DB
         );
     }
 
@@ -68,7 +69,7 @@ public class ServiceLocator {
         if (!model.exists())
             initialized = importOrSetupModelDatabase(context);
 
-        File nodes = context.getDatabasePath("nodes");
+        File nodes = context.getDatabasePath(NODES_DB);
         if (!nodes.exists())
             importNodesDatabase(context);
         return initialized;
@@ -93,10 +94,10 @@ public class ServiceLocator {
     }
 
     private static void importNodesDatabase(Context context) {
-        File nodes = new File(collectDir(), "nodes");
+        File nodes = new File(collectDir(), NODES_DB);
         if (nodes.exists())
             try {
-                FileUtils.copyFile(nodes, context.getDatabasePath("nodes"));
+                FileUtils.copyFile(nodes, context.getDatabasePath(NODES_DB));
             } catch (IOException e) {
                 throw new SurveyException(e);
             }
@@ -110,6 +111,10 @@ public class ServiceLocator {
             } catch (IOException e) {
                 throw new SurveyException(e);
             }
+
+            // TODO: Import previous records - they will in MODEL_DB.ofc_record
+            // Empty MODEL_DB.ofc_record afterward
+
             return true;
         }
         return false;

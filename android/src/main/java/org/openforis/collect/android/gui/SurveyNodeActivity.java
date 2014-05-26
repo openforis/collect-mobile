@@ -36,9 +36,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private UiNode selectedNode;
 
     public void onCreate(Bundle savedState) {
-        super.onCreate(savedState);
-        ThemeInitializer.init(this);
         ServiceLocator.init(getApplicationContext());
+        ThemeInitializer.init(this);
+        super.onCreate(savedState);
         nodePagerFragment = new NodePagerFragment();
         surveyService = ServiceLocator.surveyService();
         support = createLayoutSupport();
@@ -67,8 +67,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     private void settings() {
         Class activityClass = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                ? SettingsActivity.class
-                : SettingsFragmentActivity.class;
+                ? SettingsPreHoneycombActivity.class
+                : SettingsActivity.class;
         startActivity(new Intent(this, activityClass));
     }
 
@@ -106,16 +106,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void export(MenuItem item) {
-//        File storageDir = Environment.getExternalStorageDirectory();
-//        File collectDir = new File(storageDir, "Collect");
-//
-//        try {
-//            FileUtils.copyFileToDirectory(getDatabasePath("model"), collectDir);
-//            FileUtils.copyFileToDirectory(getDatabasePath("nodes"), collectDir);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         // TODO: Show progress bar - so we need some callback to know how far we got...
 
         try {

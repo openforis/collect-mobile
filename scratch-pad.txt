@@ -1,6 +1,7 @@
-Finish export
-
--------
+Household surveys/Assets/Alternative energy sources
+    Status of entity collection does not update when all children entities are corrected
+    Title show up twice
+    Unable to add another entity - nothing happens
 
 Remove attribute from collection
 Conversion of coordinates
@@ -8,6 +9,11 @@ Integer/Double Unit
 Boolean
 Range
 Loading code list blocks UI Thread
+
+Validate required fields when record/entity is added
+Names of entities
+    Name show up twice sometimes
+    Code labels not available when record/entity is added
 
 
 --------
@@ -51,6 +57,11 @@ Node pattern message
 Label of code attributes when adding record/entity is null
     CodeConverter
         Solve this when rendering the an enumerated entity collection? Ugly but should work.
+
+
+Disable code component when parent not selected
+    Radio-group is empty, but need text
+    Auto-complete is shown - should be hidden or disabled
 
 ----------------------------
 
@@ -176,6 +187,19 @@ https://github.com/timroes/EnhancedListView/wiki
 https://github.com/47deg/android-swipelistview#xml-usage
 
 http://www.anddev.org/applying_a_theme_to_your_application-t817.html
+
+
+Async
+-----
+http://mttkay.github.io/blog/2013/08/25/functional-reactive-programming-on-android-with-rxjava/
+https://github.com/Netflix/RxJava
+https://github.com/Netflix/RxJava/tree/master/rxjava-contrib/rxjava-android
+http://blog.futurice.com/top-7-tips-for-rxjava-on-android
+
+
+
+https://github.com/evant/gradle-retrolambda
+
 
 
 IDEAS

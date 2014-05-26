@@ -65,10 +65,39 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    boolean isRelease = System.properties['release'] == 'true'
+    logger.info('****************** Release: ' + isRelease)
+
+    if (isRelease)
+        signingConfigs {
+            release {
+                def defaultStorePath = System.properties['user.home'] + File.separator + '.android-release-key.keystore'
+                def storePath = System.console().readLine("\n-----------------\n\$ Enter keystore path [$defaultStorePath]: ")
+                if (!storePath)
+                    storePath = defaultStorePath
+                storeFile file(storePath)
+                storePassword System.console().readPassword("\$ Enter keystore password: ") as String
+                def defaultKeyAlias = 'android-release-key'
+                def selectedKeyAlias = System.console().readLine("\$ Enter key alias [$defaultKeyAlias]:") as String
+                if (!selectedKeyAlias)
+                    selectedKeyAlias = defaultKeyAlias
+                keyAlias selectedKeyAlias
+                keyPassword System.console().readPassword("\$ Enter key password: ") as String
+            }
+        }
+
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            if (isRelease) {
+                signingConfig signingConfigs.release
+                applicationVariants.all { variant ->
+                    def file = variant.outputFile
+                    variant.outputFile = new File(file.parent, 'Collect.apk')
+                }
+            }
         }
     }
 
@@ -81,3 +110,4 @@ android {
         disable 'InvalidPackage'
     }
 }
+

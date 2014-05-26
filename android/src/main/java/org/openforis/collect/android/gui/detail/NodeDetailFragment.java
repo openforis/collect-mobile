@@ -13,10 +13,7 @@ import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -56,9 +53,16 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
 
+
+        ScrollView scrollView = new ScrollView(getActivity());
+        scrollView.setFillViewport(true);
+        scrollView.addView(rootView);
+
         FrameLayout frameLayout = new FrameLayout(getActivity());
-        frameLayout.addView(rootView);
-        frameLayout.addView(createOverlay());
+        frameLayout.addView(scrollView);
+//        frameLayout.addView(rootView);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
+            frameLayout.addView(createOverlay());
         return frameLayout;
     }
 

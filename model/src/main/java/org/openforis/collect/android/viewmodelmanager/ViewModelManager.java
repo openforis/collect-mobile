@@ -24,6 +24,7 @@ public class ViewModelManager {
     public UiSurvey getSelectedSurvey() {
         return selectedSurvey;
     }
+
     public Integer getSelectedRecordId() {
         return selectedRecord == null ? null : selectedRecord.getId();
     }
@@ -39,6 +40,7 @@ public class ViewModelManager {
     }
 
     public void addRecord(UiRecord record) {
+        validateRequiredness(record);
         record.updateStatusOfNodeAndDescendants(); // TODO: This should sbe done at record.init()? Ugly anyway
         record.updateStatusOfParents();
         selectedSurvey.addRecord(record);
@@ -61,6 +63,7 @@ public class ViewModelManager {
     }
 
     public void addEntity(final UiEntity entity) {
+        validateRequiredness(entity);
         entity.updateStatusOfNodeAndDescendants(); // TODO: This should sbe done at record.init()? Ugly anyway
         entity.updateStatusOfParents();
         Timer.time(ViewModelRepository.class, "insertEntity", new Runnable() {
@@ -68,6 +71,21 @@ public class ViewModelManager {
                 repo.insertEntity(entity);
             }
         });
+    }
+
+    private void validateRequiredness(UiInternalNode node) {
+        for (UiNode child : node.getChildren()) {
+            if (child instanceof UiInternalNode)
+                validateRequiredness((UiInternalNode) child);
+            if (child instanceof UiAttribute) {
+                validateRequiredness((UiAttribute) child);
+            }
+        }
+    }
+
+    private void validateRequiredness(UiAttribute attribute) {
+        if (attribute.getDefinition().required && attribute.isEmpty())
+            attribute.setStatus(UiNode.Status.VALIDATION_ERROR);
     }
 
     public UiNode lookupNode(int nodeId) {

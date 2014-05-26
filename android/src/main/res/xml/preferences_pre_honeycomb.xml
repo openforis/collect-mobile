@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+            android:title="Collect Server URL"
+            android:key="serverUrl"
+            android:summary="Please provide the Collect Server URL"/>
+    <CheckBoxPreference
+            android:title="Use dark theme"
+            android:defaultValue="true"
+            android:summary="Determines if the theme should be dark or light."
+            android:key="darkTheme"
+            />
+    <CheckBoxPreference
+            android:title="Automatically show keyboard"
+            android:defaultValue="true"
+            android:summary="Determines if soft keyboard should automatically be shown when accessing an attribute."
+            android:key="showKeyboard"
+            />
+</PreferenceScreen>

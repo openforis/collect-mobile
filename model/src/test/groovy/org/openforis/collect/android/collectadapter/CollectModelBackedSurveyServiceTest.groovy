@@ -7,6 +7,8 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager
 import spock.lang.Specification
 
 import static org.openforis.collect.android.viewmodel.UiNode.Status.EMPTY
+import static org.openforis.collect.android.viewmodel.UiNode.Status.OK
+import static org.openforis.collect.android.viewmodel.UiNode.Status.VALIDATION_ERROR
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository
 
 /**
@@ -77,9 +79,15 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def tab = uiRecord.firstChild as UiInternalNode
         tab.label == 'Tab'
         tab.childCount == 3
-        tab.getChildAt(0) instanceof UiTextAttribute
+
+        def attribute = tab.getChildAt(0)
+        attribute instanceof UiTextAttribute
         tab.getChildAt(1) instanceof UiEntityCollection
         tab.getChildAt(2) instanceof UiAttributeCollection
+
+
+        attribute.status == VALIDATION_ERROR // Required
+        tab.status == VALIDATION_ERROR
     }
 
     def 'Can add entity'() {
@@ -97,7 +105,11 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
         uiEntity.name == 'multiple-entity-name'
         uiEntity.childCount == 2
-        uiEntity.getChildAt(0) instanceof UiTextAttribute
+
+        def attribute = uiEntity.getChildAt(0)
+        attribute instanceof UiTextAttribute
+        attribute.status == VALIDATION_ERROR // Required
+        uiEntity.status == VALIDATION_ERROR // Error because required attribute is empty
         uiEntity.getChildAt(1) instanceof UiEntityCollection
     }
 
@@ -111,8 +123,8 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def uiEntity = surveyService.addEntity()
 
         then:
-        uiEntity.status == EMPTY
-        uiEntity.firstChild.status == EMPTY
+        uiEntity.status == VALIDATION_ERROR
+        uiEntity.firstChild.status == VALIDATION_ERROR
     }
 
     def 'Can add deeply nested entity'() {
@@ -153,18 +165,18 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         loadedAttribute.text == 'Updated text'
     }
 
-    def 'When setting the value of an empty attribute, it changes state from EMPTY to OK'() {
+    def 'When setting the value of an required attribute, it changes state from VALIDATION_ERROR to OK'() {
         surveyService.importSurvey(idm)
         def uiRecord = surveyService.addRecord('entity-name')
         def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
         attribute.text = 'non-empty value'
-        assert attribute.status == EMPTY
+        assert attribute.status == VALIDATION_ERROR
 
         when:
         surveyService.updateAttribute(attribute)
 
         then:
-        attribute.status == UiNode.Status.OK
+        attribute.status == OK
     }
 
 
@@ -176,9 +188,9 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
         then:
         def attribute = findUiTextAttribute('uiAttribute-name', uiRecord)
-        attribute.status == EMPTY
-        attribute.getParent().status == EMPTY
-        uiRecord.status == EMPTY
+        attribute.status == VALIDATION_ERROR
+        attribute.getParent().status == VALIDATION_ERROR
+        uiRecord.status == VALIDATION_ERROR
     }
 
     def 'When selecting a record, status of record nodes is up-to-date'() {
@@ -190,9 +202,9 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
         then:
         def attribute = findUiTextAttribute('uiAttribute-name', selectedRecord)
-        attribute.status == EMPTY
-        attribute.getParent().status == EMPTY
-        selectedRecord.status == EMPTY
+        attribute.status == VALIDATION_ERROR
+        attribute.getParent().status == VALIDATION_ERROR
+        selectedRecord.status == VALIDATION_ERROR
     }
 
     def 'Can lookup node'() {
@@ -279,9 +291,9 @@ class CollectModelBackedSurveyServiceTest extends Specification {
             project('Project label')
             schema {
                 entity('entity-name', 'Entity label') {
-                    text('uiAttribute-name', 'Attribute label', [key: true])
+                    text('uiAttribute-name', 'Attribute label', [key: true, required: true])
                     entity('multiple-entity-name', 'Multiple entity label', [multiple: true]) {
-                        text('uiAttribute-name2', 'Attribute label2')
+                        text('uiAttribute-name2', 'Attribute label2', [required: true])
                         entity('deeply-nested-entity-name', 'Deeply nested entity label', [multiple: true]) {
                             text('uiAttribute-name3', 'Attribute label3')
                         }

@@ -14,16 +14,16 @@ import static org.openforis.collect.android.viewmodel.UiValidationError.Level.WA
  */
 class ViewModelManagerTest extends Specification {
     def repo = Mock(ViewModelRepository)
-    def attribute = new UiTextAttribute(1, new Definition(valueOf(nextId()), 'name', 'label'))
-    def entity = new UiEntity(1, new Definition(valueOf(nextId()), 'name', 'label'))
+    def attribute = new UiTextAttribute(1, new Definition(valueOf(nextId()), 'name', 'label', false))
+    def entity = new UiEntity(1, new Definition(valueOf(nextId()), 'name', 'label', false))
 
     def manager = new ViewModelManager(repo)
 
     def setup() {
-        def collection = new UiRecordCollection(nextId(), new Definition(valueOf(nextId()), 'name', 'label'))
-        def record = new UiRecord(nextId(), new Definition(valueOf(nextId()), 'name', 'label'), collection)
+        def collection = new UiRecordCollection(nextId(), new Definition(valueOf(nextId()), 'name', 'label', false))
+        def record = new UiRecord(nextId(), new Definition(valueOf(nextId()), 'name', 'label', false), collection)
         record.addChild(entity)
-        def survey = new UiSurvey(nextId(), new Definition(valueOf(nextId()), 'name', 'label'))
+        def survey = new UiSurvey(nextId(), new Definition(valueOf(nextId()), 'name', 'label', false))
         survey.addChild(collection)
         survey.addRecord(record)
         repo.surveyRecords(_) >> []

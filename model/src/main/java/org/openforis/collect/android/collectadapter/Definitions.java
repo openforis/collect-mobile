@@ -33,7 +33,7 @@ public class Definitions {
         String label = labels.isEmpty() ? "Survey" : labels.get(0).getText();
         String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
         addDefinition(
-                new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null)
+                new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null, true)
         );
         List<EntityDefinition> rootEntityDefinitions = collectSurvey.getSchema().getRootEntityDefinitions();
 
@@ -47,7 +47,7 @@ public class Definitions {
 
     private void addTabDefinition(UITab tab) {
         addDefinition(
-                new Definition(tabDefinitionId(tab), tab.getName(), label(tab))
+                new Definition(tabDefinitionId(tab), tab.getName(), label(tab), true)
         );
 
         if (tab.getTabs() != null)
@@ -71,12 +71,17 @@ public class Definitions {
         String name = nodeDefinition.getName();
         String label = label(nodeDefinition);
         Integer keyOfDefinitionId = getKeyOfDefinitionId(nodeDefinition);
+        boolean required = isRequired(nodeDefinition);
         if (nodeDefinition instanceof TaxonAttributeDefinition)
             return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
                     ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
-                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition));
+                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
         else
-            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition));
+            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+    }
+
+    private boolean isRequired(NodeDefinition nodeDefinition) {
+        return nodeDefinition.getMinCount() != null && nodeDefinition.getMinCount() > 0;
     }
 
     private Definition createCollectionDefinition(NodeDefinition nodeDefinition, Definition childDefinition) {
@@ -86,14 +91,15 @@ public class Definitions {
                     nodeDefinition.getName(),
                     collectionLabel(nodeDefinition),
                     AttributeConverter.getUiAttributeType(nodeDefinition),
-                    childDefinition);
+                    childDefinition, isRequired(nodeDefinition));
         return new Definition(
                 collectionNodeDefinitionId(nodeDefinition),
                 nodeDefinition.getName(),
                 collectionLabel(nodeDefinition),
                 getKeyOfDefinitionId(nodeDefinition),
                 nodeDescription(nodeDefinition),
-                nodePrompt(nodeDefinition)
+                nodePrompt(nodeDefinition),
+                isRequired(nodeDefinition)
         );
     }
 

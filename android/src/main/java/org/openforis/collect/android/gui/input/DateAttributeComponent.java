@@ -100,21 +100,8 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
 
-            DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
-            if (AndroidVersion.greaterThan10())
-                configureForNewerAndroids(dialog);
-
-            return dialog;
+            return new DatePickerDialog(getActivity(), this, year, month, day);
         }
-
-        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-        private void configureForNewerAndroids(DatePickerDialog dialog) {
-            DatePicker datePicker = dialog.getDatePicker();
-            if (datePicker == null)
-                throw new IllegalStateException("Dialog contains no date picker: " + dialog);
-            datePicker.setSpinnersShown(false);
-        }
-
         public void onDateSet(DatePicker view, int year, int month, int day) {
             final Calendar c = Calendar.getInstance();
             c.set(year, month, day);

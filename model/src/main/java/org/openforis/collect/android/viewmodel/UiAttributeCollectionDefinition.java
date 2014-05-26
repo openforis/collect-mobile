@@ -9,8 +9,9 @@ public class UiAttributeCollectionDefinition extends Definition {
 
     public UiAttributeCollectionDefinition(String id, String name, String label,
                                            Class<? extends UiAttribute> attributeType,
-                                           Definition attributeDefinition) {
-        super(id, name, label);
+                                           Definition attributeDefinition,
+                                           boolean required) {
+        super(id, name, label, required);
         this.attributeType = attributeType;
         this.attributeDefinition = attributeDefinition;
     }

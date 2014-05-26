@@ -108,8 +108,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
         // TODO: Move this section to viewModelManager
         attributeCollection.addChild(attribute);
-        attribute.init(); // TODO: Ugly!!!
-        attribute.updateStatusOfParents(); // TODO: Ugly!!!!
+        attribute.init(); // TODO: Don't want to care about these life-cycle methods here!!!
+        attribute.updateStatusOfParents();
         viewModelManager.addAttribute(attribute);
         updateAttribute(attribute);
         return attribute;
@@ -149,7 +149,6 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public void updateAttribute(UiAttribute attributeToUpdate) {
         Map<UiAttribute, UiAttributeChange> attributeChanges = collectModelManager.updateAttribute(attributeToUpdate);
-        // TODO: Do this in transaction
         viewModelManager.updateAttribute(attributeToUpdate, attributeChanges);
         if (listener != null)
             for (UiAttribute uiAttribute : attributeChanges.keySet())

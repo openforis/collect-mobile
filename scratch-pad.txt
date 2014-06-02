@@ -1,7 +1,6 @@
 Household surveys/Assets/Alternative energy sources
     Status of entity collection does not update when all children entities are corrected
     Title show up twice
-    Unable to add another entity - nothing happens
 
 Remove attribute from collection
 Conversion of coordinates
@@ -153,18 +152,6 @@ Measure times
 
 ----------------------------------------------------------------
 
-Risks
------
-Attributes with multiple values
-
-Relevant nodes
-
-Code list size
-
-Unique constraints on codes - who keeps track of the set of selected values?
-
-----------------------------------------------------------------
-
 http://viewpagerindicator.com/
 https://github.com/JakeWharton/Android-ViewPagerIndicator
 
@@ -210,3 +197,9 @@ IDEAS
 
 ic_action_event
 ic_action_go_to_today
+
+
+
+
+Don't restart after crash
+http://stackoverflow.com/questions/9266354/android-how-to-prevent-service-from-restarting-after-crashing

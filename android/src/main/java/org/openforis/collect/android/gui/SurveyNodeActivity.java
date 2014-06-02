@@ -29,7 +29,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
 
-    private NodePagerFragment nodePagerFragment;
     private LayoutDependentSupport support;
     private SurveyService surveyService;
 
@@ -39,7 +38,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         ServiceLocator.init(getApplicationContext());
         ThemeInitializer.init(this);
         super.onCreate(savedState);
-        nodePagerFragment = new NodePagerFragment();
         surveyService = ServiceLocator.surveyService();
         support = createLayoutSupport();
         selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
@@ -73,9 +71,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
-        nodePagerFragment.getView().post(new Runnable() {
+        nodePagerFragment().getView().post(new Runnable() {
             public void run() {
-                nodePagerFragment.onNodeSelected(previous, selected);
+                nodePagerFragment().onNodeSelected(previous, selected);
             }
         });
         support.onNodeSelected(previous, selected);
@@ -83,7 +81,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        nodePagerFragment.onAttributeChange(attribute, attributeChanges);
+        nodePagerFragment().onAttributeChange(attribute, attributeChanges);
         support.onAttributeChanged(attribute);
     }
 
@@ -196,6 +194,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private NodePagerFragment nodePagerFragment() {
+        return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
+    }
+
     private abstract class LayoutDependentSupport {
         abstract void onCreate(Bundle savedState);
 
@@ -211,16 +213,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private class SinglePaneSurveySupport extends LayoutDependentSupport {
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_single_pane_node);
-
-            // savedState is non-null when there is fragment state
-            // saved from previous configurations of this activity
-            // (e.g. when rotating the screen from portrait to landscape).
-            // In this case, the fragment will automatically be re-added
-            // to its container so we don't need to manually add it.
-            if (savedState == null)
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.attribute_detail_pager_container, nodePagerFragment)
-                        .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
+                    .commit();
         }
     }
 
@@ -228,7 +223,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_two_pane_node);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, nodePagerFragment)
+                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
                     .commit();
         }
 

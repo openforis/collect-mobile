@@ -28,7 +28,7 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
     }
 
     protected View getDefaultFocusedView() {
-        return savableComponent.getDefaultFocusedView();
+        return savableComponent == null ? null : savableComponent.getDefaultFocusedView();
     }
 
     public void onPause() {

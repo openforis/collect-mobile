@@ -67,9 +67,7 @@ public class CoordinateAttributeComponent extends EditTextAttributeComponent<UiC
     }
 
     private void requestLocation() {
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        locationManager.requestLocationUpdates(1000, 0, criteria, locationUpdater, context.getMainLooper());
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationUpdater, context.getMainLooper());
     }
 
     private void stopLocationRequest() {
@@ -81,9 +79,6 @@ public class CoordinateAttributeComponent extends EditTextAttributeComponent<UiC
             double x = location.getLongitude();
             double y = location.getLatitude();
             float accuracy = location.getAccuracy();
-            String provider = location.getProvider();
-            System.out.println(y + ", " + x + ": accuracy: " + accuracy + ", provider: " + provider);
-
             vh.accuracyView.setText("Accuracy: " + Math.round(accuracy) + "m");
             vh.selectedCoordinateView.setText(y + ", " + x);
         }

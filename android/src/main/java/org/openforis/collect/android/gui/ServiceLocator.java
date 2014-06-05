@@ -1,11 +1,14 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 import liquibase.database.core.AndroidSQLiteDatabase;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.android.CodeListService;
-import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
@@ -13,7 +16,6 @@ import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
 import org.openforis.collect.android.util.persistence.Database;
-import org.openforis.collect.android.viewmodel.UiSurvey;
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
@@ -23,7 +25,8 @@ import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
@@ -37,20 +40,47 @@ public class ServiceLocator {
     private static SurveyService surveyService;
     private static TaxonService taxonService;
 
-    public static void init(Context applicationContext) {
+    public static boolean init(Context applicationContext) {
         if (surveyService == null) {
-            boolean initialized = setupDatabases(applicationContext);
+            if (!isSurveyImported(applicationContext))
+                return false;
             AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, MODEL_DB);
-            if (!initialized)
-                new ModelDatabaseSchemaUpdater().update(modelDatabase, new AndroidSQLiteDatabase());
-
             AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
-
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
-            surveyService = createSurveyService(collectModelManager, nodeDatabase);
-            loadOrImportSurvey(surveyService);
+            SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
+            surveyService.loadSurvey();
             taxonService = createTaxonService(modelDatabase);
+            ServiceLocator.surveyService = surveyService;
         }
+        return true;
+    }
+
+    public static void importSurvey(String surveyDatabasePath, Context applicationContext) {
+        try {
+            verifyDatabase(surveyDatabasePath);
+            applicationContext.openOrCreateDatabase(MODEL_DB, 0, null);
+            File targetSurveyDatabase = applicationContext.getDatabasePath(MODEL_DB);
+            FileUtils.copyFile(new File(surveyDatabasePath), targetSurveyDatabase);
+        } catch (IOException e) {
+            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
+            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
+        } catch (SQLiteException e) {
+            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
+            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
+        }
+    }
+
+    /**
+     * Reality check on the database file. It needs to be an openable SQLite database file,
+     * and contain the ofc_survey table
+     */
+    private static void verifyDatabase(String surveyDatabasePath) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(surveyDatabasePath, null, SQLiteDatabase.OPEN_READWRITE);
+        db.rawQuery("select * from ofc_survey", new String[0]);
+    }
+
+    public static boolean isSurveyImported(Context context) {
+        return context.getDatabasePath(MODEL_DB).exists();
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {
@@ -63,18 +93,6 @@ public class ServiceLocator {
         );
     }
 
-    private static boolean setupDatabases(Context context) {
-        File model = context.getDatabasePath(MODEL_DB);
-        boolean initialized = true;
-        if (!model.exists())
-            initialized = importOrSetupModelDatabase(context);
-
-        File nodes = context.getDatabasePath(NODES_DB);
-        if (!nodes.exists())
-            importNodesDatabase(context);
-        return initialized;
-    }
-
     public static SurveyService surveyService() {
         return surveyService;
     }
@@ -85,39 +103,6 @@ public class ServiceLocator {
 
     public static TaxonService taxonService() {
         return taxonService;
-    }
-
-    private static void loadOrImportSurvey(SurveyService surveyService) {
-        UiSurvey uiSurvey = surveyService.loadSurvey();
-        if (uiSurvey == null)
-            surveyService.importSurvey(idmXmlStream());
-    }
-
-    private static void importNodesDatabase(Context context) {
-        File nodes = new File(collectDir(), NODES_DB);
-        if (nodes.exists())
-            try {
-                FileUtils.copyFile(nodes, context.getDatabasePath(NODES_DB));
-            } catch (IOException e) {
-                throw new SurveyException(e);
-            }
-    }
-
-    private static boolean importOrSetupModelDatabase(Context context) {
-        File model = new File(collectDir(), MODEL_DB);
-        if (model.exists()) {
-            try {
-                FileUtils.copyFile(model, context.getDatabasePath(MODEL_DB));
-            } catch (IOException e) {
-                throw new SurveyException(e);
-            }
-
-            // TODO: Import previous records - they will in MODEL_DB.ofc_record
-            // Empty MODEL_DB.ofc_record afterward
-
-            return true;
-        }
-        return false;
     }
 
     private static File collectDir() {
@@ -165,23 +150,5 @@ public class ServiceLocator {
 
     private static TaxonService createTaxonService(Database modelDatabase) {
         return new TaxonRepository(modelDatabase);
-    }
-
-    private static synchronized InputStream idmXmlStream() {
-        File idmFile = getIdmFile();
-        try {
-            return new FileInputStream(idmFile);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-
-    }
-
-    private static File getIdmFile() {
-        File collectDir = collectDir();
-        if (!collectDir.exists())
-            if (!collectDir.mkdir())
-                throw new IllegalStateException("Failed to create dir: " + collectDir);
-        return new File(collectDir, "idm.xml");
     }
 }

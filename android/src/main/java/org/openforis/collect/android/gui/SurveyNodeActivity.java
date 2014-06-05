@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
@@ -26,6 +28,8 @@ import java.util.Map;
  * @author Daniel Wiell
  */
 public class SurveyNodeActivity extends ActionBarActivity implements SurveyListener, NodeNavigator {
+    private static final int SELECT_SURVEY_REQUEST_CODE = 6384; // onActivityResult request
+
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
 
@@ -35,15 +39,20 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private UiNode selectedNode;
 
     public void onCreate(Bundle savedState) {
-        ServiceLocator.init(getApplicationContext());
-        ThemeInitializer.init(this);
-        super.onCreate(savedState);
-        surveyService = ServiceLocator.surveyService();
-        support = createLayoutSupport();
-        selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
-        enableUpNavigationIfNeeded(selectedNode);
-        surveyService.setListener(this);
-        support.onCreate(savedState);
+        if (ServiceLocator.init(getApplicationContext())) {
+            ThemeInitializer.init(this);
+            super.onCreate(savedState);
+            surveyService = ServiceLocator.surveyService();
+            support = createLayoutSupport();
+            selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+            enableUpNavigationIfNeeded(selectedNode);
+            surveyService.setListener(this);
+            support.onCreate(savedState);
+        } else {
+            Toast.makeText(this, "Select survey to import.", Toast.LENGTH_SHORT).show();
+            super.onCreate(savedState);
+            showSurveyFileChooser();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,15 +129,19 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void onResume() {
-        ServiceLocator.init(getApplicationContext());
-        surveyService.setListener(this);
-        UiRecord uiRecord = selectedNode.getUiRecord();
-        selectNode(uiRecord == null ? 0 : uiRecord.getId(), selectedNode.getId());
+        if (surveyService != null) {
+            ServiceLocator.init(getApplicationContext());
+            surveyService.setListener(this);
+            UiRecord uiRecord = selectedNode.getUiRecord();
+            selectNode(uiRecord == null ? 0 : uiRecord.getId(), selectedNode.getId());
+        }
         super.onResume();
     }
 
     protected void onPause() {
-        surveyService.setListener(null);
+        if (surveyService != null) {
+            surveyService.setListener(null);
+        }
         super.onPause();
     }
 
@@ -196,6 +209,41 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     private NodePagerFragment nodePagerFragment() {
         return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
+    }
+
+    public void showFileChooser(MenuItem item) {
+        showSurveyFileChooser();
+    }
+
+    private void showSurveyFileChooser() {
+        Intent target = FileUtils.createGetContentIntent();
+        Intent intent = Intent.createChooser(
+                target, "Select survey to import");
+        startActivityForResult(intent, SELECT_SURVEY_REQUEST_CODE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case SELECT_SURVEY_REQUEST_CODE:
+                if (resultCode == RESULT_OK && data != null)
+                    importSurvey(data.getData());
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void importSurvey(Uri surveyUri) {
+        try {
+            // Get the file path from the URI
+            final String path = FileUtils.getPath(this, surveyUri);
+            Toast.makeText(this, "Importing survey: " + path, Toast.LENGTH_LONG).show();
+            ServiceLocator.importSurvey(path, this); // TODO: This should fail if invalid db file
+            Intent intent = new Intent(this, SurveyNodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } catch (Exception e) {
+            showSurveyFileChooser();
+        }
     }
 
     private abstract class LayoutDependentSupport {

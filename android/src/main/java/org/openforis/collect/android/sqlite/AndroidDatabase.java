@@ -42,6 +42,7 @@ public class AndroidDatabase implements Database {
         database.close();
     }
 
+
     public DataSource dataSource() {
         return dataSource;
     }

@@ -24,6 +24,7 @@ import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -89,20 +90,24 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     public UiSurvey loadSurvey() {
-        CollectSurvey collectSurvey = Timer.time(SurveyDao.class, "loadSurvey", new Callable<CollectSurvey>() {
-            public CollectSurvey call() throws Exception {
-                SurveyDao surveyDao = surveyManager.getSurveyDao();
-                List<SurveySummary> surveySummaries = surveyDao.loadSummaries();
-                if (surveySummaries == null || surveySummaries.isEmpty())
-                    return null;
-                SurveySummary surveySummary = surveySummaries.get(0);
-                return surveyDao.load(surveySummary.getName());
-            }
-        });
-        if (collectSurvey == null)
-            return null;
-        selectSurvey(collectSurvey);
-        return modelConverter.toUiSurvey();
+        try {
+            CollectSurvey collectSurvey = Timer.time(SurveyDao.class, "loadSurvey", new Callable<CollectSurvey>() {
+                public CollectSurvey call() throws Exception {
+                    SurveyDao surveyDao = surveyManager.getSurveyDao();
+                    List<SurveySummary> surveySummaries = surveyDao.loadSummaries();
+                    if (surveySummaries == null || surveySummaries.isEmpty())
+                        return null;
+                    SurveySummary surveySummary = surveySummaries.get(0);
+                    return surveyDao.load(surveySummary.getName());
+                }
+            });
+            if (collectSurvey == null)
+                return null;
+            selectSurvey(collectSurvey);
+            return modelConverter.toUiSurvey();
+        } catch (Exception e) {
+            throw new SurveyException(e);
+        }
     }
 
     public UiRecord addRecord(String entityName, UiSurvey survey) {

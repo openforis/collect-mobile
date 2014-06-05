@@ -1,0 +1,17 @@
+Installation
+------------
+
+	* Download and install APK
+	* Download Collect.zip
+	* Copy collect.db to your device
+	* Start Collect
+	* Choose the collect.db previously copied
+
+
+Changes
+-------
+
+
+2014-06-05
+
+	* Handled case where invalid database file was selected

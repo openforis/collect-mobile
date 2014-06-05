@@ -22,6 +22,7 @@ dependencies {
     }
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'de.timroes.android:EnhancedListView:0.3.2@aar'
+    compile 'com.ipaulpro.afilechooser:afilechooser:0.0.1@aar'
 
     compile 'com.android.support:support-v4:19.+'
     compile 'com.android.support:appcompat-v7:19.+'
@@ -39,6 +40,7 @@ dependencies {
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
     }
+
 
     compile('org.openforis.android:android-jxpath:1.0-Alpha2') {
         exclude group: 'commons-beanutils'

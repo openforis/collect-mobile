@@ -10,7 +10,8 @@
               android:focusable="true"
               android:focusableInTouchMode="true"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content"/>
+              android:layout_height="wrap_content"
+              android:paddingBottom="?attr/standardPadding"/>
 
     <TextView
             android:id="@+id/node_description"

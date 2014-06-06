@@ -19,7 +19,7 @@
 
 
     <de.timroes.android.listview.EnhancedListView
-            android:paddingTop="?attr/standardDoublePadding"
+            android:paddingTop="?attr/standardPadding"
             android:padding="?attr/standardPadding"
             android:id="@+id/entity_list"
             android:layout_width="match_parent"

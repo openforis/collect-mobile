@@ -2,20 +2,16 @@ https://github.com/ACRA/acra
 https://github.com/ACRA/acralyzer
 Allow survey to be changed?
 
-Test the db file before copying it
-
-Let user pick the survey database file to import survey
-    https://github.com/iPaulPro/aFileChooser
-
-Don't restart after crash
-
-
 Household surveys/Assets/Alternative energy sources
     Status of entity collection does not update when all children entities are corrected
     Title show up twice
 
 Remove attribute from collection
+
 Conversion of coordinates
+    https://github.com/irstv/CTS
+    http://stackoverflow.com/questions/1676958/coordinate-transform
+
 Integer/Double Unit
 Boolean
 Range
@@ -25,6 +21,8 @@ Validate required fields when record/entity is added
 Names of entities
     Name show up twice sometimes
     Code labels not available when record/entity is added
+
+Don't restart after crash
 
 
 --------

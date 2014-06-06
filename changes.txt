@@ -1,16 +1,27 @@
-Installation
-------------
+First installation
+------------------
 
-	* Download and install APK
-	* Download Collect.zip
+	* Download and unzip Collect.zip
 	* Copy collect.db to your device
+	* Download and install Collect.apk
 	* Start Collect
-	* Choose the collect.db previously copied
+	* Choose your collect.db file in the file chooser
+
+
+Install an update
+-----------------
+
+    * Stop Collect if it's running
+    * Clear data (this will removed any previously collected data)
+    * Download and install Collect.apk
+    * Start Collect
+    * Choose your collect.db file in the file chooser
+
+
 
 
 Changes
 -------
-
 
 2014-06-05
 

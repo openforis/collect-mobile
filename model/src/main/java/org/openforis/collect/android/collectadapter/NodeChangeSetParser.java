@@ -84,7 +84,7 @@ class NodeChangeSetParser {
     private void parseRequiredValidationError(UiAttribute uiAttribute, EntityChange entityChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = errorMessageSource.getMessage(Locale.getDefault(), "validation.requiredField");
+            String message = errorMessageSource.getMessage(Locale.ENGLISH, "validation.requiredField"); // TODO: Don't hard code english
             addValidationError(new UiValidationError(message, level(validationResultFlag), uiAttribute), attributeChanges);
         }
     }
@@ -125,7 +125,7 @@ class NodeChangeSetParser {
     }
 
     private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
-        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.getDefault());
+        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.ENGLISH); // TODO: Don't hard code english
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }
 

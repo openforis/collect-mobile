@@ -98,7 +98,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private void notifyOnValidationErrors(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        if (attributeChanges.containsKey(attribute)) {
+        if (!attribute.equals(selectedNode) && attributeChanges.containsKey(attribute)) {
             Set<UiValidationError> validationErrors = attributeChanges.get(attribute).validationErrors;
             if (validationErrors.isEmpty())
                 return;

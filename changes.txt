@@ -19,9 +19,11 @@ Install an update
 
 
 
-
 Changes
 -------
+2014-06-06b
+
+    * Notified user with a Toast message on validation error
 
 2014-06-06
 
@@ -30,4 +32,4 @@ Changes
 
 2014-06-05
 
-	* Handled case where invalid database file was selected
+    * Handled case where invalid database file was selected

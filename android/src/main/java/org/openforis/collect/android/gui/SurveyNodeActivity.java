@@ -22,7 +22,9 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -90,8 +92,25 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        notifyOnValidationErrors(attribute, attributeChanges);
         nodePagerFragment().onAttributeChange(attribute, attributeChanges);
         support.onAttributeChanged(attribute);
+    }
+
+    private void notifyOnValidationErrors(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        if (attributeChanges.containsKey(attribute)) {
+            Set<UiValidationError> validationErrors = attributeChanges.get(attribute).validationErrors;
+            if (validationErrors.isEmpty())
+                return;
+            StringBuilder s = new StringBuilder(attribute.getLabel() + ":\n");
+            for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
+                UiValidationError error = iterator.next();
+                s.append(error.toString());
+                if (iterator.hasNext())
+                    s.append('\n');
+            }
+            Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void nextAttribute(MenuItem item) {// TODO: Implement this properly - should not only navigate siblings

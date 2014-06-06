@@ -23,6 +23,11 @@ Install an update
 Changes
 -------
 
+2014-06-06
+
+    * Fixed bug where device in different language then English tried to display validation error
+    * Increased padding under title of node description fragments, to fit eventual validation error messages
+
 2014-06-05
 
 	* Handled case where invalid database file was selected

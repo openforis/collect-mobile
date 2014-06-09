@@ -61,7 +61,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         FrameLayout frameLayout = new FrameLayout(getActivity());
         frameLayout.addView(scrollView);
 //        frameLayout.addView(rootView);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
             frameLayout.addView(createOverlay());
         return frameLayout;
     }
@@ -74,7 +74,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         super.onResume();
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private View createOverlay() {
         overlay = new LinearLayout(getActivity());
         overlay.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

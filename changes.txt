@@ -21,9 +21,12 @@ Install an update
 
 Changes
 -------
+
+    * Enabled overlay for irrelevant fields for all Android versions
+
 2014-06-06b
 
-    * Notified user with a Toast message on validation error
+    * Notified user with a Toast message on validation error, if user navigated away from attribute
 
 2014-06-06
 

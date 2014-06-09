@@ -210,3 +210,6 @@ ic_action_go_to_today
 
 
 
+adb shell screenrecord /sdcard/video.mp4
+adb pull /sdcard/video.mp4
+

@@ -1,11 +1,10 @@
 First installation
 ------------------
 
-	* Download and unzip Collect.zip
-	* Copy collect.db to your device
+	* Download collect.db
 	* Download and install Collect.apk
 	* Start Collect
-	* Choose your collect.db file in the file chooser
+	* Choose the downloaded collect.db file in the file chooser
 
 
 Install an update
@@ -22,7 +21,10 @@ Install an update
 Changes
 -------
 
-    * Enabled overlay for irrelevant fields for all Android versions
+2014-06-10
+
+    * Enabled gray overlay for irrelevant fields in all Android versions
+    * Added support for boolean attributes
 
 2014-06-06b
 

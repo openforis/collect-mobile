@@ -28,10 +28,13 @@ class NodeChangeSetParser {
     private final UiRecord uiRecord;
     private final MessageSource errorMessageSource = new ResourceBundleMessageSource();
     private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(errorMessageSource);
+    private final Locale locale;
 
     public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord) {
         this.nodeChangeSet = nodeChangeSet;
         this.uiRecord = uiRecord;
+        this.locale = Locale.ENGLISH; // TODO: Don't hard code English, use default locale
+//        this.locale = Locale.getDefault();
     }
 
     public Map<UiAttribute, UiAttributeChange> extractChanges() {
@@ -84,7 +87,7 @@ class NodeChangeSetParser {
     private void parseRequiredValidationError(UiAttribute uiAttribute, EntityChange entityChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = errorMessageSource.getMessage(Locale.ENGLISH, "validation.requiredField"); // TODO: Don't hard code english
+            String message = errorMessageSource.getMessage(this.locale, "validation.requiredField");
             addValidationError(new UiValidationError(message, level(validationResultFlag), uiAttribute), attributeChanges);
         }
     }
@@ -125,7 +128,7 @@ class NodeChangeSetParser {
     }
 
     private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
-        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, Locale.ENGLISH); // TODO: Don't hard code english
+        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, this.locale);
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }
 

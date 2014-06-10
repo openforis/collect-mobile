@@ -49,7 +49,6 @@ public abstract class SavableComponent {
 
     protected abstract void resetValidationErrors();
 
-
     public final void onSelect() {
         selected = true;
         validateNode();
@@ -102,6 +101,8 @@ public abstract class SavableComponent {
             return new DateAttributeComponent((UiDateAttribute) attribute, surveyService, context);
         if (attribute instanceof UiTaxonAttribute)
             return new TaxonAttributeComponent((UiTaxonAttribute) attribute, surveyService, context);
+        if (attribute instanceof UiBooleanAttribute)
+            return new BooleanAttributeComponent((UiBooleanAttribute) attribute, surveyService, context);
         return new UnsupportedAttributeComponent(attribute, surveyService, context);
     }
 

@@ -117,14 +117,6 @@ public class MeteredRecordManager extends RecordManager {
         });
     }
 
-    public int getRecordCount(final CollectSurvey survey, final String rootEntity, final String... keyValues) {
-        return time("getRecordCount(survey, rootEntity, keyValues)", new Callable<Integer>() {
-            public Integer call() throws Exception {
-                return delegate.getRecordCount(survey, rootEntity, keyValues);
-            }
-        });
-    }
-
     public CollectRecord create(final CollectSurvey survey, final String rootEntityName, final User user, final String modelVersionName) throws RecordPersistenceException {
         return time("create(survey, rootEntityName, user, modelVersionName)", new Callable<CollectRecord>() {
             public CollectRecord call() throws Exception {

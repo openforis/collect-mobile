@@ -15,8 +15,7 @@ import org.openforis.idm.model.Value;
 class BooleanConverter extends AttributeConverter<BooleanAttribute, UiBooleanAttribute> {
     protected UiBooleanAttribute uiAttribute(Definition definition, BooleanAttribute attribute) {
         UiBooleanAttribute uiAttribute = new UiBooleanAttribute(attribute.getId(), definition);
-        Boolean value = attribute.getValue().getValue();
-        uiAttribute.setValue(value == null ? false : value);
+        uiAttribute.setValue(attribute.getValue().getValue());
         return uiAttribute;
     }
 

@@ -12,8 +12,11 @@ Conversion of coordinates
     https://github.com/irstv/CTS
     http://stackoverflow.com/questions/1676958/coordinate-transform
 
+Measure distance
+    https://www.google.com/search?q=measure+distance+two+coordinates&gws_rd=ssl
+    http://www.movable-type.co.uk/scripts/latlong.html
+
 Integer/Double Unit
-Boolean
 Range
 Loading code list blocks UI Thread
 
@@ -23,6 +26,18 @@ Names of entities
     Code labels not available when record/entity is added
 
 Don't restart after crash
+
+-------------
+- Peru call -
+-------------
+
+Crash in one of the region fields.
+Allow “Centro Populare” not in the code list to be entered
+Parcel – large number of them. Very important to prevent mistakes when entering it.
+	Use code list, with a limited set of parcels for each team
+	Uniqueness check
+
+Eco zone databases
 
 
 --------

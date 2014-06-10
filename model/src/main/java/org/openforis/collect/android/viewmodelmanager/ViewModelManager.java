@@ -30,7 +30,7 @@ public class ViewModelManager {
     }
 
     public boolean isRecordSelected(int recordId) {
-        return selectedNode != null && selectedRecord.getId() == recordId;
+        return selectedRecord != null && selectedRecord.getId() == recordId;
     }
 
     public void selectSurvey(UiSurvey survey) {

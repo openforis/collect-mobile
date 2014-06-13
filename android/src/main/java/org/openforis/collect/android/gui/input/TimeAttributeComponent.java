@@ -12,6 +12,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiTimeAttribute;
 
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,8 +93,11 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
 
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             UiTimeAttribute attribute = component.attribute;
-            int hour = attribute.getHour() == null ? 0 : attribute.getHour();
-            int minute = attribute.getMinute() == null ? 0 : attribute.getMinute();
+            Calendar now = Calendar.getInstance();
+            int currentHour = now.get(Calendar.HOUR_OF_DAY);
+            int currentMinute = now.get(Calendar.MINUTE);
+            int hour = attribute.getHour() == null ? currentHour : attribute.getHour();
+            int minute = attribute.getMinute() == null ? currentMinute : attribute.getMinute();
             return new TimePickerDialog(getActivity(), this, hour, minute, true);
         }
 

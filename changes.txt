@@ -21,6 +21,13 @@ Install an update
 Changes
 -------
 
+2014-06-13
+
+    * Split coordinate attribute into separate fields
+    * Added support for selecting and transforming between spatial reference systems
+    * Implemented distance check
+    * Put hint on date and time fields
+
 2014-06-10
 
     * Enabled gray overlay for irrelevant fields in all Android versions

@@ -21,6 +21,11 @@ Install an update
 Changes
 -------
 
+2014-06-13b
+
+    * Stopped transforming coordinates when spatial reference system changes.
+    * Defaulted time picker to current time, if time is unspecified
+
 2014-06-13
 
     * Split coordinate attribute into separate fields

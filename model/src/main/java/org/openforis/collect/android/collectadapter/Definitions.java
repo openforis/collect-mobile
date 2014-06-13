@@ -2,18 +2,14 @@ package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
-import org.openforis.collect.android.viewmodel.Definition;
-import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
-import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
+import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.metamodel.ui.UITabSet;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.*;
 import org.openforis.idm.model.Node;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
@@ -22,10 +18,37 @@ public class Definitions {
     private static final String SURVEY_DEFINITION_ID = "survey";
     private final CollectSurvey collectSurvey;
     private Map<String, Definition> definitionById = new HashMap<String, Definition>();
+    private final List<UiSpatialReferenceSystem> spatialReferenceSystems;
 
     public Definitions(CollectSurvey collectSurvey) {
         this.collectSurvey = collectSurvey;
+        spatialReferenceSystems = createSpatialReferenceSystems(collectSurvey);
         addSurveyDefinitions();
+    }
+
+    private List<UiSpatialReferenceSystem> createSpatialReferenceSystems(CollectSurvey collectSurvey) {
+        List<UiSpatialReferenceSystem> uiSpatialReferenceSystems = new ArrayList<UiSpatialReferenceSystem>();
+        for (SpatialReferenceSystem spatialReferenceSystem : collectSurvey.getSpatialReferenceSystems()) {
+            uiSpatialReferenceSystems.add(
+                    new UiSpatialReferenceSystem(
+                            spatialReferenceSystem.getId(),
+                            spatialReferenceSystem.getWellKnownText(),
+                            label(spatialReferenceSystem))
+            );
+        }
+        return uiSpatialReferenceSystems;
+    }
+
+    private String label(SpatialReferenceSystem spatialReferenceSystem) {
+        String label = spatialReferenceSystem.getLabel(Locale.getDefault().getLanguage());
+        if (label == null) {
+            List<LanguageSpecificText> labels = spatialReferenceSystem.getLabels();
+            if (!labels.isEmpty())
+                label = labels.get(0).getText();
+            if (label == null)
+                label = spatialReferenceSystem.getId();
+        }
+        return label;
     }
 
     private void addSurveyDefinitions() {
@@ -75,6 +98,10 @@ public class Definitions {
         if (nodeDefinition instanceof TaxonAttributeDefinition)
             return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
                     ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
+                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+        else if (nodeDefinition instanceof CoordinateAttributeDefinition)
+            return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
+                    spatialReferenceSystems,
                     nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
         else
             return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);

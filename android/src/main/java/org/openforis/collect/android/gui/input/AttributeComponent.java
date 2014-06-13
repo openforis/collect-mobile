@@ -9,6 +9,7 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeChange;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,11 +43,16 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
                     labelView.setError(null);
                     return;
                 }
+                // TODO: Move functionality to UiValidationError class}
                 StringBuilder message = new StringBuilder();
-                for (UiValidationError validationError : validationErrors)
-                    message.append(validationError);
-                focus(labelView);
-                labelView.setError(message);
+                for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
+                    UiValidationError validationError = iterator.next();
+                    message.append(validationError);  // TODO: Only include messages from the worst level?
+                    if (iterator.hasNext())
+                        message.append('\n');
+                    focus(labelView);
+                    labelView.setError(message);
+                }
             }
         });
     }

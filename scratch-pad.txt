@@ -1,6 +1,30 @@
+Resolution of coordinate / doubles
+Use locale sensitive NumberFormat when formatting/parsing decimal numbers
+
+AttributeComponent - Multiple validation errors
+    Split messages
+    Exclude warnings if there are errors?
+
+Add message for code attribute fragment when parent code not selected
+
+Validate coordinates
+    Loosing focus entering x then switching to y, when y is blank - error message steals focus
+    http://epsg.io/21036/map
+
+On validation error
+    When swiping to radio group attributed, validation error is shown for radio group
+    Andras GPS -> Assessment
+
 https://github.com/ACRA/acra
 https://github.com/ACRA/acralyzer
 Allow survey to be changed?
+
+Custom error/warning indication, instead of Androids setError()
+    Different colors for errors and warnings
+    Always in the attribute label?
+
+Replace Toast notification with custom
+    Different colors for errors and warnings
 
 Household surveys/Assets/Alternative energy sources
     Status of entity collection does not update when all children entities are corrected

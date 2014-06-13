@@ -6,8 +6,9 @@ package org.openforis.collect.android.viewmodel;
 public class UiCoordinateAttribute extends UiAttribute {
     private Double x;
     private Double y;
+    private UiSpatialReferenceSystem spatialReferenceSystem;
 
-    public UiCoordinateAttribute(int id, Definition definition) {
+    public UiCoordinateAttribute(int id, UiCoordinateDefinition definition) {
         super(id, definition);
     }
 
@@ -25,6 +26,18 @@ public class UiCoordinateAttribute extends UiAttribute {
 
     public synchronized void setY(Double y) {
         this.y = y;
+    }
+
+    public synchronized UiSpatialReferenceSystem getSpatialReferenceSystem() {
+        return spatialReferenceSystem;
+    }
+
+    public synchronized void setSpatialReferenceSystem(UiSpatialReferenceSystem spatialReferenceSystem) {
+        this.spatialReferenceSystem = spatialReferenceSystem;
+    }
+
+    public UiCoordinateDefinition getDefinition() {
+        return (UiCoordinateDefinition) super.getDefinition();
     }
 
     public boolean isEmpty() {

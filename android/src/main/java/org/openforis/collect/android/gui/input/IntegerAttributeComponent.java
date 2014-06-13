@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiIntegerAttribute;
 
+import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
+
 /**
  * @author Daniel Wiell
  */
@@ -24,6 +26,6 @@ public class IntegerAttributeComponent extends EditTextAttributeComponent<UiInte
     }
 
     protected void onEditTextCreated(EditText input) {
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED);
     }
 }

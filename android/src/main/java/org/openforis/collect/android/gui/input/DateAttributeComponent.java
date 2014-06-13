@@ -55,6 +55,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
 
     protected void onEditTextCreated(EditText input) {
         selectedDateView = input;
+        selectedDateView.setHint(context.getResources().getString(R.string.hint_date_pattern) + " ");
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedDateView.setLayoutParams(params);
     }

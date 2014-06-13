@@ -36,6 +36,7 @@ dependencies {
         exclude group: 'commons-jxpath'
         exclude group: 'xmlpull'
         exclude group: 'cglib'
+        exclude group: 'org.slf4j'
         exclude group: 'log4j'
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'

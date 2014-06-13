@@ -76,6 +76,10 @@ public abstract class SavableComponent {
         }
     }
 
+    protected final String resourceString(int resourceId) {
+        return context.getResources().getString(resourceId);
+    }
+
     public static <T extends UiNode> SavableComponent create(T node, SurveyService surveyService, FragmentActivity context) {
         if (node instanceof UiAttribute)
             return createAttributeComponent((UiAttribute) node, surveyService, context);

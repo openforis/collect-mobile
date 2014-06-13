@@ -20,7 +20,6 @@ public class NodeDto {
     public int recordId;
     public boolean recordKeyAttribute;
     public Type type;
-    public Type attributeType;
     public String text;
     public Date date;
     public Integer hour;
@@ -36,6 +35,7 @@ public class NodeDto {
     public Double doubleTo;
     public Double x;
     public Double y;
+    public String srs;
     public String taxonCode;
     public String taxonScientificName;
     public File file;

@@ -39,6 +39,7 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
     }
 
     protected void updateAttributeValue(String newValue) {
+        newValue = newValue == null ? "" : newValue;
         Matcher matcher = TIME_PATTERN.matcher(newValue);
         if (matcher.find()) {
             int hour = Integer.parseInt(matcher.group(1));
@@ -52,6 +53,7 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
 
     protected void onEditTextCreated(EditText input) {
         selectedTimeView = input;
+        selectedTimeView.setHint(context.getResources().getString(R.string.hint_time_pattern) + " ");
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedTimeView.setLayoutParams(params);
     }

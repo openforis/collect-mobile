@@ -71,7 +71,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         taxonVernacularNameDao.setDataSource(database.dataSource());
         speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
         ExpressionFactory expressionFactory = new ExpressionFactory();
-        expressionFactory.setLookupProvider(new DatabaseLookupProvider());
+        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));
         speciesManager.setExpressionFactory(expressionFactory);
         return speciesManager; // TODO: Shouldn't be here - separate class, and provide as dependency
     }

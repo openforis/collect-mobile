@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -41,6 +43,10 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         return false;
     }
 
+    protected final EditText getEditText() {
+        return editText;
+    }
+
     protected View toInputView() {
         return editText;
     }
@@ -60,7 +66,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     }
 
     protected EditText createEditText() {
-        EditText editText = new EditText(context);
+        final EditText editText = new EditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
@@ -72,6 +78,17 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                     saveNode();
                 return false;
+            }
+        });
+        editText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            public void afterTextChanged(Editable s) {
+                editText.setError(null);
             }
         });
         editText.setText(attributeValue());

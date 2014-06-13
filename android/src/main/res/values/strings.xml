@@ -12,5 +12,15 @@
     <string name="action_settings">Settings</string>
 
     <string name="message_invalid_date">Invalid date</string>
-    <string name="message_invalid_coordinate">Invalid coordinate</string>
+    <string name="message_not_a_number">Not a number</string>
+
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="label_spatial_reference_system">Spatial Reference System</string>
+    <string name="label_start_gps">Start GPS</string>
+    <string name="label_stop_gps">Stop GPS</string>
+    <string name="label_accuracy">Accuracy</string>
+
+    <string name="hint_date_pattern">dd MMMM yyyy</string>
+    <string name="hint_time_pattern">hh:mm</string>
 </resources>

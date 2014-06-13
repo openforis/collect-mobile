@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiBooleanAttribute;
 
@@ -24,11 +25,9 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
 
     private RadioGroup createRadioGroup() {
         RadioGroup radioGroup = new RadioGroup(context);
-        // TODO: Don't hard-code labels
-        RadioButton yes = createButton("Yes", TRUE_ID);
-        RadioButton no = createButton("No", FALSE_ID);
+        RadioButton yes = createButton(resourceString(R.string.label_yes), TRUE_ID);
+        RadioButton no = createButton(resourceString(R.string.label_no), FALSE_ID);
         radioGroup.addView(yes);
-
         radioGroup.addView(no);
 
         if (checked != null && checked) {

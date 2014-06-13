@@ -39,6 +39,7 @@ public class NodeDatabaseSchemaChangeLog {
                         "val_double_to REAL,\n" +
                         "val_x REAL,\n" +
                         "val_y REAL,\n" +
+                        "val_srs TEXT,\n" +
                         "val_taxon_code TEXT,\n" +
                         "val_taxon_scientific_name TEXT,\n" +
                         "val_file TEXT\n" +

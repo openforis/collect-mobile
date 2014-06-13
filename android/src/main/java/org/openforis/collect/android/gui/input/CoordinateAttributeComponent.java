@@ -174,11 +174,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             srsView.setAdapter(adapter);
             srsView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    UiSpatialReferenceSystem srs = (UiSpatialReferenceSystem) srsView.getSelectedItem();
-                    if (notEqual(srs, attribute.getSpatialReferenceSystem())) {
-                        transformCoordinates();
-                        saveNode();
-                    }
+                    saveNode();
                 }
 
                 public void onNothingSelected(AdapterView<?> parent) {
@@ -186,18 +182,6 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 }
             });
             return srsView;
-        }
-
-        private void transformCoordinates() {
-            Double x = toDouble(vh.xView);
-            Double y = toDouble(vh.yView);
-            if (x != null && y != null) {
-                double[] transformedCoords = CoordinateUtils.transform(
-                        attribute.getSpatialReferenceSystem(),
-                        new double[]{x, y},
-                        selectedSpatialReferenceSystem());
-                vh.updateCoordinate(transformedCoords);
-            }
         }
 
         private TextView createNumberInput(Double value, String hint) {

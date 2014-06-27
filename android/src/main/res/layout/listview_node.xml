@@ -10,6 +10,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:minHeight="48dp">
+
     <TextView
             android:id="@+id/nodeLabel"
             android:layout_width="0dp"

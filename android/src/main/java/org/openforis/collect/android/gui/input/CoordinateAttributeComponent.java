@@ -167,12 +167,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
 
         private Spinner createSrsSpinner() {
-            final Spinner srsView = new Spinner(context);
+            final Spinner srsSpinner = new Spinner(context);
             adapter = new ArrayAdapter<UiSpatialReferenceSystem>(context,
                     android.R.layout.simple_spinner_dropdown_item,
                     attribute.getDefinition().spatialReferenceSystems);
-            srsView.setAdapter(adapter);
-            srsView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            srsSpinner.setAdapter(adapter);
+            selectCurrentSrsInSpinner(srsSpinner);
+            srsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     saveNode();
                 }
@@ -181,7 +182,15 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                     saveNode();
                 }
             });
-            return srsView;
+            return srsSpinner;
+        }
+
+        private void selectCurrentSrsInSpinner(Spinner srsSpinner) {
+            UiSpatialReferenceSystem selectedSrs = attribute.getSpatialReferenceSystem();
+            if (selectedSrs != null) {
+                int position = attribute.getDefinition().spatialReferenceSystems.indexOf(selectedSrs);
+                srsSpinner.setSelection(position);
+            }
         }
 
         private TextView createNumberInput(Double value, String hint) {

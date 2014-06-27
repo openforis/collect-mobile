@@ -5,7 +5,6 @@
             android:id="@+id/action_attribute_list"
             android:icon="?attr/viewAsListIcon"
             android:title="@string/action_node_list"
-            android:showAsAction="never"
             app:showAsAction="never"/>
 
     <item
@@ -13,6 +12,5 @@
             android:icon="?attr/nextIcon"
             android:title="@string/action_next_attribute"
             android:onClick="nextAttribute"
-            android:showAsAction="ifRoom"
             app:showAsAction="ifRoom"/>
 </menu>

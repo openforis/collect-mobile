@@ -1,6 +1,5 @@
 AttributeComponent - Multiple validation errors
-    Split messages
-    Exclude warnings if there are errors?
+    Exclude warnings if there are errors? Better to do survey design so both are not triggered at the same time
 
 Add message for code attribute fragment when parent code not selected
 

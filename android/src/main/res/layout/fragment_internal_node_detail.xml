@@ -3,15 +3,15 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/node_label"
-              style="?android:attr/textAppearanceLarge"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:paddingTop="?attr/standardPadding"
-              android:paddingRight="?attr/standardPadding"
-              android:paddingBottom="?attr/standardLargePadding"
-              android:paddingLeft="?attr/standardPadding"/>
+    <TextView
+            android:id="@+id/node_label"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="?attr/standardPadding"
+            android:paddingRight="?attr/standardPadding"
+            android:paddingBottom="?attr/standardLargePadding"
+            android:paddingLeft="?attr/standardPadding"/>
 
     <TextView
             android:id="@+id/node_description"

@@ -22,7 +22,7 @@ public class SettingsActivity extends Activity {
                 .commit();
     }
 
-    private static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragment {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 

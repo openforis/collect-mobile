@@ -4,19 +4,16 @@
     <item
             android:id="@+id/action_import"
             android:title="@string/action_import"
-            android:showAsAction="never"
             app:showAsAction="never"
             android:onClick="showFileChooser"/>
     <item
             android:id="@+id/action_export"
             android:title="@string/action_export"
-            android:showAsAction="never"
             app:showAsAction="never"
             android:onClick="export"/>
     <item
             android:id="@+id/action_settings"
             android:title="@string/action_settings"
-            android:showAsAction="never"
             app:showAsAction="never"
             android:orderInCategory="100000"/>
 </menu>

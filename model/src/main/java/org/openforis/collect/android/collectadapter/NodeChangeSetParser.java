@@ -1,7 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.viewmodel.*;
-import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
 import org.openforis.collect.model.AttributeChange;
 import org.openforis.collect.model.EntityChange;
@@ -14,11 +13,13 @@ import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Attribute;
+import org.openforis.idm.model.CalculatedAttribute;
 import org.openforis.idm.model.Node;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
 
 /**
  * @author Daniel Wiell
@@ -26,14 +27,14 @@ import java.util.Map;
 class NodeChangeSetParser {
     private final NodeChangeSet nodeChangeSet;
     private final UiRecord uiRecord;
-    private final MessageSource errorMessageSource = new ResourceBundleMessageSource();
-    private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(errorMessageSource);
+    private final Messages messages = new Messages();
+    private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(messages);
     private final Locale locale;
 
     public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord) {
         this.nodeChangeSet = nodeChangeSet;
         this.uiRecord = uiRecord;
-        this.locale = Locale.ENGLISH; // TODO: Don't hard code English, use default locale
+        this.locale = Locale.ENGLISH; // TODO: Don't hard code English, use default locale. Requires a fallback message properties in collect-core
 //        this.locale = Locale.getDefault();
     }
 
@@ -58,6 +59,8 @@ class NodeChangeSetParser {
     }
 
     private void parseAttributeChange(AttributeChange attributeChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        if (attributeChange.getNode() instanceof CalculatedAttribute)
+            return; // TODO: Should we actually ignore calculated attributes?
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
         if (!attributeChanges.containsKey(uiAttribute))
             attributeChanges.put(uiAttribute, new UiAttributeChange());
@@ -73,7 +76,10 @@ class NodeChangeSetParser {
             if (nodeChange instanceof EntityChange) {
                 EntityChange entityChange = (EntityChange) nodeChange;
                 for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
-                    UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
+                    if (childNode instanceof CalculatedAttribute)
+                        continue; // TODO: Should we actually ignore calculated attributes?
+                    Integer childNodeId = childNode.getId();
+                    UiNode uiChildNode = uiRecord.lookupNode(childNodeId);
                     if (uiChildNode instanceof UiAttribute) {
                         UiAttribute uiAttribute = (UiAttribute) uiChildNode;
                         parseRequiredValidationError(uiAttribute, entityChange, attributeChanges);
@@ -87,7 +93,7 @@ class NodeChangeSetParser {
     private void parseRequiredValidationError(UiAttribute uiAttribute, EntityChange entityChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = errorMessageSource.getMessage(this.locale, "validation.requiredField");
+            String message = messages.getMessage(this.locale, "validation.requiredField");
             addValidationError(new UiValidationError(message, level(validationResultFlag), uiAttribute), attributeChanges);
         }
     }
@@ -144,6 +150,12 @@ class NodeChangeSetParser {
                 return UiValidationError.Level.WARNING;
             default:
                 throw new IllegalStateException("Cannot create validation error level from an OK validation result flag");
+        }
+    }
+
+    private static class Messages extends ResourceBundleMessageSource {
+        protected PropertyResourceBundle findBundle(Locale locale, String baseName) {
+            return (PropertyResourceBundle) PropertyResourceBundle.getBundle(baseName, locale);
         }
     }
 }

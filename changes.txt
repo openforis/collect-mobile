@@ -17,9 +17,12 @@ Install an update
     * Choose your collect.db file in the file chooser
 
 
-
 Changes
 -------
+
+2014-07-02
+
+    * This version is required to run surveys defined with Collect 3.1.x
 
 2014-06-27
 

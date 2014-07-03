@@ -1,10 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.model.CollectRecord;
-import org.openforis.idm.model.Attribute;
-import org.openforis.idm.model.CodeAttribute;
-import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
+import org.openforis.idm.model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +30,7 @@ class RecordNodes {
     public void add(Node node) {
         if (node instanceof Entity)
             add((Entity) node);
-        else
+        else if (!(node instanceof CalculatedAttribute)) // TODO: Should we actually ignore calculated attributes?
             put(node);
     }
 

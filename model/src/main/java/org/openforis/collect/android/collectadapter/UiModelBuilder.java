@@ -7,6 +7,7 @@ import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
+import org.openforis.idm.metamodel.CalculatedAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Attribute;
@@ -106,7 +107,8 @@ class UiModelBuilder {
         private List<UiNode> createUiNodesForTabAssociations(UITab tab, Entity parentEntity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition nodeDefinition : tabAssociations(tab))
-                nodes.add(createUiNode(nodeDefinition, parentEntity));
+                if (!(nodeDefinition instanceof CalculatedAttributeDefinition))
+                    nodes.add(createUiNode(nodeDefinition, parentEntity));
             return nodes;
         }
 
@@ -159,7 +161,7 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (isAssignedToDifferentTabs(childDefinition, entity))
+                if (isAssignedToDifferentTabs(childDefinition, entity)) // TODO: Should we actually ignore calculated attributes?
                     nodes.add(createUiNode(childDefinition, entity));
             return nodes;
         }

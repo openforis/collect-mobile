@@ -11,6 +11,7 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -20,10 +21,8 @@ import java.util.concurrent.Callable;
 public class MeteredRecordManager extends RecordManager {
     private final RecordManager delegate;
 
-    public MeteredRecordManager(CodeListManager codeListManager, SurveyManager surveyManager) {
-        delegate = new RecordManager(false);
-        delegate.setCodeListManager(codeListManager);
-        delegate.setSurveyManager(surveyManager);
+    public MeteredRecordManager(RecordManager recordManager) {
+        delegate = recordManager;
     }
 
     public void save(final CollectRecord record, final String sessionId) throws RecordPersistenceException {
@@ -61,6 +60,14 @@ public class MeteredRecordManager extends RecordManager {
         return time("checkout", new Callable<CollectRecord>() {
             public CollectRecord call() throws Exception {
                 return delegate.checkout(survey, user, recordId, step, sessionId, forceUnlock);
+            }
+        });
+    }
+
+    public boolean isUnique(final CollectRecord record) {
+        return time("isUnique", new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                return delegate.isUnique(record);
             }
         });
     }
@@ -113,6 +120,95 @@ public class MeteredRecordManager extends RecordManager {
         return time("countRecords(survey, rootEntityDefinitionId)", new Callable<Integer>() {
             public Integer call() throws Exception {
                 return delegate.countRecords(survey, rootEntityDefinitionId);
+            }
+        });
+    }
+
+    public void save(final CollectRecord record) {
+        time("save(record)", new Runnable() {
+            public void run() {
+                delegate.save(record);
+            }
+        });
+    }
+
+    public void save(final CollectRecord record, final User lockingUser, final String sessionId) throws RecordPersistenceException {
+        time("save(record, lockingUser, sessionId)", new Callable<Void>() {
+            public Void call() throws RecordPersistenceException {
+                delegate.save(record, lockingUser, sessionId);
+                return null;
+            }
+        });
+    }
+
+    public CollectRecord load(final CollectSurvey survey, final int recordId) {
+        return time("load(survey, recordId)", new Callable<CollectRecord>() {
+            public CollectRecord call() throws Exception {
+                return delegate.load(survey, recordId);
+            }
+        });
+    }
+
+    public byte[] loadBinaryData(final CollectSurvey survey, final int recordId, final CollectRecord.Step step) {
+        return time("loadBinaryData(survey, recordId, step)", new Callable<byte[]>() {
+            public byte[] call() throws Exception {
+                return delegate.loadBinaryData(survey, recordId, step);
+            }
+        });
+    }
+
+    public List<CollectRecord> loadSummaries(final CollectSurvey survey, final String rootEntity, final CollectRecord.Step step) {
+        return time("loadSummaries(survey, rootEntity, step", new Callable<List<CollectRecord>>() {
+            public List<CollectRecord> call() throws Exception {
+                return delegate.loadSummaries(survey, rootEntity, step);
+            }
+        });
+    }
+
+    public List<CollectRecord> loadSummaries(final RecordFilter filter) {
+        return time("loadSummaries(filter)", new Callable<List<CollectRecord>>() {
+            public List<CollectRecord> call() throws Exception {
+                return delegate.loadSummaries(filter);
+            }
+        });
+    }
+
+    public List<CollectRecord> loadSummaries(final RecordFilter filter, final List<RecordSummarySortField> sortFields) {
+        return time("loadSummaries(filter, sortFields)", new Callable<List<CollectRecord>>() {
+            public List<CollectRecord> call() throws Exception {
+                return delegate.loadSummaries(filter, sortFields);
+            }
+        });
+    }
+
+    public List<CollectRecord> loadSummaries(final CollectSurvey survey, final String rootEntity, final Date modifiedSince) {
+        return time("loadSummaries(survey, rootEntity, modifiedSince)", new Callable<List<CollectRecord>>() {
+            public List<CollectRecord> call() throws Exception {
+                return delegate.loadSummaries(survey, rootEntity, modifiedSince);
+            }
+        });
+    }
+
+    public int countRecords(final CollectSurvey survey, final int rootEntityDefinitionId, final int dataStepNumber) {
+        return time("countRecords(survey, rootEntityDefinitionId, dataStepNumber)", new Callable<Integer>() {
+            public Integer call() throws Exception {
+                return delegate.countRecords(survey, rootEntityDefinitionId, dataStepNumber);
+            }
+        });
+    }
+
+    public int countRecords(final RecordFilter filter) {
+        return time("countRecords(filter)", new Callable<Integer>() {
+            public Integer call() throws Exception {
+                return delegate.countRecords(filter);
+            }
+        });
+    }
+
+    public int countRecords(final CollectSurvey survey, final String rootEntity, final String... keyValues) {
+        return time("countRecords(survey, rootEntity, keyValues)", new Callable<Integer>() {
+            public Integer call() throws Exception {
+                return delegate.countRecords(survey, rootEntity, keyValues);
             }
         });
     }

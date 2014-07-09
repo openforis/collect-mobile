@@ -6,12 +6,10 @@ import android.database.sqlite.SQLiteException;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
-import liquibase.database.core.AndroidSQLiteDatabase;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
-import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
@@ -132,11 +130,17 @@ public class ServiceLocator {
 
         MeteredValidator validator = new MeteredValidator(codeListManager);
         SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
-        RecordManager recordManager = new MeteredRecordManager(codeListManager, surveyManager);
-        recordManager.setRecordDao(new MobileRecordDao(nodeDatabase));
-        validator.setRecordManager(recordManager);
 
-        return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);
+        RecordManager recordManager = new MobileRecordManager(
+                codeListManager,
+                surveyManager,
+                new RecordUniquenessChecker.DataSourceRecordUniquenessChecker(nodeDatabase)
+        );
+
+        RecordManager meteredRecordManager = new MeteredRecordManager(recordManager);
+        validator.setRecordManager(meteredRecordManager);
+
+        return new CollectModelManager(surveyManager, meteredRecordManager, codeListManager, modelDatabase);
     }
 
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {

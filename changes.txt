@@ -1,4 +1,4 @@
-First installation
+ First installation
 ------------------
 
 	* Download collect.db
@@ -20,7 +20,7 @@ Install an update
 Changes
 -------
 
-2014-07-02
+2014-07-04
 
     * This version is required to run surveys defined with Collect 3.1.x
 

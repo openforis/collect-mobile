@@ -40,6 +40,32 @@ public class NodeDto {
     public String taxonScientificName;
     public File file;
 
+    public static NodeDto recordKeyAttribute(int recordId, String definitionId, String value, Class<? extends UiAttribute> attributeType) {
+        NodeDto node = new NodeDto();
+        node.recordId = recordId;
+        node.type = NodeDto.Type.ofUiNodeType(attributeType);
+        node.definitionId = definitionId;
+        if (value != null && !value.isEmpty()) {
+            switch (node.type) {
+                case CODE_ATTRIBUTE:
+                    node.codeValue = value;
+                    break;
+                case DOUBLE_ATTRIBUTE:
+                    node.doubleValue = Double.parseDouble(value);
+                    break;
+                case INTEGER_ATTRIBUTE:
+                    node.intValue = Integer.parseInt(value);
+                    break;
+                case TEXT_ATTRIBUTE:
+                    node.text = value;
+                    break;
+                default:
+                    throw new IllegalStateException("Attribute type cannot be record key: " + attributeType);
+            }
+        }
+        return node;
+    }
+
     public String toString() {
         return id + ": " + type;
     }
@@ -89,15 +115,19 @@ public class NodeDto {
 
         public static Type ofUiNode(UiNode node) {
             Class<? extends UiNode> uiNodeClass = node.getClass();
-            Type type = TYPE_BY_CLASS.get(uiNodeClass);
+            return ofUiNodeType(uiNodeClass);
+        }
+
+        public static Type ofUiNodeType(Class<? extends UiNode> uiNodeType) {
+            Type type = TYPE_BY_CLASS.get(uiNodeType);
             if (type == null) {
                 for (Type t : values()) {
-                    if (t.uiNodeClass == uiNodeClass) {
-                        TYPE_BY_CLASS.put(uiNodeClass, t);
+                    if (t.uiNodeClass == uiNodeType) {
+                        TYPE_BY_CLASS.put(uiNodeType, t);
                         return t;
                     }
                 }
-                throw new IllegalArgumentException("No type for class " + uiNodeClass);
+                throw new IllegalArgumentException("No type for class " + uiNodeType);
             }
             return type;
         }

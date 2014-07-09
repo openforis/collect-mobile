@@ -125,7 +125,8 @@ public class ViewModelManager {
     public void updateAttribute(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         // TODO: Update status and relevance of all related attributes, if it changed
         // TODO: We want attribute change events, not just validation errors
-        UiNode.Status oldRecordStatus = attribute.getUiRecord().getStatus();
+        UiRecord uiRecord = attribute.getUiRecord();
+        UiNode.Status oldRecordStatus = uiRecord.getStatus();
         List<Map<String, Object>> statusChanges = new ArrayList<Map<String, Object>>();
         for (final UiAttribute changedAttribute : attributeChanges.keySet()) {
             UiAttributeChange attributeChange = attributeChanges.get(changedAttribute);
@@ -141,11 +142,14 @@ public class ViewModelManager {
                 }});
             }
         }
-        UiNode.Status newRecordStatus = attribute.getUiRecord().getStatus();
+        UiNode.Status newRecordStatus = uiRecord.getStatus();
         if (oldRecordStatus == newRecordStatus)
             repo.updateAttribute(attribute, statusChanges);
         else
             repo.updateAttribute(attribute, statusChanges, newRecordStatus);
+
+        if (uiRecord.isKeyAttribute(attribute))
+            uiRecord.keyAttributeUpdated();
     }
 
     private void addRecordPlaceholders(UiSurvey uiSurvey) {

@@ -47,6 +47,11 @@ public class UiRecord extends UiEntity {
         return (UiRecordCollection) super.getParent();
     }
 
+    public void keyAttributeUpdated() {
+        Placeholder placeholder = (Placeholder) getParent().getChildById(getId());
+        placeholder.keyAttributes = getKeyAttributes();
+    }
+
     public static class Placeholder extends UiNode {
         private final String recordCollectionName;
         private List<UiAttribute> keyAttributes;

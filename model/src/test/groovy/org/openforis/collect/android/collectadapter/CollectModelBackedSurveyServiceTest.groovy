@@ -6,7 +6,6 @@ import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager
 import spock.lang.Specification
 
-import static org.openforis.collect.android.viewmodel.UiNode.Status.EMPTY
 import static org.openforis.collect.android.viewmodel.UiNode.Status.OK
 import static org.openforis.collect.android.viewmodel.UiNode.Status.VALIDATION_ERROR
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository

@@ -148,8 +148,8 @@ public class ViewModelManager {
         else
             repo.updateAttribute(attribute, statusChanges, newRecordStatus);
 
-        if (uiRecord.isKeyAttribute(attribute))
-            uiRecord.keyAttributeUpdated();
+//        if (uiRecord.isKeyAttribute(attribute))
+//            uiRecord.keyAttributeUpdated();
     }
 
     private void addRecordPlaceholders(UiSurvey uiSurvey) {

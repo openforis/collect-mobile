@@ -13,6 +13,7 @@ import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
+import org.openforis.collect.android.util.Unzipper;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
@@ -24,6 +25,7 @@ import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
@@ -54,27 +56,7 @@ public class ServiceLocator {
     }
 
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) {
-        try {
-            verifyDatabase(surveyDatabasePath);
-            applicationContext.openOrCreateDatabase(MODEL_DB, 0, null);
-            File targetSurveyDatabase = applicationContext.getDatabasePath(MODEL_DB);
-            FileUtils.copyFile(new File(surveyDatabasePath), targetSurveyDatabase);
-        } catch (IOException e) {
-            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
-            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
-        } catch (SQLiteException e) {
-            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
-            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
-        }
-    }
-
-    /**
-     * Reality check on the database file. It needs to be an openable SQLite database file,
-     * and contain the ofc_survey table
-     */
-    private static void verifyDatabase(String surveyDatabasePath) {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(surveyDatabasePath, null, SQLiteDatabase.OPEN_READWRITE);
-        db.rawQuery("select * from ofc_survey", new String[0]);
+        new SurveyImporter(surveyDatabasePath, applicationContext, MODEL_DB).importSurvey();
     }
 
     public static boolean isSurveyImported(Context context) {

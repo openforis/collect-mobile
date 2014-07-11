@@ -1,10 +1,10 @@
  First installation
 ------------------
 
-	* Download collect.db
+	* Download survey.collect-mobile
 	* Download and install Collect.apk
 	* Start Collect
-	* Choose the downloaded collect.db file in the file chooser
+	* Choose the downloaded survey.collect-mobile file in the file chooser
 
 
 Install an update
@@ -22,6 +22,7 @@ Changes
 
 2014-07-11
 
+    * Added setting to capture the crew ID
     * Supported survey design format exported in Collect Server
     * Uniqueness or record keys are validated
     * Fixed bug where record list wasn't properly updated when record key attribute changed

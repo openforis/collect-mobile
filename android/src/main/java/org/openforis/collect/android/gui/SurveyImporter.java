@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class SurveyImporter {
+    public static final String DATABASE_NAME = "collect.db";
     private final String sourceSurveyPath;
     private final Context applicationContext;
     private final String targetSurveyDatabasePath;
@@ -26,7 +27,7 @@ public class SurveyImporter {
     public void importSurvey() {
         try {
             File tempDir = unzipSurveyDatabase(sourceSurveyPath);
-            String sourceSurveyDatabasePath = new File(tempDir, "collect.db").getAbsolutePath();
+            String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
             verifyDatabase(sourceSurveyDatabasePath);
             applicationContext.openOrCreateDatabase(targetSurveyDatabasePath, 0, null);
             File targetSurveyDatabase = applicationContext.getDatabasePath(targetSurveyDatabasePath);
@@ -46,7 +47,7 @@ public class SurveyImporter {
         File zipFile = new File(surveyDatabasePath);
         if (!zipFile.exists())
             throw new FileNotFoundException("File not found: " + surveyDatabasePath);
-        new Unzipper(zipFile, folder).unzip();
+        new Unzipper(zipFile, folder).unzip(DATABASE_NAME);
 
         return folder;
     }

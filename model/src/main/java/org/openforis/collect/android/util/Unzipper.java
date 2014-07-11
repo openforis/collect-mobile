@@ -17,22 +17,26 @@ public class Unzipper {
         this.outputFolder = outputFolder;
     }
 
-    public void unzip() throws IOException {
+    public void unzip(String fileName) throws IOException {
         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile));
         try {
             ZipEntry zipEntry = zipInputStream.getNextEntry();
             while (zipEntry != null) {
-                extractEntry(zipInputStream, zipEntry);
+                String entryName = zipEntry.getName();
+                if (entryName.equals(fileName)) {
+                    extractEntry(zipInputStream, fileName);
+                    return;
+                }
                 zipEntry = zipInputStream.getNextEntry();
             }
+            throw new FileNotFoundException("Could not find entry with name " + fileName + " in " + zipFile);
         } finally {
             zipInputStream.close();
         }
     }
 
-    private void extractEntry(ZipInputStream zipInputStream, ZipEntry zipEntry) throws IOException {
-        String fileName = zipEntry.getName();
-        File newFile = new File(outputFolder + File.separator + fileName);
+    private void extractEntry(ZipInputStream zipInputStream, String entryName) throws IOException {
+        File newFile = new File(outputFolder + File.separator + entryName);
         OutputStream fos = new FileOutputStream(newFile);
         write(zipInputStream, fos);
     }

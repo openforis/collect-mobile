@@ -18,10 +18,10 @@ public class SurveyImporter {
     private final Context applicationContext;
     private final String targetSurveyDatabasePath;
 
-    public SurveyImporter(String sourceSurveyPath, Context applicationContext, String targetSurveyDatabasePath) {
+    public SurveyImporter(String sourceSurveyPath, Context applicationContext, File targetSurveyDatabasePath) {
         this.sourceSurveyPath = sourceSurveyPath;
         this.applicationContext = applicationContext;
-        this.targetSurveyDatabasePath = targetSurveyDatabasePath;
+        this.targetSurveyDatabasePath = targetSurveyDatabasePath.getAbsolutePath();
     }
 
     public void importSurvey() {

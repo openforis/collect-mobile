@@ -1,9 +1,12 @@
 package org.openforis.collect.android.gui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -41,19 +44,25 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private UiNode selectedNode;
 
     public void onCreate(Bundle savedState) {
-        if (ServiceLocator.init(getApplicationContext())) {
-            ThemeInitializer.init(this);
+        try {
+            if (ServiceLocator.init(this)) {
+                ThemeInitializer.init(this);
+                super.onCreate(savedState);
+                surveyService = ServiceLocator.surveyService();
+                support = createLayoutSupport();
+                selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+                enableUpNavigationIfNeeded(selectedNode);
+                surveyService.setListener(this);
+                support.onCreate(savedState);
+            } else {
+                Toast.makeText(this, "Select survey to import.", Toast.LENGTH_SHORT).show();
+                super.onCreate(savedState);
+                showSurveyFileChooser();
+            }
+        } catch (StorageNotAvailableException ignore) {
             super.onCreate(savedState);
-            surveyService = ServiceLocator.surveyService();
-            support = createLayoutSupport();
-            selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
-            enableUpNavigationIfNeeded(selectedNode);
-            surveyService.setListener(this);
-            support.onCreate(savedState);
-        } else {
-            Toast.makeText(this, "Select survey to import.", Toast.LENGTH_SHORT).show();
-            super.onCreate(savedState);
-            showSurveyFileChooser();
+            DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
+            newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
         }
     }
 
@@ -149,7 +158,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     public void onResume() {
         if (surveyService != null) {
-            ServiceLocator.init(getApplicationContext());
+            ServiceLocator.init(this);
             surveyService.setListener(this);
             UiRecord uiRecord = selectedNode.getUiRecord();
             selectNode(uiRecord == null ? 0 : uiRecord.getId(), selectedNode.getId());
@@ -234,6 +243,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         showSurveyFileChooser();
     }
 
+
+
     private void showSurveyFileChooser() {
         Intent target = FileUtils.createGetContentIntent();
         Intent intent = Intent.createChooser(
@@ -263,6 +274,12 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         } catch (Exception e) {
             showSurveyFileChooser();
         }
+    }
+
+    public static void restartActivity(Activity activity) {
+        Intent intent = new Intent(activity, SurveyNodeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
     }
 
     private abstract class LayoutDependentSupport {

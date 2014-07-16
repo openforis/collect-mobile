@@ -11,6 +11,10 @@
     <string name="action_export">Export</string>
     <string name="action_settings">Settings</string>
 
+    <string name="storage_not_found_message">Secondary storage not found</string>
+    <string name="storage_not_found_retry">Retry</string>
+    <string name="storage_not_found_settings">Use primary storage</string>
+
     <string name="message_invalid_date">Invalid date</string>
     <string name="message_not_a_number">Not a number</string>
 

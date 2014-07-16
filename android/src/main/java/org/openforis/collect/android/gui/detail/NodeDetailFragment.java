@@ -1,11 +1,9 @@
 package org.openforis.collect.android.gui.detail;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -62,7 +60,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         frameLayout.addView(scrollView);
 //        frameLayout.addView(rootView);
 //        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
-            frameLayout.addView(createOverlay());
+        frameLayout.addView(createOverlay());
         return frameLayout;
     }
 
@@ -74,7 +72,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         super.onResume();
     }
 
-//    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    //    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private View createOverlay() {
         overlay = new LinearLayout(getActivity());
         overlay.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

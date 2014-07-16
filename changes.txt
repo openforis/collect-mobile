@@ -22,6 +22,11 @@ Changes
 
 2014-07-11
 
+    * Added option to store data on SD card
+    * Specified crew ID is now displayed in the settings
+
+2014-07-11
+
     * Added setting to capture the crew ID
     * Supported survey design format exported in Collect Server
     * Uniqueness or record keys are validated

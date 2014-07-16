@@ -22,14 +22,13 @@ public class AndroidDatabase implements Database {
 
     private DataSource dataSource;
 
-    public AndroidDatabase(Context context, String databaseName) {
-        this(new NodeSchemaChangeLog(Collections.<SchemaChange>emptyList()), context, databaseName);
+    public AndroidDatabase(Context context, File databasePath) {
+        this(new NodeSchemaChangeLog(Collections.<SchemaChange>emptyList()), context, databasePath);
     }
 
-    public AndroidDatabase(NodeSchemaChangeLog schemaChangeLog, Context context, String databaseName) {
-        File databasePath = context.getDatabasePath(databaseName);
+    public AndroidDatabase(NodeSchemaChangeLog schemaChangeLog, Context context, File databasePath) {
         dataSource = new AndroidDataSource(databasePath);
-        openHelper = new OpenHelper(schemaChangeLog, context.getApplicationContext(), databaseName);
+        openHelper = new OpenHelper(schemaChangeLog, context.getApplicationContext(), databasePath);
         setupDatabase(databasePath);
     }
 
@@ -107,8 +106,8 @@ public class AndroidDatabase implements Database {
     private static class OpenHelper extends SQLiteOpenHelper {
         private final NodeSchemaChangeLog schemaChangeLog;
 
-        private OpenHelper(NodeSchemaChangeLog schemaChangeLog, Context context, String name) {
-            super(context, name, null, schemaChangeLog.getVersion());
+        private OpenHelper(NodeSchemaChangeLog schemaChangeLog, Context context, File databasePath) {
+            super(context, databasePath.getAbsolutePath(), null, schemaChangeLog.getVersion());
             this.schemaChangeLog = schemaChangeLog;
         }
 

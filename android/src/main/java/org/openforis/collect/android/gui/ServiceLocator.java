@@ -1,19 +1,16 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import android.content.SharedPreferences;
 import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
-import org.apache.commons.io.FileUtils;
+import android.preference.PreferenceManager;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
+import org.openforis.collect.android.gui.util.StorageLocations;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
-import org.openforis.collect.android.util.Unzipper;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
@@ -25,9 +22,8 @@ import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
+import static org.openforis.collect.android.gui.util.StorageLocations.hasSecondaryStorage;
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
 /**
@@ -39,12 +35,14 @@ public class ServiceLocator {
     private static CollectModelManager collectModelManager;
     private static SurveyService surveyService;
     private static TaxonService taxonService;
+    private static File workingDir;
 
     public static boolean init(Context applicationContext) {
         if (surveyService == null) {
+            workingDir = workingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
-            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, MODEL_DB);
+            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, new File(workingDir, MODEL_DB));
             AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -55,12 +53,27 @@ public class ServiceLocator {
         return true;
     }
 
+    private static File workingDir(Context applicationContext) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
+        boolean useSecondaryStorage = hasSecondaryStorage() && preferences.getBoolean("useSecondaryStorage", hasSecondaryStorage());
+        File storageLocation = null;
+        if (useSecondaryStorage) {
+            storageLocation = StorageLocations.secondaryStorageLocation();
+            if (storageLocation == null)
+                throw new StorageNotAvailableException();
+        }
+        if (storageLocation == null) {
+            storageLocation = applicationContext.getDatabasePath("database").getParentFile();
+        }
+        return storageLocation;
+    }
+
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) {
-        new SurveyImporter(surveyDatabasePath, applicationContext, MODEL_DB).importSurvey();
+        new SurveyImporter(surveyDatabasePath, applicationContext, new File(workingDir, MODEL_DB)).importSurvey();
     }
 
     public static boolean isSurveyImported(Context context) {
-        return context.getDatabasePath(MODEL_DB).exists();
+        return context.getDatabasePath(new File(workingDir, MODEL_DB).getAbsolutePath()).exists();
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {
@@ -69,7 +82,7 @@ public class ServiceLocator {
                         new NodeDatabaseSchemaChangeLog().changes()
                 ),
                 applicationContext,
-                NODES_DB
+                new File(workingDir, NODES_DB)
         );
     }
 
@@ -137,4 +150,5 @@ public class ServiceLocator {
     private static TaxonService createTaxonService(Database modelDatabase) {
         return new TaxonRepository(modelDatabase);
     }
+
 }

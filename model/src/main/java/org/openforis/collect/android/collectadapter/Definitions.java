@@ -197,7 +197,7 @@ public class Definitions {
         return label == null ? label(nodeDefinition) : label;
     }
 
-    private String label(UITab tab) {
+    public static String label(UITab tab) {
         return tab.getLabels().get(0).getText(); // TODO: Take language and type into account
     }
 

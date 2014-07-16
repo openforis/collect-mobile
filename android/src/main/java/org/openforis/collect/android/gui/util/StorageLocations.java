@@ -1,5 +1,8 @@
 package org.openforis.collect.android.gui.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -17,8 +20,18 @@ public class StorageLocations {
         return secondaryStorageLocations.get(0);
     }
 
+    public static boolean isSecondaryStorageWritable() {
+        File secondaryStorageLocation = StorageLocations.secondaryStorageLocation();
+        return secondaryStorageLocation() != null && secondaryStorageLocation.canWrite();
+    }
+
     public static boolean hasSecondaryStorage() {
         return !TextUtils.isEmpty(System.getenv(ENV_SECONDARY_STORAGE));
+    }
+
+    public static boolean usesSecondaryStorage(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return hasSecondaryStorage() && preferences.getBoolean("useSecondaryStorage", hasSecondaryStorage());
     }
 
     private static List<File> secondaryStorageLocations() {

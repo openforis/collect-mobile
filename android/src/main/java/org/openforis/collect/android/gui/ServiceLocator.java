@@ -1,9 +1,7 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
@@ -23,7 +21,7 @@ import org.openforis.collect.persistence.DynamicTableDao;
 
 import java.io.File;
 
-import static org.openforis.collect.android.gui.util.StorageLocations.hasSecondaryStorage;
+import static org.openforis.collect.android.gui.util.StorageLocations.usesSecondaryStorage;
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
 /**
@@ -42,7 +40,7 @@ public class ServiceLocator {
             workingDir = workingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
-            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, new File(workingDir, MODEL_DB));
+            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB));
             AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -53,27 +51,37 @@ public class ServiceLocator {
         return true;
     }
 
-    private static File workingDir(Context applicationContext) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext);
-        boolean useSecondaryStorage = hasSecondaryStorage() && preferences.getBoolean("useSecondaryStorage", hasSecondaryStorage());
-        File storageLocation = null;
-        if (useSecondaryStorage) {
-            storageLocation = StorageLocations.secondaryStorageLocation();
-            if (storageLocation == null)
+    private static File databasePath(String databaseName) {
+        return new File(workingDir, databaseName);
+    }
+
+    public static File workingDir(Context applicationContext) {
+        File workingDir = null;
+        if (usesSecondaryStorage(applicationContext)) {
+            if (!StorageLocations.isSecondaryStorageWritable())
                 throw new StorageNotAvailableException();
+            workingDir = secondaryStorageWorkingDir();
         }
-        if (storageLocation == null) {
-            storageLocation = applicationContext.getDatabasePath("database").getParentFile();
-        }
-        return storageLocation;
+        if (workingDir == null)
+            workingDir = applicationContext.getDatabasePath("database").getParentFile();
+        return workingDir;
+    }
+
+    private static File secondaryStorageWorkingDir() {
+        File secondaryStorageLocation = StorageLocations.secondaryStorageLocation();
+        File workingDir = new File(secondaryStorageLocation, "org.openforis.collect");
+        if (!workingDir.exists())
+            if (!workingDir.mkdir())
+                throw new StorageNotAvailableException();
+        return workingDir;
     }
 
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) {
-        new SurveyImporter(surveyDatabasePath, applicationContext, new File(workingDir, MODEL_DB)).importSurvey();
+        new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB)).importSurvey();
     }
 
     public static boolean isSurveyImported(Context context) {
-        return context.getDatabasePath(new File(workingDir, MODEL_DB).getAbsolutePath()).exists();
+        return context.getDatabasePath(databasePath(MODEL_DB).getAbsolutePath()).exists();
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {
@@ -82,7 +90,7 @@ public class ServiceLocator {
                         new NodeDatabaseSchemaChangeLog().changes()
                 ),
                 applicationContext,
-                new File(workingDir, NODES_DB)
+                databasePath(NODES_DB)
         );
     }
 
@@ -99,10 +107,10 @@ public class ServiceLocator {
     }
 
     private static File collectDir() {
-        File storageDir = Environment.getExternalStorageDirectory();
-        return new File(storageDir, "Collect");
+        return StorageLocations.isSecondaryStorageWritable()
+                ? StorageLocations.secondaryStorageLocation()
+                : Environment.getExternalStorageDirectory();
     }
-
 
     public static CollectModelBackedSurveyService createSurveyService(CollectModelManager collectModelManager, Database database) {
         return new CollectModelBackedSurveyService(

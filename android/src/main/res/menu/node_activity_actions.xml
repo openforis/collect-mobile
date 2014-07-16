@@ -2,6 +2,11 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <!-- TODO: Temporary, for demo-->
     <item
+            android:id="@+id/action_backup"
+            android:title="@string/action_backup"
+            app:showAsAction="never"
+            android:onClick="backup"/>
+    <item
             android:id="@+id/action_import"
             android:title="@string/action_import"
             app:showAsAction="never"

@@ -140,6 +140,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         navigateDown();
     }
 
+    public void backup(MenuItem item) {
+        new Backup(this.getApplicationContext()).execute();
+    }
+
     public void export(MenuItem item) {
         // TODO: Show progress bar - so we need some callback to know how far we got...
 

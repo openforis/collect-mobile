@@ -17,7 +17,12 @@ import java.util.logging.Logger;
  */
 class AndroidDataSource implements DataSource {
     private final String url;
-//    private Connection connection; // TODO: Ugly - sharing the connection
+    /**
+     * A shared connection.
+     * SQLite can be corrupted when multiple threads access database with their own connection.
+     * To prevent this, a single connection will be shared amongst the threads
+     */
+    private Connection connection;
 
     AndroidDataSource(File databaseFile) {
         this.url = "jdbc:sqldroid:" + databaseFile.getAbsolutePath();
@@ -26,14 +31,13 @@ class AndroidDataSource implements DataSource {
 
     @Override
     public synchronized Connection getConnection() throws SQLException {
-//        if (connection == null || connection.isClosed())
-//            connection = DriverManager.getConnection(url);
-//        return connection;
-        return DriverManager.getConnection(url);
+        if (connection == null || connection.isClosed())
+            connection = DriverManager.getConnection(url);
+        return connection;
     }
 
     @Override
-    public Connection getConnection(String username, String password)
+    public synchronized Connection getConnection(String username, String password)
             throws SQLException {
         return getConnection();
     }
@@ -79,5 +83,19 @@ class AndroidDataSource implements DataSource {
         } catch (ClassNotFoundException e) {
             throw new AssertionError(e); // Should never happen
         }
+    }
+
+    public synchronized void close() {
+        if (connection == null)
+            return;
+        try {
+            connection.close();
+            connection = null;
+        } catch (SQLException ignore) {
+        }
+    }
+
+    public String toString() {
+        return url;
     }
 }

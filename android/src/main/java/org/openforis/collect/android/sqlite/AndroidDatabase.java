@@ -1,8 +1,12 @@
 package org.openforis.collect.android.sqlite;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.util.persistence.PersistenceException;
@@ -18,6 +22,7 @@ import java.util.Collections;
  * @author Daniel Wiell
  */
 public class AndroidDatabase implements Database {
+    public static final String ACTION_PREPARE_EJECT = "org.openforis.collect.android.sqlite.Unmount";
     private final OpenHelper openHelper;
 
     private DataSource dataSource;
@@ -29,7 +34,37 @@ public class AndroidDatabase implements Database {
     public AndroidDatabase(NodeSchemaChangeLog schemaChangeLog, Context context, File databasePath) {
         dataSource = new AndroidDataSource(databasePath);
         openHelper = new OpenHelper(schemaChangeLog, context.getApplicationContext(), databasePath);
+        listenToPrepareEjectionBroadcasts(context);
+        listenToStorageEjectionBroadcasts(context);
         setupDatabase(databasePath);
+    }
+
+    private void listenToStorageEjectionBroadcasts(Context context) {
+        IntentFilter filter = new IntentFilter();
+        filter.addDataScheme("file");
+        filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        filter.addAction(Intent.ACTION_MEDIA_REMOVED);
+        filter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);
+        filter.addAction(Intent.ACTION_MEDIA_EJECT);
+        context.getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                Log.i("android_database", "Received storage ejection event for " + dataSource);
+                openHelper.close();
+                ((AndroidDataSource) dataSource).close();
+            }
+        }, filter);
+    }
+
+    private void listenToPrepareEjectionBroadcasts(Context context) {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_PREPARE_EJECT);
+        context.getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                Log.i("android_database", "Received storage ejection request for " + dataSource);
+                openHelper.close();
+                ((AndroidDataSource) dataSource).close();
+            }
+        }, filter);
     }
 
     private void setupDatabase(File databasePath) {
@@ -99,8 +134,8 @@ public class AndroidDatabase implements Database {
     }
 
     private void close(SQLiteDatabase database) {
-//        if (database != null && database.isOpen())
-//            database.close();
+        if (database != null && database.isOpen())
+            database.close();
     }
 
     private static class OpenHelper extends SQLiteOpenHelper {

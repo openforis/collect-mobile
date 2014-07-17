@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -141,7 +140,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void backup(MenuItem item) {
-        new Backup(this.getApplicationContext()).execute();
+        new Backup(this).execute();
     }
 
     public void export(MenuItem item) {
@@ -246,7 +245,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void showFileChooser(MenuItem item) {
         showSurveyFileChooser();
     }
-
 
 
     private void showSurveyFileChooser() {

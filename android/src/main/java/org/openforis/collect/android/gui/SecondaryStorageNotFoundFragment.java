@@ -11,7 +11,6 @@ import org.openforis.collect.R;
 
 public class SecondaryStorageNotFoundFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.storage_not_found_message)
                 .setPositiveButton(R.string.storage_not_found_retry, new DialogInterface.OnClickListener() {

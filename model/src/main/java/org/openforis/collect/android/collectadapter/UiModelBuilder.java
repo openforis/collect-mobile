@@ -95,9 +95,10 @@ class UiModelBuilder {
             nodes.addAll(createUiNodesForTabChildrenTabs(tab, parentEntity));
             boolean singleUiInternalNode = nodes.size() == 1 && nodes.get(0) instanceof UiInternalNode;
             if (singleUiInternalNode) {
-                UiInternalNode node = (UiInternalNode) nodes.get(0);
-                node.getDefinition().label =  Definitions.label(tab);
-                return node; // Skip intermediate node
+//                UiInternalNode node = (UiInternalNode) nodes.get(0);
+//                node.getDefinition().label =  Definitions.label(tab);
+//                return node; // Skip intermediate node
+                return nodes.get(0); // Skip intermediate node
             }
             UiInternalNode node = instantiateTabUiNode(tab);
             node.addChildren(nodes);

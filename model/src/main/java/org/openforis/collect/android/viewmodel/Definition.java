@@ -6,7 +6,7 @@ package org.openforis.collect.android.viewmodel;
 public class Definition {
     public final String id;
     public final String name; // TODO: Needed?
-    public String label; // TODO: Ugly to have this mutable
+    public final String label;
     public final Integer keyOfDefinitionId;
     public final String description;
     public final String prompt;

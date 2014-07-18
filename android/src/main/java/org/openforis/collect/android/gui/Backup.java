@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -32,7 +33,7 @@ public class Backup {
             if (StorageLocations.usesSecondaryStorage(activity))
                 showInsertSdCardDialog(activity);
             else
-                backupFromTempToWorkingDir(activity);
+                backupFromTempToTargetDir(activity, new File(new File(Environment.getExternalStorageDirectory(), "OpenForis Collect Mobile"), "databases"));
         } catch (IOException e) {
             // TODO: show dialog or at least toast, indicating backup failed
         }
@@ -59,14 +60,13 @@ public class Backup {
         return new File(activity.getExternalCacheDir(), workingDir.getName());
     }
 
-    private static void backupFromTempToWorkingDir(FragmentActivity activity) throws IOException {
+    private static void backupFromTempToTargetDir(FragmentActivity activity, File targetDir) throws IOException {
         File tempDir = tempDir(activity);
-        File workingDir = ServiceLocator.workingDir(activity);
-        if (workingDir.exists()) {
-            File timestampedWorkingDir = new File(workingDir.getParentFile(), workingDir.getName() + "-" + System.currentTimeMillis());
-            FileUtils.moveDirectory(workingDir, timestampedWorkingDir);
+        if (targetDir.exists()) {
+            File timestampedWorkingDir = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
+            FileUtils.moveDirectory(targetDir, timestampedWorkingDir);
         }
-        FileUtils.moveDirectory(tempDir, workingDir);
+        FileUtils.moveDirectory(tempDir, targetDir);
     }
 
     public static class BackupDialogFragment extends DialogFragment {
@@ -89,7 +89,7 @@ public class Backup {
                     button.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             try {
-                                backupFromTempToWorkingDir(getActivity());
+                                backupFromTempToTargetDir(getActivity(), ServiceLocator.workingDir(getActivity()));
                                 alertDialog.dismiss();
                             } catch (Exception ignore) {
 

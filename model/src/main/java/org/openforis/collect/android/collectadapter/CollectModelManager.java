@@ -15,10 +15,7 @@ import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.model.*;
 import org.openforis.collect.persistence.*;
-import org.openforis.idm.metamodel.AttributeDefinition;
-import org.openforis.idm.metamodel.CodeAttributeDefinition;
-import org.openforis.idm.metamodel.CodeListItem;
-import org.openforis.idm.metamodel.ModelVersion;
+import org.openforis.idm.metamodel.*;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
@@ -238,14 +235,6 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         return codeListSizeEvaluator.size((CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id)));
     }
 
-    public CollectRecord getCollectRecord(int recordId) {
-        Entity rootEntity = recordNodes.getEntityById(recordId);
-        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
-        collectRecord.setId(recordId);
-        collectRecord.setRootEntity(rootEntity);
-        return collectRecord;
-    }
-
     private AttributeDefinition getDefinition(UiAttribute uiAttribute) {
         int definitionId = Integer.parseInt(uiAttribute.getDefinition().id);
         return (AttributeDefinition) selectedSurvey.getSchema().getDefinitionById(definitionId);
@@ -284,11 +273,34 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         new SurveyExporter(uiSurvey, selectedSurvey, surveyManager, new SurveyExporter.CollectRecordProvider() {
             public CollectRecord record(int recordId) {
                 exportListener.beforeRecordExport(recordId);
-                return getCollectRecord(recordId);
+                return getCollectRecordForExporting(recordId);
             }
         }).export(exportFile);
 
     }
+
+    private CollectRecord getCollectRecordForExporting(int recordId) {
+        Entity rootEntity = recordNodes.getEntityById(recordId);
+        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
+        collectRecord.setId(recordId);
+        collectRecord.setRootEntity(rootEntity);
+        makeEmptyAttributesBlank(rootEntity);
+        return collectRecord;
+    }
+
+    private void makeEmptyAttributesBlank(Node<? extends NodeDefinition> node) {
+        if (node instanceof Entity)
+            for (Node<? extends NodeDefinition> childNode : ((Entity) node).getChildren())
+                makeEmptyAttributesBlank(childNode);
+        else if (node instanceof Attribute && node.isEmpty()) {
+            Attribute attribute = (Attribute) node;
+            for (Object f: attribute.getFields()) {
+                Field field = (Field) f;
+                field.setSymbol(FieldSymbol.BLANK_ON_FORM.getCode());
+            }
+        }
+    }
+
 
     public interface ExportListener {
         void beforeRecordExport(int recordId);

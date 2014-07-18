@@ -34,9 +34,11 @@ public class ServiceLocator {
     private static SurveyService surveyService;
     private static TaxonService taxonService;
     private static File workingDir;
+    private static File exportDir;
 
     public static boolean init(Context applicationContext) {
         if (surveyService == null) {
+            exportDir = exportDir(applicationContext);
             workingDir = workingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
@@ -69,9 +71,9 @@ public class ServiceLocator {
 
     private static File secondaryStorageWorkingDir() {
         File secondaryStorageLocation = StorageLocations.secondaryStorageLocation();
-        File workingDir = new File(secondaryStorageLocation, "org.openforis.collect");
+        File workingDir = new File(new File(secondaryStorageLocation, "OpenForis Collect Mobile"), "databases");
         if (!workingDir.exists())
-            if (!workingDir.mkdir())
+            if (!workingDir.mkdirs())
                 throw new StorageNotAvailableException();
         return workingDir;
     }
@@ -106,12 +108,6 @@ public class ServiceLocator {
         return taxonService;
     }
 
-    private static File collectDir() {
-        return StorageLocations.isSecondaryStorageWritable()
-                ? StorageLocations.secondaryStorageLocation()
-                : Environment.getExternalStorageDirectory();
-    }
-
     public static CollectModelBackedSurveyService createSurveyService(CollectModelManager collectModelManager, Database database) {
         return new CollectModelBackedSurveyService(
                 new ViewModelManager(
@@ -121,8 +117,17 @@ public class ServiceLocator {
         );
     }
 
+
+    public static File exportDir(Context context) {
+        return new File(
+                StorageLocations.isSecondaryStorageWritable()
+                        ? StorageLocations.secondaryStorageLocation()
+                        : Environment.getExternalStorageDirectory(),
+                "OpenForis Collect Mobile");
+    }
+
     private static File exportFile() {
-        return new File(collectDir(), "survey_export.zip");
+        return new File(exportDir, "survey_export.zip");
     }
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {

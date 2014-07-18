@@ -42,6 +42,8 @@ public class SurveyExporter {
 
     public void export(File outputFile) throws IOException {
         try {
+            if (!outputFile.getParentFile().exists())
+                outputFile.getParentFile().mkdirs();
             zipOutputStream = new ZipOutputStream(new FileOutputStream(outputFile));
             addInfoFile();
             addIdmFile();
@@ -83,7 +85,7 @@ public class SurveyExporter {
     }
 
     private void exportRecord(CollectRecord record) throws IOException {
-        BackupDataExtractor.BackupRecordEntry recordEntry = new BackupDataExtractor.BackupRecordEntry(CollectRecord.Step.ENTRY, record.getId());
+        BackupDataExtractor.BackupRecordEntry recordEntry = new BackupDataExtractor.BackupRecordEntry(CollectRecord.Step.CLEANSING, record.getId());
         ZipEntry entry = new ZipEntry(recordEntry.getName());
         try {
             zipOutputStream.putNextEntry(entry);

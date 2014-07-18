@@ -20,13 +20,14 @@ Install an update
 Changes
 -------
 
-2014-07-16
+2014-07-18
 
     * Added option to store data on SD card
     * Included backup functionality
     * Specified crew ID is now displayed in the settings
-    * Used tab labels instead of entity labels
     * Put exported files on SD card if data is stored on secondary storage
+    * Moved exported records directly into the cleansing phase
+    * Marked empty attributes as "blank in form"
 
 2014-07-11
 

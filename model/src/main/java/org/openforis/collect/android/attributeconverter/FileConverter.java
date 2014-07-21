@@ -16,7 +16,9 @@ import java.io.File;
 class FileConverter extends AttributeConverter<FileAttribute, UiFileAttribute> {
     public UiFileAttribute uiAttribute(Definition definition, FileAttribute attribute) {
         UiFileAttribute uiAttribute = new UiFileAttribute(attribute.getId(), definition);
-        uiAttribute.setFile(new File(attribute.getValue().getFilename()));
+        org.openforis.idm.model.File file = attribute.getValue();
+        if (file != null && file.getFilename() != null)
+            uiAttribute.setFile(new File(file.getFilename()));
         return uiAttribute;
     }
 
@@ -33,7 +35,8 @@ class FileConverter extends AttributeConverter<FileAttribute, UiFileAttribute> {
     }
 
     public Value value(UiFileAttribute uiAttribute) {
-        return new org.openforis.idm.model.File(uiAttribute.getFile().getAbsolutePath(), 0L); // TODO: File size
+        File file = uiAttribute.getFile();
+        return new org.openforis.idm.model.File(file == null ? null : file.getAbsolutePath(), 0L); // TODO: File size
     }
 
     protected FileAttribute attribute(UiFileAttribute uiAttribute, NodeDefinition definition) {

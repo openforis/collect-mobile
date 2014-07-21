@@ -82,15 +82,16 @@ public interface RecordUniquenessChecker {
 
             // TODO: Need some design - switch statement is repeated three times - NodeDto.recordKeyAttribute and two times here.
             private String constrain(NodeDto key) {
+                // SQLDroid uses SQLite rawQuery, which does not allow null values to be bound.
                 switch (key.type) {
                     case CODE_ATTRIBUTE:
-                        return "val_code_value = ?";
+                        return key.codeValue == null ? "val_code_value IS NULL" : "val_code_value = ?";
                     case DOUBLE_ATTRIBUTE:
-                        return "val_double = ?";
+                        return key.doubleValue == null ? "val_double  IS NULL" : "val_double = ?";
                     case INTEGER_ATTRIBUTE:
-                        return "val_int = ?";
+                        return key.intValue == null ? "val_int IS NULL" : "val_int = ?";
                     case TEXT_ATTRIBUTE:
-                        return "val_text = ?";
+                        return key.text == null ? "val_text IS NULL" : "val_text = ?";
                     default:
                         throw new IllegalStateException("Attribute type cannot be record key: " + key.type);
                 }
@@ -101,18 +102,23 @@ public interface RecordUniquenessChecker {
                 psh.setInt(keys.get(0).recordId); // The recordId is the same for all keys - pick it from the first
                 for (NodeDto key : keys) {
                     psh.setInt(Integer.parseInt(key.definitionId));
+                    // SQLDroid uses SQLite rawQuery, which does not allow null values to be bound.
                     switch (key.type) {
                         case CODE_ATTRIBUTE:
-                            psh.setStringOrNull(key.codeValue);
+                            if (key.codeValue != null)
+                                psh.setString(key.codeValue);
                             break;
                         case DOUBLE_ATTRIBUTE:
-                            psh.setDoubleOrNull(key.doubleValue);
+                            if (key.doubleValue != null)
+                                psh.setDouble(key.doubleValue);
                             break;
                         case INTEGER_ATTRIBUTE:
-                            psh.setIntOrNull(key.intValue);
+                            if (key.intValue != null)
+                                psh.setInt(key.intValue);
                             break;
                         case TEXT_ATTRIBUTE:
-                            psh.setStringOrNull(key.text);
+                            if (key.text != null)
+                                psh.setString(key.text);
                             break;
                         default:
                             throw new IllegalStateException("Attribute type cannot be record key: " + key.type);

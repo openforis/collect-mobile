@@ -37,6 +37,10 @@ public class PreparedStatementHelper {
         else ps.setLong(++i, value);
     }
 
+    public void setDouble(double value) throws SQLException {
+        ps.setDouble(++i, value);
+    }
+
     public void setDoubleOrNull(Double value) throws SQLException {
         if (value == null) ps.setNull(++i, Types.REAL);
         else ps.setDouble(++i, value);

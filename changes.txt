@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2014-07-23
+
+    * Allowed the exact path of the working directory to be specified
+    * Included a panel with the entity keys, to provide information what entity data is inserted for.
+
 2014-07-18
 
     * Added option to store data on SD card

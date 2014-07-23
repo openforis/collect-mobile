@@ -7,6 +7,7 @@
     <attr name="relevantTextColor" format="reference|color"/>
     <attr name="irrelevantTextColor" format="reference|color"/>
     <attr name="titleIndicatorColor" format="reference|color"/>
+    <attr name="nodePathDetailsBackground" format="reference|color"/>
 
     <attr name="breadcrumbButton" format="reference"/>
     <attr name="nextIcon" format="reference"/>

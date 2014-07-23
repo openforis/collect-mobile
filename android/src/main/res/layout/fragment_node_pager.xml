@@ -1,18 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
 
     <android.support.v4.view.ViewPager
             android:id="@+id/attributePager"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"/>
 
-    <com.viewpagerindicator.UnderlinePageIndicator
-            android:id="@+id/attributePagerIndicator"
-            android:layout_height="2dp"
-            android:layout_width="fill_parent"
-            app:fades="false"/>
-</LinearLayout>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true">
+
+        <com.viewpagerindicator.UnderlinePageIndicator
+                android:id="@+id/attributePagerIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                app:fades="false"/>
+
+        <FrameLayout
+                android:id="@+id/node_path_details_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>

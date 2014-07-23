@@ -19,9 +19,9 @@
 
 
     <de.timroes.android.listview.EnhancedListView
+            android:id="@+id/entity_list"
             android:paddingTop="?attr/standardPadding"
             android:padding="?attr/standardPadding"
-            android:id="@+id/entity_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:choiceMode="none"/>

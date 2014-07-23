@@ -13,6 +13,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
+import org.openforis.collect.android.gui.detail.NodePathDetailsFragment;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeChange;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class NodePagerFragment extends Fragment {
     private Map<UiNode, NodeDetailFragment> fragmentsByNode;
     private SurveyService surveyService;
+    private NodePathDetailsFragment nodePathDetailsFragment;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,6 +40,14 @@ public class NodePagerFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         fragmentsByNode = createDetailFragments();
         setupPager(view);
+        setupNodePathDetails();
+    }
+
+    private void setupNodePathDetails() {
+        nodePathDetailsFragment = new NodePathDetailsFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.node_path_details_container, nodePathDetailsFragment, "nodePathDetailsFragment")
+                .commit();
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
@@ -85,6 +95,9 @@ public class NodePagerFragment extends Fragment {
     public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         for (NodeDetailFragment fragment : fragmentsByNode.values())
             fragment.onAttributeChange(attribute, attributeChanges);
+
+        if (nodePathDetailsFragment != null)
+            nodePathDetailsFragment.attributeChanged(attribute);
     }
 
     private void setupPager(View view) {

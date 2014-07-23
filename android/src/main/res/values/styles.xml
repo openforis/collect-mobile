@@ -12,6 +12,7 @@
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today</item>
         <item name="timeIcon">@drawable/ic_action_time</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
+        <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
     </style>
 
     <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
@@ -22,6 +23,7 @@
         <item name="nextIcon">@drawable/ic_action_next_item_light</item>
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today_light</item>
         <item name="timeIcon">@drawable/ic_action_time_light</item>
+        <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewLight</item>
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>

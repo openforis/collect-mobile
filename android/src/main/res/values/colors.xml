@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="dark_disabled_color">#636363</color>
+    <color name="light_disabled_color">#9E9E9E</color>
+
     <color name="light_title_indicator_text_color">#BBFFFFFF</color>
     <color name="dark_title_indicator_text_color">#BB000000</color>
-    <color name="light_disabled_color">#9E9E9E</color>
+
+    <color name="dark_node_path_details_background_color">#FF494949</color>
+    <color name="light_node_path_details_background_color">#FFEFEFEF</color>
 </resources>

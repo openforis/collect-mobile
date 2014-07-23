@@ -21,6 +21,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
+import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 super.onCreate(savedState);
                 showSurveyFileChooser();
             }
-        } catch (StorageNotAvailableException ignore) {
+        } catch (WorkingDirNotWritable ignore) {
             super.onCreate(savedState);
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
@@ -144,13 +145,13 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void export(MenuItem item) {
-        // TODO: Show progress bar - so we need some callback to know how far we got...
-
         try {
             surveyService.exportSurvey();
+            String message = getResources().getString(R.string.toast_exported_survey, WorkingDir.root(this));
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Log.e("export", "Failed  to export", e);
-            Toast.makeText(this, "Failed to export survey: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to export survey: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

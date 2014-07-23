@@ -1,12 +1,11 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import android.os.Environment;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
-import org.openforis.collect.android.gui.util.StorageLocations;
+import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
 import org.openforis.collect.android.util.persistence.Database;
@@ -21,7 +20,6 @@ import org.openforis.collect.persistence.DynamicTableDao;
 
 import java.io.File;
 
-import static org.openforis.collect.android.gui.util.StorageLocations.usesSecondaryStorage;
 import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository;
 
 /**
@@ -34,15 +32,13 @@ public class ServiceLocator {
     private static SurveyService surveyService;
     private static TaxonService taxonService;
     private static File workingDir;
-    private static File exportDir;
 
     public static boolean init(Context applicationContext) {
+        workingDir = initWorkingDir(applicationContext);
         if (surveyService == null) {
-            exportDir = exportDir(applicationContext);
-            workingDir = workingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
-            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB));
+            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
             AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -53,37 +49,23 @@ public class ServiceLocator {
         return true;
     }
 
-    private static File databasePath(String databaseName) {
-        return new File(workingDir, databaseName);
+    private static File initWorkingDir(Context applicationContext) {
+        File dir = WorkingDir.root(applicationContext);
+        if ((!dir.exists() && !dir.mkdirs()) || !dir.canWrite())
+            throw new WorkingDirNotWritable();
+        return dir;
     }
 
-    public static File workingDir(Context applicationContext) {
-        File workingDir = null;
-        if (usesSecondaryStorage(applicationContext)) {
-            if (!StorageLocations.isSecondaryStorageWritable())
-                throw new StorageNotAvailableException();
-            workingDir = secondaryStorageWorkingDir();
-        }
-        if (workingDir == null)
-            workingDir = applicationContext.getDatabasePath("database").getParentFile();
-        return workingDir;
-    }
-
-    private static File secondaryStorageWorkingDir() {
-        File secondaryStorageLocation = StorageLocations.secondaryStorageLocation();
-        File workingDir = new File(new File(secondaryStorageLocation, "OpenForis Collect Mobile"), "databases");
-        if (!workingDir.exists())
-            if (!workingDir.mkdirs())
-                throw new StorageNotAvailableException();
-        return workingDir;
+    private static File databasePath(String databaseName, Context context) {
+        return new File(WorkingDir.databases(context), databaseName);
     }
 
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) {
-        new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB)).importSurvey();
+        new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB, applicationContext)).importSurvey();
     }
 
     public static boolean isSurveyImported(Context context) {
-        return context.getDatabasePath(databasePath(MODEL_DB).getAbsolutePath()).exists();
+        return context.getDatabasePath(databasePath(MODEL_DB, context).getAbsolutePath()).exists();
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {
@@ -92,7 +74,7 @@ public class ServiceLocator {
                         new NodeDatabaseSchemaChangeLog().changes()
                 ),
                 applicationContext,
-                databasePath(NODES_DB)
+                databasePath(NODES_DB, applicationContext)
         );
     }
 
@@ -117,17 +99,8 @@ public class ServiceLocator {
         );
     }
 
-
-    public static File exportDir(Context context) {
-        return new File(
-                StorageLocations.isSecondaryStorageWritable()
-                        ? StorageLocations.secondaryStorageLocation()
-                        : Environment.getExternalStorageDirectory(),
-                "OpenForis Collect Mobile");
-    }
-
     private static File exportFile() {
-        return new File(exportDir, "survey_export.zip");
+        return new File(workingDir, "survey_export.zip");
     }
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {

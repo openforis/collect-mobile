@@ -5,14 +5,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.util.StorageLocations;
+import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 
 import java.io.File;
@@ -29,11 +29,7 @@ public class Backup {
     public void execute() {
         try {
             backupToTemp();
-
-            if (StorageLocations.usesSecondaryStorage(activity))
-                showInsertSdCardDialog(activity);
-            else
-                backupFromTempToTargetDir(activity, new File(new File(Environment.getExternalStorageDirectory(), "OpenForis Collect Mobile"), "databases"));
+            showInsertSdCardDialog(activity);
         } catch (IOException e) {
             // TODO: show dialog or at least toast, indicating backup failed
         }
@@ -48,23 +44,23 @@ public class Backup {
     }
 
     private void backupToTemp() throws IOException {
-        File workingDir = ServiceLocator.workingDir(activity);
+        File databases = WorkingDir.databases(activity);
         File tempDir = tempDir(activity);
         if (tempDir.exists())
             FileUtils.deleteDirectory(tempDir);
-        FileUtils.copyDirectory(workingDir, tempDir);
+        FileUtils.copyDirectory(databases, tempDir);
     }
 
     private static File tempDir(FragmentActivity activity) {
-        File workingDir = ServiceLocator.workingDir(activity);
-        return new File(activity.getExternalCacheDir(), workingDir.getName());
+        File databases = WorkingDir.databases(activity);
+        return new File(activity.getExternalCacheDir(), databases.getName());
     }
 
     private static void backupFromTempToTargetDir(FragmentActivity activity, File targetDir) throws IOException {
         File tempDir = tempDir(activity);
         if (targetDir.exists()) {
-            File timestampedWorkingDir = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
-            FileUtils.moveDirectory(targetDir, timestampedWorkingDir);
+            File timestampedDatabases = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
+            FileUtils.moveDirectory(targetDir, timestampedDatabases);
         }
         FileUtils.moveDirectory(tempDir, targetDir);
     }
@@ -89,8 +85,10 @@ public class Backup {
                     button.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             try {
-                                backupFromTempToTargetDir(getActivity(), ServiceLocator.workingDir(getActivity()));
+                                backupFromTempToTargetDir(getActivity(), WorkingDir.databases(getActivity()));
                                 alertDialog.dismiss();
+                                String message = getResources().getString(R.string.toast_backed_up_survey, WorkingDir.root(getActivity()));
+                                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
                             } catch (Exception ignore) {
 
                             }

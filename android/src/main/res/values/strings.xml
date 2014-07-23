@@ -14,9 +14,12 @@
 
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
 
+    <string name="toast_exported_survey">Exported survey to %s</string>
+    <string name="toast_backed_up_survey">Backed up survey to %s</string>
+
     <string name="storage_not_found_message">Secondary storage not found</string>
     <string name="storage_not_found_retry">Retry</string>
-    <string name="storage_not_found_settings">Use primary storage</string>
+    <string name="storage_not_found_settings">Configure location</string>
 
     <string name="message_invalid_date">Invalid date</string>
     <string name="message_not_a_number">Not a number</string>
@@ -33,6 +36,7 @@
 
     <string name="settings_title_crewId">Crew ID</string>
 
+    <string name="settings_workingDir">Working directory</string>
     <string name="settings_title_darkTheme">Collect Mobile theme</string>
     <string name="settings_switchTextOn_darkTheme">Dark</string>
     <string name="settings_switchTextOff_darkTheme">Light</string>

@@ -6,11 +6,12 @@
             <!--android:summary="Please provide the Collect Server URL"/>-->
 
     <!-- TODO: Using message key everywhere -->
-    <CheckBoxPreference
-            android:title="Store data on secondary storage"
-            android:defaultValue="true"
-            android:key="useSecondaryStorage"
+
+    <Preference
+            android:title="@string/settings_workingDir"
+            android:key="workingDir"
             />
+
     <EditTextPreference
             android:title="@string/settings_title_crewId"
             android:key="crewId"

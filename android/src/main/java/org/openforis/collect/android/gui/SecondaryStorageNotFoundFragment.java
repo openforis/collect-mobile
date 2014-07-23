@@ -3,33 +3,30 @@ package org.openforis.collect.android.gui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.WorkingDir;
 
 public class SecondaryStorageNotFoundFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.storage_not_found_message)
+        builder.setTitle(R.string.storage_not_found_message)
+                .setMessage(WorkingDir.root(getActivity()).getAbsolutePath())
                 .setPositiveButton(R.string.storage_not_found_retry, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         SurveyNodeActivity.restartActivity(getActivity());
                     }
                 }).setNeutralButton(R.string.storage_not_found_settings, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                updatePreferences();
-                SurveyNodeActivity.restartActivity(getActivity());
+                showSettings();
             }
         });
         return builder.create();
     }
 
-    private void updatePreferences() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("useSecondaryStorage", false);
-        editor.commit();
+    private void showSettings() {
+        startActivity(new Intent(getActivity(), SettingsActivity.class));
     }
 }

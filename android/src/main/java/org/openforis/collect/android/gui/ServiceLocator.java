@@ -32,14 +32,16 @@ public class ServiceLocator {
     private static SurveyService surveyService;
     private static TaxonService taxonService;
     private static File workingDir;
+    private static AndroidDatabase modelDatabase;
+    private static AndroidDatabase nodeDatabase;
 
     public static boolean init(Context applicationContext) {
-        workingDir = initWorkingDir(applicationContext);
         if (surveyService == null) {
+            workingDir = initWorkingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
-            AndroidDatabase modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
-            AndroidDatabase nodeDatabase = createNodeDatabase(applicationContext);
+            modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
+            nodeDatabase = createNodeDatabase(applicationContext);
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
             surveyService.loadSurvey();
@@ -47,6 +49,12 @@ public class ServiceLocator {
             ServiceLocator.surveyService = surveyService;
         }
         return true;
+    }
+
+    public static void reset() {
+        surveyService = null;
+        modelDatabase.close();
+        nodeDatabase.close();
     }
 
     private static File initWorkingDir(Context applicationContext) {

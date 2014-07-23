@@ -39,6 +39,11 @@ public class AndroidDatabase implements Database {
         setupDatabase(databasePath);
     }
 
+    public void close() {
+        openHelper.close();
+        ((AndroidDataSource) dataSource).close();
+    }
+
     private void listenToStorageEjectionBroadcasts(Context context) {
         IntentFilter filter = new IntentFilter();
         filter.addDataScheme("file");
@@ -61,8 +66,7 @@ public class AndroidDatabase implements Database {
         context.getApplicationContext().registerReceiver(new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 Log.i("android_database", "Received storage ejection request for " + dataSource);
-                openHelper.close();
-                ((AndroidDataSource) dataSource).close();
+                close();
             }
         }, filter);
     }

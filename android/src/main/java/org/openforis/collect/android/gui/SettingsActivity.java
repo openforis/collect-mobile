@@ -14,8 +14,6 @@ import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.WorkingDir;
 
-import java.io.File;
-
 import static org.openforis.collect.android.gui.util.WorkingDir.PREFERENCE_KEY;
 
 /**
@@ -48,7 +46,8 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         Preference workingDirPreference = settingsFragment.findPreference(PREFERENCE_KEY);
         workingDirPreference.setSummary(workingDir);
         directoryChooserDialog.dismiss();
-        startActivity(new Intent(this, SettingsActivity.class));
+        ServiceLocator.reset();
+        SurveyNodeActivity.restartActivity(this);
         this.finish();
     }
 

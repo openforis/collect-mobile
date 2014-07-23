@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -270,19 +270,19 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             // Get the file path from the URI
             final String path = FileUtils.getPath(this, surveyUri);
             Toast.makeText(this, "Importing survey: " + path, Toast.LENGTH_LONG).show();
-            ServiceLocator.importSurvey(path, this); // TODO: This should fail if invalid db file
+            ServiceLocator.importSurvey(path, this);
             Intent intent = new Intent(this, SurveyNodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } catch (Exception e) {
             showSurveyFileChooser();
         }
     }
 
-    public static void restartActivity(Activity activity) {
-        Intent intent = new Intent(activity, SurveyNodeActivity.class);
+    public static void restartActivity(Context context) {
+        Intent intent = new Intent(context, SurveyNodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
+        context.startActivity(intent);
     }
 
     private abstract class LayoutDependentSupport {

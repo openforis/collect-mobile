@@ -90,6 +90,8 @@ public class NodeListAdapter extends BaseAdapter {
     }
 
     private int iconResource(UiNode node) {
+        if (!node.isRelevant())
+            return 0;
         switch (node.getStatus()) {
             case OK:
             case EMPTY:

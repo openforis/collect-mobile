@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2014-07-25
+
+    * Fixed crash in species selection
+
 2014-07-23
 
     * Allowed the exact path of the working directory to be specified

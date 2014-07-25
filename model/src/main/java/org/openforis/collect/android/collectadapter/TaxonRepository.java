@@ -32,9 +32,9 @@ public class TaxonRepository implements TaxonService {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "SELECT taxonomy_id, code, scientific_name\n" +
                         "FROM ofc_taxon\n" +
-                        "WHERE taxonomy_id = ?\n" +
+                        "WHERE taxonomy_id = ? AND code IS NOT NULL\n" +
                         "AND (lower(code) LIKE ? OR lower(scientific_name) LIKE ?)" +
-                        "ORDER BY code\n" +
+                        "ORDER BY scientific_name\n" +
                         "LIMIT ?");
                 ps.setInt(1, taxonomyId(taxonomy));
                 ps.setString(2, query.toLowerCase() + "%");

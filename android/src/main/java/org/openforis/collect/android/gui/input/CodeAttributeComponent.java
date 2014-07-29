@@ -47,6 +47,8 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     }
 
     protected final boolean updateAttributeIfChanged() {
+        if (codeList == null)
+            return false;
         UiCode newCode = selectedCode();
         String newQualifier = qualifier(newCode);
         if (hasChanged(newCode, newQualifier)) {

@@ -30,7 +30,7 @@ public interface SurveyService {
 
     UiAttribute addAttribute();
 
-    UiCodeAttribute addCodeAttribute(UiCode code);
+    UiCodeAttribute addCodeAttribute(UiCode code, String qualifier);
 
     void updateAttributes(Set<UiAttribute> attributes);
 

@@ -2,18 +2,21 @@ package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,13 +26,15 @@ import java.util.concurrent.Executors;
 class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionComponent {
     private final SparseArray<UiCode> codeByViewId = new SparseArray<UiCode>();
     private final Map<UiCode, UiCodeAttribute> attributesByCode = new HashMap<UiCode, UiCodeAttribute>();
-    private final LinearLayout view;
+    private final LinearLayout layout;
+    private EditText qualifierInput;
+    protected UiCodeList codeList;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     CheckboxCodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, codeListService, surveyService, context);
-        view = new LinearLayout(context);
-        view.setOrientation(LinearLayout.VERTICAL);
+        layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
         for (UiNode uiNode : attributeCollection.getChildren()) {
             UiCodeAttribute attribute = (UiCodeAttribute) uiNode;
             attributesByCode.put(attribute.getCode(), attribute);
@@ -37,12 +42,17 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         initOptions();
     }
 
+    public void saveNode() {
+        super.saveNode();
+        saveQualifier();
+    }
+
     protected Set<UiAttribute> updateChangedAttributes() {
         return new HashSet<UiAttribute>();
     }
 
     protected View toInputView() {
-        return view;
+        return layout;
     }
 
     // TODO: Dry - same as in AttributeComponent
@@ -76,36 +86,109 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
 
     private void initOptions() {
         codeByViewId.clear();
-        view.removeAllViews();
+        layout.removeAllViews();
         executor.execute(new LoadCodesTask());
+    }
+
+    private EditText createQualifierInput() {
+        final EditText editText = new EditText(context);
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    saveQualifier();
+            }
+        });
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE)
+                    saveQualifier();
+                return false;
+            }
+        });
+        editText.setText(qualifier(codeList.getQualifiableCode()));
+        editText.setSingleLine();
+        return editText;
+    }
+
+    private void saveQualifier() {
+        if (codeList == null)
+            return;
+        UiCode code = codeList.getQualifiableCode();
+        if (code == null)
+            return;
+        UiCodeAttribute attribute = attributesByCode.get(code);
+        String newQualifier = qualifierInput.getText().toString().trim();
+        if (attribute != null && ObjectUtils.notEqual(newQualifier, attribute.getQualifier())) {
+            attribute.setQualifier(newQualifier);
+            surveyService.updateAttribute(attribute);
+        }
+    }
+
+
+    private void showQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                if (layout.getChildCount() == codeList.getCodes().size()) {
+                    layout.addView(qualifierInput);
+                    qualifierInput.requestFocus();
+                }
+            }
+        });
+    }
+
+
+    private String qualifier(UiCode code) {
+        UiCodeAttribute attribute = attributesByCode.get(code);
+        return attribute == null ? null : attribute.getQualifier();
+    }
+
+    private void hideQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                layout.removeView(qualifierInput);
+            }
+        });
+    }
+
+    protected void initCodeList() {
+        codeList = codeListService.codeList(attributeCollection);
     }
 
     private class LoadCodesTask implements Runnable {
         public void run() {
-            UiCodeList codeList = codeListService.codeList(attributeCollection);
-            addCheckBoxes(codeList);
+            initCodeList();
+            initView(codeList);
         }
 
-        private void addCheckBoxes(final UiCodeList codeList) {
+        private void initView(final UiCodeList codeList) {
             uiHandler.post(new Runnable() {
                 public void run() {
+                    qualifierInput = createQualifierInput();
                     for (final UiCode code : codeList.getCodes()) {
+                        final boolean qualifiable = codeList.isQualifiable(code);
                         CheckBox checkBox = new CheckBox(context);
                         checkBox.setText(code.toString());
-                        view.addView(checkBox);
+                        layout.addView(checkBox);
                         codeByViewId.put(checkBox.getId(), code);
-                        if (attributesByCode.keySet().contains(code)) {
+                        boolean checked = attributesByCode.keySet().contains(code);
+                        if (checked) {
                             checkBox.setSelected(true);
                             checkBox.setChecked(true);
+                            if (qualifiable)
+                                showQualifier();
                         }
                         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if (isChecked)
-                                    attributesByCode.put(code, surveyService.addCodeAttribute(code));
-                                else {
+                                if (isChecked) {
+                                    attributesByCode.put(code, surveyService.addCodeAttribute(code, qualifier(code)));
+                                    if (qualifiable)
+                                        showQualifier();
+                                } else {
                                     int attributeId = attributesByCode.get(code).getId();
                                     surveyService.removeAttribute(attributeId);
                                     attributesByCode.remove(code);
+                                    if (qualifiable)
+                                        hideQualifier();
                                 }
                             }
                         });

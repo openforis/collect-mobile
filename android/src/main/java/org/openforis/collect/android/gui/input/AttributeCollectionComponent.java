@@ -69,7 +69,7 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
         surveyService.updateAttributes(changedAttributes);
     }
 
-    public final void saveNode() {
+    public void saveNode() {
         resetValidationErrors();
         notifyAboutAttributeCollectionChange(updateChangedAttributes());
     }

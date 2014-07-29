@@ -22,8 +22,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private final SparseArray<UiCode> codeByViewId = new SparseArray<UiCode>();
     private final LinearLayout layout;
     private final RadioGroup radioGroup;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private EditText qualifierInput;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     RadioCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);

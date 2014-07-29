@@ -5,6 +5,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiCodeList;
 
 /**
  * @author Daniel Wiell

@@ -95,9 +95,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return entity;
     }
 
-    public UiCodeAttribute addCodeAttribute(UiCode code) {  // TODO: Ugly. Do in transaction, redundant updating...
+    public UiCodeAttribute addCodeAttribute(UiCode code, String qualifier) {  // TODO: Ugly. Do in transaction, redundant updating...
         UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
         attribute.setCode(code);
+        attribute.setQualifier(qualifier);
         updateAttribute(attribute);
         return attribute;
     }

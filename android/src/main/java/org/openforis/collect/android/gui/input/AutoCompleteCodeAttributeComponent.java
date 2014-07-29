@@ -72,6 +72,11 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
             else
                 selectedCode = uiCodeByValue.get(text.trim());
         }
+        if (selectedCode == null && codeList.isQualifiable() && !StringUtils.isEmpty(text)) {
+            selectedCode = codeList.getQualifiableCode();
+            return selectedCode;
+        }
+
         if (selectedCode == null) {
             setText("");
             return null;
@@ -80,13 +85,19 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         return selectedCode;
     }
 
+    protected String qualifier(UiCode selectedCode) {
+        return codeList.isQualifiable(selectedCode) ? autoComplete.getText().toString().trim() : null;
+    }
+
     protected View toInputView() {
         return autoComplete;
     }
 
     protected void initOptions() {
         if (attribute.getCode() != null) {
-            setText(attribute.getCode().toString());
+            setText(attribute.getQualifier() == null
+                    ? attribute.getCode().toString()
+                    : attribute.getQualifier());
             selectedCode = attribute.getCode();
         }
         executor.execute(new LoadCodesTask());
@@ -115,7 +126,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         Handler uiHandler = new Handler();
 
         public void run() {
-            List<UiCode> codes = codeListService.codeList(attribute);
+            initCodeList();
+            List<UiCode> codes = codeList.getCodes();
             for (UiCode code : codes)
                 uiCodeByValue.put(code.getValue(), code);
             setAdapter(codes, uiHandler);

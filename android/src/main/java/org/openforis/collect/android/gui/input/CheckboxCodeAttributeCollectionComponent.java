@@ -82,14 +82,14 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
 
     private class LoadCodesTask implements Runnable {
         public void run() {
-            List<UiCode> codes = codeListService.codeList(attributeCollection);
-            addCheckBoxes(codes);
+            UiCodeList codeList = codeListService.codeList(attributeCollection);
+            addCheckBoxes(codeList);
         }
 
-        private void addCheckBoxes(final List<UiCode> codes) {
+        private void addCheckBoxes(final UiCodeList codeList) {
             uiHandler.post(new Runnable() {
                 public void run() {
-                    for (final UiCode code : codes) {
+                    for (final UiCode code : codeList.getCodes()) {
                         CheckBox checkBox = new CheckBox(context);
                         checkBox.setText(code.toString());
                         view.addView(checkBox);

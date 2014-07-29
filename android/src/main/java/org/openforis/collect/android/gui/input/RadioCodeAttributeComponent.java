@@ -2,9 +2,10 @@ package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.*;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiCode;
@@ -19,17 +20,27 @@ import java.util.concurrent.Executors;
  */
 class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private final SparseArray<UiCode> codeByViewId = new SparseArray<UiCode>();
+    private final LinearLayout layout;
     private final RadioGroup radioGroup;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private EditText qualifierInput;
 
     RadioCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
+        layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        qualifierInput = createQualifierInput();
         radioGroup = new RadioGroup(context);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (codeList.isQualifiable(selectedCode()))
+                    showQualifier();
+                else
+                    hideQualifier();
                 saveNode();
             }
         });
+        layout.addView(radioGroup);
         initOptions();
     }
 
@@ -39,7 +50,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     protected View toInputView() {
-        return radioGroup;
+        return layout;
     }
 
     protected void initOptions() {
@@ -48,11 +59,58 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         executor.execute(new LoadCodesTask());
     }
 
+    protected String qualifier(UiCode selectedCode) {
+        return qualifierInput.getText().toString();
+    }
+
+
+    private EditText createQualifierInput() {
+        final EditText editText = new EditText(context);
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    saveNode();
+            }
+        });
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE)
+                    saveNode();
+                return false;
+            }
+        });
+        editText.setText(attribute.getQualifier());
+        editText.setSingleLine();
+        return editText;
+    }
+
+    private void showQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                if (layout.getChildCount() == 1) {
+                    layout.addView(qualifierInput);
+                    qualifierInput.requestFocus();
+                }
+            }
+        });
+    }
+
+
+    private void hideQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                layout.removeView(qualifierInput);
+            }
+        });
+    }
+
     private class LoadCodesTask implements Runnable {
 
         public void run() {
-            List<UiCode> codes = codeListService.codeList(attribute);
-            addRadioButtons(codes);
+            initCodeList();
+            addRadioButtons(codeList.getCodes());
+            if (codeList.isQualifiable(attribute.getCode()))
+                showQualifier();
         }
 
         private void addRadioButtons(final List<UiCode> codes) {
@@ -77,4 +135,5 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             });
         }
     }
+
 }

@@ -7,6 +7,9 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeList;
+
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 /**
  * @author Daniel Wiell
@@ -15,6 +18,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     public static final int RADIO_GROUP_MAX_SIZE = 20;
     private UiCode parentCode;
     protected final CodeListService codeListService;
+    protected UiCodeList codeList;
 
     protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -44,21 +48,27 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
     protected final boolean updateAttributeIfChanged() {
         UiCode newCode = selectedCode();
-        if (hasChanged(newCode)) {
+        String newQualifier = qualifier(newCode);
+        if (hasChanged(newCode, newQualifier)) {
             attribute.setCode(newCode);
+            attribute.setQualifier(newQualifier);
             return true;
         }
         return false;
     }
 
-    private boolean hasChanged(UiCode newCode) {
-        UiCode oldCode = attribute.getCode();
-        if (oldCode == null)
-            return newCode != null;
-        return !oldCode.equals(newCode);
+    protected void initCodeList() {
+        codeList = codeListService.codeList(attribute);
+    }
+
+    private boolean hasChanged(UiCode newCode, String qualifier) {
+        return notEqual(attribute.getCode(), newCode)
+                || notEqual(attribute.getQualifier(), qualifier);
     }
 
     protected abstract void initOptions();
+
+    protected abstract String qualifier(UiCode selectedCode);
 
     protected final boolean isAttributeCode(UiCode code) {
         return code.equals(attribute.getCode());

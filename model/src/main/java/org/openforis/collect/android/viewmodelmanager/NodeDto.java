@@ -25,6 +25,7 @@ public class NodeDto {
     public Integer hour;
     public Integer minute;
     public String codeValue;
+    public String codeQualifier;
     public String codeLabel;
     public Boolean booleanValue;
     public Integer intValue;

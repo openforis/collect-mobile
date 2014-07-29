@@ -38,11 +38,16 @@ class ModelConverter {
         return new UiModelBuilder(collectSurvey, definitions).addUiEntity(entity, uiEntityCollection);
     }
 
-    public List<UiCode> toUiCodes(List<CodeListItem> codeList) {
+    public UiCodeList toUiCodeList(List<CodeListItem> codeList) {
         List<UiCode> uiCodes = new ArrayList<UiCode>();
-        for (CodeListItem item : codeList)
-            uiCodes.add(new UiCode(item.getCode(), item.getLabel()));
-        return uiCodes;
+        UiCode qualifiableCode = null;
+        for (CodeListItem item : codeList) {
+            UiCode code = new UiCode(item.getCode(), item.getLabel());
+            if (item.isQualifiable())
+                qualifiableCode = code;
+            uiCodes.add(code);
+        }
+        return new UiCodeList(uiCodes, qualifiableCode);
     }
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {

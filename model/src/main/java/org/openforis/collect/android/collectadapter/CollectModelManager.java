@@ -201,20 +201,20 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         return definitions.definitionById(definitionId);
     }
 
-    public List<UiCode> codeList(UiCodeAttribute uiAttribute) {
+    public UiCodeList codeList(UiCodeAttribute uiAttribute) {
         CodeAttribute attribute = recordNodes.getCodeAttribute(uiAttribute.getId());
         List<CodeListItem> items = codeListManager.loadValidItems(attribute.getParent(), attribute.getDefinition());
-        return modelConverter.toUiCodes(items);
+        return modelConverter.toUiCodeList(items);
     }
 
-    public List<UiCode> codeList(UiAttributeCollection uiAttributeCollection) {
+    public UiCodeList codeList(UiAttributeCollection uiAttributeCollection) {
         if (!uiAttributeCollection.getDefinition().isOfAttributeType(UiCodeAttribute.class))
             throw new IllegalStateException("uiAttributeCollection " + uiAttributeCollection + " expected to have UiAttributeCollection attribute type");
         Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
         Definition definition = uiAttributeCollection.getDefinition().attributeDefinition;
         CodeAttributeDefinition codeAttributeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
         List<CodeListItem> items = codeListManager.loadValidItems(parentEntity, codeAttributeDefinition);
-        return modelConverter.toUiCodes(items);
+        return modelConverter.toUiCodeList(items);
     }
 
     public boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute) {
@@ -294,7 +294,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
                 makeEmptyAttributesBlank(childNode);
         else if (node instanceof Attribute && node.isEmpty()) {
             Attribute attribute = (Attribute) node;
-            for (Object f: attribute.getFields()) {
+            for (Object f : attribute.getFields()) {
                 Field field = (Field) f;
                 field.setSymbol(FieldSymbol.BLANK_ON_FORM.getCode());
             }

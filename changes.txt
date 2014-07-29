@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2014-07-29
+
+    * Supported free text code items
+    * Prevented entity key panel from overlapping node details
+
 2014-07-25
 
     * Fixed crash in species selection

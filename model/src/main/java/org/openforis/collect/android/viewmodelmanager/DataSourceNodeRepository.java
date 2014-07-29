@@ -39,11 +39,11 @@ public class DataSourceNodeRepository implements NodeRepository {
                         "INSERT INTO ofc_view_model(\n" +
                         "   relevant, status, parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
                         "   record_key_attribute, node_type,\n" +
-                        "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
+                        "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "   val_boolean, val_int, val_int_from, val_int_to,\n" +
                         "   val_double, val_double_from, val_double_to, val_x, val_y, val_srs, val_taxon_code,\n" +
                         "   val_taxon_scientific_name, val_file, id)\n" +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 for (NodeDto node : nodes) {
                     bind(ps, node);
                     ps.addBatch();
@@ -89,7 +89,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
                         "       record_collection_name, record_key_attribute, node_type,\n" +
-                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
+                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
                         "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
                         "       val_taxon_code, val_taxon_scientific_name, val_file\n" +
@@ -148,7 +148,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                 "UPDATE ofc_view_model\n" +
                 "SET relevant = ?, status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
                 "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
-                "    val_minute = ?, val_code_value = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
+                "    val_minute = ?, val_code_value = ?, val_code_qualifier = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
                 "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?, val_y = ?, val_srs = ?,\n" +
                 "    val_taxon_code = ?, val_taxon_scientific_name = ?,\n" +
                 "    val_file = ?\n" +
@@ -166,7 +166,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
                         "       record_key_attribute, node_type,\n" +
-                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_label,\n" +
+                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
                         "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
                         "       val_taxon_code, val_taxon_scientific_name, val_file\n" +
@@ -209,6 +209,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.hour = getInteger("val_hour", rs);
         n.minute = getInteger("val_minute", rs);
         n.codeValue = rs.getString("val_code_value");
+        n.codeQualifier= rs.getString("val_code_qualifier");
         n.codeLabel = rs.getString("val_code_label");
         n.booleanValue = getBoolean("val_boolean", rs);
         n.intValue = getInteger("val_int", rs);
@@ -272,6 +273,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         psh.setIntOrNull(node.hour);
         psh.setIntOrNull(node.minute);
         psh.setString(node.codeValue);
+        psh.setString(node.codeQualifier);
         psh.setString(node.codeLabel);
         psh.setBooleanOrNull(node.booleanValue);
         psh.setIntOrNull(node.intValue);

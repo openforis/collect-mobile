@@ -37,7 +37,6 @@ public class UiCode {
         UiCode uiCode = (UiCode) o;
 
         return !(value != null ? !value.equals(uiCode.value) : uiCode.value != null);
-
     }
 
     public int hashCode() {

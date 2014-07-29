@@ -12,7 +12,6 @@ public class Definition {
     public final String prompt;
     public final boolean required;
 
-
     public Definition(String id, String name, String label, boolean required) {
         this(id, name, label, null, null, null, required);
     }

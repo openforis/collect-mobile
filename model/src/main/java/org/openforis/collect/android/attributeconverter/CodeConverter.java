@@ -5,7 +5,6 @@ import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
-import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.CodeAttribute;
@@ -33,6 +32,7 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
         UiCodeAttribute uiAttribute = new UiCodeAttribute(nodeDto.id, definition);
         if (nodeDto.codeValue != null)
             uiAttribute.setCode(new UiCode(nodeDto.codeValue, nodeDto.codeLabel));
+        uiAttribute.setQualifier(nodeDto.codeQualifier);
         return uiAttribute;
     }
 
@@ -43,6 +43,7 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
             dto.codeValue = code.getValue();
             dto.codeLabel = code.getLabel();
         }
+        dto.codeQualifier = uiAttribute.getQualifier();
         return dto;
 
     }

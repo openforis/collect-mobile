@@ -29,6 +29,7 @@ public class NodeDatabaseSchemaChangeLog {
                         "val_hour INTEGER,\n" +
                         "val_minute INTEGER,\n" +
                         "val_code_value TEXT,\n" +
+                        "val_code_qualifier TEXT,\n" +
                         "val_code_label TEXT,\n" +
                         "val_boolean INTEGER,\n" +
                         "val_int INTEGER,\n" +

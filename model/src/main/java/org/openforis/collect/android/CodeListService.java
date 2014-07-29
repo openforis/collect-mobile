@@ -8,9 +8,9 @@ import java.util.List;
  * @author Daniel Wiell
  */
 public interface CodeListService {
-    List<UiCode> codeList(UiCodeAttribute attribute);
+    UiCodeList codeList(UiCodeAttribute attribute);
 
-    List<UiCode> codeList(UiAttributeCollection uiAttributeCollection);
+    UiCodeList codeList(UiAttributeCollection uiAttributeCollection);
 
     boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute);
 

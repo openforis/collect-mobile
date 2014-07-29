@@ -55,7 +55,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 surveyService.setListener(this);
                 support.onCreate(savedState);
             } else {
-                Toast.makeText(this, "Select survey to import.", Toast.LENGTH_SHORT).show();
                 super.onCreate(savedState);
                 showSurveyFileChooser();
             }
@@ -93,7 +92,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
         nodePagerFragment().getView().post(new Runnable() {
             public void run() {
-                nodePagerFragment().onNodeSelected(previous, selected);
+                NodePagerFragment nodePagerFragment = nodePagerFragment();
+                if (nodePagerFragment != null)
+                    nodePagerFragment.onNodeSelected(previous, selected);
             }
         });
         support.onNodeSelected(previous, selected);
@@ -150,8 +151,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             String message = getResources().getString(R.string.toast_exported_survey, WorkingDir.root(this));
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            Log.e("export", "Failed  to export", e);
-            Toast.makeText(this, "Failed to export survey: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            String message = getResources().getString(R.string.toast_exported_survey_failed);
+            Log.e("export", message, e);
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -269,7 +271,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         try {
             // Get the file path from the URI
             final String path = FileUtils.getPath(this, surveyUri);
-            Toast.makeText(this, "Importing survey: " + path, Toast.LENGTH_LONG).show();
+            String message = getResources().getString(R.string.toast_import_survey);
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             ServiceLocator.importSurvey(path, this);
             Intent intent = new Intent(this, SurveyNodeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

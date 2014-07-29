@@ -74,7 +74,7 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
 
                 List values = StringUtils.isEmpty(constraint)
                         ? Collections.emptyList()
-                        : taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS); // TODO: How to get taxonomy?
+                        : taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
                 FilterResults results = new FilterResults();
                 results.values = values;
                 results.count = values.size();

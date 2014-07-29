@@ -19,6 +19,10 @@ public class UiTextAttribute extends UiAttribute {
         this.text = text;
     }
 
+    public String valueAsString() {
+        return text;
+    }
+
     public boolean isEmpty() {
         return text == null;
     }

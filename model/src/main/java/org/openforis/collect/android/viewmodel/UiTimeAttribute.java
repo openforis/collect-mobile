@@ -1,9 +1,5 @@
 package org.openforis.collect.android.viewmodel;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 /**
  * @author Daniel Wiell
  */
@@ -26,6 +22,10 @@ public class UiTimeAttribute extends UiAttribute {
     public synchronized void setTime(Integer hour, Integer minute) {
         this.hour = hour;
         this.minute = minute;
+    }
+
+    public String valueAsString() {
+        return isEmpty() ? null : format();
     }
 
     public boolean isEmpty() {

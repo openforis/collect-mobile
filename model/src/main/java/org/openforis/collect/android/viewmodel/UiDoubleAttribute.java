@@ -22,6 +22,10 @@ public class UiDoubleAttribute extends UiAttribute {
         return value == null;
     }
 
+    public String valueAsString() {
+        return value == null ? null : value.toString();
+    }
+
     public String toString() {
         return getLabel() + ": " + (value == null ? "Unspecified" : value);
     }

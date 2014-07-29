@@ -45,6 +45,7 @@ public abstract class UiAttribute extends UiNode {
         return newStatus;
     }
 
+    public abstract String valueAsString();
 
     private UiValidationError.Level getValidationErrorLevel(Set<UiValidationError> validationErrors) {
         UiValidationError.Level level = UiValidationError.Level.values()[0];
@@ -54,5 +55,4 @@ public abstract class UiAttribute extends UiNode {
         }
         return level;
     }
-
 }

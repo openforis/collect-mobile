@@ -19,6 +19,10 @@ public class UiBooleanAttribute extends UiAttribute {
         this.value = value;
     }
 
+    public String valueAsString() {
+        return value == null ? null : value.toString();
+    }
+
     public boolean isEmpty() {
         return value == null;
     }

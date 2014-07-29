@@ -40,6 +40,11 @@ public class UiCoordinateAttribute extends UiAttribute {
         return (UiCoordinateDefinition) super.getDefinition();
     }
 
+    @Override
+    public String valueAsString() {
+        return isEmpty() ? null : (x + ", " + y);
+    }
+
     public boolean isEmpty() {
         return x == null || y == null;
     }

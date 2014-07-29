@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Collect</string>
+    <string name="button_select">Editera</string>
+
+    <string name="action_add_node">Lägg till</string>
+    <string name="action_node_list">Lista</string>
+    <string name="action_next_attribute">Nästa attribut</string>
+    <string name="action_import">Importera</string>
+    <string name="action_export">Exportera</string>
+    <string name="action_backup">Säkerhetskopiera</string>
+    <string name="action_settings">Inställningar</string>
+
+    <string name="backup_insert_sd_card">Stoppa in SD kort att spara säkerhetskopian på</string>
+
+    <string name="toast_exported_survey">Exporterade till %s</string>
+    <string name="toast_exported_survey_failed">Misslyckades att exportera</string>
+    <string name="toast_import_survey">Importerar</string>
+    <string name="toast_import_survey_failed">Misslyckades att importera från %s</string>
+    <string name="toast_backed_up_survey">Säkerhetskopierade till %s</string>
+    <string name="toast_backed_up_failed">Misslyckades att säkerhetskopiera</string>
+
+    <string name="storage_not_found_message">Kan inte hitta lagringsplatsen</string>
+    <string name="storage_not_found_retry">Försök igen</string>
+    <string name="storage_not_found_settings">Konfigurara lagringsplatsen</string>
+
+    <string name="message_invalid_date">Ogiltigt datum</string>
+    <string name="message_not_a_number">Inte ett nummer</string>
+
+    <string name="label_unspecified">[Tom]</string>
+    <string name="label_yes">Ja</string>
+    <string name="label_no">Nej</string>
+    <string name="label_spatial_reference_system">Spatial Reference System</string>
+    <string name="label_start_gps">Starta GPS</string>
+    <string name="label_stop_gps">Stoppa GPS</string>
+    <string name="label_accuracy">Noggrannhet</string>
+
+    <string name="hint_date_pattern">dd MMMM yyyy</string>
+    <string name="hint_time_pattern">hh:mm</string>
+
+    <string name="settings_title_crewId">Crew ID</string>
+
+    <string name="settings_workingDir">Lagringsplats</string>
+    <string name="settings_title_darkTheme">Collect Mobile tema</string>
+    <string name="settings_switchTextOn_darkTheme">Mörk</string>
+    <string name="settings_switchTextOff_darkTheme">Ljus</string>
+    <string name="settings_summaryOn_darkTheme">Collect Mobile använder ett mörkt tema.</string>
+    <string name="settings_summaryOff_darkTheme">Collect Mobile använder ett ljust tema.</string>
+
+    <string name="settings_title_showKeyboard">Visa tangentbordet automatiskt</string>
+    <string name="settings_summary_showKeyboard">Avgör om mjukvarutangentbordet automatiskt ska visas.</string>
+
+</resources>

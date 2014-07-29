@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<EditTextPreference-->
-            <!--android:title="Collect Server URL"-->
-            <!--android:key="serverUrl"-->
-            <!--android:summary="Please provide the Collect Server URL"/>-->
-
-    <!-- TODO: Using message key everywhere -->
-
     <Preference
             android:title="@string/settings_workingDir"
             android:key="workingDir"
             />
-
     <EditTextPreference
             android:title="@string/settings_title_crewId"
             android:key="crewId"
@@ -26,9 +18,9 @@
             android:key="darkTheme"
             />
     <CheckBoxPreference
-            android:title="Automatically show keyboard"
+            android:title="@string/settings_title_showKeyboard"
             android:defaultValue="true"
-            android:summary="Determines if soft keyboard should automatically be shown when accessing an attribute."
+            android:summary="@string/settings_summary_showKeyboard"
             android:key="showKeyboard"
             />
 </PreferenceScreen>

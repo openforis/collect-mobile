@@ -18,6 +18,8 @@ import org.openforis.collect.android.viewmodel.UiNode;
 
 import java.util.*;
 
+import static org.openforis.collect.android.gui.list.EntityListAdapter.MAX_ATTRIBUTE_LABEL_LENGTH;
+import static org.openforis.collect.android.gui.list.EntityListAdapter.MAX_ATTRIBUTE_VALUE_LENGTH;
 import static org.openforis.collect.android.util.StringUtils.ellipsisMiddle;
 
 public class NodePathDetailsFragment extends Fragment {
@@ -70,7 +72,10 @@ public class NodePathDetailsFragment extends Fragment {
             StringBuilder s = new StringBuilder();
             for (Iterator<UiAttribute> iterator = keyAttributes.iterator(); iterator.hasNext(); ) {
                 UiAttribute keyAttribute = iterator.next();
-                s.append(ellipsisMiddle(keyAttribute.toString(), 50));
+                String value = keyAttribute.valueAsString();
+                value = value == null ? getActivity().getResources().getString(R.string.label_unspecified) : value;
+                s.append(ellipsisMiddle(keyAttribute.getLabel(), MAX_ATTRIBUTE_LABEL_LENGTH)).append(": ")
+                        .append(ellipsisMiddle(value, MAX_ATTRIBUTE_VALUE_LENGTH));
                 if (iterator.hasNext())
                     s.append(", ");
             }

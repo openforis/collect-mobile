@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -31,7 +32,10 @@ public class Backup {
             backupToTemp();
             showInsertSdCardDialog(activity);
         } catch (IOException e) {
-            // TODO: show dialog or at least toast, indicating backup failed
+            String message = activity.getResources().getString(R.string.toast_backed_up_survey);
+            Log.e("Backup", message, e);
+            Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+
         }
     }
 

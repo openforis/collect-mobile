@@ -22,6 +22,10 @@ public class UiTaxonAttribute extends UiAttribute {
         return (UiTaxonDefinition) super.getDefinition();
     }
 
+    public String valueAsString() {
+        return taxon == null ? null : taxon.toString();
+    }
+
     public boolean isEmpty() {
         return taxon == null;
     }

@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class NodeListAdapter extends BaseAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
-    private final Context context;
+    protected final Context context;
     private final List<UiNode> nodes;
     private Attrs attrs;
 
@@ -108,15 +108,9 @@ public class NodeListAdapter extends BaseAdapter {
     public void insert(int position, UiNode node) {
         nodes.add(position, node);
         notifyDataSetChanged();
-//        parentNode.addChild(position, node);
-//        node.init();
-
     }
 
     public void remove(int position) {
-        UiNode node = nodes.get(position);
-//        node.removeFromParent();
-//        node.getParent().unregister(node);
         nodes.remove(position);
         notifyDataSetChanged();
     }

@@ -21,6 +21,10 @@ public class UiFileAttribute extends UiAttribute {
         this.file = file;
     }
 
+    public String valueAsString() {
+        return file == null ? null : file.getAbsolutePath();
+    }
+
     public boolean isEmpty() {
         return file == null;
     }

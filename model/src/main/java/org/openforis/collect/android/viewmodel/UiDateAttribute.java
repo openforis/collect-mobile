@@ -27,6 +27,10 @@ public class UiDateAttribute extends UiAttribute {
         this.date = date;
     }
 
+    public String valueAsString() {
+        return date == null ? null : new SimpleDateFormat(DATE_PATTERN).format(date);
+    }
+
     public static String format(Date date) {
         return new SimpleDateFormat(DATE_PATTERN).format(date);
     }
@@ -34,7 +38,6 @@ public class UiDateAttribute extends UiAttribute {
     public static Date parse(String newValue) throws ParseException {
         return new SimpleDateFormat(DATE_PATTERN).parse(newValue);
     }
-
 
     public String toString() {
         return date == null ? "Undefined date" : new SimpleDateFormat(DATE_PATTERN).format(date);

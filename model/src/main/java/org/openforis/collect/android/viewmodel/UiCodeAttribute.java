@@ -27,11 +27,15 @@ public class UiCodeAttribute extends UiAttribute {
         this.qualifier = qualifier;
     }
 
+    public String valueAsString() {
+        return code == null ? null : (code.toString() + (qualifier == null ? "" : ", " + qualifier));
+    }
+
     public boolean isEmpty() {
         return code == null;
     }
 
     public String toString() {
-        return getLabel() + ": " + (code == null ? "Unspecified" : code); // TODO: How to translate "Unspecified"? Put this logic in GUI
+        return getLabel() + ": " + (code == null ? "Unspecified" : code);
     }
 }

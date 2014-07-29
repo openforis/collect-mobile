@@ -55,6 +55,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
 
         ScrollView scrollView = new ScrollView(getActivity());
+        scrollView.setFillViewport(true);
         scrollView.addView(rootView);
 
         FrameLayout frameLayout = new FrameLayout(getActivity());

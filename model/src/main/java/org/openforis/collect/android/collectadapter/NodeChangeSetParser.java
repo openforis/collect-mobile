@@ -34,8 +34,7 @@ class NodeChangeSetParser {
     public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord) {
         this.nodeChangeSet = nodeChangeSet;
         this.uiRecord = uiRecord;
-        this.locale = Locale.ENGLISH; // TODO: Don't hard code English, use default locale. Requires a fallback message properties in collect-core
-//        this.locale = Locale.getDefault();
+        this.locale = Locale.getDefault();
     }
 
     public Map<UiAttribute, UiAttributeChange> extractChanges() {

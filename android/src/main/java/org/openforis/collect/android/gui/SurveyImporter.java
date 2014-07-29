@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
+import org.openforis.collect.R;
 import org.openforis.collect.android.util.Unzipper;
 
 import java.io.File;
@@ -34,12 +35,16 @@ public class SurveyImporter {
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
         } catch (IOException e) {
-            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
-            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
+            notifyAboutImportFailure(e);
         } catch (SQLiteException e) {
-            Toast.makeText(applicationContext, "Failed to load survey.", Toast.LENGTH_SHORT).show();
-            Log.w(ServiceLocator.class.getSimpleName(), "Failed to load survey", e);
+            notifyAboutImportFailure(e);
         }
+    }
+
+    private void notifyAboutImportFailure(Exception e) {
+        String message = applicationContext.getResources().getString(R.string.toast_import_survey_failed, sourceSurveyPath);
+        Log.w(ServiceLocator.class.getSimpleName(), message, e);
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show();
     }
 
     private static File unzipSurveyDatabase(String surveyDatabasePath) throws IOException {

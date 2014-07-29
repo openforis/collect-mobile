@@ -55,7 +55,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
 
         ScrollView scrollView = new ScrollView(getActivity());
-//        scrollView.setFillViewport(true); // TODO: It doesn't take node key details into account
         scrollView.addView(rootView);
 
         FrameLayout frameLayout = new FrameLayout(getActivity());

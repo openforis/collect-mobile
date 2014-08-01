@@ -1,8 +1,6 @@
 buildscript {
     repositories {
-        maven {
-            url "http://www.openforis.org/nexus/content/groups/public/"
-        }
+        maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
 }
 
@@ -14,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.openforis.collect:collect-core:3.1.0-a4') {
+    compile('org.openforis.collect:collect-core:3.2.0-a5') {
         exclude group: 'commons-jxpath'
     }
     compile 'commons-jxpath:commons-jxpath:1.3'

@@ -1,8 +1,9 @@
 package org.openforis.collect.android.coordinate
 
+import org.openforis.collect.model.NameValueEntry
+import org.openforis.collect.persistence.DatabaseLookupProvider
 import org.openforis.idm.metamodel.DefaultSurveyContext
 import org.openforis.idm.metamodel.validation.DistanceCheck
-import org.openforis.idm.metamodel.validation.LookupProvider
 import org.openforis.idm.metamodel.validation.ValidationResult
 import org.openforis.idm.metamodel.validation.ValidationResults
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder
@@ -70,10 +71,10 @@ class DistanceCheckTest extends Specification {
         }
     }
 
-    private static class TestLookupProvider implements LookupProvider {
-        public Object lookup(String name, String attribute, Object... keys) {
+    private static class TestLookupProvider extends DatabaseLookupProvider {
+        @Override
+        protected Object loadValue(String s, String s1, NameValueEntry[] nameValueEntries) {
             return TEST_COORDINATE
         }
-
     }
 }

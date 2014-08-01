@@ -27,7 +27,7 @@ public class UiCode {
     public String toString() {
         if (label == null)
             return value;
-        return label + " (" + value + ")";
+        return label + (label.equals(value) ? "" : " (" + value + ")");
     }
 
     public boolean equals(Object o) {

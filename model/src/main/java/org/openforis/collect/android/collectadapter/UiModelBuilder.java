@@ -7,7 +7,6 @@ import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
-import org.openforis.idm.metamodel.CalculatedAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Attribute;
@@ -17,6 +16,8 @@ import org.openforis.idm.model.Node;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
 
 // TODO: Clean up
 
@@ -108,7 +109,7 @@ class UiModelBuilder {
         private List<UiNode> createUiNodesForTabAssociations(UITab tab, Entity parentEntity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition nodeDefinition : tabAssociations(tab))
-                if (!(nodeDefinition instanceof CalculatedAttributeDefinition))
+                if (!isCalculated(nodeDefinition))
                     nodes.add(createUiNode(nodeDefinition, parentEntity));
             return nodes;
         }

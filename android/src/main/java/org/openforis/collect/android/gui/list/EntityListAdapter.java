@@ -2,10 +2,8 @@ package org.openforis.collect.android.gui.list;
 
 import android.content.Context;
 import org.openforis.collect.R;
-import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
-import org.openforis.idm.model.BooleanAttribute;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -13,13 +13,14 @@ import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Attribute;
-import org.openforis.idm.model.CalculatedAttribute;
 import org.openforis.idm.model.Node;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
+
+import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
 
 /**
  * @author Daniel Wiell
@@ -58,7 +59,7 @@ class NodeChangeSetParser {
     }
 
     private void parseAttributeChange(AttributeChange attributeChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        if (attributeChange.getNode() instanceof CalculatedAttribute)
+        if (isCalculated(attributeChange.getNode()))
             return; // TODO: Should we actually ignore calculated attributes?
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
         if (!attributeChanges.containsKey(uiAttribute))
@@ -75,7 +76,7 @@ class NodeChangeSetParser {
             if (nodeChange instanceof EntityChange) {
                 EntityChange entityChange = (EntityChange) nodeChange;
                 for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
-                    if (childNode instanceof CalculatedAttribute)
+                    if (isCalculated(childNode))
                         continue; // TODO: Should we actually ignore calculated attributes?
                     Integer childNodeId = childNode.getId();
                     UiNode uiChildNode = uiRecord.lookupNode(childNodeId);
@@ -88,7 +89,6 @@ class NodeChangeSetParser {
             }
         }
     }
-
     private void parseRequiredValidationError(UiAttribute uiAttribute, EntityChange entityChange, Map<UiAttribute, UiAttributeChange> attributeChanges) {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiAttribute.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {

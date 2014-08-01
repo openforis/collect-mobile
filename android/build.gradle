@@ -1,15 +1,13 @@
 buildscript {
     repositories {
-        maven {
-            url "http://www.openforis.org/nexus/content/groups/public/"
-        }
+        maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.1'
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }

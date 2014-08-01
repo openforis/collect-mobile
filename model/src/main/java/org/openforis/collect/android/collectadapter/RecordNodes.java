@@ -6,6 +6,8 @@ import org.openforis.idm.model.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
+
 /**
  * @author Daniel Wiell
  */
@@ -30,7 +32,7 @@ class RecordNodes {
     public void add(Node node) {
         if (node instanceof Entity)
             add((Entity) node);
-        else if (!(node instanceof CalculatedAttribute)) // TODO: Should we actually ignore calculated attributes?
+        else if (!isCalculated(node)) // TODO: Should we actually ignore calculated attributes?
             put(node);
     }
 

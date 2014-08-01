@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.apache.commons.io.IOUtils;
+import org.openforis.collect.Collect;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
@@ -12,12 +13,14 @@ import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.persistence.xml.DataMarshaller;
+import org.openforis.idm.metamodel.ModelVersion;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -56,13 +59,14 @@ public class SurveyExporter {
     private void addInfoFile() throws IOException {
         try {
             zipOutputStream.putNextEntry(new ZipEntry(SurveyBackupJob.INFO_FILE_NAME));
-            SurveyBackupInfo info = new SurveyBackupInfo(collectSurvey.getUri());
+            SurveyBackupInfo info = new SurveyBackupInfo();
+            info.setSurveyName(collectSurvey.getName());
+            info.setSurveyUri(collectSurvey.getUri());
             info.store(zipOutputStream);
         } finally {
             zipOutputStream.closeEntry();
         }
     }
-
 
     private void addIdmFile() throws IOException {
         try {

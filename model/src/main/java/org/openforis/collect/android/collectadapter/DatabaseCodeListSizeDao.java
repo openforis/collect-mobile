@@ -18,7 +18,7 @@ public class DatabaseCodeListSizeDao implements CodeListSizeDao {
         this.database = database;
     }
 
-    public int codeListSize(final int codeListId, int level) {
+    public int codeListSize(final int codeListId, final int level) {
         return database.execute(new ConnectionCallback<Integer>() {
             public Integer execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
@@ -26,9 +26,10 @@ public class DatabaseCodeListSizeDao implements CodeListSizeDao {
                         "FROM \n" +
                         "   (SELECT COUNT(*) count\n" +
                         "   FROM ofc_code_list\n" +
-                        "   WHERE code_list_id = ?" +
-                        "   GROUP BY parent_id) s") ;
+                        "   WHERE code_list_id = ? AND level = ?" +
+                        "   GROUP BY parent_id) s");
                 ps.setInt(1, codeListId);
+                ps.setInt(2, level);
                 ResultSet rs = ps.executeQuery();
                 rs.next();
                 return rs.getInt(1);

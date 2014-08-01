@@ -5,6 +5,7 @@
 	* Download and install Collect.apk
 	* Start Collect
 	* Choose the downloaded survey.collect-mobile file in the file chooser
+	* Translated to Spanish
 
 
 Install an update
@@ -20,10 +21,12 @@ Install an update
 Changes
 -------
 
-2014-07-29
+2014-07-31
 
     * Supported free text code items
     * Prevented entity key panel from overlapping node details
+    * Added support for latest Collect Server version
+    * Translated to Spanish
 
 2014-07-25
 

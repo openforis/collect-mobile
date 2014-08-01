@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Collect</string>
+    <string name="button_select">Editar</string>
+
+    <string name="action_add_node">A&#241;adir</string>
+    <string name="action_node_list">Lista</string>
+    <string name="action_next_attribute">Siguiente atributo</string>
+    <string name="action_import">Importar</string>
+    <string name="action_export">Exportar</string>
+    <string name="action_backup">Copia de seguridad</string>e
+    <string name="action_settings">Opciones</string>
+
+    <string name="backup_insert_sd_card">Inserte una tarjeta SD donde guardar la copia de seguridad</string>
+
+    <string name="toast_exported_survey">Exportar encuesta a %s</string>
+    <string name="toast_exported_survey_failed">Error al exportar la encuesta</string>
+    <string name="toast_import_survey">Importando encuesta</string>
+    <string name="toast_import_survey_failed">Error al importar la encuesta desde %s</string>
+    <string name="toast_backed_up_survey">Encuesta copiada a %s</string>
+    <string name="toast_backed_up_failed">Error al crear copia de seguridad</string>
+
+    <string name="storage_not_found_message">Almacenamiento secundario no encontrado</string>
+    <string name="storage_not_found_retry">Probar de nuevo</string>
+    <string name="storage_not_found_settings">Configurar ubicaci&#243;n</string>
+
+    <string name="message_invalid_date">Fecha no valida</string>
+    <string name="message_not_a_number">No es un n&#250;mero</string>
+
+    <string name="label_unspecified">[Empty]</string>
+    <string name="label_yes">Si</string>
+    <string name="label_no">No</string>
+    <string name="label_spatial_reference_system">Sistema de Referencia Espacial</string>
+    <string name="label_start_gps">Encender GPS</string>
+    <string name="label_stop_gps">Apagar GPS</string>
+    <string name="label_accuracy">Precisi&#243;n</string>
+
+    <string name="hint_date_pattern">dd MMMM yyyy</string>
+    <string name="hint_time_pattern">hh:mm</string>
+
+    <string name="settings_title_crewId">ID de la cuadrilla</string>
+
+    <string name="settings_workingDir">Directorio de trabajo</string>
+    <string name="settings_title_darkTheme">Tema de Collect Mobile</string>
+    <string name="settings_switchTextOn_darkTheme">Oscuro</string>
+    <string name="settings_switchTextOff_darkTheme">Claro</string>
+    <string name="settings_summaryOn_darkTheme">Collect Mobile esta usando el tema oscuro.</string>
+    <string name="settings_summaryOff_darkTheme">Collect Mobile esta usando el tema claro.</string>
+
+    <string name="settings_title_showKeyboard">Mostrar el teclado automaticamente</string>
+    <string name="settings_summary_showKeyboard">Determina si el teclado se muestra automaticamente cuando se accede a un atributo.</string>
+
+</resources>

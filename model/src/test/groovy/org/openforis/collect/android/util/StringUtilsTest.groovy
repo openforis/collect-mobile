@@ -28,5 +28,6 @@ class StringUtilsTest extends Specification {
         '123456789'              | 8      | '123...89'
         'abcdefghijklmnopqrstuv' | 13     | 'abcde...rstuv'
         'abcdefghijklmnopqrstuv' | 12     | 'abcde...stuv'
+        null                     | 12     | null
     }
 }

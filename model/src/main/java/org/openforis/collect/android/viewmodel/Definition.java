@@ -5,7 +5,7 @@ package org.openforis.collect.android.viewmodel;
  */
 public class Definition {
     public final String id;
-    public final String name; // TODO: Needed?
+    public final String name;
     public final String label;
     public final Integer keyOfDefinitionId;
     public final String description;
@@ -19,7 +19,7 @@ public class Definition {
     public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description, String prompt, boolean required) {
         this.id = id;
         this.name = name;
-        this.label = label;
+        this.label = label == null ? name : label; // Use the name as label if not specified
         this.keyOfDefinitionId = keyOfDefinitionId;
         this.description = description;
         this.prompt = prompt;

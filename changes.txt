@@ -21,6 +21,10 @@ Install an update
 Changes
 -------
 
+2014-09-02
+
+    * Use node name if label is undefined
+
 2014-07-31
 
     * Supported free text code items

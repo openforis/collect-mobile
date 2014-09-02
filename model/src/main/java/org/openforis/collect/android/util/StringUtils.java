@@ -15,6 +15,7 @@ public class StringUtils {
     }
 
     public static String ellipsisMiddle(String s, int maxLength) {
+        if (s == null) return null;
         maxLength = Math.max(maxLength, ELLIPSIS.length());
         int length = s.length();
         if (length <= maxLength)

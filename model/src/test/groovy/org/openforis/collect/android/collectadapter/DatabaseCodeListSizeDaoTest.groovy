@@ -47,7 +47,4 @@ class DatabaseCodeListSizeDaoTest extends Specification {
         """)
         return id
     }
-
-
-
 }

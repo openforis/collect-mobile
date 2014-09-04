@@ -95,12 +95,8 @@ class UiModelBuilder {
             nodes.addAll(createUiNodesForTabAssociations(tab, parentEntity));
             nodes.addAll(createUiNodesForTabChildrenTabs(tab, parentEntity));
             boolean singleUiInternalNode = nodes.size() == 1 && nodes.get(0) instanceof UiInternalNode;
-            if (singleUiInternalNode) {
-//                UiInternalNode node = (UiInternalNode) nodes.get(0);
-//                node.getDefinition().label =  Definitions.label(tab);
-//                return node; // Skip intermediate node
+            if (singleUiInternalNode)
                 return nodes.get(0); // Skip intermediate node
-            }
             UiInternalNode node = instantiateTabUiNode(tab);
             node.addChildren(nodes);
             return node;
@@ -163,7 +159,7 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (isAssignedToDifferentTabs(childDefinition, entity)) // TODO: Should we actually ignore calculated attributes?
+                if (!isCalculated(childDefinition) && isAssignedToDifferentTabs(childDefinition, entity)) // TODO: Should we actually ignore calculated attributes?
                     nodes.add(createUiNode(childDefinition, entity));
             return nodes;
         }

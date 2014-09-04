@@ -24,7 +24,7 @@ public class EntityListAdapter extends NodeListAdapter {
     public String getText(UiNode node) {
         List<UiAttribute> attributes = getKeyAttributes(node);
         if (attributes.isEmpty())
-            attributes = allChildAttributes((UiInternalNode) node);
+            attributes = allChildAttributes(node);
         return toNodeLabel(attributes);
     }
 
@@ -36,13 +36,15 @@ public class EntityListAdapter extends NodeListAdapter {
         throw new IllegalStateException("Unexpected node type. Expected UiEntity or UiRecord.Placeholder, was " + child.getClass());
     }
 
-    private List<UiAttribute> allChildAttributes(UiInternalNode node) {
+    private List<UiAttribute> allChildAttributes(UiNode node) {
         List<UiAttribute> attributes = new ArrayList<UiAttribute>();
-        for (UiNode potentialAttribute : node.getChildren()) {
-            if (potentialAttribute instanceof UiAttribute)
-                attributes.add((UiAttribute) potentialAttribute);
-            if (attributes.size() >= MAX_ATTRIBUTES)
-                return attributes;
+        if (node instanceof UiInternalNode) {
+            for (UiNode potentialAttribute : ((UiInternalNode) node).getChildren()) {
+                if (potentialAttribute instanceof UiAttribute)
+                    attributes.add((UiAttribute) potentialAttribute);
+                if (attributes.size() >= MAX_ATTRIBUTES)
+                    return attributes;
+            }
         }
         return attributes;
     }

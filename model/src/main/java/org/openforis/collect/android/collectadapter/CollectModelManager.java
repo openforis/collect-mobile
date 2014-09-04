@@ -193,7 +193,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     public Definition getById(String definitionId) {
-        return definitions.definitionById(definitionId);
+        Definition definition = definitions.definitionById(definitionId);
+        if (definition == null)
+            throw new IllegalArgumentException("No definition exists with id " + definitionId);
+        return definition;
     }
 
     public UiCodeList codeList(UiCodeAttribute uiAttribute) {

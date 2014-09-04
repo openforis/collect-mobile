@@ -79,6 +79,8 @@ public class Definitions {
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
+        if (CalculatedAttributeUtils.isCalculated(nodeDefinition)) // TODO: Should we exclude calculated node definitions?
+            return;
         Definition definition = createDefinition(nodeDefinition);
         addDefinition(definition);
         if (nodeDefinition.isMultiple())

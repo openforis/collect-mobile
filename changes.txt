@@ -21,6 +21,10 @@ Install an update
 Changes
 -------
 
+2014-09-04
+
+    * Fixed bug where calculated attributes where shown
+
 2014-09-02
 
     * Use node name if label is undefined

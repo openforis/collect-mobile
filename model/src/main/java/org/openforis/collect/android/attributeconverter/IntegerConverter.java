@@ -14,13 +14,13 @@ import org.openforis.idm.model.Value;
  */
 public class IntegerConverter extends AttributeConverter<IntegerAttribute, UiIntegerAttribute> {
     public UiIntegerAttribute uiAttribute(Definition definition, IntegerAttribute attribute) {
-        UiIntegerAttribute a = new UiIntegerAttribute(attribute.getId(), definition);
+        UiIntegerAttribute a = new UiIntegerAttribute(attribute.getId(), isRelevant(attribute), definition);
         a.setValue(attribute.getValue().getValue()); // TODO: Set unit
         return a;
     }
 
     protected UiIntegerAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiIntegerAttribute a = new UiIntegerAttribute(nodeDto.id, definition);
+        UiIntegerAttribute a = new UiIntegerAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setValue(nodeDto.intValue); // TODO: Set unit
         return a;
     }

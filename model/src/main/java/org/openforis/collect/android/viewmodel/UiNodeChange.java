@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * @author Daniel Wiell
  */
-public class UiAttributeChange {
+public class UiNodeChange {
     public boolean statusChange;
     public boolean relevanceChange;
     public Set<UiValidationError> validationErrors = new HashSet<UiValidationError>();

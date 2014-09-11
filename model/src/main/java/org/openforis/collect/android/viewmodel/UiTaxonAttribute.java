@@ -6,8 +6,8 @@ package org.openforis.collect.android.viewmodel;
 public class UiTaxonAttribute extends UiAttribute {
     private UiTaxon taxon;
 
-    public UiTaxonAttribute(int id, UiTaxonDefinition definition) {
-        super(id, definition);
+    public UiTaxonAttribute(int id, boolean relevant, UiTaxonDefinition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized UiTaxon getTaxon() {

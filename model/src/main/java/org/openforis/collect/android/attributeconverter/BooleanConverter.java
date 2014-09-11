@@ -14,13 +14,13 @@ import org.openforis.idm.model.Value;
  */
 class BooleanConverter extends AttributeConverter<BooleanAttribute, UiBooleanAttribute> {
     protected UiBooleanAttribute uiAttribute(Definition definition, BooleanAttribute attribute) {
-        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(attribute.getId(), definition);
+        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(attribute.getId(), isRelevant(attribute), definition);
         uiAttribute.setValue(attribute.getValue().getValue());
         return uiAttribute;
     }
 
     protected UiBooleanAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(nodeDto.id, definition);
+        UiBooleanAttribute uiAttribute = new UiBooleanAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setValue(nodeDto.booleanValue);
         return uiAttribute;
     }

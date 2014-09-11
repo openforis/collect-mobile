@@ -122,23 +122,21 @@ public class ViewModelManager {
         repo.insertAttribute(attribute);
     }
 
-    public void updateAttribute(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        // TODO: Update status and relevance of all related attributes, if it changed
-        // TODO: We want attribute change events, not just validation errors
+    public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
         UiRecord uiRecord = attribute.getUiRecord();
         UiNode.Status oldRecordStatus = uiRecord.getStatus();
         List<Map<String, Object>> statusChanges = new ArrayList<Map<String, Object>>();
-        for (final UiAttribute changedAttribute : attributeChanges.keySet()) {
-            UiAttributeChange attributeChange = attributeChanges.get(changedAttribute);
-            changedAttribute.setValidationErrors(attributeChange.validationErrors);
-            if (attributeChange.relevanceChange || attributeChange.statusChange) {
-                changedAttribute.updateStatus(attributeChange.validationErrors);
-                if (attributeChange.relevanceChange)
-                    changedAttribute.setRelevant(!changedAttribute.isRelevant());
+        for (final UiNode changedNode : nodeChanges.keySet()) {
+            UiNodeChange nodeChange = nodeChanges.get(changedNode);
+            changedNode.setValidationErrors(nodeChange.validationErrors);
+            if (nodeChange.relevanceChange || nodeChange.statusChange) {
+                changedNode.updateStatus(nodeChange.validationErrors);
+                if (nodeChange.relevanceChange)
+                    changedNode.setRelevant(!changedNode.isRelevant());
                 statusChanges.add(new HashMap<String, Object>() {{
-                    put("id", changedAttribute.getId());
-                    put("status", changedAttribute.getStatus().name());
-                    put("relevant", changedAttribute.isRelevant());
+                    put("id", changedNode.getId());
+                    put("status", changedNode.getStatus().name());
+                    put("relevant", changedNode.isRelevant());
                 }});
             }
         }

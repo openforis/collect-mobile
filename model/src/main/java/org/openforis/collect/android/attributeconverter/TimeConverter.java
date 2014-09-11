@@ -14,14 +14,14 @@ import org.openforis.idm.model.Value;
  */
 class TimeConverter extends AttributeConverter<TimeAttribute, UiTimeAttribute> {
     public UiTimeAttribute uiAttribute(Definition definition, TimeAttribute attribute) {
-        UiTimeAttribute uiAttribute = new UiTimeAttribute(attribute.getId(), definition);
+        UiTimeAttribute uiAttribute = new UiTimeAttribute(attribute.getId(), isRelevant(attribute), definition);
         if (attribute.getHour() != null && attribute.getMinute() != null)
             uiAttribute.setTime(attribute.getHour(), attribute.getMinute());
         return uiAttribute;
     }
 
     protected UiTimeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiTimeAttribute uiAttribute = new UiTimeAttribute(nodeDto.id, definition);
+        UiTimeAttribute uiAttribute = new UiTimeAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setTime(nodeDto.hour, nodeDto.minute);
         return uiAttribute;
     }

@@ -141,13 +141,13 @@ public interface ViewModelRepository {
             Definition definition = definitionProvider.getById(nodeDto.definitionId);
             switch (nodeDto.type) {
                 case ENTITY:
-                    return new UiEntity(nodeDto.id, definition);
+                    return new UiEntity(nodeDto.id, nodeDto.relevant, definition);
                 case INTERNAL_NODE:
-                    return new UiInternalNode(nodeDto.id, definition);
+                    return new UiInternalNode(nodeDto.id, nodeDto.relevant, definition);
                 case ENTITY_COLLECTION:
-                    return new UiEntityCollection(nodeDto.id, nodeDto.parentEntityId, definition);
+                    return new UiEntityCollection(nodeDto.id, nodeDto.parentEntityId, nodeDto.relevant, definition);
                 case ATTRIBUTE_COLLECTION:
-                    return new UiAttributeCollection(nodeDto.id, nodeDto.parentEntityId, (UiAttributeCollectionDefinition) definition);
+                    return new UiAttributeCollection(nodeDto.id, nodeDto.parentEntityId, nodeDto.relevant, (UiAttributeCollectionDefinition) definition);
                 default:
                     return AttributeConverter.toUiAttribute(nodeDto, definition);
             }
@@ -217,6 +217,7 @@ public interface ViewModelRepository {
             dto.surveyId = node.getUiSurvey().getId();
             dto.recordId = node.getUiRecord().getId();
             dto.type = NodeDto.Type.ofUiNode(node);
+            dto.relevant = node.isRelevant();
             return dto;
         }
     }

@@ -6,8 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.input.SavableComponent;
-import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiAttributeChange;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiNode;
 
 import java.util.Map;
@@ -49,9 +48,9 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
             savableComponent.onSelect();
     }
 
-    public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        super.onAttributeChange(attribute, attributeChanges);
+    public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> attributeChanges) {
+        super.onNodeChange(node, attributeChanges);
         if (savableComponent != null)
-            savableComponent.onAttributeChange(attribute, attributeChanges);
+            savableComponent.onNodeChange(node, attributeChanges);
     }
 }

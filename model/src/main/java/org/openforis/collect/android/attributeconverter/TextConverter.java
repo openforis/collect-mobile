@@ -14,13 +14,13 @@ import org.openforis.idm.model.Value;
  */
 class TextConverter extends AttributeConverter<TextAttribute, UiTextAttribute> {
     public UiTextAttribute uiAttribute(Definition definition, TextAttribute attribute) {
-        UiTextAttribute uiAttribute = new UiTextAttribute(attribute.getId(), definition);
+        UiTextAttribute uiAttribute = new UiTextAttribute(attribute.getId(), isRelevant(attribute), definition);
         uiAttribute.setText(attribute.getText());
         return uiAttribute;
     }
 
     protected UiTextAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiTextAttribute uiAttribute = new UiTextAttribute(nodeDto.id, definition);
+        UiTextAttribute uiAttribute = new UiTextAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setText(nodeDto.text);
         return uiAttribute;
     }

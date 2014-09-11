@@ -8,8 +8,8 @@ public class UiCoordinateAttribute extends UiAttribute {
     private Double y;
     private UiSpatialReferenceSystem spatialReferenceSystem;
 
-    public UiCoordinateAttribute(int id, UiCoordinateDefinition definition) {
-        super(id, definition);
+    public UiCoordinateAttribute(int id, boolean relevant, UiCoordinateDefinition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized Double getX() {

@@ -45,7 +45,7 @@ public abstract class SavableComponent {
 
     public abstract void validateNode();
 
-    public abstract void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges);
+    public abstract void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 
     protected abstract void resetValidationErrors();
 
@@ -144,7 +144,7 @@ public abstract class SavableComponent {
 
         }
 
-        public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+        public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
 
         }
 

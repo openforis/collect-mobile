@@ -6,20 +6,20 @@ package org.openforis.collect.android.viewmodel;
 public class UiValidationError {
     private final String message;
     private final Level level;
-    private final UiAttribute attribute;
+    private final UiNode node;
 
-    public UiValidationError(String message, Level level, UiAttribute attribute) {
+    public UiValidationError(String message, Level level, UiNode node) {
         this.message = message;
         this.level = level;
-        this.attribute = attribute;
+        this.node = node;
     }
 
     public Level getLevel() {
         return level;
     }
 
-    public UiAttribute getAttribute() {
-        return attribute;
+    public UiNode getNode() {
+        return node;
     }
 
     public String toString() {

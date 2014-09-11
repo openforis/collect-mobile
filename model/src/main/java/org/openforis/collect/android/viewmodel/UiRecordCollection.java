@@ -7,7 +7,7 @@ package org.openforis.collect.android.viewmodel;
  */
 public class UiRecordCollection extends UiInternalNode {
     public UiRecordCollection(int id, Definition definition) {
-        super(id, definition);
+        super(id, true, definition);
         register(this);
     }
 

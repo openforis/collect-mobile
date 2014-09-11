@@ -101,18 +101,18 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         selectedNode = selected;
     }
 
-    public void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        notifyOnValidationErrors(attribute, attributeChanges);
-        nodePagerFragment().onAttributeChange(attribute, attributeChanges);
-        support.onAttributeChanged(attribute);
+    public void onNodeChanged(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        notifyOnValidationErrors(node, nodeChanges);
+        nodePagerFragment().onNodeChange(node, nodeChanges);
+        support.onNodeChanged(node);
     }
 
-    private void notifyOnValidationErrors(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        if (!attribute.equals(selectedNode) && attributeChanges.containsKey(attribute)) {
-            Set<UiValidationError> validationErrors = attributeChanges.get(attribute).validationErrors;
+    private void notifyOnValidationErrors(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        if (!node.equals(selectedNode) && nodeChanges.containsKey(node)) {
+            Set<UiValidationError> validationErrors = nodeChanges.get(node).validationErrors;
             if (validationErrors.isEmpty())
                 return;
-            StringBuilder s = new StringBuilder(attribute.getLabel() + ":\n");
+            StringBuilder s = new StringBuilder(node.getLabel() + ":\n");
             for (Iterator<UiValidationError> iterator = validationErrors.iterator(); iterator.hasNext(); ) {
                 UiValidationError error = iterator.next();
                 s.append(error.toString());
@@ -295,7 +295,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
         }
 
-        void onAttributeChanged(UiAttribute attribute) {
+        void onNodeChanged(UiNode node) {
 
         }
     }
@@ -323,7 +323,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 setNodeSelected(selected, nodeListFragment);
         }
 
-        void onAttributeChanged(UiAttribute attribute) {
+        void onNodeChanged(UiNode attribute) {
             listFragment().getListView().invalidateViews();
         }
 

@@ -224,10 +224,15 @@ class UiModelBuilder {
 
         private UiEntity instantiateUiEntity(Entity entity) {
             entity.setId(IdGenerator.nextId());
-            UiEntity uiEntity = new UiEntity(entity.getId(), definitions.toDefinition(entity));
+            UiEntity uiEntity = new UiEntity(entity.getId(), isRelevant(entity), definitions.toDefinition(entity));
             setRelevance(entity.getParent(), uiEntity);
             return uiEntity;
         }
+
+        protected boolean isRelevant(Node node) {
+            return node.getParent().isRelevant(node.getName());
+        }
+
 
         private void setRelevance(Entity parentEntity, UiEntity uiEntity) {
             uiEntity.setRelevant(parentEntity.isRelevant(uiEntity.getName()));
@@ -255,13 +260,14 @@ class UiModelBuilder {
         }
 
         private UiInternalNode instantiateTabUiNode(UITab tab) {
-            return new UiInternalNode(IdGenerator.nextId(), definitions.tabDefinition(tab));
+            return new UiInternalNode(IdGenerator.nextId(), true, definitions.tabDefinition(tab)); // TODO: Can a tab be irrelevant?
         }
 
         private UiAttributeCollection instantiateUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {
             return new UiAttributeCollection(
                     IdGenerator.nextId(),
                     parentEntity.getId(),
+                    parentEntity.isRelevant(attributeDefinition.getName()),
                     (UiAttributeCollectionDefinition) definitions.toCollectionDefinition(attributeDefinition)
             );
         }
@@ -270,6 +276,7 @@ class UiModelBuilder {
             return new UiEntityCollection(
                     IdGenerator.nextId(),
                     parentEntity.getId(),
+                    parentEntity.isRelevant(entityDefinition.getName()),
                     definitions.toCollectionDefinition(entityDefinition)
             );
         }

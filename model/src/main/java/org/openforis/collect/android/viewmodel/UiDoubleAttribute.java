@@ -6,8 +6,8 @@ package org.openforis.collect.android.viewmodel;
 public class UiDoubleAttribute extends UiAttribute {
     private Double value; // TODO: Need unit and precision
 
-    public UiDoubleAttribute(int id, Definition definition) {
-        super(id, definition);
+    public UiDoubleAttribute(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized Double getValue() {

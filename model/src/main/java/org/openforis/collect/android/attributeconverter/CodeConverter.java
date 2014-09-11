@@ -15,7 +15,7 @@ import org.openforis.idm.model.Value;
  */
 class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
     public UiCodeAttribute uiAttribute(Definition definition, CodeAttribute attribute) {
-        UiCodeAttribute uiAttribute = new UiCodeAttribute(attribute.getId(), definition);
+        UiCodeAttribute uiAttribute = new UiCodeAttribute(attribute.getId(), isRelevant(attribute), definition);
         Code attributeValue = attribute.getValue();
         String value = attributeValue.getCode();
         if (value != null) {
@@ -29,7 +29,7 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
     }
 
     protected UiCodeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiCodeAttribute uiAttribute = new UiCodeAttribute(nodeDto.id, definition);
+        UiCodeAttribute uiAttribute = new UiCodeAttribute(nodeDto.id, nodeDto.relevant, definition);
         if (nodeDto.codeValue != null)
             uiAttribute.setCode(new UiCode(nodeDto.codeValue, nodeDto.codeLabel));
         uiAttribute.setQualifier(nodeDto.codeQualifier);

@@ -7,8 +7,8 @@ public class UiTimeAttribute extends UiAttribute {
     private Integer hour;
     private Integer minute;
 
-    public UiTimeAttribute(int id, Definition definition) {
-        super(id, definition);
+    public UiTimeAttribute(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized Integer getHour() {

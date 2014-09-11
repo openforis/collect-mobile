@@ -11,7 +11,7 @@ public class UiSurvey extends UiInternalNode {
     private final Map<Integer, UiRecordCollection> recordCollectionById = new HashMap<Integer, UiRecordCollection>();
 
     public UiSurvey(int id, Definition definition) {
-        super(id, definition);
+        super(id, true, definition);
     }
 
     public void addChild(UiNode node) {

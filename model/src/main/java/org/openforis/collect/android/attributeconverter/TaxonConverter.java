@@ -16,7 +16,7 @@ import org.openforis.idm.model.Value;
  */
 class TaxonConverter extends AttributeConverter<TaxonAttribute, UiTaxonAttribute> {
     public UiTaxonAttribute uiAttribute(Definition definition, TaxonAttribute attribute) {
-        UiTaxonAttribute uiAttribute = new UiTaxonAttribute(attribute.getId(), (UiTaxonDefinition) definition);
+        UiTaxonAttribute uiAttribute = new UiTaxonAttribute(attribute.getId(), isRelevant(attribute), (UiTaxonDefinition) definition);
         String code = attribute.getCodeField().getValue();
         String scientificName = attribute.getScientificName();
         if (code != null)
@@ -25,7 +25,7 @@ class TaxonConverter extends AttributeConverter<TaxonAttribute, UiTaxonAttribute
     }
 
     protected UiTaxonAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiTaxonAttribute uiAttribute = new UiTaxonAttribute(nodeDto.id, (UiTaxonDefinition) definition);
+        UiTaxonAttribute uiAttribute = new UiTaxonAttribute(nodeDto.id, nodeDto.relevant, (UiTaxonDefinition) definition);
         if (nodeDto.taxonCode != null)
             uiAttribute.setTaxon(new UiTaxon(nodeDto.taxonCode, nodeDto.taxonScientificName));
         return uiAttribute;

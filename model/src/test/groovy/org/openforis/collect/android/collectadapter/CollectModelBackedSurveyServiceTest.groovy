@@ -108,7 +108,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
         def attribute = uiEntity.getChildAt(0)
         attribute instanceof UiTextAttribute
         attribute.status == VALIDATION_ERROR // Required
-        uiEntity.status == VALIDATION_ERROR // Error because required attribute is empty
+        uiEntity.status == VALIDATION_ERROR // Error because required node is empty
         uiEntity.getChildAt(1) instanceof UiEntityCollection
     }
 

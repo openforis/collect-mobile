@@ -92,14 +92,14 @@ class CodeListTest extends Specification {
     }
 
     Set<UiValidationError> errors(UiAttribute attribute) {
-        def attributeChangeEvents = listener.attributeChangeEvents
+        def attributeChangeEvents = listener.changeEvents
         return attributeChangeEvents.collect {
-            it.attributeChanges[attribute]?.validationErrors
+            it.changes[attribute]?.validationErrors
         }.findAll()
     }
 
     List<UiValidationError> errors() {
-        listener.attributeChangeEvents.collect { it.validationErrors }.findAll()
+        listener.changeEvents.collect { it.validationErrors }.findAll()
     }
 
     UiCode uiCode(String code) {
@@ -167,14 +167,14 @@ class CodeListTest extends Specification {
 
     private static class Listener implements SurveyListener {
         final List<Map<String, UiNode>> selectNodeEvents = []
-        final List<Map<String, ?>> attributeChangeEvents = []
+        final List<Map<String, ?>> changeEvents = []
 
         void onNodeSelected(UiNode previous, UiNode selected) {
             selectNodeEvents.add(previous: previous, selected: selected)
         }
 
-        void onAttributeChanged(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-            attributeChangeEvents.add(attribute: attribute, attributeChanges: attributeChanges)
+        void onNodeChanged(UiNode node, Map<UiNode, UiNodeChange> changes) {
+            changeEvents.add(node: node, changes: changes)
         }
     }
 }

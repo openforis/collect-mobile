@@ -13,7 +13,7 @@
     <CheckBoxPreference
             android:title="Automatically show keyboard"
             android:defaultValue="true"
-            android:summary="Determines if soft keyboard should automatically be shown when accessing an attribute."
+            android:summary="Determines if soft keyboard should automatically be shown when accessing an node."
             android:key="showKeyboard"
             />
 </PreferenceScreen>

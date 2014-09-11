@@ -9,8 +9,8 @@ public class UiEntity extends UiInternalNode {
     private Set<Integer> keyAttributeIds = new HashSet<Integer>();
     private List<UiAttribute> keyAttributes = new ArrayList<UiAttribute>();
 
-    public UiEntity(int id, Definition definition) {
-        super(id, definition);
+    public UiEntity(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public List<UiAttribute> getKeyAttributes() {

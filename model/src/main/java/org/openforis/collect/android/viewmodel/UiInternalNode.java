@@ -10,19 +10,8 @@ public class UiInternalNode extends UiNode {
     private Map<Integer, UiNode> childById = new HashMap<Integer, UiNode>();
     private List<UiNode> children = new ArrayList<UiNode>();
 
-    public UiInternalNode(int id, Definition definition) {
-        super(id, definition);
-    }
-
-    public boolean isRelevant() { // TODO: Not intuitive, should be done elsewhere, so GUI can be notified
-        boolean relevant = super.isRelevant();
-        if (relevant && !children.isEmpty()) { // Is relevant only if there is a relevant child
-            for (UiNode child : children)
-                if (child.isRelevant())
-                    return true;
-            return false;
-        }
-        return relevant;
+    public UiInternalNode(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public void register(UiNode node) {
@@ -33,6 +22,16 @@ public class UiInternalNode extends UiNode {
     public void unregister(UiNode node) {
         if (getParent() != null)
             getParent().unregister(node);
+    }
+
+    public boolean isRelevant() {
+        boolean isTab = getClass().equals(UiInternalNode.class);
+        if (!isTab) // If not a tab, use relevance as specified
+            return super.isRelevant();
+        for (UiNode child : children)  // Tabs are relevant if any child is relevant
+            if (child.isRelevant())
+                return true;
+        return false;
     }
 
     public List<UiNode> getChildren() {

@@ -14,8 +14,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.gui.detail.NodePathDetailsFragment;
-import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiAttributeChange;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
@@ -92,12 +91,12 @@ public class NodePagerFragment extends Fragment {
             selectedFragment.onSelect();
     }
 
-    public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+    public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeDetailFragment fragment : fragmentsByNode.values())
-            fragment.onAttributeChange(attribute, attributeChanges);
+            fragment.onNodeChange(node, nodeChanges);
 
         if (nodePathDetailsFragment != null)
-            nodePathDetailsFragment.attributeChanged(attribute);
+            nodePathDetailsFragment.nodeChanged(node);
     }
 
     private void setupPager(View view) {

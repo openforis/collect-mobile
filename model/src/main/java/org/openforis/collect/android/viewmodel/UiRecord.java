@@ -9,13 +9,13 @@ public class UiRecord extends UiEntity {
     private Map<Integer, UiNode> nodeById = new HashMap<Integer, UiNode>();
 
     public UiRecord(int id, Definition definition, UiRecordCollection recordCollection, Placeholder placeholder) {
-        super(id, definition);
+        super(id, true, definition);
         setParent(recordCollection);
         placeholder.keyAttributes = getKeyAttributes();
     }
 
     public UiRecord(int id, Definition definition, UiRecordCollection recordCollection) {
-        super(id, definition);
+        super(id, true, definition);
         setParent(recordCollection);
     }
 
@@ -35,6 +35,8 @@ public class UiRecord extends UiEntity {
     }
 
     public UiNode lookupNode(int nodeId) {
+        if (nodeId == getId())
+            return this;
         return nodeById.get(nodeId); // TODO: Throw exception if not found?
     }
 
@@ -61,7 +63,7 @@ public class UiRecord extends UiEntity {
         }
 
         public Placeholder(int id, Status status, String recordCollectionName, Definition definition, List<UiAttribute> keyAttributes) {
-            super(id, definition);
+            super(id, true, definition);
             this.setStatus(status);
             this.recordCollectionName = recordCollectionName;
             this.keyAttributes = new ArrayList<UiAttribute>(keyAttributes);

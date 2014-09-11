@@ -138,21 +138,21 @@ class ViewModelRepositoryTest extends Specification {
 
         UiEntity addEntity(UiInternalNode parent) {
             def definition = definition('entity', 'Entity')
-            def entity = new UiEntity(IdGenerator.nextId(), definition)
+            def entity = new UiEntity(IdGenerator.nextId(), true, definition)
             parent.addChild(entity)
             return entity
         }
 
         UiEntityCollection addEntityCollection(UiEntity parent) {
             def definition = definition('entity-collection', 'Entity Collection')
-            def entityCollection = new UiEntityCollection(IdGenerator.nextId(), parent.id, definition)
+            def entityCollection = new UiEntityCollection(IdGenerator.nextId(), parent.id, true, definition)
             parent.addChild(entityCollection)
             return entityCollection
         }
 
         UiTextAttribute addTextAttribute(UiEntity entity) {
             def definition = definition('text-uiAttribute', 'Text Attribute')
-            def attribute = new UiTextAttribute(IdGenerator.nextId(), definition)
+            def attribute = new UiTextAttribute(IdGenerator.nextId(), true, definition)
             entity.addChild(attribute)
             return attribute
         }

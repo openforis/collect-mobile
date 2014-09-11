@@ -7,8 +7,8 @@ public class UiTextAttribute extends UiAttribute {
     private String text;
     // TODO: Can be a multi-line or not
 
-    public UiTextAttribute(int id, Definition definition) {
-        super(id, definition);
+    public UiTextAttribute(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized String getText() {

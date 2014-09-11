@@ -36,6 +36,10 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         return dto;
     }
 
+    protected boolean isRelevant(Attribute attribute) {
+        return attribute.getParent().isRelevant(attribute.getName());
+    }
+
     public static <D extends Definition> UiAttribute toUiAttribute(D definition, Attribute attribute) {
         UiAttribute uiAttribute = getConverter(attribute).uiAttribute(definition, attribute);
         uiAttribute.setRelevant(attribute.getParent().isRelevant(attribute.getName()));
@@ -43,9 +47,7 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
     }
 
     public static UiNode toUiAttribute(NodeDto nodeDto, Definition definition) {
-        UiAttribute uiAttribute = getConverter(nodeDto.type.uiNodeClass).uiAttribute(nodeDto, definition);
-        uiAttribute.setRelevant(nodeDto.relevant);
-        return uiAttribute;
+        return getConverter(nodeDto.type.uiNodeClass).uiAttribute(nodeDto, definition);
     }
 
     public static NodeDto toDto(UiAttribute attribute) {

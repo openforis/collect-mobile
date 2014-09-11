@@ -9,8 +9,8 @@ public class UiFileAttribute extends UiAttribute {
     private File file;
 
 
-    public UiFileAttribute(int id, Definition definition) {
-        super(id, definition);
+    public UiFileAttribute(int id, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
     }
 
     public synchronized File getFile() {

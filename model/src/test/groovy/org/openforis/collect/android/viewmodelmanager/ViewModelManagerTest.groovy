@@ -14,8 +14,8 @@ import static org.openforis.collect.android.viewmodel.UiValidationError.Level.WA
  */
 class ViewModelManagerTest extends Specification {
     def repo = Mock(ViewModelRepository)
-    def attribute = new UiTextAttribute(1, new Definition(valueOf(nextId()), 'name', 'label', false))
-    def entity = new UiEntity(1, new Definition(valueOf(nextId()), 'name', 'label', false))
+    def attribute = new UiTextAttribute(1, true, new Definition(valueOf(nextId()), 'name', 'label', false))
+    def entity = new UiEntity(1, true, new Definition(valueOf(nextId()), 'name', 'label', false))
 
     def manager = new ViewModelManager(repo)
 
@@ -54,7 +54,7 @@ class ViewModelManagerTest extends Specification {
 
     private def attributeChanges(UiTextAttribute uiAttribute, UiValidationError.Level... levels) {
         def errors = levels.collect { new UiValidationError(it as String, it, uiAttribute) } as Set
-        def attributeChange = new UiAttributeChange()
+        def attributeChange = new UiNodeChange()
         attributeChange.validationErrors = errors
         attributeChange.statusChange = true
         return [(uiAttribute): attributeChange]

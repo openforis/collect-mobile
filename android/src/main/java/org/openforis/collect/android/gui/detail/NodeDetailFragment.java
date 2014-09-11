@@ -127,7 +127,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
+    public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         updateOverlay();
     }
 

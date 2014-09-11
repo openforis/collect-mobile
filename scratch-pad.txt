@@ -1,7 +1,7 @@
 AttributeComponent - Multiple validation errors
     Exclude warnings if there are errors? Better to do survey design so both are not triggered at the same time
 
-Add message for code attribute fragment when parent code not selected
+Add message for code node fragment when parent code not selected
 
 Validate coordinates
     Loosing focus entering x then switching to y, when y is blank - error message steals focus
@@ -17,7 +17,7 @@ Allow survey to be changed?
 
 Custom error/warning indication, instead of Androids setError()
     Different colors for errors and warnings
-    Always in the attribute label?
+    Always in the node label?
 
 Replace Toast notification with custom
     Different colors for errors and warnings
@@ -26,7 +26,7 @@ Household surveys/Assets/Alternative energy sources
     Status of entity collection does not update when all children entities are corrected
     Title show up twice
 
-Remove attribute from collection
+Remove node from collection
 
 Conversion of coordinates
     https://github.com/irstv/CTS
@@ -68,7 +68,7 @@ Relevance of internal nodes
 Checkbox
     We can actually get validation error on AttributeCollection
         Checking too many boxes
-        But, there is an empty attribute created by default
+        But, there is an empty node created by default
     When making irrelevant then relevant, wrong checks
     Required label not showing up when required but none checked
 
@@ -87,7 +87,7 @@ Enumerated entity
 Radio buttons - none selected option?
     So it value is unknown, user can reset the component
 
-Remove record/entity/attribute
+Remove record/entity/node
 
 Validation when adding record/entity
 
@@ -134,7 +134,7 @@ Speed up cluster selection
 
 Entity name show up twice  - plot/soil/layers
 
-Show attribute/entity description
+Show node/entity description
 
 Clean up UI model - confusing
     UiNode.init()
@@ -153,14 +153,14 @@ Name of entities (with multiplicity) without any key (time study)
 
 Include unit, precision for integer and real attributes
 
-Default attribute value
+Default node value
 
 Attribute states: N/A, blank
 
 Code lists: Qualifier - the other option
 
 Code lists: Prevent unique constraint violation - disable options
-    When attribute is key, disable values selected in other attributes with same definition id
+    When node is key, disable values selected in other attributes with same definition id
         Who keeps track on the set of selected values for a definition?
     Checkboxes?
 
@@ -168,23 +168,23 @@ Validation error notification menu
 
 Prevent from adding too many entities/attributes
 
-Remove record/entity/attribute
+Remove record/entity/node
 
 How to distinguish between unsaved "default value" and a saved value? Prevent saving default value
     Problem with date picker, time picker etc.
 
 Use styles, not hard-coded padding etc.
 
-Next attribute button
+Next node button
     What should happen in the multi-entity case? Should next go back to NodeAttribute?
 
 Attribute details popover
     Show the parents, and values of parents
 
-Indicate in attribute list if attribute is simple attribute, single or multiple node attribute
+Indicate in node list if node is simple node, single or multiple node node
     Different icons
 
-In attribute/entity list, let each item have a "status ball"
+In node/entity list, let each item have a "status ball"
     green - filled
     yellow - incomplete
     red - validation error
@@ -237,8 +237,8 @@ https://github.com/evant/gradle-retrolambda
 IDEAS
 -----
 
->    next attribute
->>|  next attribute with warning/error
+>    next node
+>>|  next node with warning/error
 
 ic_action_event
 ic_action_go_to_today

@@ -71,10 +71,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private void lazilyInitValidationErrors(UiAttribute attribute) {
         if (attribute.getValidationErrors() == null) {
-            Map<UiAttribute, UiAttributeChange> attributeChanges = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
+            Map<UiNode, UiNodeChange> nodeChanges = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
                     ? collectModelManager.updateAttribute(attribute) // TODO: Not semantically an update.
-                    : Collections.<UiAttribute, UiAttributeChange>emptyMap();
-            UiAttributeChange attributeChange = attributeChanges.get(attribute);
+                    : Collections.<UiNode, UiNodeChange>emptyMap();
+            UiNodeChange attributeChange = nodeChanges.get(attribute);
             if (attributeChange != null)
                 attribute.setValidationErrors(attributeChange.validationErrors);
         }
@@ -143,17 +143,16 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public void updateAttributes(Set<UiAttribute> attributes) {
         if (attributes == null)
             return;
-        for (UiAttribute attribute : attributes) {
+        for (UiAttribute attribute : attributes)
             updateAttribute(attribute);  // TODO: Do this in transaction?
-        }
     }
 
     public void updateAttribute(UiAttribute attributeToUpdate) {
-        Map<UiAttribute, UiAttributeChange> attributeChanges = collectModelManager.updateAttribute(attributeToUpdate);
-        viewModelManager.updateAttribute(attributeToUpdate, attributeChanges);
+        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
+        viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
         if (listener != null)
-            for (UiAttribute uiAttribute : attributeChanges.keySet())
-                listener.onAttributeChanged(uiAttribute, attributeChanges);
+            for (UiNode uiNode : nodeChanges.keySet())
+                listener.onNodeChanged(uiNode, nodeChanges);
     }
 
     public void exportSurvey() throws IOException {

@@ -6,7 +6,8 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiAttributeChange;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Iterator;
@@ -34,6 +35,8 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     protected final void setValidationError(final Set<UiValidationError> validationErrors) {
+        if (!attribute.isRelevant()) // Only show validation errors for relevant components
+            return;
         uiHandler.post(new Runnable() {
             public void run() {
                 if (!isSelected())
@@ -72,9 +75,10 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
         // Do nothing by default
     }
 
-    public final void onAttributeChange(UiAttribute attribute, Map<UiAttribute, UiAttributeChange> attributeChanges) {
-        onAttributeChange(attribute);
-        UiAttributeChange attributeChange = attributeChanges.get(attribute);
+    public final void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChange) {
+        if (node instanceof UiAttribute)
+            onAttributeChange((UiAttribute) node);
+        UiNodeChange attributeChange = nodeChange.get(node);
         if (attributeChange != null)
             setValidationError(attributeChange.validationErrors);
     }

@@ -6,8 +6,8 @@ package org.openforis.collect.android.viewmodel;
 public class UiEntityCollection extends UiInternalNode {
     private final int parentEntityId;
 
-    public UiEntityCollection(int id, int parentEntityId, Definition definition) {
-        super(id, definition);
+    public UiEntityCollection(int id, int parentEntityId, boolean relevant, Definition definition) {
+        super(id, relevant, definition);
         this.parentEntityId = parentEntityId;
     }
 

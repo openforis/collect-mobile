@@ -17,7 +17,7 @@ import org.openforis.idm.model.Value;
 class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoordinateAttribute> {
     public UiCoordinateAttribute uiAttribute(Definition definition, CoordinateAttribute attribute) {
         UiCoordinateDefinition coordinateDefinition = (UiCoordinateDefinition) definition;
-        UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(attribute.getId(), coordinateDefinition);
+        UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(attribute.getId(), isRelevant(attribute), coordinateDefinition);
         Coordinate attributeValue = attribute.getValue();
         uiAttribute.setX(attributeValue.getX());
         uiAttribute.setY(attributeValue.getY());
@@ -32,7 +32,7 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
 
     protected UiCoordinateAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
         UiCoordinateDefinition coordinateDefinition = (UiCoordinateDefinition) definition;
-        UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(nodeDto.id, coordinateDefinition);
+        UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(nodeDto.id, nodeDto.relevant, coordinateDefinition);
         uiAttribute.setX(nodeDto.x);
         uiAttribute.setY(nodeDto.y);
         uiAttribute.setSpatialReferenceSystem(lookupSrs(coordinateDefinition, nodeDto.srs));

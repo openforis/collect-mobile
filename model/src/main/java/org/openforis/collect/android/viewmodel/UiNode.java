@@ -1,17 +1,23 @@
 package org.openforis.collect.android.viewmodel;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * @author Daniel Wiell
  */
 public abstract class UiNode {
+    private Set<UiValidationError> validationErrors;
     private final int id;
     private final Definition definition;
     private UiInternalNode parent;
     private Status status;
     private boolean relevant = true;
 
-    public UiNode(int id, Definition definition) {
+    public UiNode(int id, boolean relevant, Definition definition) {
         this.id = id;
+        this.relevant = relevant;
         this.definition = definition;
         status = Status.OK;
     }
@@ -79,6 +85,29 @@ public abstract class UiNode {
             parentNode.updateStatusOfNodeAndParents(newParentStatus);
     }
 
+
+    public UiNode.Status determineStatus(Set<UiValidationError> validationErrors) {
+        UiNode.Status newStatus;
+        if (validationErrors.isEmpty())
+            newStatus = UiNode.Status.OK;
+        else {
+            UiValidationError.Level level = getValidationErrorLevel(validationErrors);
+            newStatus = level == UiValidationError.Level.WARNING
+                    ? UiNode.Status.VALIDATION_WARNING
+                    : UiNode.Status.VALIDATION_ERROR;
+        }
+        return newStatus;
+    }
+
+    private UiValidationError.Level getValidationErrorLevel(Set<UiValidationError> validationErrors) {
+        UiValidationError.Level level = UiValidationError.Level.values()[0];
+        for (UiValidationError validationError : validationErrors) {
+            if (validationError.getLevel().ordinal() > level.ordinal())
+                level = validationError.getLevel();
+        }
+        return level;
+    }
+
     public int getSiblingCount() {
         if (parent == null)
             throw new IllegalStateException("Parent is null");
@@ -113,6 +142,32 @@ public abstract class UiNode {
         this.parent = parent;
     }
 
+
+    public Set<UiValidationError> getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void setValidationErrors(Set<UiValidationError> validationErrors) {
+        this.validationErrors = validationErrors;
+    }
+
+    public Collection<UiNode> findAllByName(String name) {
+        ArrayList<UiNode> found = new ArrayList<UiNode>();
+        if (definition.name.equals(name))
+            found.add(this);
+        if (this instanceof UiInternalNode)
+            for (UiNode childNode : ((UiInternalNode) this).getChildren())
+                found.addAll(childNode.findAllByName(name));
+        return found;
+    }
+
+    public void updateStatus(Set<UiValidationError> validationErrors) {
+        UiNode.Status oldStatus = getStatus();
+        UiNode.Status newStatus = determineStatus(validationErrors);
+        if (oldStatus != newStatus) {
+            updateStatusOfNodeAndParents(newStatus);
+        }
+    }
     public String toString() {
         return id + ": " + definition;
     }

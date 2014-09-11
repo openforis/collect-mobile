@@ -143,32 +143,31 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     }
 
     @SuppressWarnings("unchecked")
-    public Map<UiAttribute, UiAttributeChange> updateAttribute(final UiAttribute uiAttribute) {
+    public Map<UiNode, UiNodeChange> updateAttribute(final UiAttribute uiAttribute) {
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        // TODO: This shouldn't be called attributeChanges, it contains the updates
-        Map<UiAttribute, UiAttributeChange> attributeChanges = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
         if (uiAttribute instanceof UiCodeAttribute)
-            updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, attributeChanges.keySet());
-        return attributeChanges;
+            updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, nodeChanges.keySet());
+        return nodeChanges;
     }
 
     /**
      * Update children attribute codes with correct label.
      */
-    private void updateChildrenCodeAttributes(UiCodeAttribute uiCodeAttribute, Collection<UiAttribute> uiAttributes) {
+    private void updateChildrenCodeAttributes(UiCodeAttribute uiCodeAttribute, Collection<UiNode> uiNodes) {
         int parentDefinitionId = Integer.parseInt(uiCodeAttribute.getDefinition().id);
-        for (UiAttribute uiAttribute : uiAttributes) {
-            if (uiAttribute instanceof UiCodeAttribute) {
-                CodeAttributeDefinition nodeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(uiAttribute.getDefinition().id));
+        for (UiNode uiNode : uiNodes) {
+            if (uiNode instanceof UiCodeAttribute) {
+                CodeAttributeDefinition nodeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(uiNode.getDefinition().id));
                 CodeAttributeDefinition parentDefinition = nodeDefinition.getParentCodeAttributeDefinition();
                 if (parentDefinition != null && parentDefinition.getId() == parentDefinitionId) {
-                    CodeAttribute childCodeAttribute = recordNodes.getCodeAttribute(uiAttribute.getId());
+                    CodeAttribute childCodeAttribute = recordNodes.getCodeAttribute(uiNode.getId());
                     CodeListItem item = codeListManager.loadItemByAttribute(childCodeAttribute);
                     if (item != null) {
                         UiCode updatedCode = new UiCode(item.getCode(), item.getLabel());
-                        ((UiCodeAttribute) uiAttribute).setCode(updatedCode);
+                        ((UiCodeAttribute) uiNode).setCode(updatedCode);
                     }
                 }
             }

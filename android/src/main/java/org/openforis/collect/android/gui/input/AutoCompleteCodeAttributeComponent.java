@@ -6,7 +6,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.CodeListService;
@@ -25,7 +24,7 @@ import java.util.concurrent.Executors;
  * @author Daniel Wiell
  */
 class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
-    private final AutoCompleteTextView autoComplete;
+    private final ClearableAutoCompleteTextView autoComplete;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
@@ -55,6 +54,11 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
                 if (actionId == EditorInfo.IME_ACTION_DONE)
                     saveNode();
                 return false;
+            }
+        });
+        autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
+            public void onClear() {
+                saveNode();
             }
         });
         initOptions();

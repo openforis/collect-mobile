@@ -17,14 +17,14 @@ import java.util.GregorianCalendar;
  */
 class DateConverter extends AttributeConverter<DateAttribute, UiDateAttribute> {
     public UiDateAttribute uiAttribute(Definition definition, DateAttribute attribute) {
-        UiDateAttribute uiAttribute = new UiDateAttribute(attribute.getId(), definition);
+        UiDateAttribute uiAttribute = new UiDateAttribute(attribute.getId(), isRelevant(attribute), definition);
         if (attribute.getValue() != null && attribute.getValue().toJavaDate() != null)
             uiAttribute.setDate(attribute.getValue().toJavaDate());
         return uiAttribute;
     }
 
     protected UiDateAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiDateAttribute uiAttribute = new UiDateAttribute(nodeDto.id, definition);
+        UiDateAttribute uiAttribute = new UiDateAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setDate(nodeDto.date);
         return uiAttribute;
     }

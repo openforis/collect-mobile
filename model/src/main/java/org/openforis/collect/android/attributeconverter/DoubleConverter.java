@@ -15,13 +15,13 @@ import org.openforis.idm.model.Value;
 // TODO: Set precision
 public class DoubleConverter extends AttributeConverter<RealAttribute, UiDoubleAttribute> {
     public UiDoubleAttribute uiAttribute(Definition definition, RealAttribute attribute) {
-        UiDoubleAttribute a = new UiDoubleAttribute(attribute.getId(), definition);
+        UiDoubleAttribute a = new UiDoubleAttribute(attribute.getId(), isRelevant(attribute), definition);
         a.setValue(attribute.getValue().getValue()); // TODO: Set unit
         return a;
     }
 
     protected UiDoubleAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiDoubleAttribute a = new UiDoubleAttribute(nodeDto.id, definition);
+        UiDoubleAttribute a = new UiDoubleAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setValue(nodeDto.doubleValue); // TODO: Set unit
         return a;
     }

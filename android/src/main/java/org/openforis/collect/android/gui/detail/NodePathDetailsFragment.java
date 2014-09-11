@@ -43,8 +43,8 @@ public class NodePathDetailsFragment extends Fragment {
         return createView();
     }
 
-    public void attributeChanged(UiAttribute attribute) {
-        if (view != null && keyAttributes.contains(attribute))
+    public void nodeChanged(UiNode node) {
+        if (view != null && keyAttributes.contains(node))
             replaceView();
     }
 

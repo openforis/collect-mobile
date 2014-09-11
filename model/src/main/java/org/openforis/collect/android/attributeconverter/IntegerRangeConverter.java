@@ -15,14 +15,14 @@ import org.openforis.idm.model.Value;
 // TODO: Set precision
 public class IntegerRangeConverter extends AttributeConverter<IntegerRangeAttribute, UiIntegerRangeAttribute> {
     public UiIntegerRangeAttribute uiAttribute(Definition definition, IntegerRangeAttribute attribute) {
-        UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(attribute.getId(), definition);
+        UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(attribute.getId(), isRelevant(attribute), definition);
         a.setFrom(attribute.getValue().getFrom()); // TODO: Set unit
         a.setTo(attribute.getValue().getTo());
         return a;
     }
 
     protected UiIntegerRangeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
-        UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(nodeDto.id, definition);
+        UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setFrom(nodeDto.intFrom); // TODO: Set unit
         a.setTo(nodeDto.intTo);
         return a;

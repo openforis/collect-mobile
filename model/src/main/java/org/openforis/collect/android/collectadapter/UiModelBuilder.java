@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
+import static org.openforis.collect.android.collectadapter.AttributeUtils.isShown;
 
 // TODO: Clean up
 
@@ -105,7 +105,7 @@ class UiModelBuilder {
         private List<UiNode> createUiNodesForTabAssociations(UITab tab, Entity parentEntity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition nodeDefinition : tabAssociations(tab))
-                if (!isCalculated(nodeDefinition))
+                if (isShown(survey, nodeDefinition))
                     nodes.add(createUiNode(nodeDefinition, parentEntity));
             return nodes;
         }
@@ -159,7 +159,7 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (!isCalculated(childDefinition) && isAssignedToDifferentTabs(childDefinition, entity)) // TODO: Should we actually ignore calculated attributes?
+                if (isShown(survey, childDefinition) && isAssignedToDifferentTabs(childDefinition, entity))
                     nodes.add(createUiNode(childDefinition, entity));
             return nodes;
         }
@@ -249,7 +249,7 @@ class UiModelBuilder {
         private UiAttribute instantiateUiAttribute(Attribute attribute) {
             attribute.setId(IdGenerator.nextId());
             Definition definition = definitions.toDefinition(attribute);
-            return AttributeConverter.toUiAttribute(definition, attribute);
+            return AttributeConverter.toUiAttribute((UiAttributeDefinition) definition, attribute);
         }
 
         private UiRecord instantiateUiRecord(Entity rootEntity, UiSurvey uiSurvey) {

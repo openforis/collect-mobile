@@ -79,7 +79,7 @@ public class Definitions {
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
-        if (CalculatedAttributeUtils.isCalculated(nodeDefinition)) // TODO: Should we exclude calculated node definitions?
+        if (AttributeUtils.isHidden(collectSurvey, nodeDefinition))
             return;
         Definition definition = createDefinition(nodeDefinition);
         addDefinition(definition);
@@ -97,16 +97,21 @@ public class Definitions {
         String label = label(nodeDefinition);
         Integer keyOfDefinitionId = getKeyOfDefinitionId(nodeDefinition);
         boolean required = isRequired(nodeDefinition);
-        if (nodeDefinition instanceof TaxonAttributeDefinition)
-            return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
-                    ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
-                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
-        else if (nodeDefinition instanceof CoordinateAttributeDefinition)
-            return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
-                    spatialReferenceSystems,
-                    nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
-        else
-            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+        if (nodeDefinition instanceof AttributeDefinition) {
+            boolean calculated = ((AttributeDefinition) nodeDefinition).isCalculated();
+            if (nodeDefinition instanceof TaxonAttributeDefinition)
+                return new UiTaxonDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
+                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+            else if (nodeDefinition instanceof CoordinateAttributeDefinition)
+                return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        spatialReferenceSystems,
+                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+            else
+                return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+        }
+        return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
     }
 
     private boolean isRequired(NodeDefinition nodeDefinition) {
@@ -114,13 +119,14 @@ public class Definitions {
     }
 
     private Definition createCollectionDefinition(NodeDefinition nodeDefinition, Definition childDefinition) {
-        if (nodeDefinition instanceof AttributeDefinition)
+        if (nodeDefinition instanceof AttributeDefinition) {
             return new UiAttributeCollectionDefinition(
                     collectionNodeDefinitionId(nodeDefinition),
                     nodeDefinition.getName(),
                     collectionLabel(nodeDefinition),
                     AttributeConverter.getUiAttributeType(nodeDefinition),
-                    childDefinition, isRequired(nodeDefinition));
+                    (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
+        }
         return new Definition(
                 collectionNodeDefinitionId(nodeDefinition),
                 nodeDefinition.getName(),

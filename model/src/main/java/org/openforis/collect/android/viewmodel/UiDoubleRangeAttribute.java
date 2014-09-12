@@ -7,7 +7,7 @@ public class UiDoubleRangeAttribute extends UiAttribute {
     private Double from; // TODO: Need unit and precision
     private Double to;
 
-    public UiDoubleRangeAttribute(int id, boolean relevant, Definition definition) {
+    public UiDoubleRangeAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

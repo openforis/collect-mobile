@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -14,13 +15,17 @@ import org.openforis.idm.model.Value;
  */
 // TODO: Set precision
 public class DoubleConverter extends AttributeConverter<RealAttribute, UiDoubleAttribute> {
-    public UiDoubleAttribute uiAttribute(Definition definition, RealAttribute attribute) {
+    public UiDoubleAttribute uiAttribute(UiAttributeDefinition definition, RealAttribute attribute) {
         UiDoubleAttribute a = new UiDoubleAttribute(attribute.getId(), isRelevant(attribute), definition);
-        a.setValue(attribute.getValue().getValue()); // TODO: Set unit
+        updateUiAttributeValue(attribute, a);
         return a;
     }
 
-    protected UiDoubleAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(RealAttribute attribute, UiDoubleAttribute uiAttribute) {
+        uiAttribute.setValue(attribute.getValue().getValue()); // TODO: Set unit
+    }
+
+    protected UiDoubleAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiDoubleAttribute a = new UiDoubleAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setValue(nodeDto.doubleValue); // TODO: Set unit
         return a;
@@ -38,7 +43,8 @@ public class DoubleConverter extends AttributeConverter<RealAttribute, UiDoubleA
 
     protected RealAttribute attribute(UiDoubleAttribute uiAttribute, NodeDefinition definition) {
         RealAttribute a = new RealAttribute((NumberAttributeDefinition) definition);
-        a.setValue((RealValue) value(uiAttribute));
+        if (!((NumberAttributeDefinition) definition).isCalculated())
+            a.setValue((RealValue) value(uiAttribute));
         return a;
     }
 }

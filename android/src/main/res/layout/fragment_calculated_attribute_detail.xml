@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="?attr/standardPadding">
+
+    <TextView
+            android:id="@+id/node_label"
+            style="?android:attr/textAppearanceLarge"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="?attr/standardPadding"/>
+
+    <TextView
+            android:id="@+id/node_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:id="@+id/node_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:id="@+id/calculated_attribute_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="32dp">
+    </LinearLayout>
+</LinearLayout>

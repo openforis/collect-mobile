@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.openforis.collect:collect-core:3.2.0-a5') {
+    compile('org.openforis.collect:collect-core:3.2.1-a7') {
         exclude group: 'commons-jxpath'
     }
     compile 'commons-jxpath:commons-jxpath:1.3'

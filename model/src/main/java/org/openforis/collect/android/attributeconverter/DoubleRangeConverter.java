@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDoubleRangeAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -14,14 +15,18 @@ import org.openforis.idm.model.Value;
  */
 // TODO: Set precision
 public class DoubleRangeConverter extends AttributeConverter<RealRangeAttribute, UiDoubleRangeAttribute> {
-    public UiDoubleRangeAttribute uiAttribute(Definition definition, RealRangeAttribute attribute) {
+    public UiDoubleRangeAttribute uiAttribute(UiAttributeDefinition definition, RealRangeAttribute attribute) {
         UiDoubleRangeAttribute a = new UiDoubleRangeAttribute(attribute.getId(), isRelevant(attribute), definition);
-        a.setFrom(attribute.getValue().getFrom()); // TODO: Set unit
-        a.setTo(attribute.getValue().getTo());
+        updateUiAttributeValue(attribute, a);
         return a;
     }
 
-    protected UiDoubleRangeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(RealRangeAttribute attribute, UiDoubleRangeAttribute uiAttribute) {
+        uiAttribute.setFrom(attribute.getValue().getFrom()); // TODO: Set unit
+        uiAttribute.setTo(attribute.getValue().getTo());
+    }
+
+    protected UiDoubleRangeAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiDoubleRangeAttribute a = new UiDoubleRangeAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setFrom(nodeDto.doubleFrom); // TODO: Set unit
         a.setTo(nodeDto.doubleTo);

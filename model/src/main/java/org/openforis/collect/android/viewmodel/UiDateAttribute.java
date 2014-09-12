@@ -11,7 +11,7 @@ public class UiDateAttribute extends UiAttribute {
     private static final String DATE_PATTERN = "dd MMMM yyyy";
     private Date date;
 
-    public UiDateAttribute(int id, boolean relevant, Definition definition) {
+    public UiDateAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

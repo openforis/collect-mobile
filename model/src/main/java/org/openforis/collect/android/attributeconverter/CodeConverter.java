@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
@@ -14,21 +15,24 @@ import org.openforis.idm.model.Value;
  * @author Daniel Wiell
  */
 class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
-    public UiCodeAttribute uiAttribute(Definition definition, CodeAttribute attribute) {
+    public UiCodeAttribute uiAttribute(UiAttributeDefinition definition, CodeAttribute attribute) {
         UiCodeAttribute uiAttribute = new UiCodeAttribute(attribute.getId(), isRelevant(attribute), definition);
-        Code attributeValue = attribute.getValue();
-        String value = attributeValue.getCode();
-        if (value != null) {
-
-//            CodeList codeList = attribute.getDefinition().getList();
-//            String label = codeList.getItem(value).getLabel();
-            String label = null; // TODO: Need to get the label somehow
-            uiAttribute.setCode(new UiCode(value, label));
-        }
+        updateUiAttributeValue(attribute, uiAttribute);
         return uiAttribute;
     }
 
-    protected UiCodeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(CodeAttribute attribute, UiCodeAttribute uiAttribute) {
+        Code attributeValue = attribute.getValue();
+        String value = attributeValue.getCode();
+        if (value != null) {
+            String label = null; // TODO: Need to get the label somehow
+            uiAttribute.setCode(new UiCode(value, label));
+        } else {
+            uiAttribute.setCode(null);
+        }
+    }
+
+    protected UiCodeAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiCodeAttribute uiAttribute = new UiCodeAttribute(nodeDto.id, nodeDto.relevant, definition);
         if (nodeDto.codeValue != null)
             uiAttribute.setCode(new UiCode(nodeDto.codeValue, nodeDto.codeLabel));

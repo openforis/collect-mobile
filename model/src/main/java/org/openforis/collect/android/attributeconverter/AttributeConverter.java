@@ -12,9 +12,11 @@ import org.openforis.idm.model.Value;
 @SuppressWarnings("unchecked")
 public abstract class AttributeConverter<T extends Attribute, U extends UiAttribute> {
 
-    protected abstract U uiAttribute(Definition definition, T attribute);
+    protected abstract U uiAttribute(UiAttributeDefinition definition, T attribute);
 
-    protected abstract U uiAttribute(NodeDto nodeDto, Definition definition);
+    protected abstract void updateUiAttributeValue(T attribute, U uiAttribute);
+
+    protected abstract U uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition);
 
     protected abstract NodeDto dto(U uiAttribute);
 
@@ -40,13 +42,13 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         return attribute.getParent().isRelevant(attribute.getName());
     }
 
-    public static <D extends Definition> UiAttribute toUiAttribute(D definition, Attribute attribute) {
+    public static <D extends UiAttributeDefinition> UiAttribute toUiAttribute(D definition, Attribute attribute) {
         UiAttribute uiAttribute = getConverter(attribute).uiAttribute(definition, attribute);
         uiAttribute.setRelevant(attribute.getParent().isRelevant(attribute.getName()));
         return uiAttribute;
     }
 
-    public static UiNode toUiAttribute(NodeDto nodeDto, Definition definition) {
+    public static UiAttribute toUiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         return getConverter(nodeDto.type.uiNodeClass).uiAttribute(nodeDto, definition);
     }
 
@@ -62,6 +64,10 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         Attribute attribute = getConverter(definition).attribute(uiAttribute, definition);
         attribute.setId(uiAttribute.getId());
         return attribute;
+    }
+
+    public static <T extends Attribute, U extends UiAttribute> void updateUiValue(T attribute, U uiAttribute) {
+        getConverter(attribute).updateUiAttributeValue(attribute, uiAttribute);
     }
 
     private static AttributeConverter getConverter(Attribute attribute) {

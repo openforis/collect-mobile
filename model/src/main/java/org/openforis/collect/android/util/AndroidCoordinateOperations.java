@@ -58,4 +58,8 @@ public class AndroidCoordinateOperations implements CoordinateOperations {
     public Set<String> getAvailableSRSs() {
         return spatialReferenceSystems.keySet();
     }
+
+    public boolean validate(Coordinate coordinate) {
+        return true; // TODO: Implement validation
+    }
 }

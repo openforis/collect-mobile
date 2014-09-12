@@ -7,7 +7,7 @@ public class UiBooleanAttribute extends UiAttribute {
     private Boolean value;
     // TODO: Can be a multi-line or not
 
-    public UiBooleanAttribute(int id, boolean relevant, Definition definition) {
+    public UiBooleanAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

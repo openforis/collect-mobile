@@ -9,7 +9,7 @@ public class UiFileAttribute extends UiAttribute {
     private File file;
 
 
-    public UiFileAttribute(int id, boolean relevant, Definition definition) {
+    public UiFileAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

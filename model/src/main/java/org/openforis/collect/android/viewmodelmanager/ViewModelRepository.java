@@ -149,7 +149,7 @@ public interface ViewModelRepository {
                 case ATTRIBUTE_COLLECTION:
                     return new UiAttributeCollection(nodeDto.id, nodeDto.parentEntityId, nodeDto.relevant, (UiAttributeCollectionDefinition) definition);
                 default:
-                    return AttributeConverter.toUiAttribute(nodeDto, definition);
+                    return AttributeConverter.toUiAttribute(nodeDto, (UiAttributeDefinition) definition);
             }
         }
 

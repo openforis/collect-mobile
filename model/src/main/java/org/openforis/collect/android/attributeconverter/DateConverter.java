@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDateAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
@@ -16,14 +17,20 @@ import java.util.GregorianCalendar;
  * @author Daniel Wiell
  */
 class DateConverter extends AttributeConverter<DateAttribute, UiDateAttribute> {
-    public UiDateAttribute uiAttribute(Definition definition, DateAttribute attribute) {
+    public UiDateAttribute uiAttribute(UiAttributeDefinition definition, DateAttribute attribute) {
         UiDateAttribute uiAttribute = new UiDateAttribute(attribute.getId(), isRelevant(attribute), definition);
-        if (attribute.getValue() != null && attribute.getValue().toJavaDate() != null)
-            uiAttribute.setDate(attribute.getValue().toJavaDate());
+        updateUiAttributeValue(attribute, uiAttribute);
         return uiAttribute;
     }
 
-    protected UiDateAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(DateAttribute attribute, UiDateAttribute uiAttribute) {
+        if (attribute.getValue() != null && attribute.getValue().toJavaDate() != null)
+            uiAttribute.setDate(attribute.getValue().toJavaDate());
+        else
+            uiAttribute.setDate(null);
+    }
+
+    protected UiDateAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiDateAttribute uiAttribute = new UiDateAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setDate(nodeDto.date);
         return uiAttribute;

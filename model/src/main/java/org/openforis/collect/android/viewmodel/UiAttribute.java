@@ -1,14 +1,20 @@
 package org.openforis.collect.android.viewmodel;
 
-import java.util.Set;
-
 /**
  * @author Daniel Wiell
  */
 public abstract class UiAttribute extends UiNode {
 
-    public UiAttribute(int id, boolean relevant, Definition definition) {
+    public UiAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
+    }
+
+    public UiAttributeDefinition getDefinition() {
+        return (UiAttributeDefinition) super.getDefinition();
+    }
+
+    public boolean isCalculated() {
+        return getDefinition().calculated;
     }
 
     public abstract boolean isEmpty();

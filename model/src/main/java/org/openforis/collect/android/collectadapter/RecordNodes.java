@@ -1,12 +1,15 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.model.CollectRecord;
-import org.openforis.idm.model.*;
+import org.openforis.idm.model.Attribute;
+import org.openforis.idm.model.CodeAttribute;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.Node;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
+import static org.openforis.collect.android.collectadapter.AttributeUtils.isHidden;
 
 /**
  * @author Daniel Wiell
@@ -30,9 +33,11 @@ class RecordNodes {
     }
 
     public void add(Node node) {
+        if (isHidden(node))
+            return;
         if (node instanceof Entity)
             add((Entity) node);
-        else if (!isCalculated(node)) // TODO: Should we actually ignore calculated attributes?
+        else
             put(node);
     }
 

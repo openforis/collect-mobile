@@ -1,9 +1,6 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
-import org.openforis.collect.android.viewmodel.UiTaxon;
-import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
-import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
+import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
@@ -15,16 +12,22 @@ import org.openforis.idm.model.Value;
  * @author Daniel Wiell
  */
 class TaxonConverter extends AttributeConverter<TaxonAttribute, UiTaxonAttribute> {
-    public UiTaxonAttribute uiAttribute(Definition definition, TaxonAttribute attribute) {
+    public UiTaxonAttribute uiAttribute(UiAttributeDefinition definition, TaxonAttribute attribute) {
         UiTaxonAttribute uiAttribute = new UiTaxonAttribute(attribute.getId(), isRelevant(attribute), (UiTaxonDefinition) definition);
+        updateUiAttributeValue(attribute, uiAttribute);
+        return uiAttribute;
+    }
+
+    protected void updateUiAttributeValue(TaxonAttribute attribute, UiTaxonAttribute uiAttribute) {
         String code = attribute.getCodeField().getValue();
         String scientificName = attribute.getScientificName();
         if (code != null)
             uiAttribute.setTaxon(new UiTaxon(code, scientificName));
-        return uiAttribute;
+        else
+            uiAttribute.setTaxon(null);
     }
 
-    protected UiTaxonAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected UiTaxonAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiTaxonAttribute uiAttribute = new UiTaxonAttribute(nodeDto.id, nodeDto.relevant, (UiTaxonDefinition) definition);
         if (nodeDto.taxonCode != null)
             uiAttribute.setTaxon(new UiTaxon(nodeDto.taxonCode, nodeDto.taxonScientificName));

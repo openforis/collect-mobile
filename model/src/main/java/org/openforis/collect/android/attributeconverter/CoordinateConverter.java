@@ -1,9 +1,6 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
-import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
-import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
-import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
+import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -15,22 +12,26 @@ import org.openforis.idm.model.Value;
  * @author Daniel Wiell
  */
 class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoordinateAttribute> {
-    public UiCoordinateAttribute uiAttribute(Definition definition, CoordinateAttribute attribute) {
+    public UiCoordinateAttribute uiAttribute(UiAttributeDefinition definition, CoordinateAttribute attribute) {
         UiCoordinateDefinition coordinateDefinition = (UiCoordinateDefinition) definition;
         UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(attribute.getId(), isRelevant(attribute), coordinateDefinition);
+        updateUiAttributeValue(attribute, uiAttribute);
+        return uiAttribute;
+    }
+
+    protected void updateUiAttributeValue(CoordinateAttribute attribute, UiCoordinateAttribute uiAttribute) {
         Coordinate attributeValue = attribute.getValue();
         uiAttribute.setX(attributeValue.getX());
         uiAttribute.setY(attributeValue.getY());
         String srsId = attribute.getSrsIdField().getValue();
-        uiAttribute.setSpatialReferenceSystem(lookupSrs(coordinateDefinition, srsId));
-        return uiAttribute;
+        uiAttribute.setSpatialReferenceSystem(lookupSrs(uiAttribute.getDefinition(), srsId));
     }
 
     private UiSpatialReferenceSystem lookupSrs(UiCoordinateDefinition definition, String srsId) {
         return srsId == null ? null : definition.getById(srsId);
     }
 
-    protected UiCoordinateAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected UiCoordinateAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiCoordinateDefinition coordinateDefinition = (UiCoordinateDefinition) definition;
         UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(nodeDto.id, nodeDto.relevant, coordinateDefinition);
         uiAttribute.setX(nodeDto.x);

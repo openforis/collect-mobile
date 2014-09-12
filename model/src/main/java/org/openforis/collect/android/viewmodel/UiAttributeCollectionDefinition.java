@@ -5,11 +5,11 @@ package org.openforis.collect.android.viewmodel;
  */
 public class UiAttributeCollectionDefinition extends Definition {
     public final Class<? extends UiAttribute> attributeType;
-    public final Definition attributeDefinition;
+    public final UiAttributeDefinition attributeDefinition;
 
     public UiAttributeCollectionDefinition(String id, String name, String label,
                                            Class<? extends UiAttribute> attributeType,
-                                           Definition attributeDefinition,
+                                           UiAttributeDefinition attributeDefinition,
                                            boolean required) {
         super(id, name, label, required);
         this.attributeType = attributeType;

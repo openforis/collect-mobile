@@ -7,7 +7,7 @@ public class UiIntegerRangeAttribute extends UiAttribute {
     private Integer from; // TODO: Need unit and precision
     private Integer to;
 
-    public UiIntegerRangeAttribute(int id, boolean relevant, Definition definition) {
+    public UiIntegerRangeAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

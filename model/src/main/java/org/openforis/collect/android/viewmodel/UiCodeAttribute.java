@@ -7,7 +7,7 @@ public class UiCodeAttribute extends UiAttribute {
     private UiCode code;
     private String qualifier;
 
-    public UiCodeAttribute(int id, boolean relevant, Definition definition) {
+    public UiCodeAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

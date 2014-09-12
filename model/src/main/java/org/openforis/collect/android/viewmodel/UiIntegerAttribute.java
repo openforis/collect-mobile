@@ -6,7 +6,7 @@ package org.openforis.collect.android.viewmodel;
 public class UiIntegerAttribute extends UiAttribute {
     private Integer value; // TODO: Need unit and precision
 
-    public UiIntegerAttribute(int id, boolean relevant, Definition definition) {
+    public UiIntegerAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

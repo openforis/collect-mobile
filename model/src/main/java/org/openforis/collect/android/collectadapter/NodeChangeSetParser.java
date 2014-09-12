@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
 import org.openforis.collect.model.AttributeChange;
@@ -16,12 +17,9 @@ import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.Node;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.PropertyResourceBundle;
+import java.util.*;
 
-import static org.openforis.collect.android.collectadapter.CalculatedAttributeUtils.isCalculated;
+import static org.openforis.collect.android.collectadapter.AttributeUtils.*;
 
 /**
  * @author Daniel Wiell
@@ -40,21 +38,35 @@ class NodeChangeSetParser {
     }
 
     public Map<UiNode, UiNodeChange> extractChanges() {
-        Map<UiNode, UiNodeChange> nodeChanges = parseNodeChanges();
+        Map<UiNode, UiNodeChange> nodeChanges = new HashMap<UiNode, UiNodeChange>();
+        updateCalculatedAttributeValues(nodeChanges);
+        parseNodeChanges(nodeChanges);
         determineStatusChanges(nodeChanges);
         return nodeChanges;
     }
 
+    private void updateCalculatedAttributeValues(Map<UiNode, UiNodeChange> nodeChanges) {
+        for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
+            if (nodeChange instanceof AttributeChange && isShown(nodeChange.getNode())) {
+                Attribute attribute = ((AttributeChange) nodeChange).getNode();
+                UiAttribute uiAttribute = getUiAttribute(nodeChange);
+                if (uiAttribute.isCalculated()) {
+                    AttributeConverter.updateUiValue(attribute, uiAttribute);
+                    addNodeChange(uiAttribute, nodeChanges);
+                }
+            }
+        }
+    }
+
     private void determineStatusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         for (UiNode uiNode : nodeChanges.keySet()) {
-            UiNodeChange nodeChange = getOrCreateUiNodeChange(uiNode, nodeChanges);
+            UiNodeChange nodeChange = addNodeChange(uiNode, nodeChanges);
             UiNode.Status newStatus = uiNode.determineStatus(nodeChange.validationErrors);
             nodeChange.statusChange = newStatus != uiNode.getStatus();
         }
     }
 
-    private Map<UiNode, UiNodeChange> parseNodeChanges() {
-        Map<UiNode, UiNodeChange> nodeChanges = new HashMap<UiNode, UiNodeChange>();
+    private void parseNodeChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
             if (nodeChange instanceof AttributeChange)
                 parseValidationErrors((AttributeChange) nodeChange, nodeChanges);
@@ -63,7 +75,6 @@ class NodeChangeSetParser {
                 parseRelevanceChanges((EntityChange) nodeChange, nodeChanges);
             }
         }
-        return nodeChanges;
     }
 
     private void parseRelevanceChanges(EntityChange entityChange, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -71,36 +82,43 @@ class NodeChangeSetParser {
         UiInternalNode parentUiNode = (UiInternalNode) uiRecord.lookupNode(parentNode.getId());
         for (Map.Entry<String, Boolean> relevanceEntry : entityChange.getChildrenRelevance().entrySet()) {
             NodeDefinition nodeDefinition = parentNode.getDefinition().getChildDefinition(relevanceEntry.getKey());
-            if (isCalculated(nodeDefinition)) // TODO: Should we actually ignore calculated attributes?
+            if (isHidden(parentNode.getSurvey(), nodeDefinition))
                 continue;
 
             boolean relevant = relevanceEntry.getValue();
-
             for (UiNode uiNode : parentUiNode.findAllByName(nodeDefinition.getName())) {
                 boolean previouslyRelevant = uiNode.isRelevant();
                 if (relevant != previouslyRelevant)
-                    getOrCreateUiNodeChange(uiNode, nodeChanges).relevanceChange = true;
+                    addNodeChange(uiNode, nodeChanges).relevanceChange = true;
 
             }
         }
     }
 
     private void parseValidationErrors(AttributeChange attributeChange, Map<UiNode, UiNodeChange> nodeChanges) {
-        if (isCalculated(attributeChange.getNode()))
-            return; // TODO: Should we actually ignore calculated attributes?
+        Attribute<?, ?> node = attributeChange.getNode();
+        if (isCalculated(node) || isHidden(node) || isIrrelevant(node))
+            return;
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
-        UiNodeChange nodeChange = getOrCreateUiNodeChange(uiAttribute, nodeChanges);
+        UiNodeChange nodeChange = addNodeChange(uiAttribute, nodeChanges);
         ValidationResults validationResults = attributeChange.getValidationResults();
+        List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
         for (ValidationResult validationResult : validationResults.getFailed()) {
             if (!ignored(validationResult))
-                nodeChange.validationErrors.add(toValidationError(attributeChange.getNode(), uiAttribute, validationResult));
+                validationErrors.add(toValidationError(node, uiAttribute, validationResult));
         }
+        if (!validationErrors.isEmpty())
+            nodeChange.validationErrors.addAll(validationErrors);
+    }
+
+    private boolean isIrrelevant(Attribute<?, ?> node) {
+        return !node.getParent().isRelevant(node.getName());
     }
 
     private void parseRequiredValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
         for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
-            if (isCalculated(childNode))
-                continue; // TODO: Should we actually ignore calculated attributes?
+            if (isCalculated(childNode) || isHidden(childNode))
+                continue;
             UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
             parseRequiredValidationError(uiChildNode, entityChange, uiNodeChanges);
         }
@@ -110,7 +128,7 @@ class NodeChangeSetParser {
         ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiNode.getName());
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
             String message = messages.getMessage(this.locale, "validation.requiredField");
-            UiNodeChange nodeChange = getOrCreateUiNodeChange(uiNode, nodeChanges);
+            UiNodeChange nodeChange = addNodeChange(uiNode, nodeChanges);
             nodeChange.validationErrors.add(new UiValidationError(message, level(validationResultFlag), uiNode));
         }
     }
@@ -127,7 +145,7 @@ class NodeChangeSetParser {
         return uiAttribute;
     }
 
-    private UiNodeChange getOrCreateUiNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+    private UiNodeChange addNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         UiNodeChange nodeChange = nodeChanges.get(node);
         if (nodeChange == null) {
             nodeChange = new UiNodeChange();

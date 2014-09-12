@@ -7,7 +7,7 @@ public class UiTimeAttribute extends UiAttribute {
     private Integer hour;
     private Integer minute;
 
-    public UiTimeAttribute(int id, boolean relevant, Definition definition) {
+    public UiTimeAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 

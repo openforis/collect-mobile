@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.FileAttributeDefinition;
@@ -14,15 +15,21 @@ import java.io.File;
  * @author Daniel Wiell
  */
 class FileConverter extends AttributeConverter<FileAttribute, UiFileAttribute> {
-    public UiFileAttribute uiAttribute(Definition definition, FileAttribute attribute) {
+    public UiFileAttribute uiAttribute(UiAttributeDefinition definition, FileAttribute attribute) {
         UiFileAttribute uiAttribute = new UiFileAttribute(attribute.getId(), isRelevant(attribute), definition);
-        org.openforis.idm.model.File file = attribute.getValue();
-        if (file != null && file.getFilename() != null)
-            uiAttribute.setFile(new File(file.getFilename()));
+        updateUiAttributeValue(attribute, uiAttribute);
         return uiAttribute;
     }
 
-    protected UiFileAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(FileAttribute attribute, UiFileAttribute uiAttribute) {
+        org.openforis.idm.model.File file = attribute.getValue();
+        if (file != null && file.getFilename() != null)
+            uiAttribute.setFile(new File(file.getFilename()));
+        else
+            uiAttribute.setFile(null);
+    }
+
+    protected UiFileAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiFileAttribute uiAttribute = new UiFileAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setFile(nodeDto.file);
         return uiAttribute;

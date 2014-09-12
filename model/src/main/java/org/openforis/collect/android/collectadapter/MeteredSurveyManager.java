@@ -299,10 +299,11 @@ public class MeteredSurveyManager extends SurveyManager {
         });
     }
 
-    public CollectSurvey createSurveyWork() {
+    @Override
+    public CollectSurvey createSurveyWork(final String name, final String language) {
         return time("createSurveyWork", new Callable<CollectSurvey>() {
             public CollectSurvey call() throws Exception {
-                return delegate.createSurveyWork();
+                return delegate.createSurveyWork(name, language);
             }
         });
     }

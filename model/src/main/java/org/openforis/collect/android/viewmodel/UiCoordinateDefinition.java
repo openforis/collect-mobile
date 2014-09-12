@@ -10,14 +10,14 @@ import static org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem.L
 /**
  * @author Daniel Wiell
  */
-public class UiCoordinateDefinition extends Definition {
+public class UiCoordinateDefinition extends UiAttributeDefinition {
     private final Map<String, UiSpatialReferenceSystem> srsById = new HashMap<String, UiSpatialReferenceSystem>();
     public final List<UiSpatialReferenceSystem> spatialReferenceSystems;
 
-    public UiCoordinateDefinition(String id, String name, String label, Integer keyOfDefinitionId,
+    public UiCoordinateDefinition(String id, String name, String label, Integer keyOfDefinitionId, boolean calculated,
                                   List<UiSpatialReferenceSystem> spatialReferenceSystems,
                                   String description, String prompt, boolean required) {
-        super(id, name, label, keyOfDefinitionId, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, calculated, description, prompt, required);
         this.spatialReferenceSystems = Collections.unmodifiableList(spatialReferenceSystems);
         for (UiSpatialReferenceSystem spatialReferenceSystem : spatialReferenceSystems)
             srsById.put(spatialReferenceSystem.id, spatialReferenceSystem);

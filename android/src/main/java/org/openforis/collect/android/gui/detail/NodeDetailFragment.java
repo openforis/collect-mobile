@@ -214,6 +214,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private static NodeDetailFragment createInstance(UiNode node) {
+        if (node instanceof UiAttribute && ((UiAttribute) node).isCalculated())
+            return new CalculatedAttributeFragment();
         if (node instanceof UiAttribute || node instanceof UiAttributeCollection)
             return new SavableNodeDetailFragment();
         if (node instanceof UiEntityCollection)

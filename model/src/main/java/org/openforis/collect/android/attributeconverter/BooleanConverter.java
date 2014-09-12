@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiBooleanAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -13,13 +14,17 @@ import org.openforis.idm.model.Value;
  * @author Daniel Wiell
  */
 class BooleanConverter extends AttributeConverter<BooleanAttribute, UiBooleanAttribute> {
-    protected UiBooleanAttribute uiAttribute(Definition definition, BooleanAttribute attribute) {
+    protected UiBooleanAttribute uiAttribute(UiAttributeDefinition definition, BooleanAttribute attribute) {
         UiBooleanAttribute uiAttribute = new UiBooleanAttribute(attribute.getId(), isRelevant(attribute), definition);
-        uiAttribute.setValue(attribute.getValue().getValue());
+        updateUiAttributeValue(attribute, uiAttribute);
         return uiAttribute;
     }
 
-    protected UiBooleanAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(BooleanAttribute attribute, UiBooleanAttribute uiAttribute) {
+        uiAttribute.setValue(attribute.getValue().getValue());
+    }
+
+    protected UiBooleanAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiBooleanAttribute uiAttribute = new UiBooleanAttribute(nodeDto.id, nodeDto.relevant, definition);
         uiAttribute.setValue(nodeDto.booleanValue);
         return uiAttribute;

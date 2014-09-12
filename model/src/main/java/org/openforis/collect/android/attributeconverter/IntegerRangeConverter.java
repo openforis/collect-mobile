@@ -1,6 +1,7 @@
 package org.openforis.collect.android.attributeconverter;
 
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiIntegerRangeAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -14,14 +15,18 @@ import org.openforis.idm.model.Value;
  */
 // TODO: Set precision
 public class IntegerRangeConverter extends AttributeConverter<IntegerRangeAttribute, UiIntegerRangeAttribute> {
-    public UiIntegerRangeAttribute uiAttribute(Definition definition, IntegerRangeAttribute attribute) {
+    public UiIntegerRangeAttribute uiAttribute(UiAttributeDefinition definition, IntegerRangeAttribute attribute) {
         UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(attribute.getId(), isRelevant(attribute), definition);
-        a.setFrom(attribute.getValue().getFrom()); // TODO: Set unit
-        a.setTo(attribute.getValue().getTo());
+        updateUiAttributeValue(attribute, a);
         return a;
     }
 
-    protected UiIntegerRangeAttribute uiAttribute(NodeDto nodeDto, Definition definition) {
+    protected void updateUiAttributeValue(IntegerRangeAttribute attribute, UiIntegerRangeAttribute uiAttribute) {
+        uiAttribute.setFrom(attribute.getValue().getFrom()); // TODO: Set unit
+        uiAttribute.setTo(attribute.getValue().getTo());
+    }
+
+    protected UiIntegerRangeAttribute uiAttribute(NodeDto nodeDto, UiAttributeDefinition definition) {
         UiIntegerRangeAttribute a = new UiIntegerRangeAttribute(nodeDto.id, nodeDto.relevant, definition);
         a.setFrom(nodeDto.intFrom); // TODO: Set unit
         a.setTo(nodeDto.intTo);

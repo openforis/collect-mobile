@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;

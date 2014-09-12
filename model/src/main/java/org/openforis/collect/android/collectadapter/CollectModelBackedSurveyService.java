@@ -144,7 +144,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
         if (attributes == null)
             return;
         for (UiAttribute attribute : attributes)
-            updateAttribute(attribute);  // TODO: Do this in transaction?
+            updateAttribute(attribute);  // TODO: Do this in transaction
     }
 
     public void updateAttribute(UiAttribute attributeToUpdate) {
@@ -159,6 +159,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     private void updateCalculatedAttributes(Map<UiNode, UiNodeChange> nodeChanges) {
         for (UiNode uiNode : nodeChanges.keySet())
             if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated()) {
+                // TODO: Do this in same transaction as value update, but ideally don't persist at all
                 viewModelManager.updateAttribute((UiAttribute) uiNode, nodeChanges);
                 listener.onNodeChanged(uiNode, nodeChanges);
             }

@@ -33,7 +33,7 @@ public class CalculatedAttributeFragment<T extends UiNode> extends NodeDetailFra
     }
 
     private void updateViewWithAttributeValue() {
-        viewHolder.value.setText(attribute.toString()); // TODO: Custom rendering per attribute type
+        viewHolder.value.setText(attribute.valueAsString());
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {

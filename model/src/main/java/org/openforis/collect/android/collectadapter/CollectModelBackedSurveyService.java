@@ -150,8 +150,15 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public void updateAttribute(UiAttribute attributeToUpdate) {
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
         viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
-        if (listener != null)
-            for (UiNode uiNode : nodeChanges.keySet())
+        if (listener == null)
+            return;
+        listener.onNodeChanged(attributeToUpdate, nodeChanges);
+        notifyOnCalculatedNodeChanges(nodeChanges);
+    }
+
+    private void notifyOnCalculatedNodeChanges(Map<UiNode, UiNodeChange> nodeChanges) {
+        for (UiNode uiNode : nodeChanges.keySet())
+            if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated())
                 listener.onNodeChanged(uiNode, nodeChanges);
     }
 

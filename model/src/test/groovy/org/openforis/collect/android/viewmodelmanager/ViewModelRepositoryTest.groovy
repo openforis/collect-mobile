@@ -5,7 +5,7 @@ import org.openforis.collect.android.IdGenerator
 import org.openforis.collect.android.viewmodel.*
 import spock.lang.Specification
 
-import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.*
+import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository.DatabaseViewModelRepository
 
 /**
  * @author Daniel Wiell
@@ -133,7 +133,13 @@ class ViewModelRepositoryTest extends Specification {
         private Definition definition(String name, String label) {
             def definition = new Definition(IdGenerator.nextId().toString(), name, label, false)
             definitionById[definition.id] = definition
-            definition
+            return definition
+        }
+
+        private Definition attributeDefinition(String name, String label) {
+            def definition = new UiAttributeDefinition(IdGenerator.nextId().toString(), name, label, false)
+            definitionById[definition.id] = definition
+            return definition
         }
 
         UiEntity addEntity(UiInternalNode parent) {
@@ -151,7 +157,7 @@ class ViewModelRepositoryTest extends Specification {
         }
 
         UiTextAttribute addTextAttribute(UiEntity entity) {
-            def definition = definition('text-uiAttribute', 'Text Attribute')
+            def definition = attributeDefinition('text-uiAttribute', 'Text Attribute')
             def attribute = new UiTextAttribute(IdGenerator.nextId(), true, definition)
             entity.addChild(attribute)
             return attribute

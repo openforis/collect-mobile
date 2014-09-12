@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
@@ -59,7 +58,8 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
 
     protected CodeAttribute attribute(UiCodeAttribute uiAttribute, NodeDefinition definition) {
         CodeAttribute a = new CodeAttribute((CodeAttributeDefinition) definition);
-        a.setValue((Code) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((Code) value(uiAttribute));
         return a;
     }
 }

@@ -1,6 +1,9 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
+import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
+import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
+import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -57,7 +60,8 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
 
     protected CoordinateAttribute attribute(UiCoordinateAttribute uiAttribute, NodeDefinition definition) {
         CoordinateAttribute a = new CoordinateAttribute((CoordinateAttributeDefinition) definition);
-        a.setValue((Coordinate) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((Coordinate) value(uiAttribute));
         return a;
     }
 }

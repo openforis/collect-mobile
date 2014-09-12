@@ -43,7 +43,7 @@ public class DoubleConverter extends AttributeConverter<RealAttribute, UiDoubleA
 
     protected RealAttribute attribute(UiDoubleAttribute uiAttribute, NodeDefinition definition) {
         RealAttribute a = new RealAttribute((NumberAttributeDefinition) definition);
-        if (!((NumberAttributeDefinition) definition).isCalculated())
+        if (!uiAttribute.isCalculated())
             a.setValue((RealValue) value(uiAttribute));
         return a;
     }

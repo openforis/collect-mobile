@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDateAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
@@ -57,7 +56,8 @@ class DateConverter extends AttributeConverter<DateAttribute, UiDateAttribute> {
 
     protected DateAttribute attribute(UiDateAttribute uiAttribute, NodeDefinition definition) {
         DateAttribute a = new DateAttribute((DateAttributeDefinition) definition);
-        a.setValue((Date) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((Date) value(uiAttribute));
         return a;
     }
 }

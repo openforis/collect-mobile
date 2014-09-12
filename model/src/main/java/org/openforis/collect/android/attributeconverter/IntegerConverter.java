@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiIntegerAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
@@ -42,7 +41,8 @@ public class IntegerConverter extends AttributeConverter<IntegerAttribute, UiInt
 
     protected IntegerAttribute attribute(UiIntegerAttribute uiAttribute, NodeDefinition definition) {
         IntegerAttribute a = new IntegerAttribute((NumberAttributeDefinition) definition);
-        a.setValue((IntegerValue) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((IntegerValue) value(uiAttribute));
         return a;
     }
 }

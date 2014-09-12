@@ -153,13 +153,15 @@ public class CollectModelBackedSurveyService implements SurveyService {
         if (listener == null)
             return;
         listener.onNodeChanged(attributeToUpdate, nodeChanges);
-        notifyOnCalculatedNodeChanges(nodeChanges);
+        updateCalculatedAttributes(nodeChanges);
     }
 
-    private void notifyOnCalculatedNodeChanges(Map<UiNode, UiNodeChange> nodeChanges) {
+    private void updateCalculatedAttributes(Map<UiNode, UiNodeChange> nodeChanges) {
         for (UiNode uiNode : nodeChanges.keySet())
-            if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated())
+            if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated()) {
+                viewModelManager.updateAttribute((UiAttribute) uiNode, nodeChanges);
                 listener.onNodeChanged(uiNode, nodeChanges);
+            }
     }
 
     public void exportSurvey() throws IOException {

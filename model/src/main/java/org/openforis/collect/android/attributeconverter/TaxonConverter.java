@@ -53,7 +53,8 @@ class TaxonConverter extends AttributeConverter<TaxonAttribute, UiTaxonAttribute
 
     protected TaxonAttribute attribute(UiTaxonAttribute uiAttribute, NodeDefinition definition) {
         TaxonAttribute a = new TaxonAttribute((TaxonAttributeDefinition) definition);
-        a.setValue((TaxonOccurrence) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((TaxonOccurrence) value(uiAttribute));
         return a;
     }
 }

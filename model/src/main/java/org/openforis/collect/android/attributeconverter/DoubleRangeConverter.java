@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiDoubleRangeAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
@@ -46,7 +45,8 @@ public class DoubleRangeConverter extends AttributeConverter<RealRangeAttribute,
 
     protected RealRangeAttribute attribute(UiDoubleRangeAttribute uiAttribute, NodeDefinition definition) {
         RealRangeAttribute a = new RealRangeAttribute((RangeAttributeDefinition) definition);
-        a.setValue((RealRange) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((RealRange) value(uiAttribute));
         return a;
     }
 }

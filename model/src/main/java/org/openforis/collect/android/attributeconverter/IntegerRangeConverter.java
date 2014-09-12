@@ -46,7 +46,8 @@ public class IntegerRangeConverter extends AttributeConverter<IntegerRangeAttrib
 
     protected IntegerRangeAttribute attribute(UiIntegerRangeAttribute uiAttribute, NodeDefinition definition) {
         IntegerRangeAttribute a = new IntegerRangeAttribute((RangeAttributeDefinition) definition);
-        a.setValue((IntegerRange) value(uiAttribute));
+        if (!uiAttribute.isCalculated())
+            a.setValue((IntegerRange) value(uiAttribute));
         return a;
     }
 }

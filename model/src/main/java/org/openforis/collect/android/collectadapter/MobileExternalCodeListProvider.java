@@ -3,8 +3,10 @@ package org.openforis.collect.android.collectadapter;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.ExternalCodeListItem;
+import org.openforis.idm.model.CodeAttribute;
 
 import java.sql.*;
 import java.util.*;
@@ -63,6 +65,54 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 return items;
             }
         });
+    }
+
+    public ExternalCodeListItem getItem(final CodeAttribute attribute) {
+        return database.execute(new ConnectionCallback<ExternalCodeListItem>() {
+            public ExternalCodeListItem execute(Connection connection) throws SQLException {
+                CodeAttributeDefinition definition = attribute.getDefinition();
+                CodeList codeList = definition.getList();
+                String query = singleItemQuery(attribute, codeList);
+                PreparedStatement ps = connection.prepareStatement(query);
+                setItemQueryParams(ps, attribute);
+                ResultSet rs = ps.executeQuery();
+                ExternalCodeListItem item = null;
+                if (rs.next())
+                    item = parseRow(toRow(rs), codeList, definition.getLevelPosition());
+                rs.close();
+                ps.close();
+                return item;
+            }
+        });
+
+    }
+
+    private void setItemQueryParams(PreparedStatement ps, CodeAttribute attribute) throws SQLException {
+        CodeAttribute a = attribute;
+        int i = 1;
+        while (a != null) {
+            String code = a.getValue().getCode();
+            ps.setString(i, code);
+            a = a.getCodeParent();
+            i++;
+        }
+    }
+
+    private String singleItemQuery(CodeAttribute attribute, CodeList codeList) {
+        StringBuilder constraints = new StringBuilder();
+        appendSingleItemQueryConstraint(attribute, codeList, constraints);
+        return "SELECT *\n" +
+                "FROM " + codeList.getLookupTable() + "\n" +
+                "WHERE 1 = 1" + constraints;
+    }
+
+    private void appendSingleItemQueryConstraint(CodeAttribute attribute, CodeList codeList, StringBuilder s) {
+        int level = attribute.getDefinition().getLevelPosition();
+        String levelName = levelName(codeList, level);
+        s.append(" AND ").append(levelName).append('=').append('?');
+        CodeAttribute parent = attribute.getCodeParent();
+        if (parent != null)
+            appendSingleItemQueryConstraint(parent, codeList, s);
     }
 
     private String childItemsQuery(ExternalCodeListItem parentItem) {

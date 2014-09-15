@@ -15,6 +15,7 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 

@@ -23,8 +23,9 @@ Changes
 
 2014-09-16
 
+    * Showed calculated attributed
+    * Fixed bug where the relevance of entities wasn't updated properly
     * Fixed bug where validation of external code list items failed
-    *
 
 2014-09-04
 

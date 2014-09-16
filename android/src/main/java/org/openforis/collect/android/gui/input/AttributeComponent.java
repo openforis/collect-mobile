@@ -78,7 +78,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     public final void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChange) {
         if (node instanceof UiAttribute)
             onAttributeChange((UiAttribute) node);
-        UiNodeChange attributeChange = nodeChange.get(node);
+        UiNodeChange attributeChange = nodeChange.get(attribute);
         if (attributeChange != null)
             setValidationError(attributeChange.validationErrors);
     }

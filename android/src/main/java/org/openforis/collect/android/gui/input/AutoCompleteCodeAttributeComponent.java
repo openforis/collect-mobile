@@ -58,6 +58,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         });
         autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
             public void onClear() {
+                autoComplete.setText("");
                 saveNode();
             }
         });

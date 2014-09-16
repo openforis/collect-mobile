@@ -39,7 +39,7 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
 
     private String rootItemsQuery(CodeList codeList) {
         String constraint = "1 = 1";
-        int childLevel = 2; // Level is 1 based
+        int childLevel = 2; // Level is 1 based, so children of root is at level 2
         if (hasLevel(codeList, childLevel))
             constraint = levelName(codeList, childLevel) + " IS NULL";
         return "SELECT *\n" +

@@ -21,6 +21,11 @@ Install an update
 Changes
 -------
 
+2014-09-16
+
+    * Fixed bug where validation of external code list items failed
+    *
+
 2014-09-04
 
     * Fixed bug where calculated attributes where shown

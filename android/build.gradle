@@ -43,7 +43,6 @@ dependencies {
 
 
     compile('org.openforis.android:android-jxpath:1.0-Alpha2') {
-        exclude group: 'commons-beanutils'
         exclude group: 'org.eclipse.jetty.orbit'
         exclude group: 'org.apache.tomcat'
     }

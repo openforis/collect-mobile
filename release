@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+##############################################################################
+##
+##  Release script for UN*X
+##
+##############################################################################
+./gradlew clean build publish -Drelease=true -DversionName=$1
+git commit -m 'Release: Updated version number' gradle.properties
+git push

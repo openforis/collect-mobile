@@ -8,6 +8,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
 
 repositories {
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
@@ -56,6 +57,32 @@ dependencies {
 
 }
 
+
+def localProps = new Properties()
+localProps.load(rootProject.file('local.properties').newDataInputStream())
+
+int actualVersionCode = currentVersionCode as int
+String actualVersionName = currentVersionName
+
+boolean isRelease = System.properties['release'] == 'true'
+
+if (isRelease) {
+    actualVersionCode = actualVersionCode + 1
+    actualVersionName = System.properties['versionName'] ?: actualVersionName
+
+    def props = new Properties()
+    def propsFile = rootProject.file('gradle.properties')
+    props.load(propsFile.newDataInputStream())
+
+    props.setProperty('currentVersionCode', actualVersionCode as String)
+    props.setProperty('currentVersionName', actualVersionName)
+    props.store(propsFile.newWriter(), null)
+
+    println "**************************************************************************"
+    println "*** Releasing: $actualVersionName with build number $actualVersionCode ***"
+    println "**************************************************************************"
+}
+
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -63,8 +90,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 19
-        versionCode 2
-        versionName "1.0"
+        versionCode actualVersionCode
+        versionName actualVersionName
     }
 
     compileOptions {
@@ -72,8 +99,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_6
     }
 
-    boolean isRelease = System.properties['release'] == 'true'
-    logger.info('****************** Release: ' + isRelease)
 
     if (isRelease)
         signingConfigs {
@@ -92,6 +117,7 @@ android {
                 keyPassword System.console().readPassword("\$ Enter key password: ") as String
             }
         }
+
 
     buildTypes {
         release {
@@ -117,3 +143,22 @@ android {
     }
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.openforis.collect.android'
+            artifactId 'collect-mobile'
+            version actualVersionCode
+            artifact file('build/outputs/apk/Collect.apk')
+        }
+    }
+    repositories {
+        maven {
+            url "http://www.openforis.org/nexus/content/repositories/releases/"
+            credentials {
+                username localProps.getProperty('nexus.username')
+                password localProps.getProperty('nexus.password')
+            }
+        }
+    }
+}

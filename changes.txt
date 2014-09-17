@@ -21,6 +21,10 @@ Install an update
 Changes
 -------
 
+2014-09-17
+
+    * Fixed crash for some xpath expressions
+
 2014-09-16
 
     * Showed calculated attributed

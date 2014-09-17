@@ -148,7 +148,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId 'org.openforis.collect.android'
             artifactId 'collect-mobile'
-            version actualVersionCode
+            version actualVersionCode as String
             artifact file('build/outputs/apk/Collect.apk')
         }
     }

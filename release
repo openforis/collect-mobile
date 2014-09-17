@@ -5,6 +5,7 @@
 ##  Release script for UN*X
 ##
 ##############################################################################
+set -e
 ./gradlew clean build publish -Drelease=true -DversionName=$1
 git commit -m 'Release: Updated version number' gradle.properties
 git push

@@ -21,6 +21,11 @@ Install an update
 Changes
 -------
 
+2014-09-26
+
+    * Supported new format on .collect-mobile files
+    * Verified that the Collect version used to export a survey is supported by Collect Mobile
+
 2014-09-17
 
     * Fixed crash for some xpath expressions

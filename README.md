@@ -7,6 +7,6 @@ Collect Mobile
 > sdk.dir=[adt-bundle path]/sdk
 ```
 * Execute
- ```Shell
+```Shell
 > ./gradlew clean build
 ```

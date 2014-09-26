@@ -51,4 +51,8 @@
     <string name="settings_title_showKeyboard">Automatically show keyboard</string>
     <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when accessing an node.</string>
 
+    <string name="import_title_failed">Failed to import survey %1$s</string>
+    <string name="import_text_failed">Make sure you have exported your survey for Collect Mobile using Collect Server %1$s</string>
+    <string name="import_text_wrong_version">This survey has been exported using Collect Server %1$s. This version of Collect Mobile requires %2$s to be used.</string>
+
 </resources>

@@ -2,8 +2,6 @@ package org.openforis.collect.android;
 
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.List;
-
 /**
  * @author Daniel Wiell
  */

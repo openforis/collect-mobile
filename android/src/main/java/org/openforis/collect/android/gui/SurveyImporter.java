@@ -3,18 +3,17 @@ package org.openforis.collect.android.gui;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
-import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
-import org.openforis.collect.R;
+import org.openforis.collect.Collect;
 import org.openforis.collect.android.util.Unzipper;
+import org.openforis.collect.io.SurveyBackupInfo;
+import org.openforis.commons.versioning.Version;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class SurveyImporter {
     public static final String DATABASE_NAME = "collect.db";
+    public static final String INFO_PROPERTIES_NAME = "info.properties";
     private final String sourceSurveyPath;
     private final Context applicationContext;
     private final String targetSurveyDatabasePath;
@@ -25,34 +24,55 @@ public class SurveyImporter {
         this.targetSurveyDatabasePath = targetSurveyDatabasePath.getAbsolutePath();
     }
 
-    public void importSurvey() {
+    public void importSurvey() throws MalformedSurvey, WrongSurveyVersion {
         try {
-            File tempDir = unzipSurveyDatabase(sourceSurveyPath);
+            File tempDir = unzipSurveyDefinition(sourceSurveyPath);
             String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
+            verifyVersion(tempDir);
             verifyDatabase(sourceSurveyDatabasePath);
             applicationContext.openOrCreateDatabase(targetSurveyDatabasePath, 0, null);
             File targetSurveyDatabase = applicationContext.getDatabasePath(targetSurveyDatabasePath);
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
         } catch (IOException e) {
-            notifyAboutImportFailure(e);
+            throw new MalformedSurvey(sourceSurveyPath, e);
         } catch (SQLiteException e) {
-            notifyAboutImportFailure(e);
+            throw new MalformedSurvey(sourceSurveyPath, e);
         }
     }
 
-    private void notifyAboutImportFailure(Exception e) {
-        String message = applicationContext.getResources().getString(R.string.toast_import_survey_failed, sourceSurveyPath);
-        Log.w(ServiceLocator.class.getSimpleName(), message, e);
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show();
+    private void verifyVersion(File tempDir) {
+        File infoPropertiesFile = new File(tempDir, INFO_PROPERTIES_NAME);
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(infoPropertiesFile);
+            SurveyBackupInfo info = SurveyBackupInfo.parse(is);
+            Version version = info.getCollectVersion();
+            Version mobileVersion = Collect.getVersion();
+            if (differentMinorVersions(version, mobileVersion))
+                throw new WrongSurveyVersion(sourceSurveyPath, version);
+        } catch (IOException e) {
+            throw new MalformedSurvey(sourceSurveyPath, e);
+        } finally {
+            close(is);
+        }
+
     }
 
-    private static File unzipSurveyDatabase(String surveyDatabasePath) throws IOException {
+    private boolean differentMinorVersions(Version version1, Version version2) {
+        return !surveyMinorVersion(version1).equals(surveyMinorVersion(version2));
+    }
+
+    private File unzipSurveyDefinition(String surveyDatabasePath) throws IOException {
         File folder = createTempDir();
         File zipFile = new File(surveyDatabasePath);
         if (!zipFile.exists())
             throw new FileNotFoundException("File not found: " + surveyDatabasePath);
-        new Unzipper(zipFile, folder).unzip(DATABASE_NAME);
+        try {
+            new Unzipper(zipFile, folder).unzip(DATABASE_NAME, INFO_PROPERTIES_NAME);
+        } catch (IOException e) {
+            throw new MalformedSurvey(sourceSurveyPath, e);
+        }
 
         return folder;
     }
@@ -66,6 +86,14 @@ public class SurveyImporter {
         return tempDir;
     }
 
+    private void close(InputStream is) {
+        if (is != null)
+            try {
+                is.close();
+            } catch (IOException ignore) {
+            }
+    }
+
     /**
      * Reality check on the database file. It needs to be an openable SQLite database file,
      * and contain the ofc_survey table
@@ -73,6 +101,10 @@ public class SurveyImporter {
     private static void verifyDatabase(String surveyDatabasePath) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(surveyDatabasePath, null, SQLiteDatabase.OPEN_READWRITE);
         db.rawQuery("select * from ofc_survey", new String[0]);
+    }
+
+    public static String surveyMinorVersion(Version version) {
+        return version.getMajor() + "." + version.getMinor() + ".x";
     }
 
 }

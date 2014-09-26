@@ -2,7 +2,6 @@ package org.openforis.collect.android.util;
 
 import org.cts.CRSFactory;
 import org.cts.IllegalCoordinateException;
-import org.cts.crs.CRSException;
 import org.cts.crs.GeodeticCRS;
 import org.cts.op.CoordinateOperation;
 import org.cts.op.CoordinateOperationFactory;

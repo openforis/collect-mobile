@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import org.openforis.collect.Collect;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
@@ -28,6 +31,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import static org.openforis.collect.android.gui.SurveyImporter.surveyMinorVersion;
 
 /**
  * @author Daniel Wiell
@@ -273,13 +278,41 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             final String path = FileUtils.getPath(this, surveyUri);
             String message = getResources().getString(R.string.toast_import_survey);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            ServiceLocator.importSurvey(path, this);
-            Intent intent = new Intent(this, SurveyNodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            try {
+                ServiceLocator.importSurvey(path, this);
+                Intent intent = new Intent(this, SurveyNodeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            } catch (MalformedSurvey malformedSurvey) {
+                importFailedDialog(
+                        malformedSurvey.sourceName,
+                        getString(R.string.import_text_failed, surveyMinorVersion(Collect.getVersion()))
+                );
+            } catch (WrongSurveyVersion wrongSurveyVersion) {
+                importFailedDialog(
+                        wrongSurveyVersion.sourceName,
+                        getString(R.string.import_text_wrong_version,
+                                surveyMinorVersion(wrongSurveyVersion.version),
+                                surveyMinorVersion(Collect.getVersion()))
+                );
+            }
         } catch (Exception e) {
             showSurveyFileChooser();
         }
+    }
+
+    private void importFailedDialog(String surveyPath, String message) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.import_title_failed, surveyPath))
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showSurveyFileChooser();
+                    }
+
+                })
+                .show();
     }
 
     public static void restartActivity(Context context) {

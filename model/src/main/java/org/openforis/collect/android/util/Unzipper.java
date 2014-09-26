@@ -1,6 +1,9 @@
 package org.openforis.collect.android.util;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -17,22 +20,30 @@ public class Unzipper {
         this.outputFolder = outputFolder;
     }
 
-    public void unzip(String fileName) throws IOException {
+    public void unzip(String... fileNames) throws IOException {
         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile));
+        Set<String> namesToUnzip = new HashSet<String>(Arrays.asList(fileNames));
         try {
             ZipEntry zipEntry = zipInputStream.getNextEntry();
-            while (zipEntry != null) {
-                String entryName = zipEntry.getName();
-                if (entryName.equals(fileName)) {
-                    extractEntry(zipInputStream, fileName);
-                    return;
+            while (zipEntry != null && !namesToUnzip.isEmpty()) {
+                String entryName = entryName(zipEntry);
+                if (namesToUnzip.contains(entryName)) {
+                    extractEntry(zipInputStream, entryName);
+                    namesToUnzip.remove(entryName);
                 }
                 zipEntry = zipInputStream.getNextEntry();
             }
-            throw new FileNotFoundException("Could not find entry with name " + fileName + " in " + zipFile);
+            if (!namesToUnzip.isEmpty())
+                throw new FileNotFoundException("Could not find entries  " + namesToUnzip + " in " + zipFile);
         } finally {
             zipInputStream.close();
         }
+    }
+
+    private String entryName(ZipEntry zipEntry) {
+        String name = zipEntry.getName();
+        int i = name.lastIndexOf('/'); // Ignore directories
+        return i == -1 ? name : name.substring(i + 1);
     }
 
     private void extractEntry(ZipInputStream zipInputStream, String entryName) throws IOException {

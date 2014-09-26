@@ -51,4 +51,8 @@
     <string name="settings_title_showKeyboard">Visa tangentbordet automatiskt</string>
     <string name="settings_summary_showKeyboard">Avgör om mjukvarutangentbordet automatiskt ska visas.</string>
 
+    <string name="import_title_failed">Misslyckades att importera %1$s</string>
+    <string name="import_text_failed">Se till att du har exporterat din survey till Collect Mobile med Collect Server %1$s</string>
+    <string name="import_text_wrong_version">Den här surveyn har exporterats med Collect Server %1$s. Den här versionen av Collect Mobile kräver att %2$s används vid exporten.</string>
+
 </resources>

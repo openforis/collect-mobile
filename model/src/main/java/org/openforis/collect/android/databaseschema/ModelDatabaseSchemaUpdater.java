@@ -38,5 +38,4 @@ public class ModelDatabaseSchemaUpdater {
             throw new IllegalStateException("Failed to close liquibase database", e);
         }
     }
-
 }

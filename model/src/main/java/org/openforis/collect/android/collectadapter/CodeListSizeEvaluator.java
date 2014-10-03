@@ -27,6 +27,10 @@ public class CodeListSizeEvaluator {
         return size;
     }
 
+    public void reset() {
+        sizeByCodeListDefinition.clear();
+    }
+
     private int determineMaxSize(CodeAttributeDefinition definition) {
         CodeList list = definition.getList();
         if (list.isExternal())

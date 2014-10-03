@@ -21,6 +21,10 @@ Install an update
 Changes
 -------
 
+2014-10-xx
+
+    * Fixed survey import when a survey already is imported
+
 2014-09-26
 
     * Supported new format on .collect-mobile files

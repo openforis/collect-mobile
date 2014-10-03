@@ -40,7 +40,7 @@ public class ServiceLocator {
             workingDir = initWorkingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
-            modelDatabase = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
+            modelDatabase = createModelDatabase(applicationContext);
             nodeDatabase = createNodeDatabase(applicationContext);
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -72,8 +72,40 @@ public class ServiceLocator {
         new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB, applicationContext)).importSurvey();
     }
 
+    public static void recreateNodeDatabase(Context applicationContext) {
+        deleteDatabase(NODES_DB, nodeDatabase, applicationContext);
+        createNodeDatabase(applicationContext);
+    }
+
+    public static void deleteModelDatabase(Context applicationContext) {
+        deleteDatabase(MODEL_DB, modelDatabase, applicationContext);
+    }
+
+    private static void deleteDatabase(String databaseName, AndroidDatabase database, Context applicationContext) {
+        if (database != null) {
+            database.close();
+            File nodesDbPath = databasePath(databaseName, applicationContext);
+            nodesDbPath.delete();
+        }
+    }
+
     public static boolean isSurveyImported(Context context) {
         return context.getDatabasePath(databasePath(MODEL_DB, context).getAbsolutePath()).exists();
+    }
+
+    private static AndroidDatabase createModelDatabase(Context applicationContext) {
+        AndroidDatabase database = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
+//        try {
+//            AndroidClassResolver.patchLiquibase(ServiceLocator.class.getResourceAsStream("/liquibase_classlist"));
+//        } catch (IOException e) {
+//            throw new IllegalStateException("Failed to patch Liquibase", e);
+//        }
+//        new ModelDatabaseSchemaUpdater().update(database, new SQLiteDatabase() {
+//            public boolean isLocalDatabase() throws DatabaseException {
+//                return true;
+//            }
+//        });
+        return database;
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {

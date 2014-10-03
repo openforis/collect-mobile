@@ -87,6 +87,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
 
     public UiSurvey loadSurvey() {
         try {
+            codeListSizeEvaluator.reset();
             CollectSurvey collectSurvey = Timer.time(SurveyDao.class, "loadSurvey", new Callable<CollectSurvey>() {
                 public CollectSurvey call() throws Exception {
                     SurveyDao surveyDao = surveyManager.getSurveyDao();

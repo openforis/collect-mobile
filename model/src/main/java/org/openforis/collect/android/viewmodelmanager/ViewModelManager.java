@@ -35,6 +35,7 @@ public class ViewModelManager {
 
     public void selectSurvey(UiSurvey survey) {
         selectedSurvey = survey;
+        selectedRecord = null;
         addRecordPlaceholders(survey);
         selectNode(survey.getFirstChild().getId());
     }

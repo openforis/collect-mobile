@@ -9,7 +9,7 @@
             android:id="@+id/action_import"
             android:title="@string/action_import"
             app:showAsAction="never"
-            android:onClick="showFileChooser"/>
+            android:onClick="surveyImportRequested"/>
     <item
             android:id="@+id/action_export"
             android:title="@string/action_export"

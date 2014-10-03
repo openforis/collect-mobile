@@ -30,10 +30,14 @@ public class SurveyImporter {
             String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
             verifyVersion(tempDir);
             verifyDatabase(sourceSurveyDatabasePath);
+            ServiceLocator.recreateNodeDatabase(applicationContext);
+            ServiceLocator.deleteModelDatabase(applicationContext);
             applicationContext.openOrCreateDatabase(targetSurveyDatabasePath, 0, null);
             File targetSurveyDatabase = applicationContext.getDatabasePath(targetSurveyDatabasePath);
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
+            if (ServiceLocator.surveyService() != null)
+                ServiceLocator.surveyService().loadSurvey();
         } catch (IOException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
         } catch (SQLiteException e) {

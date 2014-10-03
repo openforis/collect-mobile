@@ -38,7 +38,7 @@ import static org.openforis.collect.android.gui.SurveyImporter.surveyMinorVersio
  * @author Daniel Wiell
  */
 public class SurveyNodeActivity extends ActionBarActivity implements SurveyListener, NodeNavigator {
-    private static final int SELECT_SURVEY_REQUEST_CODE = 6384; // onActivityResult request
+    private static final int IMPORT_SURVEY_REQUEST_CODE = 6384; // onActivityResult request
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -61,7 +61,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 support.onCreate(savedState);
             } else {
                 super.onCreate(savedState);
-                showSurveyFileChooser();
+                surveyImportRequested();
             }
         } catch (WorkingDirNotWritable ignore) {
             super.onCreate(savedState);
@@ -109,7 +109,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void onNodeChanged(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         notifyOnValidationErrors(node, nodeChanges);
         nodePagerFragment().onNodeChange(node, nodeChanges);
-        support.onNodeChanged(node);
+        support.onNodeChanged(node); // TODO: Only do this if one of the child nodes updated it's status or relevance
     }
 
     private void notifyOnValidationErrors(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -171,8 +171,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         if (surveyService != null) {
             ServiceLocator.init(this);
             surveyService.setListener(this);
-            UiRecord uiRecord = selectedNode.getUiRecord();
-            selectNode(uiRecord == null ? 0 : uiRecord.getId(), selectedNode.getId());
+            if (selectedNode != null) {
+                UiRecord uiRecord = selectedNode.getUiRecord();
+                selectNode(uiRecord == null ? 0 : uiRecord.getId(), selectedNode.getId());
+            }
         }
         super.onResume();
     }
@@ -250,21 +252,30 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
     }
 
-    public void showFileChooser(MenuItem item) {
-        showSurveyFileChooser();
+    public void surveyImportRequested(MenuItem item) {
+        surveyImportRequested();
     }
 
+    private void surveyImportRequested() {
+        if (WorkingDir.databases(this).exists()) {
+            DialogFragment dialogFragment = new ImportOverwriteDataConfirmation();
+            dialogFragment.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
+        } else {
+            showImportDialog();
+        }
 
-    private void showSurveyFileChooser() {
+    }
+
+    protected void showImportDialog() {
         Intent target = FileUtils.createGetContentIntent();
         Intent intent = Intent.createChooser(
                 target, "Select survey to import");
-        startActivityForResult(intent, SELECT_SURVEY_REQUEST_CODE);
+        startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case SELECT_SURVEY_REQUEST_CODE:
+            case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null)
                     importSurvey(data.getData());
                 break;
@@ -272,32 +283,29 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     private void importSurvey(Uri surveyUri) {
+        final String path = FileUtils.getPath(this, surveyUri);
+        String message = getResources().getString(R.string.toast_import_survey);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         try {
-            // Get the file path from the URI
-            final String path = FileUtils.getPath(this, surveyUri);
-            String message = getResources().getString(R.string.toast_import_survey);
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            try {
-                ServiceLocator.importSurvey(path, this);
-                Intent intent = new Intent(this, SurveyNodeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            } catch (MalformedSurvey malformedSurvey) {
-                importFailedDialog(
-                        malformedSurvey.sourceName,
-                        getString(R.string.import_text_failed, surveyMinorVersion(Collect.getVersion()))
-                );
-            } catch (WrongSurveyVersion wrongSurveyVersion) {
-                importFailedDialog(
-                        wrongSurveyVersion.sourceName,
-                        getString(R.string.import_text_wrong_version,
-                                surveyMinorVersion(wrongSurveyVersion.version),
-                                surveyMinorVersion(Collect.getVersion()))
-                );
-            }
-        } catch (Exception e) {
-            showSurveyFileChooser();
+            ServiceLocator.importSurvey(path, this);
+            selectedNode = null;
+            Intent intent = new Intent(this, SurveyNodeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } catch (MalformedSurvey malformedSurvey) {
+            importFailedDialog(
+                    malformedSurvey.sourceName,
+                    getString(R.string.import_text_failed, surveyMinorVersion(Collect.getVersion()))
+            );
+        } catch (WrongSurveyVersion wrongSurveyVersion) {
+            importFailedDialog(
+                    wrongSurveyVersion.sourceName,
+                    getString(R.string.import_text_wrong_version,
+                            surveyMinorVersion(wrongSurveyVersion.version),
+                            surveyMinorVersion(Collect.getVersion()))
+            );
         }
     }
 
@@ -308,9 +316,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 .setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        showSurveyFileChooser();
+                        showImportDialog();
                     }
-
                 })
                 .show();
     }

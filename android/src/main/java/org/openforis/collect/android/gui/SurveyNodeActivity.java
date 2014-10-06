@@ -27,7 +27,7 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +61,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 support.onCreate(savedState);
             } else {
                 super.onCreate(savedState);
-                surveyImportRequested();
+                DialogFragment newFragment = new ImportingDemoSurveyDialog();
+                newFragment.show(getSupportFragmentManager(), "importingDemoSurvey");
             }
         } catch (WorkingDirNotWritable ignore) {
             super.onCreate(savedState);
@@ -291,9 +292,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         try {
             ServiceLocator.importSurvey(path, this);
             selectedNode = null;
-            Intent intent = new Intent(this, SurveyNodeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            startImportedSurveyNodeActivity();
         } catch (MalformedSurvey malformedSurvey) {
             importFailedDialog(
                     malformedSurvey.sourceName,
@@ -307,6 +306,12 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                             surveyMinorVersion(Collect.getVersion()))
             );
         }
+    }
+
+    public void startImportedSurveyNodeActivity() {
+        Intent intent = new Intent(this, SurveyNodeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void importFailedDialog(String surveyPath, String message) {

@@ -72,6 +72,10 @@ public class ServiceLocator {
         new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB, applicationContext)).importSurvey();
     }
 
+    public static void importDefaultSurvey(Context context) {
+        SurveyImporter.importDefaultSurvey(databasePath(MODEL_DB, context.getApplicationContext()), context);
+    }
+
     public static void recreateNodeDatabase(Context applicationContext) {
         deleteDatabase(NODES_DB, nodeDatabase, applicationContext);
         createNodeDatabase(applicationContext);

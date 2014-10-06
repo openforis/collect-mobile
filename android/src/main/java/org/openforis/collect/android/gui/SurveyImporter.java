@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.util.Unzipper;
 import org.openforis.collect.io.SurveyBackupInfo;
@@ -18,9 +19,9 @@ public class SurveyImporter {
     private final Context applicationContext;
     private final String targetSurveyDatabasePath;
 
-    public SurveyImporter(String sourceSurveyPath, Context applicationContext, File targetSurveyDatabasePath) {
+    public SurveyImporter(String sourceSurveyPath, Context context, File targetSurveyDatabasePath) {
         this.sourceSurveyPath = sourceSurveyPath;
-        this.applicationContext = applicationContext;
+        this.applicationContext = context;
         this.targetSurveyDatabasePath = targetSurveyDatabasePath.getAbsolutePath();
     }
 
@@ -43,6 +44,22 @@ public class SurveyImporter {
         } catch (SQLiteException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
         }
+    }
+
+
+    public static void importDefaultSurvey(File targetSurveyDatabasePath, Context context) {
+        try {
+            File tempDir = createTempDir();
+            InputStream sourceInput = SurveyImporter.class.getResourceAsStream("/demo.collect-mobile");
+            File intermediateSurveyPath = new File(tempDir, "demo.collect-mobile");
+            FileOutputStream intermediateOutput = new FileOutputStream(intermediateSurveyPath);
+            IOUtils.copy(sourceInput, intermediateOutput);
+            new SurveyImporter(intermediateSurveyPath.getAbsolutePath(), context, targetSurveyDatabasePath).importSurvey();
+            FileUtils.deleteDirectory(tempDir);
+        } catch(IOException e) {
+            throw new IllegalStateException(e);
+        }
+
     }
 
     private void verifyVersion(File tempDir) {

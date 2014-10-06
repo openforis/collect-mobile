@@ -55,4 +55,15 @@
     <string name="import_text_failed">Make sure you have exported your survey for Collect Mobile using Collect Server %1$s</string>
     <string name="import_text_wrong_version">This survey has been exported using Collect Server %1$s. This version of Collect Mobile requires %2$s to be used.</string>
 
+    <string name="import_overwrite_data_dialog_title">Overwrite data</string>
+    <string name="import_overwrite_data_dialog_message">Data you entered for current survey will be deleted if you proceed to import a survey.</string>
+    <string name="import_overwrite_data_dialog_confirm">Delete data and import.</string>
+
+    <string name="import_demo_dialog_title">Import demo survey</string>
+    <string name="import_demo_dialog_message">Since no other survey is imported, a demo survey will used, to highlight
+        the features of Collect Mobile. \n\n
+        Go to <a href="http://openforis.org/tools/collect.html">openforis.org</a> to find out how to design your own
+        surveys.\n
+    </string>
+
 </resources>

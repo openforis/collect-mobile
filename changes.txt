@@ -24,6 +24,8 @@ Changes
 2014-10-xx
 
     * Fixed survey import when a survey already is imported
+    * Added confirmation dialog when importing survey when data already is entered
+    * Included a demo survey, that will load at start-up, when no other survey is imported
 
 2014-09-26
 

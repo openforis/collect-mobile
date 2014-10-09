@@ -281,7 +281,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         Entity rootEntity = recordNodes.getEntityById(recordId);
         CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
         collectRecord.setId(recordId);
-        collectRecord.setRootEntity(rootEntity);
+        collectRecord.replaceRootEntity(rootEntity);
         makeEmptyAttributesBlank(rootEntity);
         return collectRecord;
     }

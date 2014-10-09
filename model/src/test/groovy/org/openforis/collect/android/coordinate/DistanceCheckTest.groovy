@@ -6,6 +6,7 @@ import org.openforis.idm.metamodel.DefaultSurveyContext
 import org.openforis.idm.metamodel.validation.DistanceCheck
 import org.openforis.idm.metamodel.validation.ValidationResult
 import org.openforis.idm.metamodel.validation.ValidationResults
+import org.openforis.idm.metamodel.validation.Validator
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder
 import org.openforis.idm.model.*
 import spock.lang.Specification
@@ -45,7 +46,12 @@ class DistanceCheckTest extends Specification {
     private ValidationResults validateVehicleLocation(String coordStr) {
         def coord = Coordinate.parseCoordinate(coordStr)
         def vehicleLocation = EntityBuilder.addValue(cluster, "vehicle_location", coord)
-        vehicleLocation.validateValue()
+        validate(vehicleLocation)
+    }
+
+    private ValidationResults validate(Attribute attribute) {
+        Validator validator = attribute.record.surveyContext.validator;
+        validator.validate(attribute)
     }
 
     private boolean containsDistanceCheck(List<ValidationResult> errors) {

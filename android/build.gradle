@@ -41,8 +41,6 @@ dependencies {
         exclude group: 'log4j'
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
-
-
     }
     compile(project(":model")) {
         exclude group: 'org.jooq'

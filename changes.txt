@@ -21,11 +21,12 @@ Install an update
 Changes
 -------
 
-2014-10-xx
+2014-10-09
 
     * Fixed survey import when a survey already is imported
     * Added confirmation dialog when importing survey when data already is entered
     * Included a demo survey, that will load at start-up, when no other survey is imported
+    * Migrate database when importing survey from older Collect Server version
 
 2014-09-26
 

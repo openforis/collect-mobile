@@ -296,14 +296,12 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         } catch (MalformedSurvey malformedSurvey) {
             importFailedDialog(
                     malformedSurvey.sourceName,
-                    getString(R.string.import_text_failed, surveyMinorVersion(Collect.getVersion()))
+                    getString(R.string.import_text_failed)
             );
         } catch (WrongSurveyVersion wrongSurveyVersion) {
             importFailedDialog(
                     wrongSurveyVersion.sourceName,
-                    getString(R.string.import_text_wrong_version,
-                            surveyMinorVersion(wrongSurveyVersion.version),
-                            surveyMinorVersion(Collect.getVersion()))
+                    getString(R.string.import_text_wrong_version)
             );
         }
     }

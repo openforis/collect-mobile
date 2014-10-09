@@ -26,6 +26,7 @@ import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository
  * @author Daniel Wiell
  */
 public class ServiceLocator {
+
     private static final String MODEL_DB = "collect.db";
     private static final String NODES_DB = "nodes";
     private static CollectModelManager collectModelManager;
@@ -42,6 +43,7 @@ public class ServiceLocator {
                 return false;
             modelDatabase = createModelDatabase(applicationContext);
             nodeDatabase = createNodeDatabase(applicationContext);
+            new ModelDatabaseMigrator(modelDatabase, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
             surveyService.loadSurvey();
@@ -98,18 +100,7 @@ public class ServiceLocator {
     }
 
     private static AndroidDatabase createModelDatabase(Context applicationContext) {
-        AndroidDatabase database = new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
-//        try {
-//            AndroidClassResolver.patchLiquibase(ServiceLocator.class.getResourceAsStream("/liquibase_classlist"));
-//        } catch (IOException e) {
-//            throw new IllegalStateException("Failed to patch Liquibase", e);
-//        }
-//        new ModelDatabaseSchemaUpdater().update(database, new SQLiteDatabase() {
-//            public boolean isLocalDatabase() throws DatabaseException {
-//                return true;
-//            }
-//        });
-        return database;
+        return new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
     }
 
     private static AndroidDatabase createNodeDatabase(Context applicationContext) {

@@ -68,6 +68,8 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
     }
 
     public ExternalCodeListItem getItem(final CodeAttribute attribute) {
+        if (attribute.getValue().getCode() == null)
+            return null;
         return database.execute(new ConnectionCallback<ExternalCodeListItem>() {
             public ExternalCodeListItem execute(Connection connection) throws SQLException {
                 CodeAttributeDefinition definition = attribute.getDefinition();

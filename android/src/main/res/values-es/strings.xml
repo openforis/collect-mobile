@@ -52,7 +52,16 @@
     <string name="settings_summary_showKeyboard">Determina si el teclado se muestra automaticamente cuando se accede a un atributo.</string>
 
     <string name="import_title_failed">Error al importar la encuesta %1$s</string>
-    <string name="import_text_failed">Asegurate de haber exportado tu encuesta para Collect Mobile usando Collect Server %1$s</string>
-    <string name="import_text_wrong_version">Esta encuesta ha sido exportada usando Collect Server %1$s. Esta version de Collect Mobile requiere utilizar la version %2$s .</string>
+    <string name="import_text_failed">Asegúrate de estar ejecutando la versión más reciente de Collect Mobile y de haber exportado la encuesta para Collect Mobile usando una versión reciente de Collect Server.</string>
+    <string name="import_text_wrong_version">Asegúrate de estar ejecutando la versión más reciente de Collect Mobile y de haber exportado la encuesta para Collect Mobile usando una versión reciente de Collect Server.</string>
+
+    <string name="import_overwrite_data_dialog_title">Reemplazar datos</string>
+    <string name="import_overwrite_data_dialog_message">Los datos introducidos para la encuesta actual seran borrados si importa la encuesta.</string>
+    <string name="import_overwrite_data_dialog_confirm">Borrar los datos e importar.</string>
+
+    <string name="import_demo_dialog_title">Importar la encuesta de prueba</string>
+    <string name="import_demo_dialog_message">Al no haberse importado ninguna encuesta, se usara una encuesta de prueba para demostrar las funciones de Collect Mobile.\n\n
+        Visite <a href="http://www.openforis.org/tools/collect.html">openforis.org</a> para averiguar como diseñar sus propias encuestas.\n
+    </string>
 
 </resources>

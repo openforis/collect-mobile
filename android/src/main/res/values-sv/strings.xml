@@ -52,7 +52,18 @@
     <string name="settings_summary_showKeyboard">Avgör om mjukvarutangentbordet automatiskt ska visas.</string>
 
     <string name="import_title_failed">Misslyckades att importera %1$s</string>
-    <string name="import_text_failed">Se till att du har exporterat din survey till Collect Mobile med Collect Server %1$s</string>
-    <string name="import_text_wrong_version">Den här surveyn har exporterats med Collect Server %1$s. Den här versionen av Collect Mobile kräver att %2$s används vid exporten.</string>
+    <string name="import_text_failed">Se till att du har den senaste versionen av Collect Mobile  och exporterat din survey till Collect Mobile med en uppdaterad version av Collect Server</string>
+    <string name="import_text_wrong_version">Se till att du har den senaste versionen av Collect Mobile  och exporterat din survey till Collect Mobile med en uppdaterad version av Collect Server</string>
+
+    <string name="import_overwrite_data_dialog_title">Ta bort datan</string>
+    <string name="import_overwrite_data_dialog_message">Din data kommer att tas bort om du fortsätter och importerar en ny survey.</string>
+    <string name="import_overwrite_data_dialog_confirm">Ta bort datan och importera</string>
+
+    <string name="import_demo_dialog_title">Importera demo survey</string>
+    <string name="import_demo_dialog_message">Eftersom ingen annan survey är importerad, kommer en demo att användas,
+        för att vis funktionalliteten i Collect Mobile.
+        \n\nGå till <a href="http://openforis.org/tools/collect.html">openforis.org</a> för instruktioner hur du
+        designar din egen survey.\n
+    </string>
 
 </resources>

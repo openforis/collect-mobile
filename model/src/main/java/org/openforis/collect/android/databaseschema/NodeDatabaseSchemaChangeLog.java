@@ -44,8 +44,7 @@ public class NodeDatabaseSchemaChangeLog {
                         "val_taxon_code TEXT,\n" +
                         "val_taxon_scientific_name TEXT,\n" +
                         "val_file TEXT\n" +
-                        ")"
-                )
+                        ")")
         );
     }
 }

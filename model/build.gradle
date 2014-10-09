@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+
     }
 }
 
@@ -8,11 +9,13 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 
 repositories {
+    mavenLocal()
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+    mavenLocal()
 }
 
 dependencies {
-    compile('org.openforis.collect:collect-core:3.3.0') {
+    compile('org.openforis.collect:collect-core:3.3.2') {
         exclude group: 'commons-jxpath'
     }
     compile 'commons-jxpath:commons-jxpath:1.3'

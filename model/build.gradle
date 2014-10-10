@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.openforis.idm:idm-api:0.0.8')
+    compile('org.openforis.idm:idm-api:0.0.10')
     compile('org.openforis.collect:collect-core:3.3.2') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.openforis.idm'

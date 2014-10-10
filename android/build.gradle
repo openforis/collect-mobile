@@ -28,7 +28,7 @@ dependencies {
     compile 'com.android.support:support-v4:19.+'
     compile 'com.android.support:appcompat-v7:19.+'
 
-    compile('org.openforis.idm:idm-api:0.0.8') {
+    compile('org.openforis.idm:idm-api:0.0.10') {
         exclude group: 'org.jooq'
         exclude group: 'org.springframework'
         exclude group: 'commons-collections'

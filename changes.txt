@@ -5,7 +5,6 @@
 	* Download and install Collect.apk
 	* Start Collect
 	* Choose the downloaded survey.collect-mobile file in the file chooser
-	* Translated to Spanish
 
 
 Install an update

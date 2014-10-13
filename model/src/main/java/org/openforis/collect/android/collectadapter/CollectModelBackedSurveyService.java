@@ -72,7 +72,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     private void lazilyInitValidationErrors(UiAttribute attribute) {
         if (attribute.getValidationErrors() == null) {
             Map<UiNode, UiNodeChange> nodeChanges = attribute.getStatus().isWorseThen(UiNode.Status.EMPTY)
-                    ? collectModelManager.updateAttribute(attribute) // TODO: Not semantically an update.
+                    ? collectModelManager.validateAttribute(attribute)
                     : Collections.<UiNode, UiNodeChange>emptyMap();
             UiNodeChange attributeChange = nodeChanges.get(attribute);
             if (attributeChange != null)

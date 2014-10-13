@@ -64,8 +64,10 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     }
 
     private boolean hasChanged(UiCode newCode, String qualifier) {
+        String oldQualifier = attribute.getQualifier() == null ? "" : attribute.getQualifier();
+        String newQualifier = qualifier == null ? "" : qualifier;
         return notEqual(attribute.getCode(), newCode)
-                || notEqual(attribute.getQualifier(), qualifier);
+                || notEqual(oldQualifier, newQualifier);
     }
 
     protected abstract void initOptions();

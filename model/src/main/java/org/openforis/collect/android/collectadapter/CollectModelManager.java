@@ -16,6 +16,9 @@ import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.model.*;
 import org.openforis.collect.persistence.*;
 import org.openforis.idm.metamodel.*;
+import org.openforis.idm.metamodel.validation.ValidationResultFlag;
+import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
@@ -152,6 +155,17 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         if (uiAttribute instanceof UiCodeAttribute)
             updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, nodeChanges.keySet());
         return nodeChanges;
+    }
+
+    public Map<UiNode, UiNodeChange> validateAttribute(UiAttribute uiAttribute) {
+        Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
+        Validator validator = attribute.getRecord().getSurveyContext().getValidator();
+        ValidationResults attributeResult = validator.validate(attribute);
+        ValidationResultFlag cardinalityResult = validator.validateMinCount(attribute.getParent(), attribute.getName());
+        NodeChangeMap changeMap = new NodeChangeMap();
+        changeMap.addMinCountValidationResultChange(new NodePointer(attribute), cardinalityResult);
+        changeMap.addValidationResultChange(attribute, attributeResult);
+        return new NodeChangeSetParser(changeMap, uiAttribute.getUiRecord()).extractChanges();
     }
 
     /**

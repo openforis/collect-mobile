@@ -12,7 +12,6 @@ apply plugin: 'maven-publish'
 
 repositories {
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
-    mavenLocal()
 }
 
 dependencies {
@@ -28,20 +27,6 @@ dependencies {
     compile 'com.android.support:support-v4:19.+'
     compile 'com.android.support:appcompat-v7:19.+'
 
-    compile('org.openforis.idm:idm-api:0.0.10') {
-        exclude group: 'org.jooq'
-        exclude group: 'org.springframework'
-        exclude group: 'commons-collections'
-        exclude group: 'commons-beanutils'
-        exclude group: 'commons-logging'
-        exclude group: 'commons-jxpath'
-        exclude group: 'xmlpull'
-        exclude group: 'cglib'
-        exclude group: 'org.slf4j'
-        exclude group: 'log4j'
-        exclude group: 'org.apache.lucene'
-        exclude group: 'org.liquibase'
-    }
     compile(project(":model")) {
         exclude group: 'org.jooq'
         exclude group: 'org.springframework'
@@ -55,7 +40,6 @@ dependencies {
         exclude group: 'log4j'
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
-        exclude group: 'org.openforis.idm'
     }
 
 

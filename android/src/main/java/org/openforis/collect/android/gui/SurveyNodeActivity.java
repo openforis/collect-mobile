@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
-import org.openforis.collect.Collect;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
@@ -27,12 +26,10 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import static org.openforis.collect.android.gui.SurveyImporter.surveyMinorVersion;
 
 /**
  * @author Daniel Wiell

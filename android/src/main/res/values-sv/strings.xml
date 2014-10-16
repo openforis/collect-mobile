@@ -66,4 +66,6 @@
         designar din egen survey.\n
     </string>
 
+    <string name="amount_selected">%s valda.</string>
+    <string name="delete">Ta bort</string>
 </resources>

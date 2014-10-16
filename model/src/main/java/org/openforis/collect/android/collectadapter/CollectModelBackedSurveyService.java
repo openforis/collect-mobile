@@ -8,6 +8,7 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -125,19 +126,25 @@ public class CollectModelBackedSurveyService implements SurveyService {
         viewModelManager.removeNode(attribute);
     }
 
-    public void removeEntity(int entityId) {
-        UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
-        if (!(node instanceof UiEntity))
-            throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
-        UiEntity entity = (UiEntity) node;
-        collectModelManager.removeEntity(entity.getId());
-        viewModelManager.removeNode(entity);
+    public void deleteEntities(Collection<Integer> entityIds) {
+        // TODO: Do in transaction
+        for (Integer entityId : entityIds) {
+            UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
+            if (!(node instanceof UiEntity))
+                throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
+            UiEntity entity = (UiEntity) node;
+            collectModelManager.removeEntity(entity.getId());
+            viewModelManager.removeNode(entity);
+        }
     }
 
-    public void removeRecord(int recordId) {
-        UiRecordCollection recordCollection = (UiRecordCollection) selectedNode();
-        UiRecord.Placeholder record = (UiRecord.Placeholder) recordCollection.getChildById(recordId);
-        viewModelManager.removeNode(record);
+    public void deleteRecords(Collection<Integer> recordIds) {
+        // TODO: Do in transaction
+        for (Integer recordId : recordIds) {
+            UiRecordCollection recordCollection = (UiRecordCollection) selectedNode();
+            UiRecord.Placeholder record = (UiRecord.Placeholder) recordCollection.getChildById(recordId);
+            viewModelManager.removeNode(record);
+        }
     }
 
     public void updateAttributes(Set<UiAttribute> attributes) {

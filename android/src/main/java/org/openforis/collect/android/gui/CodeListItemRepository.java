@@ -50,11 +50,12 @@ public class CodeListItemRepository extends AbstractCodeListItemRepository {
     private PersistedCodeListItem loadFromDatabase(final CodeList codeList, final Integer parentItemId, final String code) {
         return database.execute(new AndroidDatabaseCallback<PersistedCodeListItem>() {
             public PersistedCodeListItem execute(SQLiteDatabase database) {
+                String[] params = code == null ? null : new String[]{code};
                 Cursor cursor = database.rawQuery("" +
                         "select * from " + OFC_CODE_LIST
                         + " where " + OFC_CODE_LIST.CODE_LIST_ID + constraint(codeList.getId())
                         + " and " + OFC_CODE_LIST.PARENT_ID + constraint(parentItemId)
-                        + " and " + OFC_CODE_LIST.CODE + constraint(code), null);
+                        + " and " + OFC_CODE_LIST.CODE + parameterizedConstraint(code), params);
                 try {
                     if (!cursor.moveToFirst())
                         return null;

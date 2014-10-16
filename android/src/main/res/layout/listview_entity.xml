@@ -5,7 +5,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_vertical"
-        android:minHeight="48dp">
+        android:minHeight="48dp"
+        android:descendantFocusability="blocksDescendants">
 
     <TextView
             android:id="@+id/nodeLabel"
@@ -17,12 +18,17 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
-    <!-- TODO: Set src and contentDescription in code -->
     <ImageView
             android:id="@+id/nodeStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
+            android:gravity="end"/>
+
+    <CheckBox
+            android:id="@+id/nodeSelectedForAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="end"/>
 </LinearLayout>

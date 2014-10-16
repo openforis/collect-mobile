@@ -66,4 +66,6 @@
         surveys.\n
     </string>
 
+    <string name="amount_selected">%s selected.</string>
+    <string name="delete">Delete</string>
 </resources>

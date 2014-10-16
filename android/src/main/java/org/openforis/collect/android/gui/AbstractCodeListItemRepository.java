@@ -58,8 +58,12 @@ public abstract class AbstractCodeListItemRepository {
         }
     }
 
-    protected final String constraint(Object value) {
+    protected final String constraint(Number value) {
         return value == null ? " is null" : " = " + value;
+    }
+
+    protected final String parameterizedConstraint(String value) {
+        return value == null ? " is null" : " = ?";
     }
 
 }

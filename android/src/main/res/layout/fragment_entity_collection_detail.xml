@@ -18,12 +18,12 @@
             android:padding="?attr/standardPadding"/>
 
 
-    <de.timroes.android.listview.EnhancedListView
+    <ListView
             android:id="@+id/entity_list"
             android:paddingTop="?attr/standardPadding"
             android:padding="?attr/standardPadding"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:choiceMode="none"/>
+            android:choiceMode="singleChoice"/>
 
 </LinearLayout>

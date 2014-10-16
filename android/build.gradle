@@ -19,8 +19,6 @@ dependencies {
     compile('com.viewpagerindicator:library:2.4.1.1') {
         exclude group: 'com.google.android'
     }
-    compile 'com.nineoldandroids:library:2.4.0'
-    compile 'de.timroes.android:EnhancedListView:0.3.4@aar'
     compile 'com.ipaulpro.afilechooser:afilechooser:0.0.1@aar'
     compile 'net.rdrei.android.dirchooser:library:2.1.1@aar'
 

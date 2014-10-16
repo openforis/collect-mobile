@@ -64,4 +64,6 @@
         Visite <a href="http://www.openforis.org/tools/collect.html">openforis.org</a> para averiguar como diseñar sus propias encuestas.\n
     </string>
 
+    <string name="amount_selected">%s seleccionados.</string>
+    <string name="delete">Borrar</string>
 </resources>

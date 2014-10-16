@@ -4,6 +4,10 @@ import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * @author Daniel Wiell
  */
@@ -18,7 +22,7 @@ public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetail
         return surveyService().selectRecord(recordPlaceholder.getId());
     }
 
-    protected void removeNode(UiNode node) {
-        surveyService().removeRecord(node.getId());
+    protected void deleteNodes(Collection<Integer> nodeIds) {
+        surveyService().deleteRecords(nodeIds);
     }
 }

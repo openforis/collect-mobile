@@ -4,6 +4,7 @@ import org.openforis.collect.android.viewmodel.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -38,9 +39,9 @@ public interface SurveyService {
 
     void removeAttribute(int attributeId);
 
-    void removeEntity(int entityId);
+    void deleteEntities(Collection<Integer> entities);
 
-    void removeRecord(int recordId);
+    void deleteRecords(Collection<Integer> records);
 
     void exportSurvey() throws IOException;
 

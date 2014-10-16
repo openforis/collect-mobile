@@ -1,24 +1,32 @@
 package org.openforis.collect.android.gui.list;
 
-import android.content.Context;
+import android.app.Activity;
+import android.view.*;
+import android.widget.CheckBox;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.detail.NodeDeleter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
  */
 public class EntityListAdapter extends NodeListAdapter {
+    private static final int LAYOUT_RESOURCE_ID = R.layout.listview_entity;
     private static final int MAX_ATTRIBUTES = 2;
     public static final int MAX_ATTRIBUTE_LABEL_LENGTH = 20;
     public static final int MAX_ATTRIBUTE_VALUE_LENGTH = 20;
+    private final NodeDeleter nodeDeleter;
 
-    public EntityListAdapter(Context context, UiInternalNode parentNode) {
-        super(context, parentNode);
+    private Set<UiNode> nodesToEdit = new HashSet<UiNode>();
+    private Set<CheckBox> checked = new HashSet<CheckBox>();
+    private ActionMode actionMode;
+
+    public EntityListAdapter(Activity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {
+        super(activity, parentNode);
+        this.nodeDeleter = nodeDeleter;
     }
 
     public String getText(UiNode node) {
@@ -34,6 +42,34 @@ public class EntityListAdapter extends NodeListAdapter {
         if (child instanceof UiRecord.Placeholder)
             return ((UiRecord.Placeholder) child).getKeyAttributes();
         throw new IllegalStateException("Unexpected node type. Expected UiEntity or UiRecord.Placeholder, was " + child.getClass());
+    }
+
+    protected int layoutResourceId() {
+        return LAYOUT_RESOURCE_ID;
+    }
+
+    protected void onPrepareView(final UiNode node, View row) {
+        final CheckBox checkbox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
+        checkbox.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (checkbox.isChecked()) {
+                    nodesToEdit.add(node);
+                    checked.add(checkbox);
+                } else {
+                    nodesToEdit.remove(node);
+                    checked.remove(checkbox);
+                }
+
+                if (!nodesToEdit.isEmpty()) {
+                    if (actionMode == null)
+                        actionMode = activity.startActionMode(new EditCallback());
+                    else
+                        setEditTitle(actionMode);
+                }
+                if (nodesToEdit.isEmpty() && actionMode != null)
+                    actionMode.finish();
+            }
+        });
     }
 
     private List<UiAttribute> allChildAttributes(UiNode node) {
@@ -56,12 +92,50 @@ public class EntityListAdapter extends NodeListAdapter {
             // to so "Unspecified" can be picked up from a resource, and different parts can be styled separately
             UiAttribute attribute = iterator.next();
             String value = attribute.valueAsString();
-            value = value == null ? context.getResources().getString(R.string.label_unspecified) : value;
+            value = value == null ? activity.getResources().getString(R.string.label_unspecified) : value;
             s.append(StringUtils.ellipsisMiddle(attribute.getLabel(), MAX_ATTRIBUTE_LABEL_LENGTH)).append(": ")
                     .append(StringUtils.ellipsisMiddle(value, MAX_ATTRIBUTE_VALUE_LENGTH));
             if (iterator.hasNext())
                 s.append('\n');
         }
         return s.toString();
+    }
+
+    private void setEditTitle(ActionMode mode) {
+        mode.setTitle(activity.getString(R.string.amount_selected, nodesToEdit.size()));
+    }
+
+    private class EditCallback implements ActionMode.Callback {
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.entity_action_menu, menu);
+            return true;
+        }
+
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            setEditTitle(mode);
+            return false;
+        }
+
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete_selected_nodes:
+                    nodeDeleter.delete(nodesToEdit);
+                    notifyDataSetChanged();
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            nodesToEdit.clear();
+            for (CheckBox checkBox : checked) {
+                checkBox.setChecked(false);
+                checkBox.setSelected(false);
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.list;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +23,17 @@ import java.util.List;
  */
 public class NodeListAdapter extends BaseAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
-    protected final Context context;
-    private final List<UiNode> nodes;
+    protected final Activity activity;
+    private final UiInternalNode parentNode;
+    private List<UiNode> nodes;
     private Attrs attrs;
 
-    public NodeListAdapter(Context context, UiInternalNode parentNode) {
-        this.context = context;
+
+    public NodeListAdapter(Activity activity, UiInternalNode parentNode) {
+        this.activity = activity;
+        this.parentNode = parentNode;
         this.nodes = new ArrayList<UiNode>(parentNode.getChildren());
-        this.attrs = new Attrs(context);
+        this.attrs = new Attrs(this.activity);
     }
 
     public UiNode getItem(int position) {
@@ -50,8 +52,8 @@ public class NodeListAdapter extends BaseAdapter {
         View row = convertView;
         NodeHolder holder;
         if (row == null) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
+            LayoutInflater inflater = activity.getLayoutInflater();
+            row = inflater.inflate(layoutResourceId(), parent, false);
             if (AndroidVersion.greaterThan10())
                 setBackground(row);
 
@@ -71,8 +73,17 @@ public class NodeListAdapter extends BaseAdapter {
         else
             holder.text.setTextColor(attrs.color(R.attr.relevantTextColor));
         holder.status.setImageResource(iconResource(node));
+        onPrepareView(node, row);
 
         return row;
+    }
+
+    protected void onPrepareView(UiNode node, View row) {
+
+    }
+
+    protected int layoutResourceId() {
+        return LAYOUT_RESOURCE_ID;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -86,6 +97,7 @@ public class NodeListAdapter extends BaseAdapter {
     }
 
     public void notifyDataSetChanged() {
+        this.nodes = new ArrayList<UiNode>(parentNode.getChildren());
         super.notifyDataSetChanged();
     }
 
@@ -103,16 +115,6 @@ public class NodeListAdapter extends BaseAdapter {
             default:
                 throw new IllegalStateException("Unexpected node status: " + node.getStatus());
         }
-    }
-
-    public void insert(int position, UiNode node) {
-        nodes.add(position, node);
-        notifyDataSetChanged();
-    }
-
-    public void remove(int position) {
-        nodes.remove(position);
-        notifyDataSetChanged();
     }
 
     private static class NodeHolder {

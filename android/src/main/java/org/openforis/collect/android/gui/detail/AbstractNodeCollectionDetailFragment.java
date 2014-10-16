@@ -3,7 +3,7 @@ package org.openforis.collect.android.gui.detail;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
-import de.timroes.android.listview.EnhancedListView;
+import android.widget.ListView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.NodeNavigator;
@@ -13,6 +13,9 @@ import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,11 +48,6 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
             adapter.notifyDataSetChanged();
     }
 
-    public void onPause() {
-        super.onPause();
-        listView(getView()).discardUndo(); // Prevent node to be re-inserted
-    }
-
     public void onResume() {
         super.onResume();
         setupNodeCollection(getView());
@@ -63,37 +61,16 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     protected abstract UiInternalNode getSelectedNode(int position, T nodeCollection);
 
-    protected abstract void removeNode(UiNode node);
+    protected abstract void deleteNodes(Collection<Integer> nodeIds);
 
     protected SurveyService surveyService() {
         return ServiceLocator.surveyService();
     }
 
     private void setupNodeCollection(View rootView) {
-        adapter = new EntityListAdapter(getActivity(), node());
-        EnhancedListView listView = listView(rootView);
-        listView.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
-        listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
-            public EnhancedListView.Undoable onDismiss(EnhancedListView enhancedListView, final int position) {
-                final UiNode node = adapter.getItem(position);
-                adapter.remove(position);
-                return new EnhancedListView.Undoable() {
-                    public void undo() {
-                        adapter.insert(position, node);
-                    }
-
-                    public void discard() {
-                        removeNode(node);
-                    }
-
-                    public String getTitle() {
-                        return adapter.getText(node) + " deleted";
-                    }
-                };
-            }
-        });
-        listView.enableSwipeToDismiss();
-        listView.setSwipeDirection(EnhancedListView.SwipeDirection.END);
+        adapter = new EntityListAdapter(getActivity(), node(), new MyNodeDeleter());
+        ListView listView = listView(rootView);
+        // TODO: Setup contextual action mode
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -104,11 +81,20 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         });
     }
 
-    private EnhancedListView listView(View rootView) {
-        return (EnhancedListView) rootView.findViewById(R.id.entity_list);
+    private ListView listView(View rootView) {
+        return (ListView) rootView.findViewById(R.id.entity_list);
     }
 
     private NodeNavigator nodeNavigator() {
         return (NodeNavigator) getActivity();
+    }
+
+    private class MyNodeDeleter implements NodeDeleter {
+        public void delete(Collection<UiNode> nodes) {
+            List<Integer> nodeIds = new ArrayList<Integer>();
+            for (UiNode node : nodes)
+                nodeIds.add(node.getId());
+            deleteNodes(nodeIds);
+        }
     }
 }

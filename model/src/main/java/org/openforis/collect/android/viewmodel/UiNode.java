@@ -181,7 +181,6 @@ public abstract class UiNode {
         if (o == null || getClass() != o.getClass()) return false;
 
         UiNode uiNode = (UiNode) o;
-
         return id == uiNode.id;
 
     }

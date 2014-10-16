@@ -1,5 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
+import com.google.common.base.Objects;
+
 /**
  * @author Daniel Wiell
  */
@@ -27,19 +29,16 @@ public class UiSpatialReferenceSystem {
         this.label = label;
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UiSpatialReferenceSystem that = (UiSpatialReferenceSystem) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        UiSpatialReferenceSystem other = (UiSpatialReferenceSystem) obj;
+        return Objects.equal(this.id, other.id);
     }
 
     public String toString() {

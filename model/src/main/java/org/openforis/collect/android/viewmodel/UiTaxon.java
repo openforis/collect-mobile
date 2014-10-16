@@ -1,5 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -28,14 +29,14 @@ public class UiTaxon {
         return scientificName + " (" + code + ")";
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UiTaxon uiTaxon = (UiTaxon) o;
-        return !(code != null ? !code.equals(uiTaxon.code) : uiTaxon.code != null);
+    public int hashCode() {
+        return Objects.hashCode(code);
     }
 
-    public int hashCode() {
-        return code != null ? code.hashCode() : 0;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UiTaxon other = (UiTaxon) obj;
+        return Objects.equal(this.code, other.code);
     }
 }

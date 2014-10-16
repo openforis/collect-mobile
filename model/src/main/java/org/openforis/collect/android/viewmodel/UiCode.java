@@ -1,5 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.Validate;
 import org.openforis.collect.android.util.StringUtils;
 
@@ -30,16 +31,15 @@ public class UiCode {
         return label + (label.equals(value) ? "" : " (" + value + ")");
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UiCode uiCode = (UiCode) o;
-
-        return !(value != null ? !value.equals(uiCode.value) : uiCode.value != null);
+    public int hashCode() {
+        return Objects.hashCode(value);
     }
 
-    public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        UiCode other = (UiCode) obj;
+        return Objects.equal(this.value, other.value);
     }
 }

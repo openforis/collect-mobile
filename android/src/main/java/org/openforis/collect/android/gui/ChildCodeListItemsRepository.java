@@ -2,13 +2,16 @@ package org.openforis.collect.android.gui;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.AndroidDatabaseCallback;
-import org.openforis.idm.metamodel.*;
+import org.openforis.idm.metamodel.CodeList;
+import org.openforis.idm.metamodel.PersistedCodeListItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,23 +79,23 @@ public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository
             this.parentItemId = parentItemId;
         }
 
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Key that = (Key) o;
-
-            if (codeList != null ? !codeList.equals(that.codeList) : that.codeList != null) return false;
-            if (parentItemId != null ? !parentItemId.equals(that.parentItemId) : that.parentItemId != null)
-                return false;
-
-            return true;
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("codeList", codeList)
+                    .add("parentItemId", parentItemId)
+                    .toString();
         }
 
         public int hashCode() {
-            int result = codeList != null ? codeList.hashCode() : 0;
-            result = 31 * result + (parentItemId != null ? parentItemId.hashCode() : 0);
-            return result;
+            return Objects.hashCode(codeList, parentItemId);
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            Key other = (Key) obj;
+            return Objects.equal(this.codeList, other.codeList)
+                    && Objects.equal(this.parentItemId, other.parentItemId);
         }
     }
 }

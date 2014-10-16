@@ -11,11 +11,16 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
+
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
  */
 public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalNode> extends NodeDetailFragment<T> {
+
+    private EntityListAdapter adapter;
 
     public View createView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
         return inflater.inflate(R.layout.fragment_entity_collection_detail, container, false);
@@ -32,6 +37,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 }
             });
         }
+    }
+
+    public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        super.onNodeChange(node, nodeChanges);
+        if (nodeChanges.containsKey(node()))
+            adapter.notifyDataSetChanged();
     }
 
     public void onPause() {
@@ -59,7 +70,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void setupNodeCollection(View rootView) {
-        final EntityListAdapter adapter = new EntityListAdapter(getActivity(), node());
+        adapter = new EntityListAdapter(getActivity(), node());
         EnhancedListView listView = listView(rootView);
         listView.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
         listView.setDismissCallback(new EnhancedListView.OnDismissCallback() {

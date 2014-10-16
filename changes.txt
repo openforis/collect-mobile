@@ -20,6 +20,14 @@ Install an update
 Changes
 -------
 
+2014-10-16
+
+    * Fixed bug where statuses in entity lists weren't updated immediately
+
+2014-10-15
+
+    * Fixed crash when exporting data
+
 2014-10-09
 
     * Fixed survey import when a survey already is imported

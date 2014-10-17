@@ -122,8 +122,9 @@ public class CollectModelBackedSurveyService implements SurveyService {
         if (!(node instanceof UiAttribute))
             throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
         UiAttribute attribute = (UiAttribute) node;
-        collectModelManager.removeAttribute(attribute);
-        viewModelManager.removeNode(attribute);
+        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeAttribute(attribute);
+        viewModelManager.removeNode(attribute, nodeChanges);
+        handleNodeChanges(attribute, nodeChanges);
     }
 
     public void deleteEntities(Collection<Integer> entityIds) {
@@ -133,8 +134,9 @@ public class CollectModelBackedSurveyService implements SurveyService {
             if (!(node instanceof UiEntity))
                 throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
             UiEntity entity = (UiEntity) node;
-            collectModelManager.removeEntity(entity.getId());
-            viewModelManager.removeNode(entity);
+            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeEntity(entity);
+            viewModelManager.removeNode(entity, nodeChanges);
+            handleNodeChanges(entity, nodeChanges);
         }
     }
 
@@ -143,7 +145,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
         for (Integer recordId : recordIds) {
             UiRecordCollection recordCollection = (UiRecordCollection) selectedNode();
             UiRecord.Placeholder record = (UiRecord.Placeholder) recordCollection.getChildById(recordId);
-            viewModelManager.removeNode(record);
+            viewModelManager.removeRecord(record);
         }
     }
 
@@ -157,14 +159,18 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public void updateAttribute(UiAttribute attributeToUpdate) {
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
         viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
+        handleNodeChanges(attributeToUpdate, nodeChanges);
+    }
+
+    private void handleNodeChanges(UiNode updatedNode, Map<UiNode, UiNodeChange> nodeChanges) {
         if (listener == null)
             return;
-        listener.onNodeChanged(attributeToUpdate, nodeChanges);
+        listener.onNodeChanged(updatedNode, nodeChanges);
         updateCalculatedAttributes(nodeChanges);
     }
 
     private void updateCalculatedAttributes(Map<UiNode, UiNodeChange> nodeChanges) {
-        Map<UiNode, UiNodeChange> emptyMap = Collections.<UiNode, UiNodeChange>emptyMap();
+        Map<UiNode, UiNodeChange> emptyMap = Collections.emptyMap();
         for (UiNode uiNode : nodeChanges.keySet())
             if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated()) {
                 // TODO: Do this in same transaction as value update, but ideally don't persist at all

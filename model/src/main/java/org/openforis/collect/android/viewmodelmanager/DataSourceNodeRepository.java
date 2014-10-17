@@ -55,20 +55,26 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-
-    public void removeAll(final List<Integer> ids) {
+    public void removeAll(final List<Integer> ids, final List<Map<String, Object>> statusChanges, final NodeDto recordToUpdateStatusFor) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("DELETE FROM ofc_view_model WHERE id = ?");
-                for (int id : ids) {
-                    ps.setInt(1, id);
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                ps.close();
+                removeNodes(connection, ids);
+                if (recordToUpdateStatusFor != null)
+                    updateRecordStatus(connection, recordToUpdateStatusFor.recordId, recordToUpdateStatusFor.status);
+                updateStatusChanges(connection, statusChanges);
                 return null;
             }
         });
+    }
+
+    private void removeNodes(Connection connection, List<Integer> ids) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM ofc_view_model WHERE id = ?");
+        for (int id : ids) {
+            ps.setInt(1, id);
+            ps.addBatch();
+        }
+        ps.executeBatch();
+        ps.close();
     }
 
     public void removeRecord(final int recordId) {

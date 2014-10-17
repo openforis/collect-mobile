@@ -3,10 +3,7 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
@@ -126,6 +123,18 @@ public class ViewModelManager {
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
         UiRecord uiRecord = attribute.getUiRecord();
         UiNode.Status oldRecordStatus = uiRecord.getStatus();
+        List<Map<String, Object>> statusChanges = statusChanges(nodeChanges);
+        UiNode.Status newRecordStatus = uiRecord.getStatus();
+        if (oldRecordStatus == newRecordStatus)
+            repo.updateAttribute(attribute, statusChanges);
+        else
+            repo.updateAttribute(attribute, statusChanges, newRecordStatus);
+
+        if (uiRecord.isKeyAttribute(attribute))
+            uiRecord.keyAttributeUpdated();
+    }
+
+    private List<Map<String, Object>> statusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         List<Map<String, Object>> statusChanges = new ArrayList<Map<String, Object>>();
         for (final UiNode changedNode : nodeChanges.keySet()) {
             UiNodeChange nodeChange = nodeChanges.get(changedNode);
@@ -141,14 +150,7 @@ public class ViewModelManager {
                 }});
             }
         }
-        UiNode.Status newRecordStatus = uiRecord.getStatus();
-        if (oldRecordStatus == newRecordStatus)
-            repo.updateAttribute(attribute, statusChanges);
-        else
-            repo.updateAttribute(attribute, statusChanges, newRecordStatus);
-
-        if (uiRecord.isKeyAttribute(attribute))
-            uiRecord.keyAttributeUpdated();
+        return statusChanges;
     }
 
     private void addRecordPlaceholders(UiSurvey uiSurvey) {
@@ -157,8 +159,18 @@ public class ViewModelManager {
             uiSurvey.lookupRecordCollection(record.getRecordCollectionName()).addChild(record);
     }
 
-    public void removeNode(UiNode node) {
+    public void removeNode(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        UiRecord uiRecord = node.getUiRecord();
+        UiNode.Status oldRecordStatus = uiRecord.getStatus();
+        List<Map<String, Object>> statusChanges = statusChanges(nodeChanges);
         node.removeFromParent();
-        repo.removeNode(node);
+        node.updateStatusOfParents();
+        UiNode.Status newRecordStatus = uiRecord.getStatus();
+        repo.removeNode(node, statusChanges, oldRecordStatus != newRecordStatus);
+    }
+
+    public void removeRecord(UiRecord.Placeholder record) {
+        record.removeFromParent();
+        repo.removeRecord(record.getId());
     }
 }

@@ -89,6 +89,15 @@ public class UiInternalNode extends UiNode {
             addChild(child);
     }
 
+    public void updateStatus(Set<UiValidationError> validationErrors) {
+        Status newStatus = determineStatus(validationErrors);
+        for (UiNode child : children)
+            if (child.getStatus().isWorseThen(newStatus))
+                newStatus = child.getStatus();
+        if (getStatus() != newStatus)
+            updateStatusOfNodeAndParents(newStatus);
+    }
+
     public void updateStatusOfNodeAndDescendants() {
         int maxStatus = 0;
         for (UiNode child : children) {

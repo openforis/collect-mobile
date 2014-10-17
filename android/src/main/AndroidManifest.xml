@@ -34,9 +34,6 @@
         <activity
                 android:label="@string/app_name"
                 android:name=".android.gui.SettingsActivity"/>
-        <activity
-                android:label="@string/app_name"
-                android:name=".android.gui.SettingsPreHoneycombActivity"/>
 
         <activity
                 android:name="com.ipaulpro.afilechooser.FileChooserActivity"

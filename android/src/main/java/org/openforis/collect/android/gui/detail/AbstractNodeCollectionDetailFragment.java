@@ -44,7 +44,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         super.onNodeChange(node, nodeChanges);
-        if (nodeChanges.containsKey(node()))
+        boolean changedChildNode = node.getParent().equals(node());  // TODO: If removed, can we rely on parent to be present?
+        if (changedChildNode || nodeChanges.containsKey(node()))
             adapter.notifyDataSetChanged();
     }
 

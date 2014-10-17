@@ -30,7 +30,9 @@ public interface ViewModelRepository {
 
     void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges, UiNode.Status recordStatus);
 
-    void removeNode(UiNode node);
+    void removeNode(UiNode node, List<Map<String, Object>> statusChanges, boolean recordStatusChanged);
+
+    void removeRecord(int recordId);
 
 
     public static class DatabaseViewModelRepository implements ViewModelRepository {
@@ -98,11 +100,13 @@ public interface ViewModelRepository {
             repo.update(uiAttributeToDto(attribute), statusChanges, recordStatus.name());
         }
 
-        public void removeNode(UiNode node) {
-            if (node instanceof UiRecord.Placeholder)
-                repo.removeRecord(node.getId());
-            else
-                repo.removeAll(toIds(node));
+        public void removeNode(UiNode node, List<Map<String, Object>> statusChanges, boolean recordStatusChanged) {
+            NodeDto recordToUpdateStatusFor = recordStatusChanged ? uiRecordToDto(node.getUiRecord()) : null;
+            repo.removeAll(toIds(node), statusChanges, recordToUpdateStatusFor);
+        }
+
+        public void removeRecord(int recordId) {
+            repo.removeRecord(recordId);
         }
 
         private List<Integer> toIds(UiNode node) {

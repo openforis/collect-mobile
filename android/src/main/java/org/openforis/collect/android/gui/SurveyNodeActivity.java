@@ -86,10 +86,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private void settings() {
-        Class activityClass = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
-                ? SettingsPreHoneycombActivity.class
-                : SettingsActivity.class;
-        startActivity(new Intent(this, activityClass));
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     public void onNodeSelected(final UiNode previous, final UiNode selected) {

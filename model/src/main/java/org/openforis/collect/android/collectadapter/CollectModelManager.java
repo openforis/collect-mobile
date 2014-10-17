@@ -189,16 +189,18 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         }
     }
 
-    public void removeAttribute(UiAttribute uiAttribute) {
+    public Map<UiNode, UiNodeChange> removeAttribute(UiAttribute uiAttribute) {
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
-        recordManager.deleteNode(attribute);
+        NodeChangeSet nodeChangeSet = recordManager.deleteNode(attribute);
         recordNodes.remove(uiAttribute.getId());
+        return new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
     }
 
-    public void removeEntity(int entityId) {
-        Node node = recordNodes.getEntityById(entityId);
-        recordManager.deleteNode(node);
-        recordNodes.remove(entityId);
+    public Map<UiNode, UiNodeChange> removeEntity(UiEntity uiEntity) {
+        Node node = recordNodes.getEntityById(uiEntity.getId());
+        NodeChangeSet nodeChangeSet = recordManager.deleteNode(node);
+        recordNodes.remove(uiEntity.getId());
+        return new NodeChangeSetParser(nodeChangeSet, uiEntity.getUiRecord()).extractChanges();
     }
 
     public void recordSelected(UiRecord uiRecord) {

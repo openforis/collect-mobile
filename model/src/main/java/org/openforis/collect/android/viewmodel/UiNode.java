@@ -164,9 +164,8 @@ public abstract class UiNode {
     public void updateStatus(Set<UiValidationError> validationErrors) {
         UiNode.Status oldStatus = getStatus();
         UiNode.Status newStatus = determineStatus(validationErrors);
-        if (oldStatus != newStatus) {
+        if (oldStatus != newStatus)
             updateStatusOfNodeAndParents(newStatus);
-        }
     }
     public String toString() {
         return id + ": " + definition;

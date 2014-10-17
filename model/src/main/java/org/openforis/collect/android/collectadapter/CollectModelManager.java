@@ -121,17 +121,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         }
     }
 
-    public UiEntity addEntity(final UiEntityCollection uiEntityCollection) {
-        return Timer.time(CollectModelManager.class, "addEntity", new Callable<UiEntity>() {
-            public UiEntity call() throws Exception {
-                Entity parentEntity = recordNodes.getEntityById(uiEntityCollection.getParentEntityId());
-                NodeChangeSet changeSet = recordManager.addEntity(parentEntity, uiEntityCollection.getName());
-                Entity entity = extractAddedEntity(changeSet);
-                UiEntity uiEntity = modelConverter.toUiEntity(selectedSurvey, entity, uiEntityCollection);
-                recordNodes.add(entity);
-                return uiEntity;
-            }
-        });
+    public NodeAddedResult<UiEntity> addEntity(final UiEntityCollection uiEntityCollection) {
+        Entity parentEntity = recordNodes.getEntityById(uiEntityCollection.getParentEntityId());
+        NodeChangeSet changeSet = recordManager.addEntity(parentEntity, uiEntityCollection.getName());
+        Entity entity = extractAddedEntity(changeSet);
+        UiEntity uiEntity = modelConverter.toUiEntity(selectedSurvey, entity, uiEntityCollection);
+        recordNodes.add(entity);
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiEntity.getUiRecord()).extractChanges();
+        return new NodeAddedResult<UiEntity>(uiEntity, nodeChanges);
     }
 
     public UiAttribute addAttribute(UiAttributeCollection uiAttributeCollection) {
@@ -319,4 +316,5 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     public interface ExportListener {
         void beforeRecordExport(int recordId);
     }
+
 }

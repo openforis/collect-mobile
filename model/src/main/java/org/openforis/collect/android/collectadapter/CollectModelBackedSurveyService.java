@@ -91,8 +91,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public UiEntity addEntity() {
         UiEntityCollection entityCollection = viewModelManager.selectedEntityCollection();
-        UiEntity entity = collectModelManager.addEntity(entityCollection);
+        NodeAddedResult<UiEntity> result = collectModelManager.addEntity(entityCollection);
+        UiEntity entity = result.nodeAdded;
         viewModelManager.addEntity(entity);
+        handleNodeChanges(entity, result.nodeChanges);
         return entity;
     }
 

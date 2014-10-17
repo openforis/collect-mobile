@@ -3,7 +3,6 @@ package org.openforis.collect.android.collectadapter
 import org.openforis.collect.android.SurveyListener
 import org.openforis.collect.android.viewmodel.*
 import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.openforis.collect.android.IdGenerator.nextId

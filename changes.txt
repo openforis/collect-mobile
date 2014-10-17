@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2014-10-x
+
+    * Changed the way records/entities are deleted. Using checkboxes and contextual action mode for deletion.
+
 2014-10-16
 
     * Fixed bug where statuses in entity lists weren't updated immediately

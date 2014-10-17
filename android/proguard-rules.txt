@@ -16,8 +16,30 @@
 #   public *;
 #}
 
+-dontobfuscate
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
+
 -ignorewarnings
+
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
 
--keepattributes *Annotation*
+-keep class org.apache.commons.jxpath.** { *; }
+-keep interface org.apache.commons.jxpath.** { *; }
+
+-keep class org.openforis.** { *; }
+-keep interface org.openforis.** { *; }
+
+-keep class org.xmlpull.** { *; }
+-keep interface org.xmlpull.** { *; }
+
+-keep class javax.persistence.** { *; }
+-keep interface javax.persistence.** { *; }
+
+-keep class liquibase.** { *; }
+-keep interface liquibase.** { *; }
+
+-keep class org.jooq.** { *; }
+-keep interface org..** { *; }
+
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod

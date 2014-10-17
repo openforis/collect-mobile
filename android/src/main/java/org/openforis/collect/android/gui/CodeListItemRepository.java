@@ -52,10 +52,10 @@ public class CodeListItemRepository extends AbstractCodeListItemRepository {
             public PersistedCodeListItem execute(SQLiteDatabase database) {
                 String[] params = code == null ? null : new String[]{code};
                 Cursor cursor = database.rawQuery("" +
-                        "select * from " + OFC_CODE_LIST
-                        + " where " + OFC_CODE_LIST.CODE_LIST_ID + constraint(codeList.getId())
-                        + " and " + OFC_CODE_LIST.PARENT_ID + constraint(parentItemId)
-                        + " and " + OFC_CODE_LIST.CODE + parameterizedConstraint(code), params);
+                        "select * from " + OFC_CODE_LIST.getName()
+                        + " where " + OFC_CODE_LIST.CODE_LIST_ID.getName() + constraint(codeList.getId())
+                        + " and " + OFC_CODE_LIST.PARENT_ID.getName() + constraint(parentItemId)
+                        + " and " + OFC_CODE_LIST.CODE.getName() + parameterizedConstraint(code), params);
                 try {
                     if (!cursor.moveToFirst())
                         return null;

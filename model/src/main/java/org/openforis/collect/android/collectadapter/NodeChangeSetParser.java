@@ -101,6 +101,9 @@ class NodeChangeSetParser {
             return;
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
         UiNodeChange nodeChange = addNodeChange(uiAttribute, nodeChanges);
+        ValidationResultFlag requiredErrorResult = node.getParent().getMinCountValidationResult(node.getName());
+        addRequiredValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult);
+
         ValidationResults validationResults = attributeChange.getValidationResults();
         List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
         for (ValidationResult validationResult : validationResults.getFailed()) {
@@ -120,15 +123,17 @@ class NodeChangeSetParser {
             if (isCalculated(childNode) || isHidden(childNode))
                 continue;
             UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
-            parseRequiredValidationError(uiChildNode, entityChange, uiNodeChanges);
+            ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());
+            addRequiredValidationErrorIfAny(uiChildNode, uiNodeChanges, validationResultFlag);
         }
     }
 
-    private void parseRequiredValidationError(UiNode uiNode, EntityChange entityChange, Map<UiNode, UiNodeChange> nodeChanges) {
-        ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiNode.getName());
+    private void addRequiredValidationErrorIfAny(UiNode uiNode, Map<UiNode, UiNodeChange> nodeChanges, ValidationResultFlag validationResultFlag) {
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
             String message = messages.getMessage(this.locale, "validation.requiredField");
             UiNodeChange nodeChange = addNodeChange(uiNode, nodeChanges);
+            if (!nodeChange.validationErrors.isEmpty())
+                return; // We've already added required validation for this node
             nodeChange.validationErrors.add(new UiValidationError(message, level(validationResultFlag), uiNode));
         }
     }

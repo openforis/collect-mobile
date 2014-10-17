@@ -25,6 +25,7 @@ public class UiValidationError {
     public String toString() {
         return message;
     }
+
     public enum Level {
         WARNING, ERROR
     }

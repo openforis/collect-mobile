@@ -20,9 +20,10 @@ Install an update
 Changes
 -------
 
-2014-10-x
+2014-10-17
 
     * Changed the way records/entities are deleted. Using checkboxes and contextual action mode for deletion.
+    * Made sure node state is updated when related nodes are deleted
 
 2014-10-16
 

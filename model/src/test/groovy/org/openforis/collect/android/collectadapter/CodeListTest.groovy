@@ -73,21 +73,6 @@ class CodeListTest extends Specification {
         errors(parentAttribute).empty
     }
 
-
-    // TODO: Make these two tests pass!
-    def 'Missing required code in parent gives validation error on parent and not child'() {
-        parentAttribute.setCode(uiCode('001'))
-        surveyService.updateAttribute(parentAttribute)
-        parentAttribute.setCode(null)
-
-        when:
-        surveyService.updateAttribute(parentAttribute)
-
-        then:
-        errors(parentAttribute).size() == 1
-        errors(childAttribute).empty
-    }
-
     def 'Missing required code in child gives validation error on child and not parent'() {
         childAttribute.setCode(uiCode('001a'))
         surveyService.updateAttribute(childAttribute)

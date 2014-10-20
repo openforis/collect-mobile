@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.HashMap;
@@ -168,6 +169,8 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                         final boolean qualifiable = codeList.isQualifiable(code);
                         CheckBox checkBox = new CheckBox(context);
                         checkBox.setText(code.toString());
+                        int padding = new Attrs(context).dimensionInPixels(R.attr.standardPadding) / 2;
+                        checkBox.setPadding(0, padding, 0, padding);
                         layout.addView(checkBox);
                         codeByViewId.put(checkBox.getId(), code);
                         boolean checked = attributesByCode.keySet().contains(code);

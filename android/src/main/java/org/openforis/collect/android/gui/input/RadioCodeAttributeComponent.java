@@ -6,8 +6,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -120,6 +122,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     for (UiCode code : codes) {
                         RadioButton radioButton = new RadioButton(context);
                         radioButton.setText(code.toString());
+                        int padding = new Attrs(context).dimensionInPixels(R.attr.standardPadding) / 2;
+                        radioButton.setPadding(0, padding, 0, padding);
                         radioGroup.addView(radioButton);
                         codeByViewId.put(radioButton.getId(), code);
                         if (isAttributeCode(code)) {

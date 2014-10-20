@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
+import org.openforis.collect.R;
 import org.openforis.collect.android.viewmodel.UiCode;
 
 import java.util.ArrayList;
@@ -17,9 +18,7 @@ import java.util.List;
  * @author Daniel Wiell
  */
 class UiCodeAdapter extends ArrayAdapter<UiCode> {
-    //    private static final int LAYOUT_RESOURCE_ID = R.layout.listview_code;
-//    private static final int LAYOUT_RESOURCE_ID = android.R.layout.simple_list_item_1;
-    private static final int LAYOUT_RESOURCE_ID = android.R.layout.simple_dropdown_item_1line;
+    private static final int LAYOUT_RESOURCE_ID = R.layout.wrapping_dropdown_item;
     private final Context context;
     private final List<UiCode> codes;
     private List<UiCode> filteredCodes;
@@ -39,8 +38,6 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
             row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
 
             holder = new CodeHolder();
-//            holder.codeValue = (TextView) row.findViewById(R.id.codeListItemCode);
-//            holder.label = (TextView) row.findViewById(R.id.codeListItemLabel);
             holder.code = (TextView) row.findViewById(android.R.id.text1);
 
             row.setTag(holder);
@@ -50,8 +47,6 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
 
         UiCode code = filteredCodes.get(position);
         holder.code.setText(code.toString());
-//        holder.codeValue.setText(codeValue.getValue());
-//        holder.label.setText(codeValue.getLabel());
 
         return row;
     }

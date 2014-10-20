@@ -55,12 +55,10 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void removeAll(final List<Integer> ids, final List<Map<String, Object>> statusChanges, final NodeDto recordToUpdateStatusFor) {
+    public void removeAll(final List<Integer> ids, final Map<Integer, StatusChange> statusChanges) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 removeNodes(connection, ids);
-                if (recordToUpdateStatusFor != null)
-                    updateRecordStatus(connection, recordToUpdateStatusFor.recordId, recordToUpdateStatusFor.status);
                 updateStatusChanges(connection, statusChanges);
                 return null;
             }
@@ -114,38 +112,30 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void update(final NodeDto node, final List<Map<String, Object>> statusChanges, final String recordStatus) {
+    public void update(final NodeDto node, final Map<Integer, StatusChange> statusChanges) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 updateAttribute(connection, node);
-                if (recordStatus != null)
-                    updateRecordStatus(connection, node.recordId, recordStatus);
                 updateStatusChanges(connection, statusChanges);
                 return null;
             }
         });
     }
 
-    private void updateStatusChanges(Connection connection, List<Map<String, Object>> statusChanges) throws SQLException {
+    private void updateStatusChanges(Connection connection, Map<Integer, StatusChange> statusChanges) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("" +
                 "UPDATE ofc_view_model\n" +
                 "SET relevant = ?, status = ?\n" +
                 "WHERE id = ?");
-        for (Map<String, Object> statusChange : statusChanges) {
-            ps.setBoolean(1, (Boolean) statusChange.get("relevant"));
-            ps.setString(2, (String) statusChange.get("status"));
-            ps.setInt(3, (Integer) statusChange.get("id"));
+        for (Map.Entry<Integer, StatusChange> statusChangeEntry : statusChanges.entrySet()) {
+            int id = statusChangeEntry.getKey();
+            StatusChange statusChange = statusChangeEntry.getValue();
+            ps.setBoolean(1, statusChange.relevant);
+            ps.setString(2, statusChange.status);
+            ps.setInt(3, id);
             ps.addBatch();
         }
         ps.executeBatch();
-        ps.close();
-    }
-
-    private void updateRecordStatus(Connection connection, int recordId, String recordStatus) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("UPDATE ofc_view_model SET status =? WHERE id = ?");
-        ps.setString(1, recordStatus);
-        ps.setInt(2, recordId);
-        ps.executeUpdate();
         ps.close();
     }
 
@@ -215,7 +205,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.hour = getInteger("val_hour", rs);
         n.minute = getInteger("val_minute", rs);
         n.codeValue = rs.getString("val_code_value");
-        n.codeQualifier= rs.getString("val_code_qualifier");
+        n.codeQualifier = rs.getString("val_code_qualifier");
         n.codeLabel = rs.getString("val_code_label");
         n.booleanValue = getBoolean("val_boolean", rs);
         n.intValue = getInteger("val_int", rs);

@@ -26,11 +26,9 @@ public interface ViewModelRepository {
 
     void insertAttribute(UiAttribute attribute);
 
-    void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges);
+    void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges);
 
-    void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges, UiNode.Status recordStatus);
-
-    void removeNode(UiNode node, List<Map<String, Object>> statusChanges, boolean recordStatusChanged);
+    void removeNode(UiNode node, Map<Integer, StatusChange> statusChanges);
 
     void removeRecord(int recordId);
 
@@ -92,17 +90,12 @@ public interface ViewModelRepository {
             repo.insert(Arrays.asList(uiAttributeToDto(attribute)));
         }
 
-        public void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges) {
-            repo.update(uiAttributeToDto(attribute), statusChanges, null);
+        public void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges) {
+            repo.update(uiAttributeToDto(attribute), statusChanges);
         }
 
-        public void updateAttribute(UiAttribute attribute, List<Map<String, Object>> statusChanges, UiNode.Status recordStatus) {
-            repo.update(uiAttributeToDto(attribute), statusChanges, recordStatus.name());
-        }
-
-        public void removeNode(UiNode node, List<Map<String, Object>> statusChanges, boolean recordStatusChanged) {
-            NodeDto recordToUpdateStatusFor = recordStatusChanged ? uiRecordToDto(node.getUiRecord()) : null;
-            repo.removeAll(toIds(node), statusChanges, recordToUpdateStatusFor);
+        public void removeNode(UiNode node, Map<Integer, StatusChange> statusChanges) {
+            repo.removeAll(toIds(node), statusChanges);
         }
 
         public void removeRecord(int recordId) {

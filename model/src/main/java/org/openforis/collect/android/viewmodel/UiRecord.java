@@ -19,9 +19,12 @@ public class UiRecord extends UiEntity {
         setParent(recordCollection);
     }
 
-    public void updateStatusOfNodeAndParents(Status status) {
+    public List<UiNode> updateStatusOfNodeAndParents(Status status) {
         setStatus(status);
         getParent().getChildById(getId()).setStatus(status); // Update record placeholder status
+        ArrayList<UiNode> updatedNodes = new ArrayList<UiNode>();
+        updatedNodes.add(this);
+        return updatedNodes;
     }
 
     public void register(UiNode node) {

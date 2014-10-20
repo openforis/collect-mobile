@@ -3,7 +3,9 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
@@ -122,32 +124,27 @@ public class ViewModelManager {
 
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
         UiRecord uiRecord = attribute.getUiRecord();
-        UiNode.Status oldRecordStatus = uiRecord.getStatus();
-        List<Map<String, Object>> statusChanges = statusChanges(nodeChanges);
-        UiNode.Status newRecordStatus = uiRecord.getStatus();
-        if (oldRecordStatus == newRecordStatus)
-            repo.updateAttribute(attribute, statusChanges);
-        else
-            repo.updateAttribute(attribute, statusChanges, newRecordStatus);
+        Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
+        repo.updateAttribute(attribute, statusChanges);
 
         if (uiRecord.isKeyAttribute(attribute))
             uiRecord.keyAttributeUpdated();
     }
 
-    private List<Map<String, Object>> statusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
-        List<Map<String, Object>> statusChanges = new ArrayList<Map<String, Object>>();
+    private Map<Integer, StatusChange> statusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
+        Map<Integer, StatusChange> statusChanges = new HashMap<Integer, StatusChange>();
         for (final UiNode changedNode : nodeChanges.keySet()) {
             UiNodeChange nodeChange = nodeChanges.get(changedNode);
             changedNode.setValidationErrors(nodeChange.validationErrors);
             if (nodeChange.relevanceChange || nodeChange.statusChange) {
-                changedNode.updateStatus(nodeChange.validationErrors);
+                List<UiNode> nodesWithUpdatedStatus = changedNode.updateStatus(nodeChange.validationErrors);
                 if (nodeChange.relevanceChange)
                     changedNode.setRelevant(!changedNode.isRelevant());
-                statusChanges.add(new HashMap<String, Object>() {{
-                    put("id", changedNode.getId());
-                    put("status", changedNode.getStatus().name());
-                    put("relevant", changedNode.isRelevant());
-                }});
+
+                for (final UiNode nodeWithUpdatedStatus : nodesWithUpdatedStatus)
+                    statusChanges.put(nodeWithUpdatedStatus.getId(),
+                            new StatusChange(nodeWithUpdatedStatus));
+
             }
         }
         return statusChanges;
@@ -160,13 +157,12 @@ public class ViewModelManager {
     }
 
     public void removeNode(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
-        UiRecord uiRecord = node.getUiRecord();
-        UiNode.Status oldRecordStatus = uiRecord.getStatus();
-        List<Map<String, Object>> statusChanges = statusChanges(nodeChanges);
+        Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
         node.removeFromParent();
-        node.updateStatusOfParents();
-        UiNode.Status newRecordStatus = uiRecord.getStatus();
-        repo.removeNode(node, statusChanges, oldRecordStatus != newRecordStatus);
+        List<UiNode> updatedParents = node.updateStatusOfParents();
+        for (UiNode updatedParent : updatedParents)
+            statusChanges.put(updatedParent.getId(), new StatusChange(updatedParent));
+        repo.removeNode(node, statusChanges);
     }
 
     public void removeRecord(UiRecord.Placeholder record) {

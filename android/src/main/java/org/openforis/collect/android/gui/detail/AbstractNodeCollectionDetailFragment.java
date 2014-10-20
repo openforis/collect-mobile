@@ -8,6 +8,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
@@ -69,9 +70,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void setupNodeCollection(View rootView) {
-        adapter = new EntityListAdapter(getActivity(), node(), new MyNodeDeleter());
+        adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), node(), new MyNodeDeleter());
         ListView listView = listView(rootView);
-        // TODO: Setup contextual action mode
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

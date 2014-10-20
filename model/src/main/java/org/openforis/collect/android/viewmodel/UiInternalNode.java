@@ -89,13 +89,14 @@ public class UiInternalNode extends UiNode {
             addChild(child);
     }
 
-    public void updateStatus(Set<UiValidationError> validationErrors) {
+    public List<UiNode> updateStatus(Set<UiValidationError> validationErrors) {
         Status newStatus = determineStatus(validationErrors);
         for (UiNode child : children)
             if (child.getStatus().isWorseThen(newStatus))
                 newStatus = child.getStatus();
         if (getStatus() != newStatus)
-            updateStatusOfNodeAndParents(newStatus);
+            return updateStatusOfNodeAndParents(newStatus);
+        return Collections.emptyList();
     }
 
     public void updateStatusOfNodeAndDescendants() {
@@ -108,7 +109,7 @@ public class UiInternalNode extends UiNode {
                 childStatus = internalNodeChild.getStatus().ordinal();
             } else
                 childStatus = child.getStatus().ordinal();
-            if (childStatus > maxStatus) {
+            if (child.isRelevant() && childStatus > maxStatus) {
                 maxStatus = childStatus;
             }
         }

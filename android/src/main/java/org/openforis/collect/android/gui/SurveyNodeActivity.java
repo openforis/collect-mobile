@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -159,6 +158,12 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     public void navigateTo(int nodeId) {
         Intent intent = createSelectNodeIntent(nodeId);
+        startActivity(intent);
+    }
+
+    public void reloadWithoutBackStack() {
+        Intent intent = createSelectNodeIntent(selectedNode);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

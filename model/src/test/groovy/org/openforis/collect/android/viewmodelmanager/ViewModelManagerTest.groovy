@@ -49,7 +49,7 @@ class ViewModelManagerTest extends Specification {
 
         then:
         attribute.status == VALIDATION_WARNING
-        1 * repo.updateAttribute(attribute, _, _)
+        1 * repo.updateAttribute(attribute, _)
     }
 
     private def attributeChanges(UiTextAttribute uiAttribute, UiValidationError.Level... levels) {
@@ -67,7 +67,7 @@ class ViewModelManagerTest extends Specification {
 
         then:
         attribute.status == VALIDATION_ERROR
-        1 * repo.updateAttribute(attribute, _, _)
+        1 * repo.updateAttribute(attribute, _)
     }
 
 

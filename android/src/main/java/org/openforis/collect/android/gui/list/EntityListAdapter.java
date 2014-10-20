@@ -1,9 +1,9 @@
 package org.openforis.collect.android.gui.list;
 
-import android.app.Activity;
 import android.view.*;
 import android.widget.CheckBox;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.detail.NodeDeleter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
@@ -24,7 +24,7 @@ public class EntityListAdapter extends NodeListAdapter {
     private Set<CheckBox> checked = new HashSet<CheckBox>();
     private ActionMode actionMode;
 
-    public EntityListAdapter(Activity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {
+    public EntityListAdapter(SurveyNodeActivity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {
         super(activity, parentNode);
         this.nodeDeleter = nodeDeleter;
     }
@@ -121,8 +121,9 @@ public class EntityListAdapter extends NodeListAdapter {
             switch (item.getItemId()) {
                 case R.id.delete_selected_nodes:
                     nodeDeleter.delete(nodesToEdit);
-                    notifyDataSetChanged();
-                    mode.finish();
+                    // Need to clear the back stack, to prevent deleted node from being revisited.
+                    ((SurveyNodeActivity) activity).reloadWithoutBackStack();
+
                     return true;
                 default:
                     return false;

@@ -12,11 +12,11 @@ public interface NodeRepository {
 
     NodeDto.Collection recordNodes(int recordId);
 
-    void update(NodeDto node, List<Map<String, Object>> statusChanges, String recordStatus);
+    void update(NodeDto node, Map<Integer, StatusChange> statusChanges);
 
     NodeDto.Collection surveyRecords(int surveyId);
 
-    void removeAll(List<Integer> ids, List<Map<String, Object>> statusChanges, NodeDto recordToUpdateStatusFor);
+    void removeAll(List<Integer> ids, Map<Integer, StatusChange> statusChanges);
 
     void removeRecord(int recordId);
 }

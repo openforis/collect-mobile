@@ -1,8 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
@@ -67,22 +65,27 @@ public abstract class UiNode {
         this.relevant = relevant;
     }
 
-    public void updateStatusOfNodeAndParents(UiNode.Status status) {
+    public List<UiNode> updateStatusOfNodeAndParents(UiNode.Status status) {
         setStatus(status);
-        updateStatusOfParents();
+        List<UiNode> nodesWithUpdatedStatus = new ArrayList<UiNode>();
+        nodesWithUpdatedStatus.add(this);
+        nodesWithUpdatedStatus.addAll(updateStatusOfParents());
+        return nodesWithUpdatedStatus;
     }
 
-    public void updateStatusOfParents() {
+    public List<UiNode> updateStatusOfParents() {
         UiInternalNode parentNode = getParent();
         if (parentNode == null)
-            return;
+            return Collections.emptyList();
         UiNode.Status newParentStatus = UiNode.Status.values()[0];
         for (UiNode child : parentNode.getChildren()) {
             if (child.isRelevant() && child.getStatus().ordinal() > newParentStatus.ordinal())
                 newParentStatus = child.getStatus();
         }
-        if (newParentStatus != parentNode.getStatus())
-            parentNode.updateStatusOfNodeAndParents(newParentStatus);
+        if (newParentStatus != parentNode.getStatus()) {
+            return parentNode.updateStatusOfNodeAndParents(newParentStatus);
+        }
+        return Collections.emptyList();
     }
 
 
@@ -161,12 +164,15 @@ public abstract class UiNode {
         return found;
     }
 
-    public void updateStatus(Set<UiValidationError> validationErrors) {
+    public List<UiNode> updateStatus(Set<UiValidationError> validationErrors) {
         UiNode.Status oldStatus = getStatus();
         UiNode.Status newStatus = determineStatus(validationErrors);
-        if (oldStatus != newStatus)
-            updateStatusOfNodeAndParents(newStatus);
+        if (oldStatus != newStatus) {
+            return updateStatusOfNodeAndParents(newStatus);
+        }
+        return Collections.emptyList();
     }
+
     public String toString() {
         return id + ": " + definition;
     }

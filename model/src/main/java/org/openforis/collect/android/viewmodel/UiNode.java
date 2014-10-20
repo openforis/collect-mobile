@@ -78,7 +78,7 @@ public abstract class UiNode {
             return;
         UiNode.Status newParentStatus = UiNode.Status.values()[0];
         for (UiNode child : parentNode.getChildren()) {
-            if (child.getStatus().ordinal() > newParentStatus.ordinal())
+            if (child.isRelevant() && child.getStatus().ordinal() > newParentStatus.ordinal())
                 newParentStatus = child.getStatus();
         }
         if (newParentStatus != parentNode.getStatus())

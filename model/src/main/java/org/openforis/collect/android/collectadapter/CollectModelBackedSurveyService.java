@@ -46,6 +46,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public UiRecord addRecord(String entityName) {
         UiRecord record = collectModelManager.addRecord(entityName, viewModelManager.getSelectedSurvey());
         viewModelManager.addRecord(record);
+        collectModelManager.recordSelected(record);
         return record;
     }
 

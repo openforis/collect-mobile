@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -205,9 +206,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private LayoutDependentSupport createLayoutSupport() {
-        return getResources().getBoolean(R.bool.twoPane)
-                ? new TwoPaneSurveySupport()
-                : new SinglePaneSurveySupport();
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        return dpWidth < 600 ? new SinglePaneSurveySupport() : new TwoPaneSurveySupport();
     }
 
     private ViewPager nodePager() {

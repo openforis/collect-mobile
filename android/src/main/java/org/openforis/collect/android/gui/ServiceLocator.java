@@ -15,8 +15,12 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.model.CollectSurveyContext;
+import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
+import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.File;
 
@@ -140,23 +144,41 @@ public class ServiceLocator {
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
-        CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
-                externalCodeListProvider
-        );
+//        CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
 
-        MeteredValidator validator = new MeteredValidator(codeListManager);
-        SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
+        CodeListManager codeListManager = new CodeListManager();
+        codeListManager.setCodeListItemDao(new MobileCodeListItemDao(modelDatabase));
+        codeListManager.setExternalCodeListProvider(externalCodeListProvider);
+
+//        MeteredValidator validator = new MeteredValidator(codeListManager);
+        CollectValidator validator = new CollectValidator();
+        validator.setCodeListManager(codeListManager);
+//        SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
+        SurveyManager surveyManager = new SurveyManager();
+        ExpressionFactory expressionFactory = new ExpressionFactory();
+        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(modelDatabase));
+        CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
+        collectSurveyContext.setExternalCodeListProvider(externalCodeListProvider);
+        SurveyDao surveyDao = new SurveyDao();
+        surveyDao.setSurveyContext(collectSurveyContext);
+        surveyDao.setDataSource(modelDatabase.dataSource());
+        surveyManager.setSurveyDao(surveyDao);
+        surveyManager.setCodeListManager(codeListManager);
+        surveyManager.setCollectSurveyContext(collectSurveyContext);
+        surveyDao.setSurveyContext(collectSurveyContext);
+        surveyManager.setSurveyDao(surveyDao);
+
 
         RecordManager recordManager = new MobileRecordManager(
                 codeListManager,
                 surveyManager,
                 new RecordUniquenessChecker.DataSourceRecordUniquenessChecker(nodeDatabase)
         );
+        validator.setRecordManager(recordManager);
 
-        RecordManager meteredRecordManager = new MeteredRecordManager(recordManager);
-        validator.setRecordManager(meteredRecordManager);
-
-        return new CollectModelManager(surveyManager, meteredRecordManager, codeListManager, modelDatabase);
+//        RecordManager meteredRecordManager = new MeteredRecordManager(recordManager);
+//        return new CollectModelManager(surveyManager, meteredRecordManager, codeListManager, modelDatabase);
+        return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);
     }
 
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {

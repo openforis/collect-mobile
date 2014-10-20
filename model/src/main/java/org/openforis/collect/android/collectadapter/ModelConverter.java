@@ -52,6 +52,7 @@ class ModelConverter {
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {
         CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey));
+        collectRecord.setId(uiRecord.getId());
         Entity rootEntity = collectRecord.createRootEntity(uiRecord.getName());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);

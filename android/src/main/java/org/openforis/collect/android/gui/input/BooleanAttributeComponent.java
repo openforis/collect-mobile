@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import com.google.common.base.Objects;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiBooleanAttribute;
@@ -57,7 +58,9 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
     }
 
     protected boolean updateAttributeIfChanged() {
-        boolean changed = checked != attribute.getValue() || (checked != null && checked.equals(attribute.getValue()));
+        boolean changed = checked != attribute.getValue()
+                || (checked == null && attribute.getValue())
+                || (checked && attribute.getValue() == null);
         if (changed) {
             attribute.setValue(checked);
             return true;

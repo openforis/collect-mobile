@@ -65,6 +65,8 @@ class ModelConverter {
     }
 
     private void addChildNodes(Entity entity, UiInternalNode uiNode, CollectRecord collectRecord) {
+        entity.setRelevant(uiNode.getName(), uiNode.isRelevant());
+
         for (UiNode childUiNode : uiNode.getChildren()) {
             if (childUiNode instanceof UiEntity)
                 entity.add(toEntity((UiEntity) childUiNode, collectRecord));

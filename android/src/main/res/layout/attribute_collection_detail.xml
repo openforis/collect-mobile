@@ -1,28 +1,32 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
-
-    <include layout="@layout/label_and_add_node"/>
-
-    <TextView
-            android:id="@+id/node_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="?attr/standardPadding"/>
-
-    <TextView
-            android:id="@+id/node_prompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="?attr/standardPadding"/>
-
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
-            android:id="@+id/input_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="?attr/standardPadding">
+            android:orientation="vertical">
+
+        <include layout="@layout/label_and_add_node"/>
+
+        <TextView
+                android:id="@+id/node_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="?attr/standardPadding"/>
+
+        <TextView
+                android:id="@+id/node_prompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="?attr/standardPadding"/>
+
+        <LinearLayout
+                android:id="@+id/input_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="?attr/standardPadding"/>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

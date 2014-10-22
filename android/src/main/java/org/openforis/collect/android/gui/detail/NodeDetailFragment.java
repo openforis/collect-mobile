@@ -11,7 +11,10 @@ import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -29,7 +32,6 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
-    private static final int RELEVANT_OVERLAY_COLOR = Color.parseColor("#00000000");
     private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
     private boolean selected;
 
@@ -53,13 +55,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
 
-
-        ScrollView scrollView = new ScrollView(getActivity());
-        scrollView.setFillViewport(true);
-        scrollView.addView(rootView);
-
         FrameLayout frameLayout = new FrameLayout(getActivity());
-        frameLayout.addView(scrollView);
+        frameLayout.addView(rootView);
         frameLayout.addView(createOverlay());
         return frameLayout;
     }
@@ -75,6 +72,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private View createOverlay() {
         overlay = new LinearLayout(getActivity());
         overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        overlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
         updateOverlay();
         return overlay;
     }
@@ -183,7 +181,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     private void updateOverlay() {
         if (node != null && overlay != null)
-            overlay.setBackgroundColor(node.isRelevant() ? RELEVANT_OVERLAY_COLOR : IRRELEVANT_OVERLAY_COLOR);
+            overlay.setVisibility(node.isRelevant() ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void showKeyboard(View view) {

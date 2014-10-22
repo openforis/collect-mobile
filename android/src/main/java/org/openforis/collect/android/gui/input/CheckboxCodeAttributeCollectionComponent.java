@@ -125,7 +125,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         }
     }
 
-
     private void showQualifier() {
         uiHandler.post(new Runnable() {
             public void run() {
@@ -165,12 +164,13 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
             uiHandler.post(new Runnable() {
                 public void run() {
                     qualifierInput = createQualifierInput();
-                    for (final UiCode code : codeList.getCodes()) {
+                    java.util.List<UiCode> codes = codeList.getCodes();
+                    for (int i = 0; i < codes.size(); i++) {
+                        final UiCode code = codes.get(i);
                         final boolean qualifiable = codeList.isQualifiable(code);
                         CheckBox checkBox = new CheckBox(context);
+                        checkBox.setId(i + 1);
                         checkBox.setText(code.toString());
-                        int padding = new Attrs(context).dimensionInPixels(R.attr.standardPadding) / 2;
-                        checkBox.setPadding(0, padding, 0, padding);
                         layout.addView(checkBox);
                         codeByViewId.put(checkBox.getId(), code);
                         boolean checked = attributesByCode.keySet().contains(code);

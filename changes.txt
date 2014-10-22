@@ -20,6 +20,12 @@ Install an update
 Changes
 -------
 
+2014-10-22
+
+    * Fixed broken scrolling in older Android versions
+    * Fixed overlapping radio buttons/checkboxes in older Android versions
+    * Fixes to relevance and validation state
+
 2014-10-20
 
     * Ignored irrelevant child nodes when determining an entity's validation status

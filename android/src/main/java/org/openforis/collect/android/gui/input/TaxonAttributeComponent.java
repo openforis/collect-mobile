@@ -23,7 +23,12 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
 
     protected TaxonAttributeComponent(UiTaxonAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
-        autoComplete = new AutoCompleteTextView(context);
+        autoComplete = createAutoComplete(attribute, context);
+
+    }
+
+    private AutoCompleteTextView createAutoComplete(UiTaxonAttribute attribute, FragmentActivity context) {
+        final AutoCompleteTextView autoComplete = new AutoCompleteTextView(context);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         if (attribute.getTaxon() != null) {
@@ -53,7 +58,11 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
             }
         });
         autoComplete.setAdapter(new UiTaxonAdapter(context, attribute, ServiceLocator.taxonService()));
+        return autoComplete;
+    }
 
+    protected TextView errorMessageContainerView() {
+        return autoComplete;
     }
 
     protected boolean updateAttributeIfChanged() {
@@ -69,7 +78,6 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     protected View toInputView() {
         return autoComplete;
     }
-
 
     private UiTaxon selectedTaxon() {
         Editable editable = autoComplete.getText();

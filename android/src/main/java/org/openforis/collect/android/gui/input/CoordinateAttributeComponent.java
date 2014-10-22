@@ -267,6 +267,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
     private NumberFormat numberFormat() {
         NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setGroupingUsed(false);
         numberFormat.setMaximumFractionDigits(10);
         numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
         return numberFormat;

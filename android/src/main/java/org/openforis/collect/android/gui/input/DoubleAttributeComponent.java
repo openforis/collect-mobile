@@ -6,7 +6,6 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -53,6 +52,7 @@ public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubl
 
     private NumberFormat numberFormat() {
         NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setGroupingUsed(false);
         numberFormat.setMaximumFractionDigits(Integer.MAX_VALUE);
         numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
         return numberFormat;

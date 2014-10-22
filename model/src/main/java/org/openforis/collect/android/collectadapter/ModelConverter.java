@@ -64,17 +64,23 @@ class ModelConverter {
         return versions.isEmpty() ? null : versions.get(versions.size() - 1).getName();
     }
 
-    private void addChildNodes(Entity entity, UiInternalNode uiNode, CollectRecord collectRecord) {
-        entity.setRelevant(uiNode.getName(), uiNode.isRelevant());
+    private void addChildNodes(Entity entity, UiInternalNode uiInternalNode, CollectRecord collectRecord) {
+        entity.setRelevant(uiInternalNode.getName(), uiInternalNode.isRelevant());
 
-        for (UiNode childUiNode : uiNode.getChildren()) {
+        for (UiNode childUiNode : uiInternalNode.getChildren()) {
             if (childUiNode instanceof UiEntity)
-                entity.add(toEntity((UiEntity) childUiNode, collectRecord));
+                addToEntity(entity, toEntity((UiEntity) childUiNode, collectRecord), childUiNode);
             else if (childUiNode instanceof UiAttribute)
-                entity.add(toAttribute((UiAttribute) childUiNode));
+                addToEntity(entity, toAttribute((UiAttribute) childUiNode), childUiNode);
             else if (childUiNode instanceof UiInternalNode)
                 addChildNodes(entity, (UiInternalNode) childUiNode, collectRecord);
+
         }
+    }
+
+    private void addToEntity(Entity entity, Node node, UiNode uiNode) {
+        entity.add(node);
+        entity.setRelevant(node.getName(), uiNode.isRelevant());
     }
 
     private Node toAttribute(UiAttribute uiAttribute) {

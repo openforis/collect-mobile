@@ -164,13 +164,8 @@ public abstract class UiNode {
         return found;
     }
 
-    public List<UiNode> updateStatus(Set<UiValidationError> validationErrors) {
-        UiNode.Status oldStatus = getStatus();
-        UiNode.Status newStatus = determineStatus(validationErrors);
-        if (oldStatus != newStatus) {
-            return updateStatusOfNodeAndParents(newStatus);
-        }
-        return Collections.emptyList();
+    public void updateStatus(Set<UiValidationError> validationErrors) {
+        status = determineStatus(validationErrors);
     }
 
     public String toString() {

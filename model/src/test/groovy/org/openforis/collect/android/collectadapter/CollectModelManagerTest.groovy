@@ -32,6 +32,5 @@ class CollectModelManagerTest extends Specification {
 
         then:
         collectSurvey
-
     }
 }

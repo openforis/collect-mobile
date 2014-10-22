@@ -137,16 +137,20 @@ public class ViewModelManager {
             UiNodeChange nodeChange = nodeChanges.get(changedNode);
             changedNode.setValidationErrors(nodeChange.validationErrors);
             if (nodeChange.relevanceChange || nodeChange.statusChange) {
-                List<UiNode> nodesWithUpdatedStatus = changedNode.updateStatus(nodeChange.validationErrors);
                 if (nodeChange.relevanceChange)
                     changedNode.setRelevant(!changedNode.isRelevant());
-
-                for (final UiNode nodeWithUpdatedStatus : nodesWithUpdatedStatus)
-                    statusChanges.put(nodeWithUpdatedStatus.getId(),
-                            new StatusChange(nodeWithUpdatedStatus));
-
+                changedNode.updateStatus(nodeChange.validationErrors);
+                statusChanges.put(changedNode.getId(), new StatusChange(changedNode));
             }
         }
+
+        for (UiNode uiNode : nodeChanges.keySet()) {
+            List<UiNode> updatedParents = uiNode.updateStatusOfParents();
+            for (UiNode updatedParent : updatedParents) {
+                statusChanges.put(updatedParent.getId(), new StatusChange(updatedParent));
+            }
+        }
+
         return statusChanges;
     }
 

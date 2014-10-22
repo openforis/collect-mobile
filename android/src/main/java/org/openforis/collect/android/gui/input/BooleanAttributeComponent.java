@@ -58,9 +58,10 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
     }
 
     protected boolean updateAttributeIfChanged() {
-        boolean changed = checked != attribute.getValue()
-                || (checked == null && attribute.getValue())
-                || (checked && attribute.getValue() == null);
+        Boolean previouslyChecked = attribute.getValue();
+        boolean changed = !Objects.equal(checked, previouslyChecked)
+                || (checked == null && previouslyChecked != null && previouslyChecked)
+                || (checked != null && checked && previouslyChecked == null);
         if (changed) {
             attribute.setValue(checked);
             return true;

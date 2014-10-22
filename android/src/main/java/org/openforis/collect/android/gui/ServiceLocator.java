@@ -144,16 +144,13 @@ public class ServiceLocator {
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
-//        CodeListManager codeListManager = new MeteredCodeListManager(new MobileCodeListItemDao(modelDatabase),
 
         CodeListManager codeListManager = new CodeListManager();
         codeListManager.setCodeListItemDao(new MobileCodeListItemDao(modelDatabase));
         codeListManager.setExternalCodeListProvider(externalCodeListProvider);
 
-//        MeteredValidator validator = new MeteredValidator(codeListManager);
         CollectValidator validator = new CollectValidator();
         validator.setCodeListManager(codeListManager);
-//        SurveyManager surveyManager = new MeteredSurveyManager(codeListManager, validator, externalCodeListProvider, modelDatabase);
         SurveyManager surveyManager = new SurveyManager();
         ExpressionFactory expressionFactory = new ExpressionFactory();
         expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(modelDatabase));
@@ -176,8 +173,6 @@ public class ServiceLocator {
         );
         validator.setRecordManager(recordManager);
 
-//        RecordManager meteredRecordManager = new MeteredRecordManager(recordManager);
-//        return new CollectModelManager(surveyManager, meteredRecordManager, codeListManager, modelDatabase);
         return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);
     }
 

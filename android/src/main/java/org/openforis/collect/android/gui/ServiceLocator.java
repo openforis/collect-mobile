@@ -20,6 +20,7 @@ import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.File;
@@ -156,6 +157,9 @@ public class ServiceLocator {
         expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(modelDatabase));
         CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
         collectSurveyContext.setExternalCodeListProvider(externalCodeListProvider);
+        CollectCodeListService codeListService = new CollectCodeListService();
+        codeListService.setCodeListManager(codeListManager);
+        collectSurveyContext.setCodeListService(codeListService);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveyContext(collectSurveyContext);
         surveyDao.setDataSource(modelDatabase.dataSource());

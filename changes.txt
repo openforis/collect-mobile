@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2014-10-24
+
+    * Fixed bug that crashed surveys with enumerated entities
+
 2014-10-22
 
     * Fixed broken scrolling in older Android versions

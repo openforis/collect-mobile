@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
@@ -105,10 +106,11 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         selectedNode = selected;
     }
 
-    public void onNodeChanged(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+    public void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        // TODO: Delete files when deleting nodes
         notifyOnValidationErrors(node, nodeChanges);
         nodePagerFragment().onNodeChange(node, nodeChanges);
-        support.onNodeChanged(node); // TODO: Only do this if one of the child nodes updated it's status or relevance
+        support.onNodeChanged(node); // TODO: Only do this if one of the child nodes updated its status or relevance
     }
 
     private void notifyOnValidationErrors(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {

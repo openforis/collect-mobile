@@ -14,9 +14,9 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.gui.detail.NodePathDetailsFragment;
-import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

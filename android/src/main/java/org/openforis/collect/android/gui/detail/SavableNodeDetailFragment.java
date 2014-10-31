@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.input.SavableComponent;
-import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
 
 import java.util.Map;
 

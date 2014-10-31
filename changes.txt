@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2014-10-31
+
+    * Added support for file attributes. Images can be captured or selected.
+
 2014-10-24
 
     * Fixed bug that crashed surveys with enumerated entities

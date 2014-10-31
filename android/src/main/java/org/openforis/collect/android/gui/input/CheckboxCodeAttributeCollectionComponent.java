@@ -11,7 +11,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.HashMap;
@@ -188,7 +187,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                                         showQualifier();
                                 } else {
                                     int attributeId = attributesByCode.get(code).getId();
-                                    surveyService.removeAttribute(attributeId);
+                                    surveyService.deletedAttribute(attributeId);
                                     attributesByCode.remove(code);
                                     if (qualifiable)
                                         hideQualifier();

@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
@@ -12,6 +13,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import static org.openforis.collect.android.NodeEvent.*;
 
 /**
  * @author Daniel Wiell
@@ -120,14 +123,14 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return attribute;
     }
 
-    public void removeAttribute(int attributeId) {
+    public void deletedAttribute(int attributeId) {
         UiNode node = selectedNode().getUiRecord().lookupNode(attributeId);
         if (!(node instanceof UiAttribute))
             throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
         UiAttribute attribute = (UiAttribute) node;
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeAttribute(attribute);
         viewModelManager.removeNode(attribute, nodeChanges);
-        handleNodeChanges(attribute, nodeChanges);
+        handleNodeChanges(DELETED, attribute, nodeChanges);
     }
 
     public void deleteEntities(Collection<Integer> entityIds) {
@@ -139,7 +142,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
             UiEntity entity = (UiEntity) node;
             Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeEntity(entity);
             viewModelManager.removeNode(entity, nodeChanges);
-            handleNodeChanges(entity, nodeChanges);
+            handleNodeChanges(DELETED, entity, nodeChanges);
         }
     }
 
@@ -162,13 +165,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public void updateAttribute(UiAttribute attributeToUpdate) {
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
         viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
-        handleNodeChanges(attributeToUpdate, nodeChanges);
+        handleNodeChanges(UPDATED, attributeToUpdate, nodeChanges);
     }
 
-    private void handleNodeChanges(UiNode updatedNode, Map<UiNode, UiNodeChange> nodeChanges) {
+    private void handleNodeChanges(NodeEvent event, UiNode updatedNode, Map<UiNode, UiNodeChange> nodeChanges) {
         if (listener == null)
             return;
-        listener.onNodeChanged(updatedNode, nodeChanges);
+        listener.onNodeChanged(event, updatedNode, nodeChanges);
         updateCalculatedAttributes(nodeChanges);
     }
 
@@ -178,7 +181,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
             if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated()) {
                 // TODO: Do this in same transaction as value update, but ideally don't persist at all
                 viewModelManager.updateAttribute((UiAttribute) uiNode, emptyMap);
-                listener.onNodeChanged(uiNode, emptyMap);
+                listener.onNodeChanged(UPDATED, uiNode, emptyMap);
             }
     }
 

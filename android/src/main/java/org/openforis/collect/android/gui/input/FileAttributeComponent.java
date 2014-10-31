@@ -132,8 +132,6 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);
     }
 
-    // TODO: How to trigger the deletion of images after entities are deleted?
-
     protected boolean updateAttributeIfChanged() {
         if (imageChanged) {
             attribute.setFile(imageFile);

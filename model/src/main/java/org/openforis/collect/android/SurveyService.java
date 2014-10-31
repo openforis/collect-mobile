@@ -38,7 +38,7 @@ public interface SurveyService {
 
     void updateAttribute(UiAttribute attribute);
 
-    void removeAttribute(int attributeId);
+    void deletedAttribute(int attributeId);
 
     void deleteEntities(Collection<Integer> entities);
 

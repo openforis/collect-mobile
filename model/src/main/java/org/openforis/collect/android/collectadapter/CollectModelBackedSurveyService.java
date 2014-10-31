@@ -199,6 +199,9 @@ public class CollectModelBackedSurveyService implements SurveyService {
         this.listener = listener;
     }
 
+    public File file(UiFileAttribute attribute) {
+        return collectModelManager.file(attribute);
+    }
 
     private void notifyNodeSelected(UiNode previous, UiNode selected) {
         if (listener != null)

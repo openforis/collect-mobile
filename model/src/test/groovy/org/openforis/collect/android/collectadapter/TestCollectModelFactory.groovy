@@ -27,7 +27,7 @@ class TestCollectModelFactory {
         def recordManager = recordManager
         def codeListManager = new CodeListManager(codeListItemDao: new CodeListItemDao(dataSource: modelDatabase.dataSource()))
         def surveyManager = surveyManager(codeListManager, collectValidator(codeListManager, recordManager))
-        def collectModelManager = new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase)
+        def collectModelManager = new CollectModelManager(surveyManager, recordManager, codeListManager, null, modelDatabase)
         new CollectModelBackedSurveyService(
                 new ViewModelManager(
                         new ViewModelRepository.DatabaseViewModelRepository(
@@ -39,7 +39,7 @@ class TestCollectModelFactory {
         )
     }
     static CollectModelManager collectModelManager(Database database) {
-        new CollectModelManager(surveyManager, recordManager, null, database)
+        new CollectModelManager(surveyManager, recordManager, null, null, database)
     }
 
     public static RecordManager getRecordManager() {

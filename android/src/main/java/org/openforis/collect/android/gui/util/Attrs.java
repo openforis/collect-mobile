@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
 /**
@@ -18,6 +19,10 @@ public class Attrs {
         return context.getResources().getColor(resourceId(attrId));
     }
 
+    public Drawable drawable(int attrId) {
+        return context.getResources().getDrawable(resourceId(attrId));
+    }
+
     @SuppressWarnings("ConstantConditions")
     public int resourceId(int attrId) {
         TypedValue typedValue = new TypedValue();
@@ -25,12 +30,4 @@ public class Attrs {
         return typedValue.resourceId;
     }
 
-    public int dimensionInPixels(int attrId) {
-        int indexOfAttrTextSize = 0;
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { attrId });
-        int size = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
-        a.recycle();
-        return size;
-    }
 }

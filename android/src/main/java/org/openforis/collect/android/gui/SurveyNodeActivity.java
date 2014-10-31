@@ -22,6 +22,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.viewmodel.*;
@@ -35,7 +36,9 @@ import java.util.Set;
  * @author Daniel Wiell
  */
 public class SurveyNodeActivity extends ActionBarActivity implements SurveyListener, NodeNavigator {
-    private static final int IMPORT_SURVEY_REQUEST_CODE = 6384; // onActivityResult request
+    private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
+    public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
+    public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -44,6 +47,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private SurveyService surveyService;
 
     private UiNode selectedNode;
+    private FileAttributeComponent imageListener;
 
     public void onCreate(Bundle savedState) {
         try {
@@ -280,8 +284,19 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 if (resultCode == RESULT_OK && data != null)
                     importSurvey(data.getData());
                 break;
+            case IMAGE_CAPTURE_REQUEST_CODE:
+                if (imageListener != null)
+                    imageListener.imageChanged();
+                break;
+            case IMAGE_SELECTED_REQUEST_CODE:
+                if (imageListener != null && data != null)
+                    imageListener.imageSelected(data.getData());
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void setImageChangedListener(FileAttributeComponent listener) {
+        imageListener = listener;
     }
 
 

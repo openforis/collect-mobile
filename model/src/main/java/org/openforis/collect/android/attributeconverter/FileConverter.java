@@ -1,6 +1,5 @@
 package org.openforis.collect.android.attributeconverter;
 
-import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 import org.openforis.collect.android.viewmodelmanager.NodeDto;
@@ -43,7 +42,8 @@ class FileConverter extends AttributeConverter<FileAttribute, UiFileAttribute> {
 
     public Value value(UiFileAttribute uiAttribute) {
         File file = uiAttribute.getFile();
-        return new org.openforis.idm.model.File(file == null ? null : file.getAbsolutePath(), 0L); // TODO: File size
+
+        return new org.openforis.idm.model.File(file == null ? null : file.getName(), file == null ? 0L : file.length());
     }
 
     protected FileAttribute attribute(UiFileAttribute uiAttribute, NodeDefinition definition) {

@@ -2,6 +2,7 @@ package org.openforis.collect.android;
 
 import org.openforis.collect.android.viewmodel.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -46,4 +47,6 @@ public interface SurveyService {
     void exportSurvey() throws IOException;
 
     void setListener(SurveyListener listener);
+
+    File file(UiFileAttribute attribute);
 }

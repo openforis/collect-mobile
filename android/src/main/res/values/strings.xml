@@ -68,4 +68,8 @@
 
     <string name="amount_selected">%s selected.</string>
     <string name="delete">Delete</string>
+
+    <string name="file_attribute_capture_image">Capture image</string>
+    <string name="file_attribute_select_image">Select image</string>
+    <string name="file_attribute_remove_image">Remove image</string>
 </resources>

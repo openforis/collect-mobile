@@ -13,6 +13,7 @@ import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import org.openforis.collect.manager.CodeListManager;
+import org.openforis.collect.manager.RecordFileManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectSurveyContext;
@@ -177,7 +178,14 @@ public class ServiceLocator {
         );
         validator.setRecordManager(recordManager);
 
-        return new CollectModelManager(surveyManager, recordManager, codeListManager, modelDatabase);
+
+
+        RecordFileManager recordFileManager= new RecordFileManager() {{
+            storageDirectory = new File(workingDir.getAbsolutePath(), "collect_upload");
+        }};
+        recordFileManager.setDefaultRootStoragePath(workingDir.getAbsolutePath());
+
+        return new CollectModelManager(surveyManager, recordManager, codeListManager, recordFileManager, modelDatabase);
     }
 
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {

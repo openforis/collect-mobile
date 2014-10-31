@@ -8,10 +8,7 @@ import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.viewmodel.*;
-import org.openforis.collect.manager.CodeListManager;
-import org.openforis.collect.manager.RecordManager;
-import org.openforis.collect.manager.SpeciesManager;
-import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.manager.*;
 import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.model.*;
 import org.openforis.collect.persistence.*;
@@ -22,8 +19,8 @@ import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +33,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
     private final CodeListManager codeListManager;
+    private final RecordFileManager recordFileManager;
     private final CodeListSizeEvaluator codeListSizeEvaluator;
 
     private final User user = new User();
@@ -50,10 +48,12 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
     public CollectModelManager(SurveyManager surveyManager,
                                RecordManager recordManager,
                                CodeListManager codeListManager,
+                               RecordFileManager recordFileManager,
                                Database database) {
         this.surveyManager = surveyManager;
         this.recordManager = recordManager;
         this.codeListManager = codeListManager;
+        this.recordFileManager = recordFileManager;
         codeListSizeEvaluator = new CodeListSizeEvaluator(new DatabaseCodeListSizeDao(database));
 
         speciesManager = createSpeciesManager(database);
@@ -286,8 +286,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
                 exportListener.beforeRecordExport(recordId);
                 return getCollectRecordForExporting(recordId);
             }
-        }).export(exportFile);
-
+        }, recordFileManager, recordManager).export(exportFile);
     }
 
     private CollectRecord getCollectRecordForExporting(int recordId) {
@@ -310,6 +309,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
                 field.setSymbol(FieldSymbol.BLANK_ON_FORM.getCode());
             }
         }
+    }
+
+    public File file(UiFileAttribute uiFileAttribute) {
+        FileAttribute attribute = (FileAttribute) recordNodes.getAttribute(uiFileAttribute.getId());
+        FileAttributeDefinition def = attribute.getDefinition();
+        File dir = new File(recordFileManager.getDefaultStorageDirectory().getPath() + "/" + RecordFileManager.getRepositoryRelativePath(def));
+        String fileName = String.format("%d_%d.%s", attribute.getRecord().getId(), attribute.getInternalId(), "jpg");
+        return new File(dir, fileName);
     }
 
 

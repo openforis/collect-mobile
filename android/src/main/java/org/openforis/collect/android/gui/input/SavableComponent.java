@@ -107,6 +107,8 @@ public abstract class SavableComponent {
             return new TaxonAttributeComponent((UiTaxonAttribute) attribute, surveyService, context);
         if (attribute instanceof UiBooleanAttribute)
             return new BooleanAttributeComponent((UiBooleanAttribute) attribute, surveyService, context);
+        if (attribute instanceof UiFileAttribute)
+            return new FileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
         return new UnsupportedAttributeComponent(attribute, surveyService, context);
     }
 

@@ -1,7 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.apache.commons.io.IOUtils;
-import org.openforis.collect.Collect;
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
@@ -9,18 +9,20 @@ import org.openforis.collect.android.viewmodel.UiSurvey;
 import org.openforis.collect.io.SurveyBackupInfo;
 import org.openforis.collect.io.SurveyBackupJob;
 import org.openforis.collect.io.data.BackupDataExtractor;
+import org.openforis.collect.io.data.RecordFileBackupTask;
+import org.openforis.collect.manager.RecordFileManager;
+import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.persistence.xml.DataMarshaller;
-import org.openforis.idm.metamodel.ModelVersion;
+import org.openforis.idm.model.FileAttribute;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,18 +30,23 @@ import java.util.zip.ZipOutputStream;
  * @author Daniel Wiell
  */
 public class SurveyExporter {
+    private static final Logger LOG = Logger.getLogger(SurveyExporter.class.getName());
     private final UiSurvey uiSurvey;
     private final CollectSurvey collectSurvey;
     private final SurveyManager surveyManager;
     private final CollectRecordProvider collectRecordProvider;
+    private final RecordFileManager recordFileManager;
+    private final RecordManager recordManager;
     private final DataMarshaller dataMarshaller;
     private ZipOutputStream zipOutputStream;
 
-    public SurveyExporter(UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyManager surveyManager, CollectRecordProvider collectRecordProvider) throws IOException {
+    public SurveyExporter(UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyManager surveyManager, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager, RecordManager recordManager) throws IOException {
         this.uiSurvey = uiSurvey;
         this.collectSurvey = collectSurvey;
         this.surveyManager = surveyManager;
         this.collectRecordProvider = collectRecordProvider;
+        this.recordFileManager = recordFileManager;
+        this.recordManager = recordManager;
         dataMarshaller = new DataMarshaller();
     }
 
@@ -54,6 +61,25 @@ public class SurveyExporter {
         } finally {
             IOUtils.closeQuietly(zipOutputStream);
         }
+    }
+
+    private void addRecordFiles() {
+        for (final UiNode recordCollection : uiSurvey.getChildren()) {
+            new RecordFileBackupTask() {{
+                setRecordFileManager(recordFileManager);
+                setRecordManager(recordManager);
+                setSurvey(collectSurvey);
+                setZipOutputStream(zipOutputStream);
+                setRootEntityName(recordCollection.getName());
+                try {
+                    execute();
+                } catch (Throwable throwable) {
+                    throw new RuntimeException("Failed to export files", throwable);
+                }
+            }};
+
+        }
+
     }
 
     private void addInfoFile() throws IOException {
@@ -84,8 +110,34 @@ public class SurveyExporter {
                 UiRecord.Placeholder recordPlaceholder = (UiRecord.Placeholder) rp;
                 CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
                 exportRecord(record);
+                exportRecordFiles(record);
             }
         }
+    }
+
+    private void exportRecordFiles(CollectRecord record) throws IOException {
+        List<FileAttribute> fileAttributes = record.getFileAttributes();
+        for (FileAttribute fileAttribute : fileAttributes) {
+            if ( ! fileAttribute.isEmpty() ) {
+
+                File file = recordFileManager.getRepositoryFile(fileAttribute);
+                if ( file == null || ! file.exists() ) {
+                    LOG.log(Level.WARNING, String.format("Record file not found for record %s (%d) attribute %s (%d)",
+                            StringUtils.join(record.getRootEntityKeyValues(), ','), record.getId(), fileAttribute.getPath(), fileAttribute.getInternalId()));
+                } else {
+                    String entryName = RecordFileBackupTask.calculateRecordFileEntryName(fileAttribute);
+                    writeFile(file, entryName);
+                }
+            }
+        }
+    }
+
+    private void writeFile(File file, String entryName) throws IOException {
+        ZipEntry entry = new ZipEntry(entryName);
+        zipOutputStream.putNextEntry(entry);
+        IOUtils.copy(new FileInputStream(file), zipOutputStream);
+        zipOutputStream.closeEntry();
+        zipOutputStream.flush();
     }
 
     private void exportRecord(CollectRecord record) throws IOException {

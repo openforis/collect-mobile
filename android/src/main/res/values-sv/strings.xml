@@ -68,4 +68,8 @@
 
     <string name="amount_selected">%s valda.</string>
     <string name="delete">Ta bort</string>
+
+    <string name="file_attribute_capture_image">Ta ny bild</string>
+    <string name="file_attribute_select_image">Välj bild</string>
+    <string name="file_attribute_remove_image">Ta bort bild</string>
 </resources>

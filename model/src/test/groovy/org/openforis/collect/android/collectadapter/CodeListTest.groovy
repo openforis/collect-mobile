@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter
 
+import org.openforis.collect.android.NodeEvent
 import org.openforis.collect.android.SurveyListener
 import org.openforis.collect.android.viewmodel.*
 import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
@@ -168,7 +169,7 @@ class CodeListTest extends Specification {
             selectNodeEvents.add(previous: previous, selected: selected)
         }
 
-        void onNodeChanged(UiNode node, Map<UiNode, UiNodeChange> changes) {
+        void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> changes) {
             changeEvents.add(node: node, changes: changes)
         }
     }

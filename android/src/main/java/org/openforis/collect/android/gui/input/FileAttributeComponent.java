@@ -152,6 +152,8 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         try {
             cursor.moveToFirst();
             String imageFilePath = cursor.getString(0);
+            if (imageFilePath == null)
+                return;
             FileUtils.copyFile(new File(imageFilePath), imageFile);
             imageChanged();
         } catch (IOException e) {
@@ -182,7 +184,30 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     private void showImage() {
         ImageView imageView = (ImageView) inputView.findViewById(R.id.file_attribute_image);
         imageView.setVisibility(View.VISIBLE);
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+
+        int targetW = 375;
+        int targetH = 500;
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
+
+
+
+
+//        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
         imageView.setImageBitmap(bitmap);
     }
 }

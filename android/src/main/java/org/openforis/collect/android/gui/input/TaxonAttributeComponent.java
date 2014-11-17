@@ -18,17 +18,17 @@ import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
  * @author Daniel Wiell
  */
 public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute> {
-    private final AutoCompleteTextView autoComplete;
+    private AutoCompleteTextView autoComplete;
     private UiTaxon selectedTaxon;
 
     protected TaxonAttributeComponent(UiTaxonAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
-        autoComplete = createAutoComplete(attribute, context);
+        createAutoComplete(attribute, context);
 
     }
 
-    private AutoCompleteTextView createAutoComplete(UiTaxonAttribute attribute, FragmentActivity context) {
-        final AutoCompleteTextView autoComplete = new AutoCompleteTextView(context);
+    private void createAutoComplete(UiTaxonAttribute attribute, FragmentActivity context) {
+        autoComplete = new AutoCompleteTextView(context);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         if (attribute.getTaxon() != null) {
@@ -58,7 +58,6 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
             }
         });
         autoComplete.setAdapter(new UiTaxonAdapter(context, attribute, ServiceLocator.taxonService()));
-        return autoComplete;
     }
 
     protected TextView errorMessageContainerView() {

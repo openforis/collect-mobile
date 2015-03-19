@@ -4,12 +4,17 @@ import groovy.sql.Sql
 import liquibase.database.AbstractJdbcDatabase
 import liquibase.database.core.H2Database
 import liquibase.database.core.PostgresDatabase
+import org.h2.jdbc.JdbcConnection
+import org.h2.jdbc.JdbcDatabaseMetaData
 import org.h2.jdbcx.JdbcDataSource
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater
 import org.openforis.collect.android.util.persistence.ConnectionCallback
 import org.openforis.collect.android.util.persistence.Database
 
 import javax.sql.DataSource
+import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.SQLException
 
 /**
  * @author Daniel Wiell

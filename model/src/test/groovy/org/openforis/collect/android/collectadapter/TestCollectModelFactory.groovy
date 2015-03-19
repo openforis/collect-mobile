@@ -9,13 +9,13 @@ import org.openforis.collect.io.exception.CodeListImportException
 import org.openforis.collect.manager.CodeListManager
 import org.openforis.collect.manager.RecordManager
 import org.openforis.collect.manager.SurveyManager
-import org.openforis.collect.model.CollectSurvey
-import org.openforis.collect.model.CollectSurveyContext
+import org.openforis.collect.model.*
 import org.openforis.collect.model.validation.CollectValidator
 import org.openforis.collect.persistence.CodeListItemDao
+import org.openforis.collect.persistence.RecordDao
+import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder
 import org.openforis.idm.metamodel.CodeList
 import org.openforis.idm.metamodel.CodeListItem
-import org.openforis.idm.metamodel.validation.Validator
 import org.openforis.idm.model.expression.ExpressionFactory
 
 /**
@@ -51,17 +51,21 @@ class TestCollectModelFactory {
         return surveyManager(new CodeListManagerStub())
     }
 
-    public static SurveyManager surveyManager(CodeListManager codeListManager, Validator validator = new Validator()) {
+    public static SurveyManager surveyManager(CodeListManager codeListManager, CollectValidator validator = new CollectValidator()) {
+        if (validator.recordManager == null) {
+            validator.recordManager = recordManager
+            validator.recordManager.recordDao = new RecordDaoStub()
+        }
         def manager = new SurveyManager()
         manager.surveyDao = new SurveyDaoStub()
         CollectSurveyContext context = new CollectSurveyContext(new ExpressionFactory(), validator);
-        manager.surveyDao.surveyContext = context;
         manager.collectSurveyContext = context;
+        manager.surveyDao.surveySerializer = new CollectSurveyIdmlBinder(context)
         manager.codeListManager = codeListManager
         return manager
     }
 
-    public static Validator collectValidator(CodeListManager codeListManager, RecordManager recordManager) {
+    public static CollectValidator collectValidator(CodeListManager codeListManager, RecordManager recordManager) {
         new CollectValidator(codeListManager: codeListManager, recordManager: recordManager)
     }
 
@@ -70,6 +74,12 @@ class TestCollectModelFactory {
 
         public <T extends CodeListItem> List<T> loadRootItems(CodeList list) {
             return Collections.emptyList();
+        }
+    }
+
+    private static class RecordDaoStub extends RecordDao {
+        public List<CollectRecord> loadSummaries(RecordFilter filter, List<RecordSummarySortField> sortFields) {
+            return Collections.emptyList()
         }
     }
 }

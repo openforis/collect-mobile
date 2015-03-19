@@ -63,6 +63,7 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
     public static Attribute toAttribute(UiAttribute uiAttribute, NodeDefinition definition) {
         Attribute attribute = getConverter(definition).attribute(uiAttribute, definition);
         attribute.setId(uiAttribute.getId());
+        attribute.updateSummaryInfo();
         return attribute;
     }
 

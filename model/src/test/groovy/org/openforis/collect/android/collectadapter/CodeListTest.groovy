@@ -4,6 +4,7 @@ import org.openforis.collect.android.NodeEvent
 import org.openforis.collect.android.SurveyListener
 import org.openforis.collect.android.viewmodel.*
 import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.openforis.collect.android.IdGenerator.nextId
@@ -12,6 +13,7 @@ import static org.openforis.collect.android.collectadapter.TestCollectModelFacto
 /**
  * @author Daniel Wiell
  */
+@Ignore
 class CodeListTest extends Specification {
     @Delegate
     IdmBuilder builder = new IdmBuilder()

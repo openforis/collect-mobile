@@ -115,7 +115,7 @@ public class Definitions {
     }
 
     private boolean isRequired(NodeDefinition nodeDefinition) {
-        return nodeDefinition.getMinCount() != null && nodeDefinition.getMinCount() > 0;
+        return nodeDefinition.isAlwaysRequired(); // TODO: What about min count?
     }
 
     private Definition createCollectionDefinition(NodeDefinition nodeDefinition, Definition childDefinition) {

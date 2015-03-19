@@ -12,10 +12,12 @@ import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.SurveySummary;
 import org.openforis.collect.model.User;
+import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseLookupProvider;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyImportException;
 import org.openforis.collect.persistence.SurveyWorkDao;
+import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.idm.metamodel.ExternalCodeListProvider;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
@@ -35,19 +37,18 @@ import java.util.concurrent.Callable;
 public class MeteredSurveyManager extends SurveyManager {
     private final SurveyManager delegate;
 
-    public MeteredSurveyManager(CodeListManager codeListManager, Validator validator, ExternalCodeListProvider externalCodeListProvider, Database database) {
+    public MeteredSurveyManager(CodeListManager codeListManager, CollectValidator validator, ExternalCodeListProvider externalCodeListProvider, Database database) {
         delegate = new SurveyManager();
         ExpressionFactory expressionFactory = new ExpressionFactory();
         expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));
         CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
         collectSurveyContext.setExternalCodeListProvider(externalCodeListProvider);
         SurveyDao surveyDao = new SurveyDao();
-        surveyDao.setSurveyContext(collectSurveyContext);
+        surveyDao.setSurveySerializer(new CollectSurveyIdmlBinder(collectSurveyContext));
         surveyDao.setDataSource(database.dataSource());
         delegate.setSurveyDao(surveyDao);
         delegate.setCodeListManager(codeListManager);
         delegate.setCollectSurveyContext(collectSurveyContext);
-        surveyDao.setSurveyContext(collectSurveyContext);
         delegate.setSurveyDao(surveyDao);
     }
 

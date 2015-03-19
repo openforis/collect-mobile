@@ -3,7 +3,7 @@ buildscript {
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.0'
+        classpath 'com.android.tools.build:gradle:1.1.1'
     }
 }
 
@@ -26,7 +26,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
 
     compile(project(":model")) {
-        exclude group: 'org.jooq'
+//        exclude group: 'org.jooq'
         exclude group: 'org.springframework'
         exclude group: 'commons-collections'
         exclude group: 'commons-beanutils'
@@ -46,7 +46,7 @@ dependencies {
         exclude group: 'org.apache.tomcat'
     }
     compile 'org.openforis.android:android-spring:1.0-Alpha2'
-    compile 'org.openforis.android:android-jooq:1.0-Alpha2'
+//    compile 'org.openforis.android:android-jooq:1.0-Alpha2'
     compile 'org.sqldroid:sqldroid:1.0.0.RC10.1'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
@@ -102,7 +102,8 @@ android {
         signingConfigs {
             release {
                 def defaultStorePath = System.properties['user.home'] + File.separator + '.android-release-key.keystore'
-                def storePath = System.console().readLine("\n-----------------\n\$ Enter keystore path [$defaultStorePath]: ")
+                def storePath = System.console().readLine("\n-----------------\n\$ Enter keystore path " +
+                        "[$defaultStorePath]: ")
                 if (!storePath)
                     storePath = defaultStorePath
                 storeFile file(storePath)
@@ -119,18 +120,22 @@ android {
 
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             if (isRelease) {
                 signingConfig signingConfigs.release
                 applicationVariants.all { variant ->
-                    def file = variant.outputFile
-                    variant.outputFile = new File(file.parent, 'Collect.apk')
+                    variant.outputs.each { output ->
+                        def outputFile = output.outputFile
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            output.outputFile = new File(outputFile.parent, 'Collect.apk')
+                        }
+                    }
                 }
             }
         }
         debug {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }

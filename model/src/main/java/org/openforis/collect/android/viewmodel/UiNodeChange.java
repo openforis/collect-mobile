@@ -13,6 +13,12 @@ public class UiNodeChange {
     public boolean relevanceChange;
     public Set<UiValidationError> validationErrors = new HashSet<UiValidationError>();
 
+    public static UiNodeChange statusChanged() {
+        UiNodeChange change = new UiNodeChange();
+        change.statusChange = true;
+        return change;
+    }
+
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("statusChange", statusChange)

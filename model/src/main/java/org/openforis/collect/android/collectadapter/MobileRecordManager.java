@@ -27,7 +27,7 @@ public class MobileRecordManager extends RecordManager {
     }
 
     public boolean isUnique(CollectRecord record) {
-        record.updateRootEntityKeyValues();
+        record.updateSummaryFields();
         List<String> keyValues = record.getRootEntityKeyValues();
         List<NodeDto> keys = new ArrayList<NodeDto>();
         EntityDefinition rootDefinition = record.getRootEntity().getDefinition();

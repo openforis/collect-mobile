@@ -9,12 +9,10 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static org.openforis.collect.android.NodeEvent.*;
+import static org.openforis.collect.android.NodeEvent.DELETED;
+import static org.openforis.collect.android.NodeEvent.UPDATED;
 
 /**
  * @author Daniel Wiell
@@ -103,10 +101,27 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public UiCodeAttribute addCodeAttribute(UiCode code, String qualifier) {  // TODO: Ugly. Do in transaction, redundant updating...
+        // Remove validation errors from the unspecified attribute
+
         UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
         attribute.setCode(code);
         attribute.setQualifier(qualifier);
-        updateAttribute(attribute);
+
+        UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
+        Map<UiNode, UiNodeChange> resetErrorChanges = new HashMap<UiNode, UiNodeChange>();
+        for (UiNode sibling : attributeCollection.getChildren())
+            if (attribute != sibling
+                    && ((UiCodeAttribute) sibling).getCode() == null
+                    && sibling.getStatus() != UiNode.Status.OK) {
+                sibling.setValidationErrors(Collections.<UiValidationError>emptySet());
+                sibling.setStatus(UiNode.Status.OK);
+                resetErrorChanges.put(sibling, UiNodeChange.statusChanged());
+            }
+
+        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attribute);
+        nodeChanges.putAll(resetErrorChanges);
+        viewModelManager.updateAttribute(attribute, nodeChanges);
+        handleNodeChanges(UPDATED, attribute, nodeChanges);
         return attribute;
     }
 

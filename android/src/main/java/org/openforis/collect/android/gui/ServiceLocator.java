@@ -21,6 +21,7 @@ import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
@@ -153,7 +154,6 @@ public class ServiceLocator {
 
         CollectValidator validator = new CollectValidator();
         validator.setCodeListManager(codeListManager);
-        SurveyManager surveyManager = new SurveyManager();
         ExpressionFactory expressionFactory = new ExpressionFactory();
         expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(modelDatabase));
         CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
@@ -162,12 +162,15 @@ public class ServiceLocator {
         codeListService.setCodeListManager(codeListManager);
         collectSurveyContext.setCodeListService(codeListService);
         SurveyDao surveyDao = new SurveyDao();
-        surveyDao.setSurveyContext(collectSurveyContext);
+        final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
+        surveyDao.setSurveySerializer(surveySerializer);
         surveyDao.setDataSource(modelDatabase.dataSource());
+
+        SurveyManager surveyManager = new SurveyManager();
+        surveyManager.setSurveySerializer(surveySerializer);
         surveyManager.setSurveyDao(surveyDao);
         surveyManager.setCodeListManager(codeListManager);
         surveyManager.setCollectSurveyContext(collectSurveyContext);
-        surveyDao.setSurveyContext(collectSurveyContext);
         surveyManager.setSurveyDao(surveyDao);
 
 

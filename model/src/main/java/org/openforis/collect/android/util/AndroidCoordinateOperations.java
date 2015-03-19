@@ -62,4 +62,6 @@ public class AndroidCoordinateOperations implements CoordinateOperations {
     public boolean validate(Coordinate coordinate) {
         return true; // TODO: Implement validation
     }
+
+    public void validateWKT(String wkt) throws Exception { }
 }

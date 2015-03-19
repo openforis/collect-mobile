@@ -60,6 +60,7 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
         CodeAttribute a = new CodeAttribute((CodeAttributeDefinition) definition);
         if (!uiAttribute.isCalculated())
             a.setValue((Code) value(uiAttribute));
+
         return a;
     }
 }

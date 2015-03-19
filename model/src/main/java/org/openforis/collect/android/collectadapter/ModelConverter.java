@@ -4,6 +4,7 @@ import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
+import org.openforis.collect.model.RecordUpdater;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.ModelVersion;
@@ -52,10 +53,12 @@ class ModelConverter {
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {
         CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey));
+        collectRecord.setStep(CollectRecord.Step.CLEANSING);
         collectRecord.setId(uiRecord.getId());
         Entity rootEntity = collectRecord.createRootEntity(uiRecord.getName());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);
+        new RecordUpdater().initializeRecord(collectRecord);
         return collectRecord;
     }
 
@@ -65,8 +68,6 @@ class ModelConverter {
     }
 
     private void addChildNodes(Entity entity, UiInternalNode uiInternalNode, CollectRecord collectRecord) {
-        entity.setRelevant(uiInternalNode.getName(), uiInternalNode.isRelevant());
-
         for (UiNode childUiNode : uiInternalNode.getChildren()) {
             if (childUiNode instanceof UiEntity)
                 addToEntity(entity, toEntity((UiEntity) childUiNode, collectRecord), childUiNode);
@@ -74,7 +75,6 @@ class ModelConverter {
                 addToEntity(entity, toAttribute((UiAttribute) childUiNode), childUiNode);
             else if (childUiNode instanceof UiInternalNode)
                 addChildNodes(entity, (UiInternalNode) childUiNode, collectRecord);
-
         }
     }
 

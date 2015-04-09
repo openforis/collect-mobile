@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 import org.openforis.collect.R;
+import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.gui.util.WorkingDir;
 
 import static org.openforis.collect.android.gui.util.WorkingDir.PREFERENCE_KEY;
@@ -20,7 +22,7 @@ import static org.openforis.collect.android.gui.util.WorkingDir.PREFERENCE_KEY;
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
-    private static final String CREW_ID = "crewId";
+    public static final String CREW_ID = "crewId";
     private DirectoryChooserFragment directoryChooserDialog;
     private SettingsFragment settingsFragment;
 
@@ -35,6 +37,11 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, settingsFragment)
                 .commit();
+    }
+
+    public static void init(Context context) {
+        String crew = PreferenceManager.getDefaultSharedPreferences(context).getString(CREW_ID, "");
+        Settings.setCrew(crew);
     }
 
     public void onSelectDirectory(@NonNull String workingDir) {
@@ -79,7 +86,9 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             crewIdPreference.setSummary(preferences.getString(CREW_ID, ""));
             crewIdPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    crewIdPreference.setSummary(newValue.toString());
+                    String crew = newValue.toString();
+                    crewIdPreference.setSummary(crew);
+                    Settings.setCrew(crew);
                     return true;
                 }
             });

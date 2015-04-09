@@ -45,6 +45,7 @@ public class ServiceLocator {
 
     public static boolean init(Context applicationContext) {
         if (surveyService == null) {
+            SettingsActivity.init(applicationContext);
             workingDir = initWorkingDir(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
@@ -132,17 +133,13 @@ public class ServiceLocator {
         return taxonService;
     }
 
-    public static CollectModelBackedSurveyService createSurveyService(CollectModelManager collectModelManager, Database database) {
+    private static CollectModelBackedSurveyService createSurveyService(CollectModelManager collectModelManager, Database database) {
         return new CollectModelBackedSurveyService(
                 new ViewModelManager(
                         new DatabaseViewModelRepository(collectModelManager, new DataSourceNodeRepository(database))
                 ),
-                collectModelManager, exportFile()
+                collectModelManager, workingDir
         );
-    }
-
-    private static File exportFile() {
-        return new File(workingDir, "survey_export.zip");
     }
 
     private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {
@@ -182,8 +179,7 @@ public class ServiceLocator {
         validator.setRecordManager(recordManager);
 
 
-
-        RecordFileManager recordFileManager= new RecordFileManager() {{
+        RecordFileManager recordFileManager = new RecordFileManager() {{
             storageDirectory = new File(workingDir.getAbsolutePath(), "collect_upload");
         }};
         recordFileManager.setDefaultRootStoragePath(workingDir.getAbsolutePath());
@@ -203,5 +199,4 @@ public class ServiceLocator {
     private static TaxonService createTaxonService(Database modelDatabase) {
         return new TaxonRepository(modelDatabase);
     }
-
 }

@@ -1,9 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.openforis.collect.android.*;
 import org.openforis.collect.android.CodeListService;
-import org.openforis.collect.android.DefinitionProvider;
-import org.openforis.collect.android.IdGenerator;
-import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.persistence.Database;
@@ -286,7 +284,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
                 exportListener.beforeRecordExport(recordId);
                 return getCollectRecordForExporting(recordId);
             }
-        }, recordFileManager, recordManager).export(exportFile);
+        }, recordFileManager).export(exportFile);
     }
 
     private CollectRecord getCollectRecordForExporting(int recordId) {

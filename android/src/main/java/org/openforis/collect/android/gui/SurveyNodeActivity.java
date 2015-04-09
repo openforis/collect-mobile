@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -28,6 +29,7 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.WorkingDir;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,6 +57,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             if (ServiceLocator.init(this)) {
                 ThemeInitializer.init(this);
                 super.onCreate(savedState);
+
                 surveyService = ServiceLocator.surveyService();
                 support = createLayoutSupport();
                 selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
@@ -153,7 +156,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     public void export(MenuItem item) {
         try {
-            surveyService.exportSurvey();
+            File exportedFile = surveyService.exportSurvey();
+            makeFileDiscoverable(exportedFile);
             String message = getResources().getString(R.string.toast_exported_survey, WorkingDir.root(this));
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
@@ -161,6 +165,11 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             Log.e("export", message, e);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void makeFileDiscoverable(File exportedFile) {
+        // Workaround for https://code.google.com/p/android/issues/detail?id=38282
+        MediaScannerConnection.scanFile(this, new String[]{exportedFile.getAbsolutePath()}, null, null);
     }
 
     public void navigateTo(int nodeId) {

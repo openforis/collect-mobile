@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.NodeEvent;
+import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
@@ -20,14 +21,14 @@ import static org.openforis.collect.android.NodeEvent.UPDATED;
 public class CollectModelBackedSurveyService implements SurveyService {
     private final ViewModelManager viewModelManager;
     private final CollectModelManager collectModelManager;
-    private final File exportFile;
+    private final File workingDir;
 
     private SurveyListener listener;
 
-    public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager, File exportFile) {
+    public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager, File workingDir) {
         this.viewModelManager = viewModelManager;
         this.collectModelManager = collectModelManager;
-        this.exportFile = exportFile;
+        this.workingDir = workingDir;
     }
 
     public UiSurvey importSurvey(InputStream inputStream) {
@@ -200,10 +201,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
     }
 
-    public void exportSurvey() throws IOException {
+    public File exportSurvey() throws IOException {
         Integer selectedRecordId = viewModelManager.getSelectedRecordId();
 
-        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportFile, new CollectModelManager.ExportListener() {
+        File exportedFile = exportFile();
+        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, new CollectModelManager.ExportListener() {
             public void beforeRecordExport(int recordId) {
                 selectRecord(recordId);
             }
@@ -211,6 +213,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
         if (selectedRecordId != null)
             selectRecord(selectedRecordId);
+
+        return exportedFile;
+    }
+
+    private File exportFile() {
+        String fileName = viewModelManager.getSelectedSurvey().getName();
+        String username = Settings.user().getName();
+        if (!username.isEmpty())
+            fileName += "_" + username;
+        fileName += ".collect-data";
+        return new File(workingDir, fileName);
     }
 
     public void setListener(SurveyListener listener) {

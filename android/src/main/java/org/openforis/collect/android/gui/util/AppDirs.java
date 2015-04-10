@@ -8,18 +8,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import org.openforis.collect.android.gui.WorkingDirNotWritable;
-import org.openforis.collect.model.CollectSurvey;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class AppDirs {
     public static final String PREFERENCE_KEY = "workingDir";
     private static final String ENV_SECONDARY_STORAGE = "SECONDARY_STORAGE";
-
-    public static void currentSurvey(CollectSurvey survey) {
-        System.out.println(survey);
-    }
 
     public static File root(Context context) throws WorkingDirNotWritable {
         File workingDir = readFromPreference(context);
@@ -45,7 +43,7 @@ public class AppDirs {
         if (workingDir == null)
             workingDir = sdCardDirFromEnv();
         if (workingDir == null)
-            workingDir =  context.getExternalFilesDir(null);
+            workingDir = context.getExternalFilesDir(null);
         updatePreference(workingDir, context);
         makeDiscoverable(context, workingDir);
         return workingDir;

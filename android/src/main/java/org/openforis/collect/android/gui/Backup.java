@@ -2,8 +2,10 @@ package org.openforis.collect.android.gui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,7 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.util.WorkingDir;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 
 import java.io.File;
@@ -48,7 +50,7 @@ public class Backup {
     }
 
     private void backupToTemp() throws IOException {
-        File databases = WorkingDir.databases(activity);
+        File databases = AppDirs.databases(activity);
         File tempDir = tempDir(activity);
         if (tempDir.exists())
             FileUtils.deleteDirectory(tempDir);
@@ -56,7 +58,7 @@ public class Backup {
     }
 
     private static File tempDir(FragmentActivity activity) {
-        File databases = WorkingDir.databases(activity);
+        File databases = AppDirs.databases(activity);
         return new File(activity.getExternalCacheDir(), databases.getName());
     }
 
@@ -65,8 +67,14 @@ public class Backup {
         if (targetDir.exists()) {
             File timestampedDatabases = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
             FileUtils.moveDirectory(targetDir, timestampedDatabases);
+            makeDiscoverable(activity, timestampedDatabases);
         }
         FileUtils.moveDirectory(tempDir, targetDir);
+        makeDiscoverable(activity, targetDir);
+    }
+
+    private static void makeDiscoverable(Context context, File targetDir) {
+        MediaScannerConnection.scanFile(context, new String[]{targetDir.getAbsolutePath()}, null, null);
     }
 
     public static class BackupDialogFragment extends DialogFragment {
@@ -89,9 +97,9 @@ public class Backup {
                     button.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             try {
-                                backupFromTempToTargetDir(getActivity(), WorkingDir.databases(getActivity()));
+                                backupFromTempToTargetDir(getActivity(), AppDirs.databases(getActivity()));
                                 alertDialog.dismiss();
-                                String message = getResources().getString(R.string.toast_backed_up_survey, WorkingDir.root(getActivity()));
+                                String message = getResources().getString(R.string.toast_backed_up_survey, AppDirs.root(getActivity()));
                                 Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
                             } catch (Exception ignore) {
 

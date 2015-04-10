@@ -13,9 +13,11 @@ import android.support.annotation.NonNull;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
-import org.openforis.collect.android.gui.util.WorkingDir;
+import org.openforis.collect.android.gui.util.AppDirs;
 
-import static org.openforis.collect.android.gui.util.WorkingDir.PREFERENCE_KEY;
+import java.io.File;
+
+import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
 /**
  * @author Daniel Wiell
@@ -29,7 +31,8 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
-        directoryChooserDialog = DirectoryChooserFragment.newInstance(WorkingDir.WORKING_DIR_NAME, WorkingDir.root(this).getAbsolutePath());
+        File workingDir = AppDirs.root(this);
+        directoryChooserDialog = DirectoryChooserFragment.newInstance(workingDir.getName(), workingDir.getParent());
 
 
         // Display the fragment as the main content.
@@ -71,7 +74,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
 
         private void setupStorageLocationPreference() {
             Preference workingDirPreference = findPreference(PREFERENCE_KEY);
-            workingDirPreference.setSummary(WorkingDir.root(getActivity()).getAbsolutePath());
+            workingDirPreference.setSummary(AppDirs.root(getActivity()).getAbsolutePath());
             workingDirPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     ((SettingsActivity) getActivity()).directoryChooserDialog.show(getFragmentManager(), null);

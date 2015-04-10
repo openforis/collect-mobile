@@ -5,7 +5,7 @@ import liquibase.database.core.AndroidSQLiteDatabase;
 import liquibase.exception.DatabaseException;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
-import org.openforis.collect.android.gui.util.WorkingDir;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.commons.versioning.Version;
 
@@ -31,7 +31,7 @@ public class ModelDatabaseMigrator {
     public void migrateIfNeeded() {
         Version currentVersion = Collect.getVersion();
         Properties collectVersion = new Properties();
-        File workingDir = WorkingDir.root(context);
+        File workingDir = AppDirs.root(context); // TODO: Use the survey dir instead
         File collectVersionFile = new File(workingDir, "collect-version.properties");
         try {
             if (collectVersionFile.exists()) {

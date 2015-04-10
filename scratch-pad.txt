@@ -1,20 +1,9 @@
-Files doesn't show up when USB connected
-    https://code.google.com/p/android/issues/detail?id=38282
-    http://stackoverflow.com/questions/13737261/nexus-4-not-showing-files-via-mtp/20413888#20413888
-    public void makeFileDiscoverable(File file, Context context){
-        MediaScannerConnection.scanFile(context, new String[]{file.getPath()}, null, null);
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.fromFile(file)));
-    }
-
-
-    context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
-
-
-    MediaScannerConnection.scanFile(context, new String[] { YOUR_FILE.getAbsolutePath() }, null, null);
+SD cards not writable in KitKat
+    http://www.androidcentral.com/kitkat-sdcard-changes
+    <SDCard_path>/Android/data/org.openforis.collect
 
 Images with hi-res cameras doesn't show
-https://code.facebook.com/posts/366199913563917/introducing-fresco-a-new-image-library-for-android/
+    https://code.facebook.com/posts/366199913563917/introducing-fresco-a-new-image-library-for-android/
 
 ---------------------------------------
 

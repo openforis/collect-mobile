@@ -5,7 +5,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
-import org.openforis.collect.android.gui.util.WorkingDir;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
 import org.openforis.collect.android.util.persistence.Database;
@@ -46,7 +46,7 @@ public class ServiceLocator {
     public static boolean init(Context applicationContext) {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
-            workingDir = initWorkingDir(applicationContext);
+            workingDir = AppDirs.root(applicationContext);
             if (!isSurveyImported(applicationContext))
                 return false;
             modelDatabase = createModelDatabase(applicationContext);
@@ -67,15 +67,9 @@ public class ServiceLocator {
         nodeDatabase.close();
     }
 
-    private static File initWorkingDir(Context applicationContext) {
-        File dir = WorkingDir.root(applicationContext);
-        if ((!dir.exists() && !dir.mkdirs()) || !dir.canWrite())
-            throw new WorkingDirNotWritable();
-        return dir;
-    }
 
     private static File databasePath(String databaseName, Context context) {
-        return new File(WorkingDir.databases(context), databaseName);
+        return new File(AppDirs.databases(context), databaseName);
     }
 
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {

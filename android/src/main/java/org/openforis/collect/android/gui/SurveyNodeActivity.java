@@ -26,7 +26,7 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
-import org.openforis.collect.android.gui.util.WorkingDir;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
@@ -158,7 +158,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         try {
             File exportedFile = surveyService.exportSurvey();
             makeFileDiscoverable(exportedFile);
-            String message = getResources().getString(R.string.toast_exported_survey, WorkingDir.root(this));
+            String message = getResources().getString(R.string.toast_exported_survey, exportedFile.getAbsolutePath());
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             String message = getResources().getString(R.string.toast_exported_survey_failed);
@@ -273,7 +273,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private void surveyImportRequested() {
-        if (WorkingDir.databases(this).exists()) {
+        if (AppDirs.databases(this).exists()) {
             DialogFragment dialogFragment = new ImportOverwriteDataConfirmation();
             dialogFragment.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
         } else {

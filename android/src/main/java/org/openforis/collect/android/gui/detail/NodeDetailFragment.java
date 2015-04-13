@@ -18,6 +18,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -95,6 +96,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.node_detail_fragment_actions, menu);
+        SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
+        if (activity.isTwoPane())
+            menu.removeItem(R.id.action_attribute_list);
     }
 
     public void onPrepareOptionsMenu(Menu menu) {

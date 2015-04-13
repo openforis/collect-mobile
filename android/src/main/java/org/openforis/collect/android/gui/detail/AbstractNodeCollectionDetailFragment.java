@@ -57,6 +57,10 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.entity_collection_details_fragment_actions, menu);
+        SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
+        if (activity.isTwoPane())
+            menu.removeItem(R.id.action_attribute_list);
+
     }
 
     protected abstract UiInternalNode addNode();

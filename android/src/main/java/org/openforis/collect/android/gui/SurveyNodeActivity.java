@@ -46,6 +46,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private UiNode selectedNode;
     private FileAttributeComponent imageListener;
 
+    private boolean twoPane;
+
     public void onCreate(Bundle savedState) {
         try {
             if (ServiceLocator.init(this)) {
@@ -73,6 +75,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.node_activity_actions, menu);
         return true;
+    }
+
+    public boolean isTwoPane() {
+        return twoPane;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -211,7 +217,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private LayoutDependentSupport createLayoutSupport() {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return dpWidth < 600 ? new SinglePaneSurveySupport() : new TwoPaneSurveySupport();
+        this.twoPane = dpWidth >= 600;
+        return twoPane ? new TwoPaneSurveySupport() : new SinglePaneSurveySupport();
     }
 
     private ViewPager nodePager() {

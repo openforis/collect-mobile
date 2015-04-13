@@ -6,7 +6,6 @@
             android:icon="?attr/viewAsListIcon"
             android:title="@string/action_node_list"
             app:showAsAction="never"/>
-
     <item
             android:id="@+id/action_next_attribute"
             android:icon="?attr/nextIcon"

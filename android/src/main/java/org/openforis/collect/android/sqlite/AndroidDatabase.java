@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.util.persistence.PersistenceException;
@@ -37,6 +38,7 @@ public class AndroidDatabase implements Database {
         listenToPrepareEjectionBroadcasts(context);
         listenToStorageEjectionBroadcasts(context);
         setupDatabase(databasePath);
+        AndroidFiles.makeDiscoverable(databasePath, context);
     }
 
     public void close() {

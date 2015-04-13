@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.Collect;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.util.Unzipper;
@@ -50,6 +51,7 @@ public class SurveyImporter {
             FileUtils.deleteDirectory(tempDir);
             migrateIfNeeded(version, targetSurveyDatabase);
             selectSurvey(surveyName, applicationContext);
+            AndroidFiles.makeDiscoverable(targetSurveyDatabase, applicationContext);
             return true;
         } catch (IOException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);

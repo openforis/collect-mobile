@@ -1,11 +1,11 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import android.media.MediaScannerConnection;
 import liquibase.database.core.AndroidSQLiteDatabase;
 import liquibase.exception.DatabaseException;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.commons.versioning.Version;
@@ -56,15 +56,10 @@ public class ModelDatabaseMigrator {
             collectVersion.setProperty("major", String.valueOf(currentVersion.getMajor()));
             collectVersion.setProperty("minor", String.valueOf(currentVersion.getMinor()));
             collectVersion.store(new FileOutputStream(collectVersionFile), "");
-            makeDiscoverable(context, collectVersionFile);
+            AndroidFiles.makeDiscoverable(collectVersionFile, context);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Failed to store collect-version.properties file", e);
         }
-    }
-
-
-    private static void makeDiscoverable(Context context, File file) {
-        MediaScannerConnection.scanFile(context, new String[]{file.getAbsolutePath()}, null, null);
     }
 
     public void migrate() {

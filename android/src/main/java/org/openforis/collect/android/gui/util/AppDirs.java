@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -27,7 +26,7 @@ public class AppDirs {
         if (!workingDir.exists()) {
             if (!workingDir.mkdirs())
                 throw new WorkingDirNotWritable();
-            makeDiscoverable(context, workingDir);
+            AndroidFiles.makeDiscoverable(workingDir, context);
         } else if (!workingDir.canWrite()) {
             throw new WorkingDirNotWritable();
         }
@@ -49,12 +48,8 @@ public class AppDirs {
         if (workingDir == null)
             workingDir = context.getExternalFilesDir(null);
         updatePreference(workingDir, context);
-        makeDiscoverable(context, workingDir);
+        AndroidFiles.makeDiscoverable(workingDir, context);
         return workingDir;
-    }
-
-    private static void makeDiscoverable(Context context, File workingDir) {
-        MediaScannerConnection.scanFile(context, new String[]{workingDir.getAbsolutePath()}, null, null);
     }
 
     private static void updatePreference(File workingDir, Context context) {

@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -22,6 +21,7 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
@@ -150,7 +150,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void export(MenuItem item) {
         try {
             File exportedFile = surveyService.exportSurvey();
-            makeFileDiscoverable(exportedFile);
+            AndroidFiles.makeDiscoverable(exportedFile, this);
             String message = getResources().getString(R.string.toast_exported_survey, exportedFile.getAbsolutePath());
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
@@ -158,11 +158,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             Log.e("export", message, e);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void makeFileDiscoverable(File exportedFile) {
-        // Workaround for https://code.google.com/p/android/issues/detail?id=38282
-        MediaScannerConnection.scanFile(this, new String[]{exportedFile.getAbsolutePath()}, null, null);
     }
 
     public void navigateTo(int nodeId) {

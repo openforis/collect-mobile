@@ -55,7 +55,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         Preference workingDirPreference = settingsFragment.findPreference(PREFERENCE_KEY);
         workingDirPreference.setSummary(workingDir);
         directoryChooserDialog.dismiss();
-        ServiceLocator.reset();
+        ServiceLocator.reset(this);
         SurveyNodeActivity.restartActivity(this);
         this.finish();
     }

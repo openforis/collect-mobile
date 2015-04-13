@@ -50,7 +50,7 @@ public class Backup {
     }
 
     private void backupToTemp() throws IOException {
-        File databases = AppDirs.databases(activity);
+        File databases = AppDirs.surveysRootDir(activity);
         File tempDir = tempDir(activity);
         if (tempDir.exists())
             FileUtils.deleteDirectory(tempDir);
@@ -58,7 +58,7 @@ public class Backup {
     }
 
     private static File tempDir(FragmentActivity activity) {
-        File databases = AppDirs.databases(activity);
+        File databases = AppDirs.surveysRootDir(activity);
         return new File(activity.getExternalCacheDir(), databases.getName());
     }
 
@@ -97,7 +97,7 @@ public class Backup {
                     button.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             try {
-                                backupFromTempToTargetDir(getActivity(), AppDirs.databases(getActivity()));
+                                backupFromTempToTargetDir(getActivity(), AppDirs.surveysRootDir(getActivity()));
                                 alertDialog.dismiss();
                                 String message = getResources().getString(R.string.toast_backed_up_survey, AppDirs.root(getActivity()));
                                 Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();

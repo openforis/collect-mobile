@@ -34,8 +34,12 @@ public class AppDirs {
         return workingDir;
     }
 
-    public static File databases(Context context) throws WorkingDirNotWritable {
-        return new File(root(context), "databases");
+    public static File surveyDatabasesDir(String surveyName, Context context) throws WorkingDirNotWritable {
+        return new File(surveysRootDir(context), surveyName);
+    }
+
+    public static File surveysRootDir(Context context) throws WorkingDirNotWritable {
+        return new File(root(context), "surveys");
     }
 
     private static File defaultWorkingDir(Context context) {

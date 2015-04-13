@@ -20,8 +20,8 @@ public class EntityListAdapter extends NodeListAdapter {
     public static final int MAX_ATTRIBUTE_VALUE_LENGTH = 20;
     private final NodeDeleter nodeDeleter;
 
-    private Set<UiNode> nodesToEdit = new HashSet<UiNode>();
-    private Set<CheckBox> checked = new HashSet<CheckBox>();
+    private final Set<UiNode> nodesToEdit = new HashSet<UiNode>();
+    private final Set<CheckBox> checked = new HashSet<CheckBox>();
     private ActionMode actionMode;
 
     public EntityListAdapter(SurveyNodeActivity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {

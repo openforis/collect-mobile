@@ -1,3 +1,8 @@
+Translate
+    survey_list
+    action_survey_list
+    settings
+
 SD cards not writable in KitKat
     http://www.androidcentral.com/kitkat-sdcard-changes
     <SDCard_path>/Android/data/org.openforis.collect

@@ -11,6 +11,11 @@
             app:showAsAction="never"
             android:onClick="surveyImportRequested"/>
     <item
+            android:id="@+id/action_survey_list"
+            android:title="@string/action_survey_list"
+            app:showAsAction="never"
+            android:onClick="navigateToSurveyList"/>
+    <item
             android:id="@+id/action_export"
             android:title="@string/action_export"
             app:showAsAction="never"

@@ -25,8 +25,8 @@ public class NodeListAdapter extends BaseAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
     protected final Activity activity;
     private final UiInternalNode parentNode;
+    private final Attrs attrs;
     private List<UiNode> nodes;
-    private Attrs attrs;
 
 
     public NodeListAdapter(Activity activity, UiInternalNode parentNode) {
@@ -86,7 +86,6 @@ public class NodeListAdapter extends BaseAdapter {
         return LAYOUT_RESOURCE_ID;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setBackground(View row) {
         row.setBackgroundResource(attrs.resourceId(android.R.attr.activatedBackgroundIndicator));
     }

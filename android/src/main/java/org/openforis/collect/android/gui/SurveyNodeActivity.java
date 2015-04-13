@@ -273,13 +273,15 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private void surveyImportRequested() {
-        if (AppDirs.databases(this).exists()) {
-            DialogFragment dialogFragment = new ImportOverwriteDataConfirmation();
-            dialogFragment.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
-        } else {
-            showImportDialog();
-        }
+//        String surveyName = SurveyImporter.selectedSurvey(this);
 
+        // TODO: Need to compare with other survey name
+//        if (AppDirs.surveyDatabasesDir(surveyName, this).exists()) {
+//            DialogFragment dialogFragment = new ImportOverwriteDataConfirmation();
+//            dialogFragment.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
+//        } else {
+            showImportDialog();
+//        }
     }
 
     protected void showImportDialog() {
@@ -355,6 +357,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         Intent intent = new Intent(context, SurveyNodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
+    }
+
+    public void navigateToSurveyList(MenuItem item) {
+        this.startActivity(new Intent(this, SurveyListActivity.class));
     }
 
     private abstract class LayoutDependentSupport {

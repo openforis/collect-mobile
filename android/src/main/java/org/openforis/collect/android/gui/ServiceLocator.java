@@ -33,8 +33,7 @@ import static org.openforis.collect.android.viewmodelmanager.ViewModelRepository
  * @author Daniel Wiell
  */
 public class ServiceLocator {
-
-    private static final String MODEL_DB = "collect.db";
+    public static final String MODEL_DB = "collect.db";
     private static final String NODES_DB = "nodes";
     private static CollectModelManager collectModelManager;
     private static SurveyService surveyService;
@@ -47,10 +46,11 @@ public class ServiceLocator {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
             workingDir = AppDirs.root(applicationContext);
-            if (!isSurveyImported(applicationContext))
+            String surveyName = SurveyImporter.selectedSurvey(applicationContext);
+            if (surveyName == null || !isSurveyImported(surveyName, applicationContext))
                 return false;
-            modelDatabase = createModelDatabase(applicationContext);
-            nodeDatabase = createNodeDatabase(applicationContext);
+            modelDatabase = createModelDatabase(surveyName, applicationContext);
+            nodeDatabase = createNodeDatabase(surveyName, applicationContext);
             new ModelDatabaseMigrator(modelDatabase, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -61,57 +61,61 @@ public class ServiceLocator {
         return true;
     }
 
-    public static void reset() {
+    public static void reset(Context context) {
         surveyService = null;
-        modelDatabase.close();
-        nodeDatabase.close();
+        if (modelDatabase != null)
+            modelDatabase.close();
+        if (nodeDatabase != null)
+            nodeDatabase.close();
+        init(context.getApplicationContext());
     }
 
 
-    private static File databasePath(String databaseName, Context context) {
-        return new File(AppDirs.databases(context), databaseName);
+    private static File databasePath(String databaseName, String surveyName, Context context) {
+        return new File(AppDirs.surveyDatabasesDir(surveyName, context), databaseName);
     }
 
     public static void importSurvey(String surveyDatabasePath, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {
-        new SurveyImporter(surveyDatabasePath, applicationContext, databasePath(MODEL_DB, applicationContext)).importSurvey();
+        new SurveyImporter(surveyDatabasePath, applicationContext).importSurvey();
+        surveyService = null;
+        init(applicationContext);
     }
 
     public static void importDefaultSurvey(Context context) {
-        SurveyImporter.importDefaultSurvey(databasePath(MODEL_DB, context.getApplicationContext()), context);
+        SurveyImporter.importDefaultSurvey(context);
     }
 
-    public static void recreateNodeDatabase(Context applicationContext) {
-        deleteDatabase(NODES_DB, nodeDatabase, applicationContext);
-        createNodeDatabase(applicationContext);
+    public static void deleteNodeDatabase(Context applicationContext, String surveyName) {
+        deleteDatabase(NODES_DB, surveyName, nodeDatabase, applicationContext);
     }
 
-    public static void deleteModelDatabase(Context applicationContext) {
-        deleteDatabase(MODEL_DB, modelDatabase, applicationContext);
+    public static void deleteModelDatabase(Context applicationContext, String surveyName) {
+        deleteDatabase(MODEL_DB, surveyName, modelDatabase, applicationContext);
     }
 
-    private static void deleteDatabase(String databaseName, AndroidDatabase database, Context applicationContext) {
+    private static void deleteDatabase(String databaseName, String surveyName, AndroidDatabase database, Context applicationContext) {
         if (database != null) {
             database.close();
-            File nodesDbPath = databasePath(databaseName, applicationContext);
+            File nodesDbPath = databasePath(databaseName, surveyName, applicationContext);
             nodesDbPath.delete();
         }
     }
 
-    public static boolean isSurveyImported(Context context) {
-        return context.getDatabasePath(databasePath(MODEL_DB, context).getAbsolutePath()).exists();
+    public static boolean isSurveyImported(String surveyName, Context context) {
+        return context.getDatabasePath(databasePath(MODEL_DB, surveyName, context).getAbsolutePath()).exists();
     }
 
-    private static AndroidDatabase createModelDatabase(Context applicationContext) {
-        return new AndroidDatabase(applicationContext, databasePath(MODEL_DB, applicationContext));
+    private static AndroidDatabase createModelDatabase(String surveyName, Context applicationContext) {
+        return new AndroidDatabase(applicationContext, databasePath(MODEL_DB, surveyName, applicationContext));
     }
 
-    private static AndroidDatabase createNodeDatabase(Context applicationContext) {
+    private static AndroidDatabase createNodeDatabase(String surveyName, Context applicationContext) {
         return new AndroidDatabase(
                 new NodeSchemaChangeLog(
                         new NodeDatabaseSchemaChangeLog().changes()
                 ),
                 applicationContext,
-                databasePath(NODES_DB, applicationContext)
+                databasePath(NODES_DB, surveyName, applicationContext)
         );
     }
 

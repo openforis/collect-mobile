@@ -1,11 +1,8 @@
 package org.openforis.collect.android.gui;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -19,14 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
-import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
@@ -39,7 +34,6 @@ import java.util.Set;
  * @author Daniel Wiell
  */
 public class SurveyNodeActivity extends ActionBarActivity implements SurveyListener, NodeNavigator {
-    private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
     public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
 
@@ -65,9 +59,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 surveyService.setListener(this);
                 support.onCreate(savedState);
             } else {
-                super.onCreate(savedState);
-                DialogFragment newFragment = new ImportingDemoSurveyDialog();
-                newFragment.show(getSupportFragmentManager(), "importingDemoSurvey");
+                super.onCreate(savedState); // TODO: Try to more this to beginning of method
+                navigateToSurveyList();
             }
         } catch (WorkingDirNotWritable ignore) {
             super.onCreate(savedState);
@@ -268,35 +261,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
     }
 
-    public void surveyImportRequested(MenuItem item) {
-        surveyImportRequested();
-    }
-
-    private void surveyImportRequested() {
-//        String surveyName = SurveyImporter.selectedSurvey(this);
-
-        // TODO: Need to compare with other survey name
-//        if (AppDirs.surveyDatabasesDir(surveyName, this).exists()) {
-//            DialogFragment dialogFragment = new ImportOverwriteDataConfirmation();
-//            dialogFragment.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
-//        } else {
-            showImportDialog();
-//        }
-    }
-
-    protected void showImportDialog() {
-        Intent target = FileUtils.createGetContentIntent();
-        Intent intent = Intent.createChooser(
-                target, "Select survey to import");
-        startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case IMPORT_SURVEY_REQUEST_CODE:
-                if (resultCode == RESULT_OK && data != null)
-                    importSurvey(data.getData());
-                break;
             case IMAGE_CAPTURE_REQUEST_CODE:
                 if (imageListener != null)
                     imageListener.imageChanged();
@@ -312,47 +278,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         imageListener = listener;
     }
 
-
-    private void importSurvey(Uri surveyUri) {
-        final String path = FileUtils.getPath(this, surveyUri);
-        String message = getResources().getString(R.string.toast_import_survey);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        try {
-            ServiceLocator.importSurvey(path, this);
-            selectedNode = null;
-            startImportedSurveyNodeActivity();
-        } catch (MalformedSurvey malformedSurvey) {
-            importFailedDialog(
-                    malformedSurvey.sourceName,
-                    getString(R.string.import_text_failed)
-            );
-        } catch (WrongSurveyVersion wrongSurveyVersion) {
-            importFailedDialog(
-                    wrongSurveyVersion.sourceName,
-                    getString(R.string.import_text_wrong_version)
-            );
-        }
-    }
-
-    public void startImportedSurveyNodeActivity() {
-        Intent intent = new Intent(this, SurveyNodeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
-    private void importFailedDialog(String surveyPath, String message) {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(getString(R.string.import_title_failed, surveyPath))
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        showImportDialog();
-                    }
-                })
-                .show();
-    }
-
     public static void restartActivity(Context context) {
         Intent intent = new Intent(context, SurveyNodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -360,6 +285,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void navigateToSurveyList(MenuItem item) {
+        navigateToSurveyList();
+    }
+
+    private void navigateToSurveyList() {
         this.startActivity(new Intent(this, SurveyListActivity.class));
     }
 

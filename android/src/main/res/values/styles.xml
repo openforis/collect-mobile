@@ -9,6 +9,7 @@
         <item name="breadcrumbButton">@drawable/breadcrumb_button</item>
         <item name="titleIndicatorColor">@color/light_title_indicator_text_color</item>
         <item name="nextIcon">@drawable/ic_action_next_item</item>
+        <item name="importIcon">@drawable/ic_action_download</item>
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today</item>
         <item name="timeIcon">@drawable/ic_action_time</item>
         <item name="cameraIcon">@drawable/ic_action_camera</item>
@@ -24,6 +25,7 @@
         <item name="breadcrumbButton">@drawable/breadcrumb_button_light</item>
         <item name="titleIndicatorColor">@color/dark_title_indicator_text_color</item>
         <item name="nextIcon">@drawable/ic_action_next_item_light</item>
+        <item name="importIcon">@drawable/ic_action_download_light</item>
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today_light</item>
         <item name="timeIcon">@drawable/ic_action_time_light</item>
         <item name="cameraIcon">@drawable/ic_action_camera_light</item>

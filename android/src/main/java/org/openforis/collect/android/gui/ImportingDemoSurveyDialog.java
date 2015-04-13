@@ -24,7 +24,7 @@ public class ImportingDemoSurveyDialog extends DialogFragment {
                 .setTitle(R.string.import_demo_dialog_title)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
+                        SurveyListActivity activity = (SurveyListActivity) getActivity();
                         ServiceLocator.importDefaultSurvey(activity);
                         activity.startImportedSurveyNodeActivity();
                     }

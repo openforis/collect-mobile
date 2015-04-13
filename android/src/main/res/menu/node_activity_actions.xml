@@ -6,20 +6,15 @@
             app:showAsAction="never"
             android:onClick="backup"/>
     <item
-            android:id="@+id/action_import"
-            android:title="@string/action_import"
+            android:id="@+id/action_export"
+            android:title="@string/action_export"
             app:showAsAction="never"
-            android:onClick="surveyImportRequested"/>
+            android:onClick="export"/>
     <item
             android:id="@+id/action_survey_list"
             android:title="@string/action_survey_list"
             app:showAsAction="never"
             android:onClick="navigateToSurveyList"/>
-    <item
-            android:id="@+id/action_export"
-            android:title="@string/action_export"
-            app:showAsAction="never"
-            android:onClick="export"/>
     <item
             android:id="@+id/action_settings"
             android:title="@string/action_settings"

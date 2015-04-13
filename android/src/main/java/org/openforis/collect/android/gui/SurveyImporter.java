@@ -28,24 +28,29 @@ public class SurveyImporter {
         this.applicationContext = context;
     }
 
-    public void importSurvey() throws MalformedSurvey, WrongSurveyVersion {
+    public boolean importSurvey(boolean overwrite) throws MalformedSurvey, WrongSurveyVersion {
         try {
             File tempDir = unzipSurveyDefinition(sourceSurveyPath);
             String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
-            realityCheckDatabaseToImport(sourceSurveyDatabasePath);
             SurveyBackupInfo info = info(tempDir);
             String surveyName = info.getSurveyName();
+
+            File databases = AppDirs.surveyDatabasesDir(surveyName, applicationContext);
+            File targetSurveyDatabase = new File(databases, ServiceLocator.MODEL_DB);
+
+            if (!overwrite && targetSurveyDatabase.exists())
+                return false;
+
+            realityCheckDatabaseToImport(sourceSurveyDatabasePath);
             Version version = getAndVerifyVersion(info);
             ServiceLocator.deleteNodeDatabase(applicationContext, surveyName);
             ServiceLocator.deleteModelDatabase(applicationContext, surveyName);
 
-            File databases = AppDirs.surveyDatabasesDir(surveyName, applicationContext);
-            String targetSurveyDatabasePath = new File(databases, ServiceLocator.MODEL_DB).getAbsolutePath();
-            File targetSurveyDatabase = applicationContext.getDatabasePath(targetSurveyDatabasePath);
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
             migrateIfNeeded(version, targetSurveyDatabase);
             selectSurvey(surveyName, applicationContext);
+            return true;
         } catch (IOException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
         } catch (SQLiteException e) {
@@ -86,7 +91,7 @@ public class SurveyImporter {
             File intermediateSurveyPath = new File(tempDir, "demo.collect-mobile");
             FileOutputStream intermediateOutput = new FileOutputStream(intermediateSurveyPath);
             IOUtils.copy(sourceInput, intermediateOutput);
-            new SurveyImporter(intermediateSurveyPath.getAbsolutePath(), context).importSurvey();
+            new SurveyImporter(intermediateSurveyPath.getAbsolutePath(), context).importSurvey(true);
             FileUtils.deleteDirectory(tempDir);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -152,6 +157,4 @@ public class SurveyImporter {
     public static String surveyMinorVersion(Version version) {
         return version.getMajor() + "." + version.getMinor() + ".x";
     }
-
-
 }

@@ -1,48 +1,174 @@
 package org.openforis.collect.android.gui;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
-import android.view.*;
-import android.widget.*;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.AppDirs;
-import org.openforis.collect.android.gui.util.Attrs;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.io.IOException;
 import java.util.Set;
 
 public class SurveyListActivity extends ActionBarActivity {
+    private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
+    private boolean showOverwriteDialog;
+    private String surveyPath;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final SurveyListAdapter adapter = new SurveyListAdapter(this);
+        if (adapter.isEmpty())
+            showDemoSurveyDialog();
+        else
+            showSurveyList(adapter);
+    }
+
+    private void showSurveyList(final SurveyListAdapter adapter) {
         setContentView(R.layout.survey_list);
-
         ListView listView = (ListView) findViewById(R.id.survey_list);
-
-        final SurveyAdapter adapter = new SurveyAdapter(this, surveys());
+        final Context context = this;
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String surveyName = adapter.survey(position).name;
-                SurveyImporter.selectSurvey(surveyName, SurveyListActivity.this);
-                startActivity(new Intent(SurveyListActivity.this, SurveyNodeActivity.class));
+                String surveyName = adapter.survey(position);
+                SurveyImporter.selectSurvey(surveyName, context);
+                SurveyNodeActivity.restartActivity(context);
             }
         });
-        adapter.setSurveysDeletedListener(new SurveyAdapter.SurveysDeletedListener() {
-            public void onSurveysDeleted(Set<Survey> surveys) {
-                System.out.println("Deleted " + surveys);
+        adapter.setSurveysDeletedListener(new SurveyListAdapter.SurveysDeletedListener() {
+            public void onSurveysDeleted(Set<String> surveys) {
+                deleteSurveys(surveys);
+                clearBackstack();
             }
         });
         selectSurvey(listView, adapter);
-
     }
 
-    private void selectSurvey(ListView listView, SurveyAdapter adapter) {
+    private void showDemoSurveyDialog() {
+        DialogFragment newFragment = new ImportingDemoSurveyDialog();
+        newFragment.show(getSupportFragmentManager(), "importingDemoSurvey");
+    }
+
+    private void deleteSurveys(Set<String> surveys) {
+        File surveysDir = AppDirs.surveysDir(this);
+        for (String survey : surveys) {
+            File surveyDir = new File(surveysDir, survey);
+            if (surveyDir.exists())
+                try {
+                    org.apache.commons.io.FileUtils.deleteDirectory(surveyDir);
+                } catch (IOException e) {
+                    Log.e(SurveyListActivity.class.getName(), "Failed to delete survey " + surveyDir, e);
+                }
+        }
+    }
+
+    private void clearBackstack() {
+        Intent intent = new Intent(this, SurveyListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        this.startActivity(intent);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.survey_list_activity_actions, menu);
+        return true;
+    }
+
+
+    public void surveyImportRequested(MenuItem item) {
+        showImportDialog();
+    }
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case IMPORT_SURVEY_REQUEST_CODE:
+                if (resultCode == RESULT_OK && data != null)
+                    importSurvey(FileUtils.getPath(this, data.getData()), false);
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected void showImportDialog() {
+        Intent target = FileUtils.createGetContentIntent();
+        Intent intent = Intent.createChooser(
+                target, "Select survey to import");
+        startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
+    }
+
+
+    protected void importSurvey(String surveyPath, boolean overwrite) {
+        String message = getResources().getString(R.string.toast_import_survey);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+
+        try {
+            if (ServiceLocator.importSurvey(surveyPath, overwrite, this) || overwrite)
+                startImportedSurveyNodeActivity();
+            else {
+                showOverwriteDialog = true;
+                this.surveyPath = surveyPath;
+            }
+        } catch (MalformedSurvey malformedSurvey) {
+            importFailedDialog(
+                    malformedSurvey.sourceName,
+                    getString(R.string.import_text_failed)
+            );
+        } catch (WrongSurveyVersion wrongSurveyVersion) {
+            importFailedDialog(
+                    wrongSurveyVersion.sourceName,
+                    getString(R.string.import_text_wrong_version)
+            );
+        }
+    }
+
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        if (showOverwriteDialog)
+            showImportOwerwriteDialog(surveyPath);
+        showOverwriteDialog = false;
+        surveyPath = null;
+    }
+
+    private void showImportOwerwriteDialog(String surveyPath) {
+        ImportOverwriteDataConfirmation dialog = ImportOverwriteDataConfirmation.create(surveyPath);
+        dialog.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
+    }
+
+    public void startImportedSurveyNodeActivity() {
+        Intent intent = new Intent(this, SurveyNodeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    private void importFailedDialog(String surveyPath, String message) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.import_title_failed, surveyPath))
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showImportDialog();
+                    }
+                })
+                .show();
+    }
+
+    private void selectSurvey(ListView listView, SurveyListAdapter adapter) {
         String selectedSurvey = SurveyImporter.selectedSurvey(this);
         if (selectedSurvey != null) {
             int position = adapter.position(selectedSurvey);
@@ -50,190 +176,6 @@ public class SurveyListActivity extends ActionBarActivity {
                 listView.setSelection(position);
                 listView.setItemChecked(position, true);
             }
-        }
-    }
-
-    private List<Survey> surveys() {
-        List<Survey> surveys = new ArrayList<Survey>();
-        File surveysRootDir = AppDirs.surveysRootDir(this);
-        for (File databaseDir : surveysRootDir.listFiles()) {
-            if (databaseDir.isDirectory())
-                surveys.add(createSurvey(databaseDir));
-        }
-        return surveys;
-    }
-
-    private Survey createSurvey(File databaseDir) {
-        return new Survey(databaseDir.getName(), databaseDir.getName());
-    }
-
-    private static class Survey {
-        public final String name;
-        public final String label;
-
-        public Survey(String name, String label) {
-            this.name = name;
-            this.label = label;
-        }
-
-        public String toString() {
-            return "Survey{" +
-                    "name='" + name + '\'' +
-                    ", label='" + label + '\'' +
-                    '}';
-        }
-    }
-
-    public static class SurveyAdapter extends BaseAdapter {
-        private final Activity activity;
-        private List<Survey> surveys;
-        private final Attrs attrs;
-
-        private final Set<Survey> surveysToEdit = new HashSet<Survey>();
-        private final Set<CheckBox> checked = new HashSet<CheckBox>();
-        private ActionMode actionMode;
-        private SurveysDeletedListener surveysDeletedListener;
-
-        public SurveyAdapter(Activity activity, List<Survey> surveys) {
-            this.activity = activity;
-            this.surveys = new ArrayList<Survey>(surveys);
-            attrs = new Attrs(activity);
-        }
-
-        public int getCount() {
-            return surveys.size();
-        }
-
-        public Object getItem(int position) {
-            return surveys.get(position);
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            SurveyHolder holder;
-            if (row == null) {
-                LayoutInflater inflater = activity.getLayoutInflater();
-                row = inflater.inflate(R.layout.listview_survey, parent, false);
-                if (AndroidVersion.greaterThan10())
-                    setBackground(row);
-
-                holder = new SurveyHolder();
-                holder.text = (TextView) row.findViewById(R.id.surveyLabel);
-                row.setTag(holder);
-            } else {
-                holder = (SurveyHolder) row.getTag();
-            }
-
-            Survey survey = surveys.get(position);
-            holder.text.setText(survey.label);
-            holder.text.setTextColor(attrs.color(R.attr.relevantTextColor)); // TODO: Needed?
-            setupEditActions(survey, row);
-
-            return row;
-        }
-
-        private void setupEditActions(final Survey survey, View row) {
-            final CheckBox checkbox = (CheckBox) row.findViewById(R.id.surveySelectedForAction);
-            checkbox.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    if (checkbox.isChecked()) {
-                        surveysToEdit.add(survey);
-                        checked.add(checkbox);
-                    } else {
-                        surveysToEdit.remove(survey);
-                        checked.remove(checkbox);
-                    }
-
-                    if (!surveysToEdit.isEmpty()) {
-                        if (actionMode == null)
-                            actionMode = activity.startActionMode(new EditCallback());
-                        else
-                            setEditTitle(actionMode);
-                    }
-                    if (surveysToEdit.isEmpty() && actionMode != null)
-                        actionMode.finish();
-                }
-            });
-        }
-
-        private void setBackground(View row) {
-            row.setBackgroundResource(attrs.resourceId(android.R.attr.activatedBackgroundIndicator));
-        }
-
-
-        private void setEditTitle(ActionMode mode) {
-            mode.setTitle(activity.getString(R.string.amount_selected, surveysToEdit.size()));
-        }
-
-        public void setSurveysDeletedListener(SurveysDeletedListener surveysDeletedListener) {
-            this.surveysDeletedListener = surveysDeletedListener;
-        }
-
-        public Survey survey(int position) {
-            return surveys.get(position);
-        }
-
-        public int position(String selectedSurvey) {
-            if (selectedSurvey == null)
-                return -1;
-            for (int i = 0; i < surveys.size(); i++) {
-                Survey survey = surveys.get(i);
-                if (survey.label.equals(selectedSurvey))
-                    return i;
-            }
-            return -1;
-        }
-
-        private class EditCallback implements ActionMode.Callback {
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.entity_action_menu, menu);
-                return true;
-            }
-
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                setEditTitle(mode);
-                return false;
-            }
-
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.delete_selected_nodes:
-                        deleteCheckedSurveys();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            public void onDestroyActionMode(ActionMode mode) {
-                actionMode = null;
-                surveysToEdit.clear();
-                for (CheckBox checkBox : checked) {
-                    checkBox.setChecked(false);
-                    checkBox.setSelected(false);
-                }
-            }
-        }
-
-        private void deleteCheckedSurveys() {
-            if (surveysDeletedListener != null)
-                surveysDeletedListener.onSurveysDeleted(surveysToEdit);
-            surveys.removeAll(surveysToEdit);
-            actionMode.finish();
-            notifyDataSetChanged();
-        }
-
-        private static class SurveyHolder {
-            TextView text;
-        }
-
-        public interface SurveysDeletedListener {
-            void onSurveysDeleted(Set<Survey> surveys);
         }
     }
 }

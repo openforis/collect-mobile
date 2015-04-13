@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+            android:id="@+id/action_import"
+            android:title="@string/action_import"
+            android:icon="?attr/importIcon"
+            app:showAsAction="ifRoom|withText"
+            android:onClick="surveyImportRequested"/>
+</menu>

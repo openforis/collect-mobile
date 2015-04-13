@@ -75,10 +75,13 @@ public class ServiceLocator {
         return new File(AppDirs.surveyDatabasesDir(surveyName, context), databaseName);
     }
 
-    public static void importSurvey(String surveyDatabasePath, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {
-        new SurveyImporter(surveyDatabasePath, applicationContext).importSurvey();
-        surveyService = null;
-        init(applicationContext);
+    public static boolean importSurvey(String surveyDatabasePath, boolean overwrite, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {
+        boolean imported = new SurveyImporter(surveyDatabasePath, applicationContext).importSurvey(overwrite);
+        if (imported) {
+            surveyService = null;
+            init(applicationContext);
+        }
+        return imported;
     }
 
     public static void importDefaultSurvey(Context context) {

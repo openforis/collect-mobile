@@ -20,6 +20,9 @@ Install an update
 Changes
 -------
 
+2015-04-14
+    * Added support for multiple surveys
+
 2015-03-19
     * Added support for latest Collect Desktop version
     * Fixed problem with validation of code attributes with multiplicity, rendered as checkboxes

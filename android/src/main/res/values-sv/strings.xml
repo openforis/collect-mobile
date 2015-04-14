@@ -59,7 +59,7 @@
     <string name="import_overwrite_data_dialog_message">Din data kommer att tas bort om du fortsätter och importerar en ny survey.</string>
     <string name="import_overwrite_data_dialog_confirm">Ta bort datan och importera</string>
 
-    <string name="import_demo_dialog_title">Importera demo survey</string>
+    <string name="import_demo_dialog_title">Importera demo formulär</string>
     <string name="import_demo_dialog_message">Eftersom ingen annan survey är importerad, kommer en demo att användas,
         för att vis funktionalliteten i Collect Mobile.
         \n\nGå till <a href="http://openforis.org/tools/collect.html">openforis.org</a> för instruktioner hur du
@@ -72,4 +72,7 @@
     <string name="file_attribute_capture_image">Ta ny bild</string>
     <string name="file_attribute_select_image">Välj bild</string>
     <string name="file_attribute_remove_image">Ta bort bild</string>
+    <string name="survey_list">Formulär</string>
+    <string name="settings">Inställningar</string>
+    <string name="action_survey_list">Formulär</string>
 </resources>

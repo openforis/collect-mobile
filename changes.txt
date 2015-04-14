@@ -1,10 +1,10 @@
  First installation
 ------------------
 
-	* Download survey.collect-mobile
+	* Download your .collect-mobile
 	* Download and install Collect.apk
 	* Start Collect
-	* Choose the downloaded survey.collect-mobile file in the file chooser
+	* Choose your downloaded .collect-mobile file in the file chooser
 
 
 Install an update
@@ -14,7 +14,7 @@ Install an update
     * Clear data (this will removed any previously collected data)
     * Download and install Collect.apk
     * Start Collect
-    * Choose your collect.db file in the file chooser
+    * Choose your .collect-mobile file in the file chooser
 
 
 Changes

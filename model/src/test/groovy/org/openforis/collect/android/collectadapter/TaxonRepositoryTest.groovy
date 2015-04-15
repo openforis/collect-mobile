@@ -40,10 +40,10 @@ class TaxonRepositoryTest extends Specification {
         insertTaxon('code', 'name', anotherTaxonomy) // Not expected to match - wrong taxonomy
 
         expect:
-        repo.find("c", taxonomy.name, 10)*.code == ['code']
-        repo.find("n", taxonomy.name, 10)*.code == ['code']
-        repo.find("C", taxonomy.name, 10)*.code == ['code']
-        repo.find("N", taxonomy.name, 10)*.code == ['code']
+            repo.find("c", taxonomy.name, 10)*.code == ['code']
+            repo.find("n", taxonomy.name, 10)*.code == ['code']
+            repo.find("C", taxonomy.name, 10)*.code == ['code']
+            repo.find("N", taxonomy.name, 10)*.code == ['code']
     }
 
     def 'Can limit results'() {
@@ -52,7 +52,7 @@ class TaxonRepositoryTest extends Specification {
         insertTaxon('a3', 'name3', taxonomy)
 
         expect:
-        repo.find("a", taxonomy.name, 2).size() == 2
+            repo.find("a", taxonomy.name, 2).size() == 2
     }
 
     private void insertTaxon(String code, String scientificName, Taxonomy taxonomy) {
@@ -75,8 +75,8 @@ class TaxonRepositoryTest extends Specification {
     private int insertSurvey() {
         def surveyId = nextId()
         database.sql.executeInsert("""
-            INSERT INTO ofc_survey(id, name, uri, idml)
-            VALUES ($surveyId, 'survey', 'http://the/uri', '<idm/>')
+            INSERT INTO ofc_survey(id, name, uri, idml, date_created, date_modified)
+            VALUES ($surveyId, 'survey', 'http://the/uri', '<idm/>', ${new Date()}, ${new Date()})
         """)
         surveyId
     }

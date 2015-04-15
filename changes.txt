@@ -20,6 +20,9 @@ Install an update
 Changes
 -------
 
+2015-04-15
+    * Added the possibility to share exported data though email, bluetooth, DropBox, Google Drive etc.
+
 2015-04-14
     * Added support for multiple surveys
 

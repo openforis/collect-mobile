@@ -22,35 +22,24 @@ public class ModelDatabaseMigrator {
     private static final Logger LOG = Logger.getLogger(ModelDatabaseMigrator.class.getName());
 
     private final Database database;
+    private final String surveyName;
     private final Context context;
 
-    public ModelDatabaseMigrator(Database database, Context context) {
+    public ModelDatabaseMigrator(Database database, String surveyName, Context context) {
         this.database = database;
+        this.surveyName = surveyName;
         this.context = context;
     }
 
     public void migrateIfNeeded() {
         Version currentVersion = Collect.getVersion();
         Properties collectVersion = new Properties();
-        File workingDir = AppDirs.root(context); // TODO: Use the survey dir instead
-        File collectVersionFile = new File(workingDir, "collect-version.properties");
-        try {
-            if (collectVersionFile.exists()) {
-                FileInputStream in = new FileInputStream(collectVersionFile);
-                collectVersion.load(in);
-            }
-
-            int majorVersion = Integer.parseInt(collectVersion.getProperty("major"));
-            int minorVersion = Integer.parseInt(collectVersion.getProperty("minor"));
-
-            if (majorVersion < currentVersion.getMajor() || minorVersion < currentVersion.getMinor())
-                migrate();
-
-
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to check if migration is needed", e);
+        File surveyDir = new File(AppDirs.surveysDir(context), surveyName); // TODO: Use the survey dir instead
+        File collectVersionFile = new File(surveyDir, "collect-version.properties");
+        if (collectVersionFile.exists())
+            migrateIfNeeded(currentVersion, collectVersion, collectVersionFile);
+        else
             migrate();
-        }
 
         try {
             collectVersion.setProperty("major", String.valueOf(currentVersion.getMajor()));
@@ -59,6 +48,23 @@ public class ModelDatabaseMigrator {
             AndroidFiles.makeDiscoverable(collectVersionFile, context);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Failed to store collect-version.properties file", e);
+        }
+    }
+
+    private void migrateIfNeeded(Version currentVersion, Properties collectVersion, File collectVersionFile) {
+        try {
+            FileInputStream in = new FileInputStream(collectVersionFile);
+            collectVersion.load(in);
+
+            int majorVersion = Integer.parseInt(collectVersion.getProperty("major"));
+            int minorVersion = Integer.parseInt(collectVersion.getProperty("minor"));
+
+            if (majorVersion < currentVersion.getMajor() || minorVersion < currentVersion.getMinor())
+                migrate();
+
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "Failed to check if migration is needed", e);
+            migrate();
         }
     }
 

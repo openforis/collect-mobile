@@ -49,7 +49,7 @@ public class SurveyImporter {
 
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
-            migrateIfNeeded(version, targetSurveyDatabase);
+            migrateIfNeeded(version, targetSurveyDatabase, surveyName);
             selectSurvey(surveyName, applicationContext);
             AndroidFiles.makeDiscoverable(targetSurveyDatabase, applicationContext);
             return true;
@@ -78,11 +78,11 @@ public class SurveyImporter {
         ServiceLocator.reset(context);
     }
 
-    private void migrateIfNeeded(Version version, File targetSurveyDatabase) {
+    private void migrateIfNeeded(Version version, File targetSurveyDatabase, String surveyName) {
         AndroidDatabase database = new AndroidDatabase(applicationContext, targetSurveyDatabase);
         Version currentVersion = Collect.getVersion();
         if (version.getMajor() < currentVersion.getMajor() || version.getMinor() < currentVersion.getMinor())
-            new ModelDatabaseMigrator(database, applicationContext).migrate();
+            new ModelDatabaseMigrator(database, surveyName, applicationContext).migrate();
     }
 
 

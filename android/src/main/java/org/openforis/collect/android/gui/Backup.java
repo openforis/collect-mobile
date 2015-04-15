@@ -49,24 +49,24 @@ public class Backup {
     }
 
     private void backupToTemp() throws IOException {
-        File databases = AppDirs.surveysDir(activity);
+        File surveysDir = AppDirs.surveysDir(activity);
         File tempDir = tempDir(activity);
         if (tempDir.exists())
             FileUtils.deleteDirectory(tempDir);
-        FileUtils.copyDirectory(databases, tempDir);
+        FileUtils.copyDirectory(surveysDir, tempDir);
     }
 
     private static File tempDir(FragmentActivity activity) {
-        File databases = AppDirs.surveysDir(activity);
-        return new File(activity.getExternalCacheDir(), databases.getName());
+        File surveysDir = AppDirs.surveysDir(activity);
+        return new File(activity.getExternalCacheDir(), surveysDir.getName());
     }
 
     private static void backupFromTempToTargetDir(FragmentActivity activity, File targetDir) throws IOException {
         File tempDir = tempDir(activity);
         if (targetDir.exists()) {
-            File timestampedDatabases = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
-            FileUtils.moveDirectory(targetDir, timestampedDatabases);
-            AndroidFiles.makeDiscoverable(timestampedDatabases, activity);
+            File timestampedSurveysDir = new File(targetDir.getParentFile(), targetDir.getName() + "-" + System.currentTimeMillis());
+            FileUtils.moveDirectory(targetDir, timestampedSurveysDir);
+            AndroidFiles.makeDiscoverable(timestampedSurveysDir, activity);
         }
         FileUtils.moveDirectory(tempDir, targetDir);
         AndroidFiles.makeDiscoverable(targetDir, activity);

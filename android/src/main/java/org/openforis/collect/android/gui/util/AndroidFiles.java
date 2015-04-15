@@ -22,7 +22,7 @@ public class AndroidFiles {
     }
 
     private static void makeFileDiscoverable(File file, Context context) {
-        MediaScannerConnection.scanFile(context, new String[]{file.getPath()}, null, null);
+        MediaScannerConnection.scanFile(context.getApplicationContext(), new String[]{file.getPath()}, null, null);
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.fromFile(file)));
     }

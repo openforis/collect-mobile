@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -157,8 +158,11 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         try {
             File exportedFile = surveyService.exportSurvey();
             AndroidFiles.makeDiscoverable(exportedFile, this);
-            String message = getResources().getString(R.string.toast_exported_survey, exportedFile.getAbsolutePath());
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
+            shareIntent.setType("*/*");
+            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.abc_shareactionprovider_share_with)));
         } catch (IOException e) {
             String message = getResources().getString(R.string.toast_exported_survey_failed);
             Log.e("export", message, e);

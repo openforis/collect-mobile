@@ -13,10 +13,7 @@ import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.SurveySummary;
 import org.openforis.collect.model.User;
 import org.openforis.collect.model.validation.CollectValidator;
-import org.openforis.collect.persistence.DatabaseLookupProvider;
-import org.openforis.collect.persistence.SurveyDao;
-import org.openforis.collect.persistence.SurveyImportException;
-import org.openforis.collect.persistence.SurveyWorkDao;
+import org.openforis.collect.persistence.*;
 import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.idm.metamodel.ExternalCodeListProvider;
 import org.openforis.idm.metamodel.Survey;
@@ -309,9 +306,9 @@ public class MeteredSurveyManager extends SurveyManager {
         });
     }
 
-    public void saveSurveyWork(final CollectSurvey survey) throws SurveyImportException {
+    public void saveSurveyWork(final CollectSurvey survey) throws SurveyStoreException {
         time("saveSurveyWork", new Callable<Void>() {
-            public Void call() throws SurveyImportException {
+            public Void call() throws SurveyStoreException {
                 delegate.saveSurveyWork(survey);
                 return null;
             }

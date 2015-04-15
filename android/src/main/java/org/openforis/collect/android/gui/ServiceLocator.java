@@ -51,7 +51,7 @@ public class ServiceLocator {
                 return false;
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
-            new ModelDatabaseMigrator(modelDatabase, applicationContext).migrateIfNeeded();
+            new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
             surveyService.loadSurvey();

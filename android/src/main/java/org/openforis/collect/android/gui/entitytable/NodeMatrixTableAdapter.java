@@ -57,6 +57,13 @@ public class NodeMatrixTableAdapter extends BaseTableAdapter {
         selectedColumn = nodeMatrix.columnIndex(selectedNode);
     }
 
+    public int[] selectedCoordinate() {
+        return new int[] {
+                selectedColumn * width - width,
+                selectedRow * height - height
+        };
+    }
+
     @Override
     public int getRowCount() {
         return nodeMatrix.rowCount();

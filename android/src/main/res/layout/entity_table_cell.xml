@@ -5,5 +5,4 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:padding="5dp"
-        android:layout_margin="1dp"
         />

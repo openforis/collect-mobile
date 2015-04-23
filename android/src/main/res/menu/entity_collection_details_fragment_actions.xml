@@ -1,5 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+<!-- TODO: Dynamic label? -->
+    <item
+            android:id="@+id/action_entity_table"
+            android:icon="?attr/tableIcon"
+            android:title="Entity table"
+            android:onClick="showEntityTable"
+            app:showAsAction="ifRoom"/>
 
     <item
             android:id="@+id/action_attribute_list"

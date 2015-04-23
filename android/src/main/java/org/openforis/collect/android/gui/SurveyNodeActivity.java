@@ -20,6 +20,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -292,6 +293,10 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     public void navigateToSurveyList(MenuItem item) {
         navigateToSurveyList();
+    }
+
+    public void showEntityTable(MenuItem menuItem) {
+        EntityTableDialogFragment.show(getSupportFragmentManager());
     }
 
     private void navigateToSurveyList() {

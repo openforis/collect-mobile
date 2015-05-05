@@ -1,16 +1,12 @@
 package org.openforis.collect.android.gui.detail;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.view.*;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -20,6 +16,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
@@ -189,20 +186,11 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private void showKeyboard(View view) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean showKeyboard = preferences.getBoolean("showKeyboard", true);
-        if (showKeyboard) {
-            view.requestFocus();
-            inputMethodManager().showSoftInput(view, InputMethodManager.SHOW_FORCED);
-        }
+        Keyboard.show(view, getActivity());
     }
 
     private void hideKeyboard(View view) {
-        inputMethodManager().hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private InputMethodManager inputMethodManager() {
-        return (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        Keyboard.hide(getActivity());
     }
 
     public static NodeDetailFragment create(UiNode node) {

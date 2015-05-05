@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -53,6 +54,10 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         return layout;
     }
 
+    public View getDefaultFocusedView() {
+        return qualifierInput;
+    }
+
     protected void initOptions() {
         codeByViewId.clear();
         radioGroup.removeAllViews();
@@ -89,7 +94,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             public void run() {
                 if (layout.getChildCount() == 1) {
                     layout.addView(qualifierInput);
-                    qualifierInput.requestFocus();
+                    Keyboard.show(qualifierInput, context);
                 }
             }
         });
@@ -99,6 +104,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private void hideQualifier() {
         uiHandler.post(new Runnable() {
             public void run() {
+                Keyboard.hide(context);
                 layout.removeView(qualifierInput);
             }
         });

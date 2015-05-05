@@ -47,6 +47,10 @@ public class SurveyImporter {
             ServiceLocator.deleteNodeDatabase(applicationContext, surveyName);
             ServiceLocator.deleteModelDatabase(applicationContext, surveyName);
 
+            File imagesDir = AppDirs.surveyImagesDir(surveyName, applicationContext);
+            if (imagesDir.exists())
+                FileUtils.deleteDirectory(imagesDir);
+
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
             migrateIfNeeded(version, targetSurveyDatabase, surveyName);

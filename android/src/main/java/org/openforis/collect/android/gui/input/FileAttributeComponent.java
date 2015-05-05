@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
@@ -170,6 +171,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         imageView.setVisibility(View.INVISIBLE);
         View removeButton = inputView.findViewById(R.id.file_attribute_remove);
         removeButton.setVisibility(View.INVISIBLE);
+        AndroidFiles.makeDiscoverable(imageFile, context);
         saveNode();
     }
 
@@ -178,6 +180,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         showImage();
         View removeButton = inputView.findViewById(R.id.file_attribute_remove);
         removeButton.setVisibility(View.VISIBLE);
+        AndroidFiles.makeDiscoverable(imageFile, context);
         saveNode();
     }
 
@@ -203,11 +206,6 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         bmOptions.inPurgeable = true;
 
         Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
-
-
-
-
-//        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
         imageView.setImageBitmap(bitmap);
     }
 }

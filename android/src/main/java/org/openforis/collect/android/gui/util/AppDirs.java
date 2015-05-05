@@ -41,12 +41,18 @@ public class AppDirs {
         return new File(root(context), "surveys");
     }
 
+    public static File surveyImagesDir(String surveyName, Context context) throws WorkingDirNotWritable {
+        return new File(surveyDatabasesDir(surveyName, context), "collect_upload");
+    }
+
     private static File defaultWorkingDir(Context context) {
         File workingDir = sdCardDir(context);
         if (workingDir == null)
             workingDir = sdCardDirFromEnv();
         if (workingDir == null)
             workingDir = context.getExternalFilesDir(null);
+        if (workingDir == null)
+            workingDir = context.getFilesDir();
         updatePreference(workingDir, context);
         AndroidFiles.makeDiscoverable(workingDir, context);
         return workingDir;

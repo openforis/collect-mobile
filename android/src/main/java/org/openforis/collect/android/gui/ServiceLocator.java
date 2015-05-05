@@ -5,6 +5,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
@@ -52,7 +53,7 @@ public class ServiceLocator {
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
-            collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase);
+            collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
             surveyService.loadSurvey();
             taxonService = createTaxonService(modelDatabase);
@@ -143,7 +144,7 @@ public class ServiceLocator {
         );
     }
 
-    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase) {
+    private static CollectModelManager createCollectModelManager(AndroidDatabase modelDatabase, Database nodeDatabase, final String surveyName, final Context context) {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
 
         CodeListManager codeListManager = new CodeListManager();
@@ -181,9 +182,14 @@ public class ServiceLocator {
 
 
         RecordFileManager recordFileManager = new RecordFileManager() {{
-            storageDirectory = new File(workingDir.getAbsolutePath(), "collect_upload");
+            storageDirectory = AppDirs.surveyImagesDir(surveyName, context);
+            if (!storageDirectory.exists()) {
+                if (!storageDirectory.mkdirs())
+                    throw new WorkingDirNotWritable();
+                AndroidFiles.makeDiscoverable(storageDirectory, context);
+            }
         }};
-        recordFileManager.setDefaultRootStoragePath(workingDir.getAbsolutePath());
+        recordFileManager.setDefaultRootStoragePath(AppDirs.surveyDatabasesDir(surveyName, context).getAbsolutePath());
 
         return new CollectModelManager(surveyManager, recordManager, codeListManager, recordFileManager, modelDatabase);
     }

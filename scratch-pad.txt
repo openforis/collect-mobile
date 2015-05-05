@@ -1,11 +1,4 @@
-Translate
-    survey_list
-    action_survey_list
-    settings
-
-SD cards not writable in KitKat
-    http://www.androidcentral.com/kitkat-sdcard-changes
-    <SDCard_path>/Android/data/org.openforis.collect
+Cluster/Detail - not showing entity table properly
 
 Images with hi-res cameras doesn't show
     https://code.facebook.com/posts/366199913563917/introducing-fresco-a-new-image-library-for-android/

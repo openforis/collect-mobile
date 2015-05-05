@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.HashMap;
@@ -53,6 +54,10 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
 
     protected View toInputView() {
         return layout;
+    }
+
+    public View getDefaultFocusedView() {
+        return qualifierInput;
     }
 
     // TODO: Dry - same as in AttributeComponent
@@ -129,7 +134,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
             public void run() {
                 if (layout.getChildCount() == codeList.getCodes().size()) {
                     layout.addView(qualifierInput);
-                    qualifierInput.requestFocus();
+                    Keyboard.show(qualifierInput, context);
                 }
             }
         });
@@ -144,6 +149,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private void hideQualifier() {
         uiHandler.post(new Runnable() {
             public void run() {
+                Keyboard.hide(context);
                 layout.removeView(qualifierInput);
             }
         });

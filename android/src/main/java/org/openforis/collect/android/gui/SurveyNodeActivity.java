@@ -24,6 +24,7 @@ import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
@@ -296,6 +297,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void showEntityTable(MenuItem menuItem) {
+        Keyboard.hide(this);
         EntityTableDialogFragment.show(getSupportFragmentManager());
     }
 
@@ -306,13 +308,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private abstract class LayoutDependentSupport {
         abstract void onCreate(Bundle savedState);
 
-        void onNodeSelected(UiNode previous, UiNode selected) {
+        void onNodeSelected(UiNode previous, UiNode selected) { }
 
-        }
-
-        void onNodeChanged(UiNode node) {
-
-        }
+        void onNodeChanged(UiNode node) { }
     }
 
     private class SinglePaneSurveySupport extends LayoutDependentSupport {

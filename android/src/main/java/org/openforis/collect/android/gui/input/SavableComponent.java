@@ -1,15 +1,13 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
@@ -68,12 +66,18 @@ public abstract class SavableComponent {
         return null; // By default, no view is focused
     }
 
+    protected final void showKeyboard(View inputView) {
+        if (isSelected())
+            Keyboard.show(inputView, context);
+    }
+
+    protected final void hideKeyboard() {
+        if (isSelected())
+            Keyboard.hide(context);
+    }
+
     protected final void focus(View inputView) {
         inputView.requestFocus();
-        if (inputView instanceof EditText) {
-            InputMethodManager inputManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.showSoftInput(inputView, InputMethodManager.SHOW_FORCED);
-        }
     }
 
     protected final String resourceString(int resourceId) {

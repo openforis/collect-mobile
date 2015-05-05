@@ -1,15 +1,14 @@
 package org.openforis.collect.android.gui.entitytable;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.*;
-import android.view.inputmethod.InputMethodManager;
 import com.inqbarna.tablefixheaders.TableFixHeaders;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiNode;
 
 public class EntityTableDialogFragment extends DialogFragment {
@@ -18,18 +17,10 @@ public class EntityTableDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         selectedNode = ServiceLocator.surveyService().selectedNode();
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-
-
-
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
         return dialog;
     }
 
-    private boolean hideKeyboard() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        return inputMethodManager.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.entity_table, container);
@@ -40,7 +31,7 @@ public class EntityTableDialogFragment extends DialogFragment {
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        hideKeyboard();
+        Keyboard.hide(getActivity());
     }
 
     public void onResume() {

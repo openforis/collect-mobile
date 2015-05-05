@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 

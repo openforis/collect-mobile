@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Daniel Wiell
@@ -31,6 +32,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private EditText qualifierInput;
     protected UiCodeList codeList;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private AtomicBoolean qualified = new AtomicBoolean();
 
     CheckboxCodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, codeListService, surveyService, context);
@@ -57,7 +59,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     public View getDefaultFocusedView() {
-        return qualifierInput;
+        return qualified.get() ? qualifierInput : null;
     }
 
     // TODO: Dry - same as in AttributeComponent
@@ -87,7 +89,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     protected void resetValidationErrors() {
 
     }
-
 
     private void initOptions() {
         codeByViewId.clear();
@@ -130,11 +131,12 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     private void showQualifier() {
+        qualified.set(true);
         uiHandler.post(new Runnable() {
             public void run() {
                 if (layout.getChildCount() == codeList.getCodes().size()) {
                     layout.addView(qualifierInput);
-                    Keyboard.show(qualifierInput, context);
+                    showKeyboard(qualifierInput);
                 }
             }
         });
@@ -147,6 +149,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     private void hideQualifier() {
+        qualified.set(false);
         uiHandler.post(new Runnable() {
             public void run() {
                 Keyboard.hide(context);

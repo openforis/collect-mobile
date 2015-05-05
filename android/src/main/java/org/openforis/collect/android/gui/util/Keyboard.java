@@ -28,7 +28,6 @@ public class Keyboard {
                 return;
             inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
-
     }
 
     private static InputMethodManager inputMethodManager(Context context) {

@@ -142,13 +142,13 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onSelected() {
         View view = getDefaultFocusedView();
-        if (view == null)
-            hideKeyboard(getView());
+        if (view == null || !node.isRelevant())
+            hideKeyboard();
         else {
             if (view instanceof EditText)
                 showKeyboard(view);
             else {
-                hideKeyboard(view);
+                hideKeyboard();
                 view.requestFocus();
             }
         }
@@ -189,7 +189,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         Keyboard.show(view, getActivity());
     }
 
-    private void hideKeyboard(View view) {
+    private void hideKeyboard() {
         Keyboard.hide(getActivity());
     }
 

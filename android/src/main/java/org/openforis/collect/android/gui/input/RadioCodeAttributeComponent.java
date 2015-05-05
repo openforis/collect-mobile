@@ -32,6 +32,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         layout.setOrientation(LinearLayout.VERTICAL);
         qualifierInput = createQualifierInput();
         radioGroup = new RadioGroup(context);
+        layout.addView(radioGroup);
+        initOptions();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (codeList.isQualifiable(selectedCode()))
@@ -41,8 +43,6 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                 saveNode();
             }
         });
-        layout.addView(radioGroup);
-        initOptions();
     }
 
     protected UiCode selectedCode() {
@@ -55,7 +55,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     public View getDefaultFocusedView() {
-        return qualifierInput;
+        return codeList.isQualifiable(selectedCode()) ? qualifierInput : null;
     }
 
     protected void initOptions() {
@@ -94,7 +94,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             public void run() {
                 if (layout.getChildCount() == 1) {
                     layout.addView(qualifierInput);
-                    Keyboard.show(qualifierInput, context);
+                    showKeyboard(qualifierInput);
                 }
             }
         });
@@ -104,14 +104,13 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private void hideQualifier() {
         uiHandler.post(new Runnable() {
             public void run() {
-                Keyboard.hide(context);
+                hideKeyboard();
                 layout.removeView(qualifierInput);
             }
         });
     }
 
     private class LoadCodesTask implements Runnable {
-
         public void run() {
             initCodeList();
             addRadioButtons(codeList.getCodes());

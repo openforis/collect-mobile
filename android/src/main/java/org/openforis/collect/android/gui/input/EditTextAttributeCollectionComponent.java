@@ -66,7 +66,7 @@ public abstract class EditTextAttributeCollectionComponent extends AttributeColl
         attributeComponentByAttribute.put(attribute, attributeComponent);
         View inputView = attributeComponent.toInputView();
         view.addView(inputView);
-        focus(inputView);
+        showKeyboard(inputView);
     }
 }
 

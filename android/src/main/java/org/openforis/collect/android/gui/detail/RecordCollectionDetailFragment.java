@@ -1,12 +1,13 @@
 package org.openforis.collect.android.gui.detail;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import org.openforis.collect.R;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Daniel Wiell
@@ -20,6 +21,11 @@ public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetail
     protected UiInternalNode getSelectedNode(int position, UiRecordCollection recordCollection) {
         UiNode recordPlaceholder = recordCollection.getChildAt(position);
         return surveyService().selectRecord(recordPlaceholder.getId());
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.removeItem(R.id.action_entity_table);
     }
 
     protected void deleteNodes(Collection<Integer> nodeIds) {

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 public class Keyboard {
     public static void show(View view, Context context) {
@@ -19,18 +20,17 @@ public class Keyboard {
 
     public static void hide(Activity activity) {
         InputMethodManager inputMethodManager = inputMethodManager(activity);
-        if (inputMethodManager != null) {
-            if (activity == null)
-                return;
-            if (activity.getCurrentFocus() == null)
-                return;
-            if (activity.getCurrentFocus().getWindowToken() == null)
-                return;
-            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-        }
+        if (inputMethodManager == null || activity == null)
+            return;
+        View currentFocus = activity.getCurrentFocus();
+        if (!(currentFocus instanceof EditText) || currentFocus.getWindowToken() == null)
+            inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
+        else
+            inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
     }
 
     private static InputMethodManager inputMethodManager(Context context) {
         return (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
+
 }

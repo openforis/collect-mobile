@@ -21,7 +21,7 @@ Changes
 -------
 
 2015-05-05
-    * Added possibility to get a read-only overview of a list of entities, and their attribute values
+    * Added overview tables, providing an overview of entered data and allows for quick navigation.
 
 2015-04-15
     * Added the possibility to share exported data though email, bluetooth, DropBox, Google Drive etc.

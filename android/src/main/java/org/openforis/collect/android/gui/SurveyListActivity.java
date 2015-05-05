@@ -1,7 +1,7 @@
 package org.openforis.collect.android.gui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AppDirs;
+import org.openforis.collect.android.gui.util.Keyboard;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,13 +41,13 @@ public class SurveyListActivity extends ActionBarActivity {
     private void showSurveyList(final SurveyListAdapter adapter) {
         setContentView(R.layout.survey_list);
         ListView listView = (ListView) findViewById(R.id.survey_list);
-        final Context context = this;
+        final Activity activity = this;
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String surveyName = adapter.survey(position);
-                SurveyImporter.selectSurvey(surveyName, context);
-                SurveyNodeActivity.restartActivity(context);
+                SurveyImporter.selectSurvey(surveyName, activity);
+                SurveyNodeActivity.restartActivity(activity);
             }
         });
         adapter.setSurveysDeletedListener(new SurveyListAdapter.SurveysDeletedListener() {
@@ -77,6 +78,7 @@ public class SurveyListActivity extends ActionBarActivity {
     }
 
     private void clearBackstack() {
+        Keyboard.hide(this);
         Intent intent = new Intent(this, SurveyListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         this.startActivity(intent);

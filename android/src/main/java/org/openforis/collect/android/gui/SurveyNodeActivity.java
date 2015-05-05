@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -173,6 +174,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void navigateTo(int nodeId) {
+        Keyboard.hide(this);
         Intent intent = createSelectNodeIntent(nodeId);
         startActivity(intent);
     }
@@ -286,10 +288,11 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         imageListener = listener;
     }
 
-    public static void restartActivity(Context context) {
-        Intent intent = new Intent(context, SurveyNodeActivity.class);
+    public static void restartActivity(Activity activity) {
+        Keyboard.hide(activity);
+        Intent intent = new Intent(activity, SurveyNodeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
+        activity.startActivity(intent);
     }
 
     public void navigateToSurveyList(MenuItem item) {
@@ -302,6 +305,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     private void navigateToSurveyList() {
+        Keyboard.hide(this);
         this.startActivity(new Intent(this, SurveyListActivity.class));
     }
 

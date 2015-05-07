@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -55,7 +54,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     public View getDefaultFocusedView() {
-        return codeList.isQualifiable(selectedCode()) ? qualifierInput : null;
+        return codeList == null ? null :
+                codeList.isQualifiable(selectedCode()) ? qualifierInput : null;
     }
 
     protected void initOptions() {

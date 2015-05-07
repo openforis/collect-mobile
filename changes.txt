@@ -20,11 +20,14 @@ Install an update
 Changes
 -------
 
+2015-05-06
+    * Fixed a bug that could cause a crash when accessing a code attribute
+
 2015-05-05
     * Added overview tables, providing an overview of entered data and allows for quick navigation.
 
 2015-04-15
-    * Added the possibility to share exported data though email, bluetooth, DropBox, Google Drive etc.
+    * Added the possibility to share exported data though email, Bluetooth, DropBox, Google Drive etc.
 
 2015-04-14
     * Added support for multiple surveys

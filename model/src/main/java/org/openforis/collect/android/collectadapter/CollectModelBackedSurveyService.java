@@ -79,8 +79,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
                     ? collectModelManager.validateAttribute(attribute)
                     : Collections.<UiNode, UiNodeChange>emptyMap();
             UiNodeChange attributeChange = nodeChanges.get(attribute);
-            if (attributeChange != null)
+            if (attributeChange != null) {
                 attribute.setValidationErrors(attributeChange.validationErrors);
+                if (attributeChange.statusChange)
+                    updateAttribute(attribute);
+            }
         }
     }
 

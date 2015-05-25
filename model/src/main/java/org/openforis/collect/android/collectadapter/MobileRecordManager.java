@@ -27,6 +27,8 @@ public class MobileRecordManager extends RecordManager {
     }
 
     public boolean isUnique(CollectRecord record) {
+        if (record.getRootEntity().getId() == null)
+            return true; // Collect Core tries to validate records at creation time - Mobile wait with that validation until record is selected first time
         record.updateSummaryFields();
         List<String> keyValues = record.getRootEntityKeyValues();
         List<NodeDto> keys = new ArrayList<NodeDto>();

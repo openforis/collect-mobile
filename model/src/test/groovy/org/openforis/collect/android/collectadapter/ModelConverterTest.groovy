@@ -86,7 +86,7 @@ class ModelConverterTest extends Specification {
     }
 
     private CollectRecord addRecord(String entityName, CollectSurvey collectSurvey) {
-        recordManager.create(collectSurvey, entityName, new User(), null)
+        recordManager.create(collectSurvey, entityName, new User(), null, null, CollectRecord.Step.CLEANSING)
     }
 
     private ModelConverter modelConverter(CollectSurvey collectSurvey) {

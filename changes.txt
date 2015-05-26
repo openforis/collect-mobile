@@ -20,7 +20,7 @@ Install an update
 Changes
 -------
 
-2015-05-25
+2015-05-26
     * Updated support for default values
     * Minor bug fixes
 

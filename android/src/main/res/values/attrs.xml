@@ -10,8 +10,11 @@
     <attr name="nodePathDetailsBackground" format="reference|color"/>
 
     <attr name="breadcrumbButton" format="reference"/>
+    <attr name="breadcrumbSeparator" format="reference"/>
     <attr name="entityTableCellPressed" format="reference"/>
     <attr name="nextIcon" format="reference"/>
+    <attr name="smartNextIcon" format="reference"/>
+    <attr name="prevIcon" format="reference"/>
     <attr name="importIcon" format="reference"/>
     <attr name="goToTodayIcon" format="reference"/>
     <attr name="timeIcon" format="reference"/>

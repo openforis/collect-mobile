@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -135,14 +134,39 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         }
     }
 
-    public void nextAttribute(MenuItem item) {// TODO: Implement this properly - should not only navigate siblings
-        UiNode node = selectedNode;
+    public void smartNextAttribute(MenuItem item) {
+        UiNode next = new SmartNext(selectedNode).next();
+        if (next.getParent() == selectedNode.getParent()) {
+            ViewPager pager = nodePager();
+            pager.setCurrentItem(next.getIndexInParent());
+        } else
+            navigateTo(next);
+    }
+
+    public void nextNode(MenuItem item) {
+        if (hasNextSibling()) {
+            ViewPager pager = nodePager();
+            pager.setCurrentItem(pager.getCurrentItem() + 1);
+        }
+    }
+
+    public void prevNode(MenuItem item) {
+        if (hasPrevSibling()) {
+            ViewPager pager = nodePager();
+            pager.setCurrentItem(pager.getCurrentItem() - 1);
+        }
+    }
+
+    private boolean hasNextSibling() {
         ViewPager pager = nodePager();
         int attributeIndex = pager.getCurrentItem();
-        if (attributeIndex < node.getSiblingCount()) {
-            pager.setCurrentItem(attributeIndex + 1);
-        } else
-            System.out.println("Should navigate to next node");
+        return attributeIndex < selectedNode.getSiblingCount() - 1;
+    }
+
+    private boolean hasPrevSibling() {
+        ViewPager pager = nodePager();
+        int attributeIndex = pager.getCurrentItem();
+        return attributeIndex > 0;
     }
 
     public void navigateDown(View view) {
@@ -177,6 +201,17 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         Keyboard.hide(this);
         Intent intent = createSelectNodeIntent(nodeId);
         startActivity(intent);
+    }
+
+    private void navigateTo(UiNode node) {
+        Keyboard.hide(this);
+        Intent intent = createSelectNodeIntent(node.getId());
+        startActivity(intent);
+    }
+
+    private void navigateHome() {
+        Keyboard.hide(this);
+        startActivity(new Intent(this, SurveyNodeActivity.class));
     }
 
     public void reloadWithoutBackStack() {
@@ -217,6 +252,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     private void navigateUp() {
         UiNode node = surveyService.selectedNode().getParent();
+        if (node.getParent() == null)
+            return; // Already at the root, cannot navigate up
         if (node.getParent().excludeWhenNavigating())
             node = node.getParent();
         navigateTo(node.getId());

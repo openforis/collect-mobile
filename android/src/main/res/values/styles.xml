@@ -7,9 +7,12 @@
         <item name="relevantTextColor">@android:color/white</item>
         <item name="irrelevantTextColor">@color/dark_disabled_color</item>
         <item name="breadcrumbButton">@drawable/breadcrumb_button</item>
+        <item name="breadcrumbSeparator">@drawable/ic_breadcrumb_separator</item>
         <item name="entityTableCellPressed">@drawable/abc_ab_solid_dark_holo</item>
         <item name="titleIndicatorColor">@color/light_title_indicator_text_color</item>
-        <item name="nextIcon">@drawable/ic_action_next_item</item>
+        <item name="nextIcon">@drawable/ic_action_playback_forw</item>
+        <item name="smartNextIcon">@drawable/ic_action_playback_next</item>
+        <item name="prevIcon">@drawable/ic_action_playback_rev</item>
         <item name="importIcon">@drawable/ic_action_download</item>
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today</item>
         <item name="timeIcon">@drawable/ic_action_time</item>
@@ -25,9 +28,12 @@
         <item name="relevantTextColor">@android:color/black</item>
         <item name="irrelevantTextColor">@color/light_disabled_color</item>
         <item name="breadcrumbButton">@drawable/breadcrumb_button_light</item>
+        <item name="breadcrumbSeparator">@drawable/ic_breakcrumb_separator_light</item>
         <item name="entityTableCellPressed">@drawable/abc_ab_solid_light_holo</item>
         <item name="titleIndicatorColor">@color/dark_title_indicator_text_color</item>
-        <item name="nextIcon">@drawable/ic_action_next_item_light</item>
+        <item name="nextIcon">@drawable/ic_action_playback_forw_light</item>
+        <item name="smartNextIcon">@drawable/ic_action_playback_next_light</item>
+        <item name="prevIcon">@drawable/ic_action_playback_rev_light</item>
         <item name="importIcon">@drawable/ic_action_download_light</item>
         <item name="goToTodayIcon">@drawable/ic_action_go_to_today_light</item>
         <item name="timeIcon">@drawable/ic_action_time_light</item>

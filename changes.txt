@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-05-25
+    * Updated support for default values
+    * Minor bug fixes
+
 2015-05-06
     * Fixed a bug that could cause a crash when accessing a code attribute
 
@@ -38,6 +42,7 @@ Changes
 
 2014-11-17
 
+    * Added action button for "previous" and a "smart-next"
     * Fixed bug that could cause crash when initializing taxon attribute
 
 2014-11-04

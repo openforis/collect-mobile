@@ -64,7 +64,7 @@ public class NodeParentsFragment extends Fragment {
 
     private View createSeparator() {
         ImageView imageView = new ImageView(getActivity());
-        imageView.setImageResource(attrs.resourceId(R.attr.nextIcon));
+        imageView.setImageResource(attrs.resourceId(R.attr.breadcrumbSeparator));
         return imageView;
     }
 

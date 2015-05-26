@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
@@ -99,22 +100,42 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem nextAttributeItem = menu.findItem(R.id.action_next_attribute);
-        // TODO: Should check this based on complete graph, not just for the entity. This logic should be done elsewhere
-        boolean isLast = node.getIndexInParent() == node.getSiblingCount() - 1;
-        if (nextAttributeItem != null && isLast) {
-            nextAttributeItem.setEnabled(false);
-            nextAttributeItem.getIcon().mutate().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
-        }
+        setupNextNodeMenuItem(menu);
+        setupSmartNextMenuItem(menu);
+        setupPrevNodeMenuItem(menu);
 
         boolean attributeListDisplayed = getActivity().findViewById(R.id.attribute_list) != null; // TODO: Ugly
         if (!attributeListDisplayed) {
             MenuItem attributeListItem = menu.findItem(R.id.action_attribute_list);
-            // TODO: Only show node list if single pane layout - redundant otherwise
             if (attributeListItem != null) {// TODO: This should always be the case?
                 MenuItemCompat.setShowAsAction(attributeListItem, SupportMenuItem.SHOW_AS_ACTION_IF_ROOM);
             }
         }
+    }
+
+    private void setupPrevNodeMenuItem(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_prev_attribute);
+        boolean isFirst = node.getIndexInParent() == 0;
+        if (menuItem != null && isFirst)
+            disable(menuItem);
+    }
+
+    private void setupNextNodeMenuItem(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_next_attribute);
+        boolean isLast = node.getIndexInParent() == node.getSiblingCount() - 1;
+        if (menuItem != null && isLast)
+            disable(menuItem);
+    }
+
+    private void setupSmartNextMenuItem(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_smart_next_attribute);
+        if (!new SmartNext(node).hasNext())
+            disable(menuItem);
+    }
+
+    private void disable(MenuItem menuItem) {
+        menuItem.setEnabled(false);
+        menuItem.getIcon().mutate().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

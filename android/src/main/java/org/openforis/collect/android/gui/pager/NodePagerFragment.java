@@ -21,6 +21,7 @@ import org.openforis.collect.android.viewmodel.UiNodeChange;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Daniel Wiell
@@ -115,8 +116,7 @@ public class NodePagerFragment extends Fragment {
 
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    int position = pager.getCurrentItem();
-                    UiNode selectedNode = surveyService.selectedNode().getSiblingAt(position);
+                    UiNode selectedNode = surveyService.selectedNode();
                     NodeDetailFragment detailFragment = fragmentsByNode.get(selectedNode);
                     if (detailFragment != null)
                         detailFragment.onSelected();

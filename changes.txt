@@ -21,28 +21,34 @@ Changes
 -------
 
 2015-05-26
+
+    * Added action button for "previous" and a "smart-next"
     * Updated support for default values
     * Minor bug fixes
 
 2015-05-06
+
     * Fixed a bug that could cause a crash when accessing a code attribute
 
 2015-05-05
+
     * Added overview tables, providing an overview of entered data and allows for quick navigation.
 
 2015-04-15
+
     * Added the possibility to share exported data though email, Bluetooth, DropBox, Google Drive etc.
 
 2015-04-14
+
     * Added support for multiple surveys
 
 2015-03-19
+
     * Added support for latest Collect Desktop version
     * Fixed problem with validation of code attributes with multiplicity, rendered as checkboxes
 
 2014-11-17
 
-    * Added action button for "previous" and a "smart-next"
     * Fixed bug that could cause crash when initializing taxon attribute
 
 2014-11-04

@@ -3,8 +3,6 @@ package org.openforis.collect.android.collectadapter;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
-import org.openforis.collect.metamodel.ui.UITab;
-import org.openforis.collect.metamodel.ui.UITabSet;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.*;
 import org.openforis.idm.model.Node;
@@ -62,20 +60,6 @@ public class Definitions {
 
         for (EntityDefinition entityDefinition : rootEntityDefinitions)
             addNodeDefinition(entityDefinition);
-
-        for (UITabSet tabSet : collectSurvey.getUIOptions().getTabSets())
-            for (UITab tab : tabSet.getTabs())
-                addTabDefinition(tab);
-    }
-
-    private void addTabDefinition(UITab tab) {
-        addDefinition(
-                new Definition(tabDefinitionId(tab), tab.getName(), label(tab), true)
-        );
-
-        if (tab.getTabs() != null)
-            for (UITab childTab : tab.getTabs())
-                addTabDefinition(childTab);
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
@@ -168,20 +152,12 @@ public class Definitions {
         return toDefinition(node.getDefinition());
     }
 
-    public Definition tabDefinition(UITab tab) {
-        return definitionById(tabDefinitionId(tab));
-    }
-
     public NodeDefinition toNodeDefinition(Definition definition) {
         try {
             return collectSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
         } catch (NumberFormatException e) {
             throw new IllegalStateException("Expected definition id to be an int, was " + definition.id);
         }
-    }
-
-    private String tabDefinitionId(UITab tab) {
-        return "tab-" + tab.getName();
     }
 
     private String nodeDefinitionId(NodeDefinition nodeDefinition) {
@@ -203,10 +179,6 @@ public class Definitions {
     private String collectionLabel(NodeDefinition nodeDefinition) { // TODO: Take language into account
         String label = nodeDefinition.getLabel(NodeLabel.Type.HEADING);
         return label == null ? label(nodeDefinition) : label;
-    }
-
-    public static String label(UITab tab) {
-        return tab.getLabels().get(0).getText(); // TODO: Take language and type into account
     }
 
     private String nodeDescription(NodeDefinition nodeDefinition) {

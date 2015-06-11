@@ -3,7 +3,6 @@ package org.openforis.collect.android.collectadapter;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.viewmodel.*;
-import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
@@ -14,12 +13,9 @@ import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.Node;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.openforis.collect.android.collectadapter.AttributeUtils.isShown;
-
-// TODO: Clean up
 
 /**
  * @author Daniel Wiell
@@ -58,7 +54,7 @@ class UiModelBuilder {
         UiRecord create(CollectRecord record, UiSurvey uiSurvey) {
             Entity rootEntity = record.getRootEntity();
             uiRecord = instantiateUiRecord(rootEntity, uiSurvey);
-            uiRecord.addChildren(createUiNodesForTabs(rootTabs(rootEntity), rootEntity));
+            uiRecord.addChildren(createUiEntityChildrenNodes(rootEntity));
             uiRecord.init();
             return uiRecord;
         }
@@ -68,56 +64,9 @@ class UiModelBuilder {
                 uiRecord = uiEntityCollection.getUiRecord();
             UiEntity uiEntity = instantiateUiEntity(entity);
             uiEntity.addChildren(createUiEntityChildrenNodes(entity));
-            uiEntity.addChildren(createUiNodesForEntityChildrenTabs(entity));
             uiEntityCollection.addChild(uiEntity);
             uiEntity.init();
             return uiEntity;
-        }
-
-        private List<UiNode> createUiNodesForEntityChildrenTabs(Entity parentEntity) {
-            UITab entityTab = tab(parentEntity);
-            if (entityTab == null)
-                return Collections.emptyList();
-            return createUiNodesForTabs(entityTab.getTabs(), parentEntity);
-        }
-
-        private List<UiNode> createUiNodesForTabs(List<UITab> tabs, Entity parentEntity) {
-            List<UiNode> nodes = new ArrayList<UiNode>();
-            for (UITab tab : tabs) {
-                UiNode tabNode = createUiNodeForTab(tab, parentEntity);
-                nodes.add(tabNode);
-            }
-            return nodes;
-        }
-
-        private UiNode createUiNodeForTab(UITab tab, Entity parentEntity) {
-            List<UiNode> nodes = new ArrayList<UiNode>();
-            nodes.addAll(createUiNodesForTabAssociations(tab, parentEntity));
-            nodes.addAll(createUiNodesForTabChildrenTabs(tab, parentEntity));
-            boolean singleUiInternalNode = nodes.size() == 1 && nodes.get(0) instanceof UiInternalNode;
-            if (singleUiInternalNode)
-                return nodes.get(0); // Skip intermediate node
-            UiInternalNode node = instantiateTabUiNode(tab);
-            node.addChildren(nodes);
-            return node;
-        }
-
-        private List<UiNode> createUiNodesForTabAssociations(UITab tab, Entity parentEntity) {
-            List<UiNode> nodes = new ArrayList<UiNode>();
-            for (NodeDefinition nodeDefinition : tabAssociations(tab))
-                if (isShown(survey, nodeDefinition))
-                    nodes.add(createUiNode(nodeDefinition, parentEntity));
-            return nodes;
-        }
-
-        private List<UiNode> createUiNodesForTabChildrenTabs(UITab tab, Entity parentEntity) {
-            List<UiNode> childTabNodes = new ArrayList<UiNode>();
-            for (UITab childTab : tab.getTabs()) {
-                EntityDefinition entityDefinition = entityDefinition(childTab);
-                if (entityDefinition != null && !entityDefinition.isMultiple())
-                    childTabNodes.add(createUiNodeForTab(childTab, (Entity) childNode(parentEntity, entityDefinition)));
-            }
-            return childTabNodes;
         }
 
         private UiNode createUiNode(NodeDefinition nodeDefinition, Entity parentEntity) {
@@ -143,7 +92,7 @@ class UiModelBuilder {
         private UiNode createUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {
             UiAttributeCollection uiAttributeCollection = instantiateUiAttributeCollection(attributeDefinition, parentEntity);
             setRelevance(parentEntity, uiAttributeCollection);
-            List<Node<? extends NodeDefinition>> childAttributes = parentEntity.getAll(attributeDefinition.getName());
+            List<Node<? extends NodeDefinition>> childAttributes = parentEntity.getChildren(attributeDefinition.getName());
             for (Node<? extends NodeDefinition> childAttribute : childAttributes)
                 uiAttributeCollection.addChild(instantiateUiAttribute((Attribute) childAttribute));
             return uiAttributeCollection;
@@ -159,44 +108,22 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (isShown(survey, childDefinition) && isAssignedToDifferentTabs(childDefinition, entity))
+                if (isShown(survey, childDefinition))
                     nodes.add(createUiNode(childDefinition, entity));
             return nodes;
-        }
-
-        private boolean isAssignedToDifferentTabs(NodeDefinition childDefinition, Entity entity) {
-            UITab childTab = tab(childDefinition);
-            UITab entityTab = tab(entity);
-            return childTab == null || entityTab == null || childTab.getName().equals(entityTab.getName());
         }
 
         private UiEntityCollection createUiEntityCollection(EntityDefinition entityDefinition, Entity parentEntity) {
             UiEntityCollection uiEntityCollection = instantiateUiEntityCollection(entityDefinition, parentEntity);
             setRelevance(parentEntity, uiEntityCollection);
-            List<Node<? extends NodeDefinition>> childrenEntities = parentEntity.getAll(entityDefinition.getName());
+            List<Node<? extends NodeDefinition>> childrenEntities = parentEntity.getChildren(entityDefinition.getName());
             for (Node<? extends NodeDefinition> childrenEntity : childrenEntities)
                 addUiEntity((Entity) childrenEntity, uiEntityCollection);
             return uiEntityCollection;
         }
 
-        private UITab tab(NodeDefinition nodeDefinition) {
-            return survey.getUIOptions().getAssignedTab(nodeDefinition);
-        }
-
-        private UITab tab(Node<EntityDefinition> node) {
-            return tab(node.getDefinition());
-        }
-
-        private List<UITab> rootTabs(Entity rootEntity) {
-            return survey.getUIOptions().getAssignedRootTabSet(rootEntity.getDefinition()).getTabs();
-        }
-
         private List<NodeDefinition> childDefinitions(Entity entity) {
             return nonDeprecated(entity.getDefinition().getChildDefinitions());
-        }
-
-        private List<NodeDefinition> tabAssociations(UITab tab) {
-            return nonDeprecated(survey.getUIOptions().getNodesPerTab(tab, false));
         }
 
         private List<NodeDefinition> nonDeprecated(List<NodeDefinition> nodeDefinitions) {
@@ -206,13 +133,6 @@ class UiModelBuilder {
                     definitions.add(definition);
             }
             return definitions;
-        }
-
-        private EntityDefinition entityDefinition(UITab tab) { // TODO: Ugly, and might not hold
-            List<NodeDefinition> definitions = tabAssociations(tab);
-            if (definitions.isEmpty())
-                return null;
-            return definitions.get(0).getParentEntityDefinition();
         }
 
         private Node childNode(Entity entity, NodeDefinition childDefinition) {
@@ -257,10 +177,6 @@ class UiModelBuilder {
             String name = rootEntity.getName();
             UiRecordCollection collection = uiSurvey.lookupRecordCollection(name);
             return new UiRecord(rootEntity.getId(), definitions.toDefinition(rootEntity), collection);
-        }
-
-        private UiInternalNode instantiateTabUiNode(UITab tab) {
-            return new UiInternalNode(IdGenerator.nextId(), true, definitions.tabDefinition(tab)); // TODO: Can a tab be irrelevant?
         }
 
         private UiAttributeCollection instantiateUiAttributeCollection(AttributeDefinition attributeDefinition, Entity parentEntity) {

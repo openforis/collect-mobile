@@ -32,6 +32,7 @@ class ModelConverterTest extends Specification {
     }
 
 
+    @Ignore
     def 'Can convert a CollectRecord to nodes'() {
         def collectSurvey = importSurvey()
         def collectRecord = addRecord('entity-name', collectSurvey)
@@ -51,6 +52,7 @@ class ModelConverterTest extends Specification {
     }
 
 
+    @Ignore
     def 'Attribute without default value is in state EMPTY'() {
         def collectSurvey = importSurvey()
         def collectRecord = addRecord('entity-name', collectSurvey)

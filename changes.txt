@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-06-11
+
+    * From now on, tabs in survey are ignored. Groupings of attributes can still be done through entities.
+
 2015-05-26
 
     * Added action button for "previous" and a "smart-next"

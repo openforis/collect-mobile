@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-07-20
+
+    * Fixed the problem where high-resolution images could slow down, or even crash, the app.
+
 2015-06-11
 
     * From now on, tabs in survey are ignored. Groupings of attributes can still be done through entities.

@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
+    public static final int MAX_DISPLAY_WIDTH = 375;
+    public static final int MAX_DISPLAY_HEIGHT = 500;
     private final View inputView;
     private final File imageFile;
     private boolean imageChanged;
@@ -187,25 +189,20 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     private void showImage() {
         ImageView imageView = (ImageView) inputView.findViewById(R.id.file_attribute_image);
         imageView.setVisibility(View.VISIBLE);
-
-        int targetW = 375;
-        int targetH = 500;
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
+        Bitmap bitmap = scaleImage(imageFile.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
         imageView.setImageBitmap(bitmap);
+    }
+
+    private Bitmap scaleImage(String filePath, int maxWidth, int maxHeight) {
+        BitmapFactory.Options resample = new BitmapFactory.Options();
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, bounds);
+        int width = bounds.outWidth;
+        int height = bounds.outHeight;
+        boolean withinBounds = width <= maxWidth && height <= maxHeight;
+        if (!withinBounds)
+            resample.inSampleSize = (int) Math.round(Math.min((double) width / (double) maxWidth, (double) height / (double) maxHeight));
+        return BitmapFactory.decodeFile(filePath, resample);
     }
 }

@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-07-29
+
+    * Added support for latest Collect Desktop version
+
 2015-07-20
 
     * Fixed the problem where high-resolution images could slow down, or even crash, the app.

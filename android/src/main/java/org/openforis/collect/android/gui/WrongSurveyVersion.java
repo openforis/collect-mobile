@@ -12,7 +12,7 @@ public class WrongSurveyVersion extends RuntimeException {
     public WrongSurveyVersion(String surveyPath, Version version) {
         super("Survey design exported from Collect Server with newer collect-core version then Collect Mobile. "
                 + "Survey exported with " + SurveyImporter.surveyMinorVersion(version)
-                + ". Collect Mobile has version " + SurveyImporter.surveyMinorVersion(Collect.getVersion()));
+                + ". Collect Mobile has version " + SurveyImporter.surveyMinorVersion(Collect.VERSION));
         this.sourceName = new File(surveyPath).getName();
         this.version = version;
     }

@@ -32,7 +32,7 @@ public class ModelDatabaseMigrator {
     }
 
     public void migrateIfNeeded() {
-        Version currentVersion = Collect.getVersion();
+        Version currentVersion = Collect.VERSION;
         Properties collectVersion = new Properties();
         File surveyDir = new File(AppDirs.surveysDir(context), surveyName); // TODO: Use the survey dir instead
         File collectVersionFile = new File(surveyDir, "collect-version.properties");

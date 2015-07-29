@@ -84,7 +84,7 @@ public class SurveyImporter {
 
     private void migrateIfNeeded(Version version, File targetSurveyDatabase, String surveyName) {
         AndroidDatabase database = new AndroidDatabase(applicationContext, targetSurveyDatabase);
-        Version currentVersion = Collect.getVersion();
+        Version currentVersion = Collect.VERSION;
         if (version.getMajor() < currentVersion.getMajor() || version.getMinor() < currentVersion.getMinor())
             new ModelDatabaseMigrator(database, surveyName, applicationContext).migrate();
     }
@@ -107,7 +107,7 @@ public class SurveyImporter {
 
     private Version getAndVerifyVersion(SurveyBackupInfo info) {
         Version version = info.getCollectVersion();
-        Version currentVersion = Collect.getVersion();
+        Version currentVersion = Collect.VERSION;
         if (version.getMajor() > currentVersion.getMajor() || version.getMinor() > currentVersion.getMinor())
             throw new WrongSurveyVersion(sourceSurveyPath, version);
         return version;

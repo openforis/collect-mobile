@@ -20,7 +20,7 @@ Install an update
 Changes
 -------
 
-2015-07-29
+2015-07-30
 
     * Added support for latest Collect Desktop version
 

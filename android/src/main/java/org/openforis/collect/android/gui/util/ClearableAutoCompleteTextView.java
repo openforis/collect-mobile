@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,7 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView {
     }
 
     void init() {
+        this.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         // Set the bounds of the button
         this.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 imgClearButton, null);

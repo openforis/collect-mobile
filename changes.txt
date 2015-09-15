@@ -20,6 +20,13 @@ Install an update
 Changes
 -------
 
+2015-09-15
+
+    * Taxon attribute displays and searches vernacular names
+    * Taxon querying more powerful. E.g. the query "abe es" matches "Abelmoschus esculentus"
+    * Added button for clearing current taxon
+
+
 2015-07-30
 
     * Added support for latest Collect Desktop version

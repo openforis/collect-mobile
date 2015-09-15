@@ -29,24 +29,69 @@ public class TaxonRepository implements TaxonService {
     public List<UiTaxon> find(final String query, final String taxonomy, final int maxResults) {
         return database.execute(new ConnectionCallback<List<UiTaxon>>() {
             public List<UiTaxon> execute(Connection connection) throws SQLException {
+                ConstraintBuilder constraintBuilder = new ConstraintBuilder(query);
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT taxonomy_id, code, scientific_name\n" +
-                        "FROM ofc_taxon\n" +
+                        "SELECT taxonomy_id, code, scientific_name, vernacular_name\n" +
+                        "FROM ofc_taxon t\n" +
+                        "LEFT JOIN ofc_taxon_vernacular_name v ON t.id = v.taxon_id\n" +
                         "WHERE taxonomy_id = ? AND code IS NOT NULL\n" +
-                        "AND (lower(code) LIKE ? OR lower(scientific_name) LIKE ?)" +
-                        "ORDER BY scientific_name\n" +
+                        "AND " + constraintBuilder.constraint() + "\n" +
+                        "ORDER BY scientific_name, vernacular_name\n" +
                         "LIMIT ?");
                 ps.setInt(1, taxonomyId(taxonomy));
-                ps.setString(2, query.toLowerCase() + "%");
-                ps.setString(3, query.toLowerCase() + "%");
-                ps.setInt(4, maxResults);
+                int i = 1;
+                for (String param : constraintBuilder.params) {
+                    i += 1;
+                    ps.setString(i, param);
+                }
+                ps.setInt(i + 1, maxResults * 3);
                 ResultSet rs = ps.executeQuery();
+
+
                 List<UiTaxon> result = new ArrayList<UiTaxon>();
-                while (rs.next())
-                    result.add(toTaxon(rs));
+                List<String> commonNames = new ArrayList<String>();
+                String code = null;
+                String scientificName = null;
+                while (rs.next()) {
+                    if (code != null && !code.equals(rs.getString("code"))) {
+                        result.add(new UiTaxon(code, scientificName, commonNames));
+                        commonNames = new ArrayList<String>();
+                    }
+
+                    code = rs.getString("code");
+                    scientificName = rs.getString("scientific_name");
+                    String commonName = rs.getString("vernacular_name");
+                    if (commonName != null)
+                        commonNames.add(commonName);
+                }
+                if (code != null)
+                    result.add(new UiTaxon(code, scientificName, commonNames));
+
                 ps.close();
                 rs.close();
-                return result;
+                return result.subList(0, Math.min(maxResults, result.size()));
+            }
+        });
+    }
+
+    public Map<String, String> commonNameByLanguage(final String taxonCode, final String taxonomy) {
+        return database.execute(new ConnectionCallback<Map<String, String>>() {
+            public Map<String, String> execute(Connection connection) throws SQLException {
+                PreparedStatement ps = connection.prepareStatement("" +
+                        "SELECT language_code, vernacular_name\n" +
+                        "FROM ofc_taxon t\n" +
+                        "JOIN ofc_taxon_vernacular_name v ON t.id = v.taxon_id\n" +
+                        "WHERE code = ? AND taxonomy_id = ?\n" +
+                        "ORDER BY language_code, vernacular_name");
+                ps.setString(1, taxonCode);
+                ps.setInt(2, taxonomyId(taxonomy));
+                ResultSet rs = ps.executeQuery();
+                Map<String, String> nameByLanguage = new HashMap<String, String>();
+                while (rs.next())
+                    nameByLanguage.put(rs.getString("language_code"), rs.getString("vernacular_name"));
+                ps.close();
+                rs.close();
+                return nameByLanguage;
             }
         });
     }
@@ -75,7 +120,31 @@ public class TaxonRepository implements TaxonService {
         });
     }
 
-    private UiTaxon toTaxon(ResultSet rs) throws SQLException {
-        return new UiTaxon(rs.getString("code"), rs.getString("scientific_name"));
+
+    private static class ConstraintBuilder {
+        private final List<String> params = new ArrayList<String>();
+        private final StringBuilder constraint = new StringBuilder();
+
+        public ConstraintBuilder(String query) {
+            String[] split = query.toLowerCase().split(" ");
+            for (int i = 0; i < split.length; i++) {
+                String queryTerm = split[i];
+                if (i != 0) constraint.append("AND ");
+                constraint.append("(lower(code) LIKE ?\n")
+                        .append("OR lower(scientific_name) LIKE ? OR lower(scientific_name) LIKE ? \n")
+                        .append("OR lower(vernacular_name) LIKE ? OR lower(vernacular_name) LIKE ?) \n");
+                params.add(queryTerm + "%");
+
+                params.add(queryTerm + "%");
+                params.add("% " + queryTerm + "%");
+
+                params.add(queryTerm + "%");
+                params.add("% " + queryTerm + "%");
+            }
+        }
+
+        public String constraint() {
+            return "(" + constraint + ")";
+        }
     }
 }

@@ -10,11 +10,11 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.R;
 import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,11 +23,12 @@ import java.util.List;
 public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     private static final int MAX_RESULTS = 50;
     // TODO: Use custom layout
-    private static final int LAYOUT_RESOURCE_ID = android.R.layout.simple_dropdown_item_1line;
+    private static final int LAYOUT_RESOURCE_ID = R.layout.taxon_dropdown_item;
     private final Context context;
     private final UiTaxonAttribute attribute;
     private final TaxonService taxonService;
     private List<UiTaxon> filteredValues;
+    private String query = "";
 
     public UiTaxonAdapter(Context context, UiTaxonAttribute attribute, TaxonService taxonService) {
         this.context = context;
@@ -55,7 +56,8 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
             row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
 
             holder = new TaxonHolder();
-            holder.code = (TextView) row.findViewById(android.R.id.text1);
+            holder.text1 = (TextView) row.findViewById(android.R.id.text1);
+            holder.text2 = (TextView) row.findViewById(android.R.id.text2);
 
             row.setTag(holder);
         } else {
@@ -63,7 +65,12 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
         }
 
         UiTaxon taxon = filteredValues.get(position);
-        holder.code.setText(taxon.toString());
+        holder.text1.setText(taxon.toString());
+        if (!taxon.getCommonNames().isEmpty()) {
+            String commonNames = StringUtils.join(taxon.getCommonNames(), ", ");
+            holder.text2.setText(commonNames);
+        } else
+            holder.text2.setText("");
 
         return row;
     }
@@ -71,10 +78,8 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     public Filter getFilter() {
         return new Filter() {
             protected FilterResults performFiltering(CharSequence constraint) {
-
-                List values = StringUtils.isEmpty(constraint)
-                        ? Collections.emptyList()
-                        : taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
+                constraint = constraint == null ? "" : ((String) constraint).trim();
+                List values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
                 FilterResults results = new FilterResults();
                 results.values = values;
                 results.count = values.size();
@@ -85,6 +90,7 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
             @SuppressWarnings("unchecked")
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 filteredValues = (List<UiTaxon>) results.values;
+                UiTaxonAdapter.this.query = (String) constraint;
                 if (results.count > 0)
                     notifyDataSetChanged();
                 else
@@ -94,7 +100,7 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     }
 
     private static class TaxonHolder {
-        TextView code;
-        TextView scientificName;
+        TextView text1;
+        TextView text2;
     }
 }

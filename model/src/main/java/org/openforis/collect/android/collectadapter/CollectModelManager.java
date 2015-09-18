@@ -292,21 +292,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
         collectRecord.setId(recordId);
         collectRecord.replaceRootEntity(rootEntity);
-        makeEmptyAttributesBlank(rootEntity);
         return collectRecord;
-    }
-
-    private void makeEmptyAttributesBlank(Node<? extends NodeDefinition> node) {
-        if (node instanceof Entity)
-            for (Node<? extends NodeDefinition> childNode : ((Entity) node).getChildren())
-                makeEmptyAttributesBlank(childNode);
-        else if (node instanceof Attribute && node.isEmpty()) {
-            Attribute attribute = (Attribute) node;
-            for (Object f : attribute.getFields()) {
-                Field field = (Field) f;
-                field.setSymbol(FieldSymbol.BLANK_ON_FORM.getCode());
-            }
-        }
     }
 
     public File file(UiFileAttribute uiFileAttribute) {

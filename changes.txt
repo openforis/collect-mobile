@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-09-21
+
+    * Worked around Android bug in handling decimal separators others than dot "."
+
 2015-09-15
 
     * Taxon attribute displays and searches vernacular names

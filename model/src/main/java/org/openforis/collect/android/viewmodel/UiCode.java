@@ -10,11 +10,18 @@ import org.openforis.collect.android.util.StringUtils;
 public class UiCode {
     private final String value;
     private final String label;
+    private final String description;
 
     public UiCode(String value, String label) {
+        this(value, label, null);
+    }
+
+
+    public UiCode(String value, String label, String description) {
         Validate.notEmpty(value, "value is required");
         this.value = value;
         this.label = StringUtils.normalizeWhiteSpace(label);
+        this.description = description;
     }
 
     public String getValue() {
@@ -23,6 +30,10 @@ public class UiCode {
 
     public String getLabel() {
         return label;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String toString() {

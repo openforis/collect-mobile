@@ -9,8 +9,6 @@ import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import static android.text.InputType.*;
-
 /**
  * @author Daniel Wiell
  */
@@ -63,6 +61,6 @@ public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubl
     }
 
     protected void onEditTextCreated(EditText input) {
-        input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+        input.setKeyListener(new DecimalSeparatorAwareKeyListener());
     }
 }

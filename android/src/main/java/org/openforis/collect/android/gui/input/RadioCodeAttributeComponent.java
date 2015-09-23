@@ -137,7 +137,6 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     if (selectedViewId != null) {
                         radioGroup.check(selectedViewId);
                     }
-
                 }
             });
         }

@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.HashSet;
@@ -70,6 +69,11 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
     }
 
     protected CodeAttributeComponent createAttributeComponent(UiCodeAttribute attribute) {
-        return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
+        return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context) {
+            protected void initCodeList() {
+                super.initCodeList();
+                AutoCompleteCodeAttributeCollectionComponent.this.initCodeList();
+            }
+        };
     }
 }

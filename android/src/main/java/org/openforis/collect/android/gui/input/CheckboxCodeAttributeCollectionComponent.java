@@ -30,7 +30,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private final Map<UiCode, UiCodeAttribute> attributesByCode = new HashMap<UiCode, UiCodeAttribute>();
     private final LinearLayout layout;
     private EditText qualifierInput;
-    protected UiCodeList codeList;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private AtomicBoolean qualified = new AtomicBoolean();
 
@@ -156,10 +155,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                 layout.removeView(qualifierInput);
             }
         });
-    }
-
-    protected void initCodeList() {
-        codeList = codeListService.codeList(attributeCollection);
     }
 
     private class LoadCodesTask implements Runnable {

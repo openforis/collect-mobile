@@ -79,7 +79,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         });
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE)
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
                     saveNode();
                 return false;
             }

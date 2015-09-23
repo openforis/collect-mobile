@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
-import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -52,7 +51,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         });
         autoComplete.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE)
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
                     saveNode();
                 return false;
             }
@@ -92,7 +91,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     protected String qualifier(UiCode selectedCode) {
-        return codeList.isQualifiable(selectedCode) ? autoComplete.getText().toString().trim() : null;
+        return codeList.isQualifiable() ? autoComplete.getText().toString().trim() : null;
     }
 
     protected View toInputView() {

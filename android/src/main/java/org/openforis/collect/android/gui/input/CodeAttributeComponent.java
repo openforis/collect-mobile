@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
     public static final int RADIO_GROUP_MAX_SIZE = 20;
-    private static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
+    public static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
     private UiCode parentCode;
     protected final CodeListService codeListService;
     protected UiCodeList codeList;
@@ -60,6 +60,8 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             return false;
         UiCode newCode = selectedCode();
         String newQualifier = qualifier(newCode);
+        if (StringUtils.isNotEmpty(newQualifier) && newCode == null)
+            newCode = codeList.getQualifiableCode();
         if (hasChanged(newCode, newQualifier)) {
             attribute.setCode(newCode);
             attribute.setQualifier(newQualifier);
@@ -90,6 +92,8 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     private void includeDescriptionsButton() {
         View inputView = toInputView();
         ViewGroup parent = (ViewGroup) inputView.getParent();
+        if (parent == null)
+            return;
         if (parent.findViewWithTag(DESCRIPTION_BUTTON_TAG) == null) {
             Button button = new Button(context);
             button.setTextAppearance(context, android.R.style.TextAppearance_Small);
@@ -106,7 +110,6 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             int linkColor = new TextView(context).getLinkTextColors().getDefaultColor();
             button.setTextColor(linkColor);
             parent.addView(button);
-
         }
     }
 

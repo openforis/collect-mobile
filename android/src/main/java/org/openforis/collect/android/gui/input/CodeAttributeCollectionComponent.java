@@ -45,6 +45,7 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
         return false;
     }
 
+    // TODO: Handle duplication
     protected void initCodeList() {
         if (codeList == null) {
             codeList = codeListService.codeList(attributeCollection);

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Daniel Wiell
  */
@@ -32,10 +34,10 @@ public class UiCodeAttribute extends UiAttribute {
     }
 
     public boolean isEmpty() {
-        return code == null;
+        return code == null && StringUtils.isEmpty(qualifier);
     }
 
     public String toString() {
-        return getLabel() + ": " + (code == null ? "Unspecified" : code);
+        return getLabel() + ": " + (code == null ? (StringUtils.isEmpty(qualifier) ? "Unspecified" : qualifier) : code);
     }
 }

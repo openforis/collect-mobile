@@ -7,10 +7,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
@@ -41,6 +38,13 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
         return view;
     }
 
+    public View getDefaultFocusedView() { // Focus the last component
+        Collection<CodeAttributeComponent> components = attributeComponentByAttribute.values();
+        if (components.isEmpty())
+            return null;
+        return new ArrayList<CodeAttributeComponent>(components).get(components.size() - 1).toInputView();
+    }
+
     protected final void setValidationError(UiAttribute attribute, Set<UiValidationError> validationErrors) {
         AttributeComponent attributeComponent = attributeComponentByAttribute.get(attribute);
         if (attributeComponent != null) // While we're adding an attribute, it's not in the map yet
@@ -57,22 +61,51 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
         for (AttributeComponent attributeComponent : attributeComponentByAttribute.values())
             if (attributeComponent.updateAttributeIfChanged())
                 changedAttributes.add(attributeComponent.attribute);
+        deleteEmptyAttributes();
         return changedAttributes;
     }
 
+    private void deleteEmptyAttributes() {
+        for (CodeAttributeComponent component : attributeComponentByAttribute.values()) {
+            if (component.attribute.isEmpty())
+                deleteAttribute(component.attribute);
+        }
+    }
+
     private void addAttributeToComponent(UiCodeAttribute attribute) {
+        deleteEmptyAttributes();
         CodeAttributeComponent attributeComponent = createAttributeComponent(attribute);
         attributeComponentByAttribute.put(attribute, attributeComponent);
         View inputView = attributeComponent.toInputView();
-        view.addView(inputView);
+        View button = view.findViewWithTag(CodeAttributeComponent.DESCRIPTION_BUTTON_TAG);
+        if (button == null)
+            view.addView(inputView);
+        else
+            view.addView(inputView, view.indexOfChild(button));
+
         showKeyboard(inputView);
+        // TODO: Register listener when clearing
+    }
+
+    private void deleteAttribute(UiCodeAttribute attribute) {
+        surveyService.deletedAttribute(attribute.getId());
+        CodeAttributeComponent component = attributeComponentByAttribute.remove(attribute);
+        view.removeView(component.toInputView());
     }
 
     protected CodeAttributeComponent createAttributeComponent(UiCodeAttribute attribute) {
         return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context) {
             protected void initCodeList() {
-                super.initCodeList();
+                codeList = codeListService.codeList(attribute);
                 AutoCompleteCodeAttributeCollectionComponent.this.initCodeList();
+            }
+
+            public void notifyAboutAttributeChange() {
+                if (attribute.isEmpty())
+                    deleteAttribute(attribute);
+                else
+                    super.notifyAboutAttributeChange();
+
             }
         };
     }

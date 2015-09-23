@@ -83,7 +83,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
             setValidationError(attributeChange.validationErrors);
     }
 
-    protected final void notifyAboutAttributeChange() {
+    protected void notifyAboutAttributeChange() {
         surveyService.updateAttribute(attribute);
     }
 

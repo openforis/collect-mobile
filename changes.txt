@@ -25,6 +25,8 @@ Changes
     * Included support for comma as decimal separators
     * Added dialog displaying code descriptions for a code attribute
     * Improved the code attributes with multiple auto-completion components
+    * Updated demo survey
+    * Supports latest version of Collect Desktop
 
 2015-09-15
 

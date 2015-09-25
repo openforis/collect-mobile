@@ -1,7 +1,9 @@
 package org.openforis.collect.android.collectadapter;
 
-import org.openforis.collect.android.*;
 import org.openforis.collect.android.CodeListService;
+import org.openforis.collect.android.DefinitionProvider;
+import org.openforis.collect.android.IdGenerator;
+import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.persistence.Database;
@@ -17,8 +19,9 @@ import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
-import java.io.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +95,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
             CollectSurvey collectSurvey = Timer.time(SurveyDao.class, "loadSurvey", new Callable<CollectSurvey>() {
                 public CollectSurvey call() throws Exception {
                     SurveyDao surveyDao = surveyManager.getSurveyDao();
-                    List<SurveySummary> surveySummaries = surveyDao.loadSummaries();
-                    if (surveySummaries == null || surveySummaries.isEmpty())
+                    List<CollectSurvey> surveys = surveyDao.loadAll();
+                    if (surveys.isEmpty())
                         return null;
-                    SurveySummary surveySummary = surveySummaries.get(0);
-                    return surveyDao.load(surveySummary.getName());
+                    return surveys.get(0);
                 }
             });
             if (collectSurvey == null)

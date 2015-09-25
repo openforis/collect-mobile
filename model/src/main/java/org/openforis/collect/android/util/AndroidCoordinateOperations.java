@@ -47,6 +47,16 @@ public class AndroidCoordinateOperations implements CoordinateOperations {
         return new UiSpatialReferenceSystem(srs.getId(), srs.getWellKnownText(), srs.getLabels().get(0).getText());
     }
 
+    public Coordinate convertToWgs84(Coordinate coordinate) {
+        UiSpatialReferenceSystem fromSrs = toUiSrs(coordinate);
+        UiSpatialReferenceSystem toSrs = UiSpatialReferenceSystem.LAT_LNG_SRS;
+        if (fromSrs.equals(toSrs))
+            return coordinate;
+        double[] uiCoordinate = toUiCoordinate(coordinate);
+        double[] transformed = CoordinateUtils.transform(fromSrs, uiCoordinate, toSrs);
+        return new Coordinate(transformed[0], transformed[1], toSrs.id);
+    }
+
     public SpatialReferenceSystem fetchSRS(String code) {
         return spatialReferenceSystems.get(code);
     }

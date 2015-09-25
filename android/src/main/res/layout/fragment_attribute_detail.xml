@@ -22,13 +22,13 @@
                 android:id="@+id/node_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="?attr/standardPadding"/>
+                android:paddingBottom="?attr/standardPadding"/>
 
         <TextView
                 android:id="@+id/node_prompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="?attr/standardPadding"/>
+                android:paddingBottom="?attr/standardPadding"/>
 
         <LinearLayout
                 android:id="@+id/input_container"

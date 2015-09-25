@@ -20,7 +20,7 @@ Install an update
 Changes
 -------
 
-2015-09-24
+2015-09-25
 
     * Included support for comma as decimal separators
     * Added dialog displaying code descriptions for a code attribute

@@ -13,19 +13,14 @@ import org.openforis.idm.metamodel.Survey
 class SurveyDaoStub extends SurveyDao {
     private final Map surveyByName = [:];
 
-    void importModel(Survey survey) throws SurveyImportException {
+    List<CollectSurvey> loadAll() {
+        return new ArrayList(surveyByName.values())
+    }
+
+
+    void insert(CollectSurvey survey) throws SurveyImportException {
         survey.id = IdGenerator.nextId()
         surveyByName[survey.name] = survey
-    }
-
-    CollectSurvey load(String name) {
-        return surveyByName[name] as CollectSurvey
-    }
-
-    List<SurveySummary> loadSummaries() {
-        surveyByName.values().collect {
-            SurveySummary.createFromSurvey(it)
-        }
     }
 }
 

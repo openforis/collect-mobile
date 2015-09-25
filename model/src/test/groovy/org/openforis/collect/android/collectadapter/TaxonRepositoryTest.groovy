@@ -2,6 +2,7 @@ package org.openforis.collect.android.collectadapter
 
 import org.openforis.collect.android.viewmodel.UiTaxon
 import org.openforis.collect.model.CollectSurvey
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.openforis.collect.android.IdGenerator.nextId
@@ -10,6 +11,7 @@ import static org.openforis.collect.android.IdGenerator.nextId
  * @author Daniel Wiell
  */
 @SuppressWarnings("GroovyUnusedDeclaration")
+@Ignore
 class TaxonRepositoryTest extends Specification {
     @Delegate IdmBuilder builder = new IdmBuilder()
     def database = new ModelTestDatabase()

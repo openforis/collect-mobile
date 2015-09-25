@@ -7,6 +7,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Wiell
  */
+@Ignore
 class DatabaseCodeListSizeDaoTest extends Specification {
     public static final NO_PARENT = null
     def codeListId = IdGenerator.nextId()

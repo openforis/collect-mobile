@@ -142,9 +142,6 @@ android {
 
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
-        exclude 'LICENSE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/NOTICE'
         exclude 'META-INF/NOTICE.txt'
     }
 

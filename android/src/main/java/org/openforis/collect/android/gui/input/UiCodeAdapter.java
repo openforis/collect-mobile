@@ -13,6 +13,7 @@ import org.openforis.collect.android.viewmodel.UiCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Daniel Wiell
@@ -27,7 +28,7 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
         super(context, LAYOUT_RESOURCE_ID, codes);
         this.context = context;
         this.codes = codes;
-        filteredCodes = codes;
+        filteredCodes = new CopyOnWriteArrayList<UiCode>(codes);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -84,7 +85,9 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
 
             @SuppressWarnings("unchecked")
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredCodes = (List<UiCode>) results.values;
+                filteredCodes.clear();
+                if (results.values != null)
+                    filteredCodes.addAll((List<UiCode>) results.values);
                 if (results.count > 0)
                     notifyDataSetChanged();
                 else

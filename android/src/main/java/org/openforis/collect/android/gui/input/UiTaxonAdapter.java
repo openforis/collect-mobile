@@ -16,6 +16,7 @@ import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Daniel Wiell
@@ -27,7 +28,7 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     private final Context context;
     private final UiTaxonAttribute attribute;
     private final TaxonService taxonService;
-    private List<UiTaxon> filteredValues;
+    private List<UiTaxon> filteredValues = new CopyOnWriteArrayList<UiTaxon>();
     private String query = "";
 
     public UiTaxonAdapter(Context context, UiTaxonAttribute attribute, TaxonService taxonService) {
@@ -89,7 +90,9 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
 
             @SuppressWarnings("unchecked")
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredValues = (List<UiTaxon>) results.values;
+                filteredValues.clear();
+                if (results.values != null)
+                    filteredValues.addAll((List<UiTaxon>) results.values);
                 UiTaxonAdapter.this.query = (String) constraint;
                 if (results.count > 0)
                     notifyDataSetChanged();

@@ -126,9 +126,9 @@ public class TaxonRepository implements TaxonService {
         private final StringBuilder constraint = new StringBuilder();
 
         public ConstraintBuilder(String query) {
-            String[] split = query.toLowerCase().split(" ");
-            for (int i = 0; i < split.length; i++) {
-                String queryTerm = split[i];
+            String[] terms = query.toLowerCase().split(" ");
+            for (int i = 0; i < terms.length; i++) {
+                String queryTerm = terms[i];
                 if (i != 0) constraint.append("AND ");
                 constraint.append("(lower(code) LIKE ?\n")
                         .append("OR lower(scientific_name) LIKE ? OR lower(scientific_name) LIKE ? \n")

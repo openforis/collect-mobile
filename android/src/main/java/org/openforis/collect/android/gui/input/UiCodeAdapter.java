@@ -74,8 +74,9 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
                     return codes;
                 String query = constraint.toString().trim().toLowerCase();
                 ArrayList<UiCode> matchingCodes = new ArrayList<UiCode>();
+                String[] terms = query.split(" ");
                 for (UiCode code : codes) {
-                    if (matches(code, query))
+                    if (matches(code, terms))
                         matchingCodes.add(code);
                 }
                 return matchingCodes;
@@ -92,12 +93,16 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
         };
     }
 
-    private boolean matches(UiCode code, String query) {
-        return matches(query, code.getValue()) || matches(query, code.getLabel()) || matches(query, code.toString());
+    private boolean matches(UiCode code, String[] terms) {
+        for (String term : terms) {
+            if (!matches(term, code.getValue()) && !matches(term, code.getLabel()) && !matches(term, code.toString()))
+                return false;
+        }
+        return true;
     }
 
-    private boolean matches(String query, String s) {
-        return (s != null && s.toLowerCase().startsWith(query));
+    private boolean matches(String term, String s) {
+        return s != null && s.trim().toLowerCase().matches(".*\\b" + term + ".*");
     }
 
     private static class CodeHolder {

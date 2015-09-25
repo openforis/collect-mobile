@@ -27,6 +27,7 @@ Changes
     * Improved the code attributes with multiple auto-completion components
     * Updated demo survey
     * Supports latest version of Collect Desktop
+    * Minor bug fixes
 
 2015-09-15
 

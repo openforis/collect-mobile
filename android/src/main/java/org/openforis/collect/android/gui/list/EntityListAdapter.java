@@ -3,12 +3,15 @@ package org.openforis.collect.android.gui.list;
 import android.view.*;
 import android.widget.CheckBox;
 import org.openforis.collect.R;
+import org.openforis.collect.android.CodeListService;
+import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.detail.NodeDeleter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.*;
+
 
 /**
  * @author Daniel Wiell
@@ -22,10 +25,12 @@ public class EntityListAdapter extends NodeListAdapter {
 
     private final Set<UiNode> nodesToEdit = new HashSet<UiNode>();
     private final Set<CheckBox> checked = new HashSet<CheckBox>();
+    private final CodeListService codeListService;
     private ActionMode actionMode;
 
     public EntityListAdapter(SurveyNodeActivity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {
         super(activity, parentNode);
+        codeListService = ServiceLocator.codeListService();
         this.nodeDeleter = nodeDeleter;
     }
 
@@ -46,6 +51,19 @@ public class EntityListAdapter extends NodeListAdapter {
 
     protected int layoutResourceId() {
         return LAYOUT_RESOURCE_ID;
+    }
+
+    private List<UiAttribute> allChildAttributes(UiNode node) {
+        List<UiAttribute> attributes = new ArrayList<UiAttribute>();
+        if (node instanceof UiInternalNode) {
+            for (UiNode potentialAttribute : ((UiInternalNode) node).getChildren()) {
+                if (potentialAttribute instanceof UiAttribute)
+                    attributes.add((UiAttribute) potentialAttribute);
+                if (attributes.size() >= MAX_ATTRIBUTES)
+                    return attributes;
+            }
+        }
+        return attributes;
     }
 
     protected void onPrepareView(final UiNode node, View row) {
@@ -72,26 +90,15 @@ public class EntityListAdapter extends NodeListAdapter {
         });
     }
 
-    private List<UiAttribute> allChildAttributes(UiNode node) {
-        List<UiAttribute> attributes = new ArrayList<UiAttribute>();
-        if (node instanceof UiInternalNode) {
-            for (UiNode potentialAttribute : ((UiInternalNode) node).getChildren()) {
-                if (potentialAttribute instanceof UiAttribute)
-                    attributes.add((UiAttribute) potentialAttribute);
-                if (attributes.size() >= MAX_ATTRIBUTES)
-                    return attributes;
-            }
-        }
-        return attributes;
-    }
-
     private String toNodeLabel(List<UiAttribute> attributes) {
         StringBuilder s = new StringBuilder();
         for (Iterator<UiAttribute> iterator = attributes.iterator(); iterator.hasNext(); ) {
             // TODO: Should assemble the attribute name/value manually,
             // to so "Unspecified" can be picked up from a resource, and different parts can be styled separately
             UiAttribute attribute = iterator.next();
-            String value = attribute.valueAsString();
+            String value = attribute instanceof UiCodeAttribute
+                    ? codeString((UiCodeAttribute) attribute)
+                    : attribute.valueAsString();
             value = value == null ? activity.getResources().getString(R.string.label_unspecified) : value;
             s.append(StringUtils.ellipsisMiddle(attribute.getLabel(), MAX_ATTRIBUTE_LABEL_LENGTH)).append(": ")
                     .append(StringUtils.ellipsisMiddle(value, MAX_ATTRIBUTE_VALUE_LENGTH));
@@ -99,6 +106,19 @@ public class EntityListAdapter extends NodeListAdapter {
                 s.append('\n');
         }
         return s.toString();
+    }
+
+    private String codeString(UiCodeAttribute attribute) {
+        UiCode code = attribute.getCode();
+        if (code != null && code.getLabel() == null) {
+            UiCodeList codeList = codeListService.codeList(attribute);
+            attribute.setCode(codeList.getCode(attribute.getCode().getValue()));
+        }
+        return attribute.valueAsString();
+    }
+
+    private String loadLabel(UiCodeAttribute attribute) {
+        return null;
     }
 
     private void setEditTitle(ActionMode mode) {

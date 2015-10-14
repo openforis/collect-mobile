@@ -23,7 +23,9 @@ public class UiEntity extends UiInternalNode {
 
     public void register(UiNode node) {
         super.register(node);
-        if (node instanceof UiAttribute && node.getDefinition().isKeyOf(this)) {
+        if (node instanceof UiAttribute
+                && node.getDefinition().isKeyOf(this)
+                && !keyAttributeIds.contains(node.getId())) {
             keyAttributes.add((UiAttribute) node);
             keyAttributeIds.add(node.getId());
         }

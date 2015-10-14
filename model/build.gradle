@@ -26,7 +26,7 @@ dependencies {
 
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.codehaus.groovy:groovy-all:2.3.9'
-    testCompile 'com.h2database:h2:1.3.174'
+    testCompile 'com.h2database:h2:1.4.189'
 }
 
 task copyTestResources(type: Copy) {

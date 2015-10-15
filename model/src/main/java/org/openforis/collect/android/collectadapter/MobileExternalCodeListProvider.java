@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.openforis.collect.android.util.NaturalOrderComparator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
@@ -32,6 +33,13 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                     items.add(parseRow(toRow(rs), codeList, 1));
                 rs.close();
                 ps.close();
+                final Comparator<String> naturalOrderComparator =
+                        new NaturalOrderComparator<String>();
+                Collections.sort(items, new Comparator<ExternalCodeListItem>() {
+                    public int compare(ExternalCodeListItem o1, ExternalCodeListItem o2) {
+                        return naturalOrderComparator.compare(o1.getCode(), o2.getCode());
+                    }
+                });
                 return items;
             }
         });
@@ -62,6 +70,7 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                     items.add(parseRow(toRow(rs), codeList, parentItem.getLevel() + 1));
                 rs.close();
                 ps.close();
+                Collections.sort(items, new NaturalOrderComparator<ExternalCodeListItem>());
                 return items;
             }
         });

@@ -25,4 +25,6 @@ public class StringUtils {
         int endOfEnd = (int) (ceil(length / 2d + charsToRemove / 2d));
         return s.substring(0, endOfStart) + ELLIPSIS + s.substring(endOfEnd);
     }
+
 }
+

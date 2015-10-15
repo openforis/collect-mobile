@@ -66,7 +66,8 @@ public class SmartNext {
     }
 
     public boolean isNext(UiNode node) {
-        return node != fromNode && node.isRelevant() && !node.isCalculated() &&
+        return node != fromNode && node.isRelevant()
+                && !node.isCalculated() &&
                 (node instanceof UiAttribute
                         || node instanceof UiAttributeCollection
                         || node instanceof UiEntityCollection);

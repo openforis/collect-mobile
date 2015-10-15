@@ -29,6 +29,10 @@ public abstract class UiNode {
         }
     }
 
+    public boolean isCalculated() {
+        return false;
+    }
+
     public int getId() {
         return id;
     }

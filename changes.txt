@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2015-10-21
+
+    * Improved sorting of sampling unit codes
+    * Minor bug fixes
+
 2015-09-25
 
     * Included support for comma as decimal separators

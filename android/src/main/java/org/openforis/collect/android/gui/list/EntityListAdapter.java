@@ -110,15 +110,12 @@ public class EntityListAdapter extends NodeListAdapter {
 
     private String codeString(UiCodeAttribute attribute) {
         UiCode code = attribute.getCode();
-        if (code != null && code.getLabel() == null) {
+        if (code != null && code.getLabel() == null
+                && !(parentNode instanceof UiRecordCollection)) { // Don't look up code labels for record collection
             UiCodeList codeList = codeListService.codeList(attribute);
             attribute.setCode(codeList.getCode(attribute.getCode().getValue()));
         }
         return attribute.valueAsString();
-    }
-
-    private String loadLabel(UiCodeAttribute attribute) {
-        return null;
     }
 
     private void setEditTitle(ActionMode mode) {

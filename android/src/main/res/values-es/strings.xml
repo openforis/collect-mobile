@@ -73,5 +73,15 @@
     <string name="action_survey_list">Encuestas</string>
     <string name="survey_list">Encuestas</string>
     <string name="settings">Ajustes</string>
+    <string name="label_empty">…</string>
+    <string name="label_destination">Destino</string>
+    <string name="label_distance">Distancia</string>
+    <string name="label_navigate">Navegue hasta la ubicación esperada</string>
+    <string name="label_show_code_descriptions">Descripciones Mostrar código</string>
+    <string name="settings_summaryOff_compassEnabled">Brújula dispositivo está deshabilitado</string>
+    <string name="settings_summaryOn_compassEnabled">Brújula dispositivo está habilitado</string>
+    <string name="settings_switchTextOff_compassEnabled">Desactivar</string>
+    <string name="settings_switchTextOn_compassEnabled">Activar</string>
+    <string name="settings_title_compass">Brújula del dispositivo</string>
 
 </resources>

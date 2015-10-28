@@ -75,4 +75,14 @@
     <string name="survey_list">Formulär</string>
     <string name="settings">Inställningar</string>
     <string name="action_survey_list">Formulär</string>
+    <string name="label_destination">Destination</string>
+    <string name="label_empty">…</string>
+    <string name="label_distance">Avstånd</string>
+    <string name="label_navigate">Navigera till förväntad plats</string>
+    <string name="label_show_code_descriptions">Visa kodbeskrivningar</string>
+    <string name="settings_summaryOff_compassEnabled">Compassen på enheten är inaktiverad</string>
+    <string name="settings_summaryOn_compassEnabled">Compassen på enheten är aktiverad</string>
+    <string name="settings_switchTextOff_compassEnabled">Inaktivera</string>
+    <string name="settings_switchTextOn_compassEnabled">Aktivera</string>
+    <string name="settings_title_compass">Kompass</string>
 </resources>

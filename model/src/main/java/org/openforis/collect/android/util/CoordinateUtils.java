@@ -88,8 +88,22 @@ public class CoordinateUtils {
         return R * c * 1000; // convert to meters
     }
 
+    public static double bearing(UiSpatialReferenceSystem fromSrs, double[] from, UiSpatialReferenceSystem toSrs, double[] to) {
+        double[] fromLatLng = transform(fromSrs, from, LAT_LNG_SRS);
+        double[] toLatLng = transform(toSrs, to, LAT_LNG_SRS);
+
+        double longitude1 = fromLatLng[0];
+        double longitude2 = toLatLng[0];
+        double latitude1 = Math.toRadians(fromLatLng[1]);
+        double latitude2 = Math.toRadians(toLatLng[1]);
+        double longDiff = Math.toRadians(longitude2 - longitude1);
+        double y = Math.sin(longDiff) * Math.cos(latitude2);
+        double x = Math.cos(latitude1) * Math.sin(latitude2) - Math.sin(latitude1) * Math.cos(latitude2) * Math.cos(longDiff);
+
+        return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360;
+    }
+
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
-
 }

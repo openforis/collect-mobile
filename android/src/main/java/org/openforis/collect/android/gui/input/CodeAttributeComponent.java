@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -99,7 +100,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             button.setTextAppearance(context, android.R.style.TextAppearance_Small);
             button.setTag(DESCRIPTION_BUTTON_TAG);
             button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            button.setText("Show code descriptions");
+            button.setText(context.getResources().getString(R.string.label_show_code_descriptions));
             button.setBackgroundDrawable(null);
             button.setPaintFlags(button.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             button.setOnClickListener(new View.OnClickListener() {

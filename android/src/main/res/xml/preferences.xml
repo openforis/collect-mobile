@@ -9,6 +9,15 @@
             android:key="crewId"
             />
     <SwitchPreference
+            android:title="@string/settings_title_compass"
+            android:defaultValue="true"
+            android:switchTextOn="@string/settings_switchTextOn_compassEnabled"
+            android:switchTextOff="@string/settings_switchTextOff_compassEnabled"
+            android:summaryOn="@string/settings_summaryOn_compassEnabled"
+            android:summaryOff="@string/settings_summaryOff_compassEnabled"
+            android:key="compassEnabled"
+    />
+    <SwitchPreference
             android:title="@string/settings_title_darkTheme"
             android:defaultValue="true"
             android:switchTextOn="@string/settings_switchTextOn_darkTheme"

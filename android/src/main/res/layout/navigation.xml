@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        android:padding="?attr/standardPadding">
+
+
+    <RelativeLayout
+            android:id="@+id/navigationCircle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/navigation_circle">
+
+
+        <View
+                android:id="@+id/destinationCircle"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/navigation_destination"
+                android:visibility="invisible"
+        />
+
+        <TextView
+                android:id="@+id/navigationN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="N"
+                android:visibility="invisible"
+        />
+
+        <TextView
+                android:id="@+id/navigationE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="E"
+                android:visibility="invisible"
+        />
+
+        <TextView
+                android:id="@+id/navigationS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="S"
+                android:visibility="invisible"
+        />
+
+        <TextView
+                android:id="@+id/navigationW"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="W"
+                android:visibility="invisible"
+        />
+
+        <View
+                android:id="@+id/currentLocationCircle"
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/navigation_center"
+        />
+    </RelativeLayout>
+
+
+    <TableLayout
+            android:id="@+id/navigationData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:shrinkColumns="*"
+            android:paddingTop="?attr/standardPadding">
+
+        <TableRow>
+
+            <TextView
+                    android:id="@+id/navigationDestinationDistanceLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_distance"
+            />
+
+            <TextView
+                    android:id="@+id/navigationAccuracyLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_accuracy"
+            />
+
+            <TextView
+                    android:id="@+id/navigationDestinationBearingLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_destination"
+            />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                    android:id="@+id/navigationDestinationDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_empty"
+            />
+
+            <TextView
+                    android:id="@+id/navigationAccuracy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_empty"
+            />
+
+            <TextView
+                    android:id="@+id/navigationDestinationBearing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_empty"
+            />
+
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

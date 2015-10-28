@@ -18,6 +18,7 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
     public UiCoordinateAttribute uiAttribute(UiAttributeDefinition definition, CoordinateAttribute attribute) {
         UiCoordinateDefinition coordinateDefinition = (UiCoordinateDefinition) definition;
         UiCoordinateAttribute uiAttribute = new UiCoordinateAttribute(attribute.getId(), isRelevant(attribute), coordinateDefinition);
+
         updateUiAttributeValue(attribute, uiAttribute);
         return uiAttribute;
     }

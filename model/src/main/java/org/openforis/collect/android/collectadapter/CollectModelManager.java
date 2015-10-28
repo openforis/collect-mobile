@@ -1,11 +1,10 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.CodeListService;
-import org.openforis.collect.android.DefinitionProvider;
-import org.openforis.collect.android.IdGenerator;
-import org.openforis.collect.android.SurveyException;
+import org.openforis.collect.android.*;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
+import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.manager.*;
@@ -13,9 +12,7 @@ import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.model.*;
 import org.openforis.collect.persistence.*;
 import org.openforis.idm.metamodel.*;
-import org.openforis.idm.metamodel.validation.ValidationResultFlag;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.metamodel.validation.Validator;
+import org.openforis.idm.metamodel.validation.*;
 import org.openforis.idm.model.*;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
@@ -30,7 +27,7 @@ import java.util.concurrent.Callable;
 /**
  * @author Daniel Wiell
  */
-public class CollectModelManager implements DefinitionProvider, CodeListService {
+public class CollectModelManager implements DefinitionProvider, CodeListService, CoordinateDestinationService {
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
     private final CodeListManager codeListManager;
@@ -305,6 +302,22 @@ public class CollectModelManager implements DefinitionProvider, CodeListService 
         return new File(dir, fileName);
     }
 
+
+    public double[] destination(UiCoordinateAttribute uiAttribute) {
+        CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
+        for (Check<?> check : attribute.getDefinition().getChecks()) {
+            if (check instanceof DistanceCheck) {
+                Coordinate destinationPoint = ((DistanceCheck) check).evaluateDestinationPoint(attribute);
+                return CoordinateUtils.transform(
+                        uiAttribute.getSpatialReferenceSystem(),
+                        new double[]{destinationPoint.getX(), destinationPoint.getY()},
+                        UiSpatialReferenceSystem.LAT_LNG_SRS
+                );
+
+            }
+        }
+        throw new IllegalStateException("No distance check for " + uiAttribute);
+    }
 
     public interface ExportListener {
         void beforeRecordExport(int recordId);

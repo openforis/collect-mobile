@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 import org.openforis.collect.android.CodeListService;
+import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.*;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
@@ -128,6 +129,10 @@ public class ServiceLocator {
     }
 
     public static CodeListService codeListService() {
+        return collectModelManager;
+    }
+
+    public static CoordinateDestinationService coordinateDestinationService() {
         return collectModelManager;
     }
 

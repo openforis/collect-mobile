@@ -1,20 +1,18 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Context;
-import android.location.Criteria;
+import android.graphics.Paint;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.detail.NavigationDialogFragment;
 import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
@@ -31,14 +29,13 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
  * @author Daniel Wiell
  */
 public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinateAttribute> {
-    private final LocationManager locationManager;
-    private final LocationUpdater locationUpdater = new LocationUpdater();
+    private final LocationProvider locationProvider;
     private ViewHolder vh;
 
-    protected CoordinateAttributeComponent(UiCoordinateAttribute attribute, SurveyService surveyService, FragmentActivity context) {
+    protected CoordinateAttributeComponent(UiCoordinateAttribute attribute, SurveyService surveyService, final FragmentActivity context) {
         super(attribute, surveyService, context);
         vh = new ViewHolder();
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        locationProvider = new LocationProvider(new UpdateListener(context), context, true);
     }
 
     protected boolean updateAttributeIfChanged() {
@@ -78,51 +75,27 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
     }
 
     private void requestLocation() {
-        locationUpdater.bestAccuracy = Float.MAX_VALUE;
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        for (String provider : locationManager.getAllProviders()) {
-            if (locationManager.isProviderEnabled(provider))
-                locationManager.requestLocationUpdates(provider, 1000, 0, locationUpdater, context.getMainLooper());
-        }
+        locationProvider.start();
     }
 
     private void stopLocationRequest() {
-        locationManager.removeUpdates(locationUpdater);
+        locationProvider.stop();
         vh.button.setChecked(false);
     }
 
-    private final class LocationUpdater implements LocationListener {
-        private float bestAccuracy = Float.MAX_VALUE;
+    private double[] transformToSelectedSrs(Location location) {
+        double[] coord = new double[]{location.getLongitude(), location.getLatitude()};
+        UiSpatialReferenceSystem from = UiSpatialReferenceSystem.LAT_LNG_SRS;
+        UiSpatialReferenceSystem to = selectedSpatialReferenceSystem();
+        return CoordinateUtils.transform(from, coord, to);
+    }
 
-        public synchronized void onLocationChanged(Location location) {
-            float accuracy = location.getAccuracy();
-            if (accuracy < bestAccuracy) {
-                bestAccuracy = accuracy;
-                vh.accuracyView.setText(context.getResources().getString(R.string.label_accuracy) + ": " + Math.round(accuracy) + "m");
-                double[] transformedCoord = transformToSelectedSrs(location);
-                vh.updateCoordinate(transformedCoord);
-            }
-        }
-
-        private double[] transformToSelectedSrs(Location location) {
-            double[] coord = new double[]{location.getLongitude(), location.getLatitude()};
-            UiSpatialReferenceSystem from = UiSpatialReferenceSystem.LAT_LNG_SRS;
-            UiSpatialReferenceSystem to = selectedSpatialReferenceSystem();
-            return CoordinateUtils.transform(from, coord, to);
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            // Do nothing
-        }
-
-        public void onProviderEnabled(String provider) {
-            // Do nothing
-        }
-
-        public void onProviderDisabled(String provider) {
-            // Do nothing
-        }
+    private NumberFormat numberFormat() {
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setGroupingUsed(false);
+        numberFormat.setMaximumFractionDigits(10);
+        numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
+        return numberFormat;
     }
 
     private class ViewHolder {
@@ -132,6 +105,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         TextView yView;
         TextView accuracyView;
         ToggleButton button;
+        Button navigateButton;
         ArrayAdapter<UiSpatialReferenceSystem> adapter;
 
         private ViewHolder() {
@@ -150,6 +124,10 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             view.addView(xView);
             view.addView(yView);
             view.addView(button);
+            if (attribute.getDefinition().destinationPointSpecified) {
+                navigateButton = createNavigationButton();
+                view.addView(navigateButton);
+            }
 
             view.addView(accuracyView);
         }
@@ -183,6 +161,23 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 }
             });
             return srsSpinner;
+        }
+
+        private Button createNavigationButton() {
+            Button button = new Button(context);
+            button.setTextAppearance(context, android.R.style.TextAppearance_Small);
+            button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+            button.setText(context.getResources().getString(R.string.label_navigate));
+            button.setBackgroundDrawable(null);
+            button.setPaintFlags(button.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    NavigationDialogFragment.show(context.getSupportFragmentManager());
+                }
+            });
+            int linkColor = new TextView(context).getLinkTextColors().getDefaultColor();
+            button.setTextColor(linkColor);
+            return button;
         }
 
         private void selectCurrentSrsInSpinner(Spinner srsSpinner) {
@@ -265,12 +260,16 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
     }
 
-    private NumberFormat numberFormat() {
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setGroupingUsed(false);
-        numberFormat.setMaximumFractionDigits(10);
-        numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
-        return numberFormat;
-    }
+    private class UpdateListener implements LocationProvider.LocationUpdateListener {
+        private final FragmentActivity context;
 
+        public UpdateListener(FragmentActivity context) {this.context = context;}
+
+        public void onUpdate(Location location) {
+            float accuracy = location.getAccuracy();
+            vh.accuracyView.setText(context.getResources().getString(R.string.label_accuracy) + ": " + Math.round(accuracy) + "m");
+            double[] transformedCoord = transformToSelectedSrs(location);
+            vh.updateCoordinate(transformedCoord);
+        }
+    }
 }

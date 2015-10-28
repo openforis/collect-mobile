@@ -13,11 +13,13 @@ import static org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem.L
 public class UiCoordinateDefinition extends UiAttributeDefinition {
     private final Map<String, UiSpatialReferenceSystem> srsById = new HashMap<String, UiSpatialReferenceSystem>();
     public final List<UiSpatialReferenceSystem> spatialReferenceSystems;
+    public final boolean destinationPointSpecified;
 
     public UiCoordinateDefinition(String id, String name, String label, Integer keyOfDefinitionId, boolean calculated,
                                   List<UiSpatialReferenceSystem> spatialReferenceSystems,
-                                  String description, String prompt, boolean required) {
+                                  String description, String prompt, boolean required, boolean destinationPointSpecified) {
         super(id, name, label, keyOfDefinitionId, calculated, description, prompt, required);
+        this.destinationPointSpecified = destinationPointSpecified;
         this.spatialReferenceSystems = Collections.unmodifiableList(spatialReferenceSystems);
         for (UiSpatialReferenceSystem spatialReferenceSystem : spatialReferenceSystems)
             srsById.put(spatialReferenceSystem.id, spatialReferenceSystem);

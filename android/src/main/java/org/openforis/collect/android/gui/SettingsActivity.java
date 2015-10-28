@@ -25,6 +25,7 @@ import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
     public static final String CREW_ID = "crewId";
+    public static final String COMPASS_ENABLED = "compassEnabled";
     private DirectoryChooserFragment directoryChooserDialog;
     private SettingsFragment settingsFragment;
 
@@ -43,8 +44,9 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     public static void init(Context context) {
-        String crew = PreferenceManager.getDefaultSharedPreferences(context).getString(CREW_ID, "");
-        Settings.setCrew(crew);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Settings.setCrew(preferences.getString(CREW_ID, ""));
+        Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
     }
 
     public void onSelectDirectory(@NonNull String workingDir) {
@@ -70,6 +72,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             addPreferencesFromResource(R.xml.preferences);
             setupStorageLocationPreference();
             setupCrewIdPreference();
+            setupCompassEnabledPreference();
         }
 
         private void setupStorageLocationPreference() {
@@ -92,6 +95,16 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                     String crew = newValue.toString();
                     crewIdPreference.setSummary(crew);
                     Settings.setCrew(crew);
+                    return true;
+                }
+            });
+        }
+        private void setupCompassEnabledPreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final Preference preference = findPreference(COMPASS_ENABLED);
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Settings.setCompassEnabled((Boolean) newValue);
                     return true;
                 }
             });

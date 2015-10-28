@@ -5,6 +5,8 @@ import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.*;
+import org.openforis.idm.metamodel.validation.Check;
+import org.openforis.idm.metamodel.validation.DistanceCheck;
 import org.openforis.idm.model.Node;
 
 import java.util.*;
@@ -87,15 +89,25 @@ public class Definitions {
                 return new UiTaxonDefinition(id, name, label, keyOfDefinitionId, calculated,
                         ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
-            else if (nodeDefinition instanceof CoordinateAttributeDefinition)
+            else if (nodeDefinition instanceof CoordinateAttributeDefinition) {
                 return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        spatialReferenceSystems,
-                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
-            else
+                        spatialReferenceSystems, nodeDescription(nodeDefinition),
+                        nodePrompt(nodeDefinition), required,
+                        isDestinationPointSpecified((CoordinateAttributeDefinition) nodeDefinition));
+            } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
         }
         return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+    }
+
+    private boolean isDestinationPointSpecified(CoordinateAttributeDefinition nodeDefinition) {
+        boolean destinationPointSpecified = false;
+        for (Check<?> check : nodeDefinition.getChecks()) {
+            destinationPointSpecified = check instanceof DistanceCheck
+                    && ((DistanceCheck) check).getDestinationPointExpression() != null;
+        }
+        return destinationPointSpecified;
     }
 
     private boolean isRequired(NodeDefinition nodeDefinition) {

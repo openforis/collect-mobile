@@ -38,11 +38,23 @@
     <string name="label_start_gps">Start GPS</string>
     <string name="label_stop_gps">Stop GPS</string>
     <string name="label_accuracy">Accuracy</string>
+    <string name="label_navigate">Navigate to expected location</string>
+    <string name="label_distance">Distance</string>
+    <string name="label_destination">Destination</string>
+    <string name="label_empty">…</string>
+
+    <string name="label_show_code_descriptions">Show code descriptions</string>
 
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>
 
     <string name="settings_title_crewId">Crew ID</string>
+
+    <string name="settings_title_compass">Device compass</string>
+    <string name="settings_switchTextOn_compassEnabled">Enable</string>
+    <string name="settings_switchTextOff_compassEnabled">Disable</string>
+    <string name="settings_summaryOn_compassEnabled">Device compass is enabled</string>
+    <string name="settings_summaryOff_compassEnabled">Device compass is disabled</string>
 
     <string name="settings_workingDir">Working directory</string>
     <string name="settings_title_darkTheme">Collect Mobile theme</string>

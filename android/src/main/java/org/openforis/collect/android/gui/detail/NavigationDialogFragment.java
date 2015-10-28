@@ -24,6 +24,7 @@ import org.openforis.collect.android.util.CoordinateTranslator;
 import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 
 import static org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem.LAT_LNG_SRS;
 
@@ -127,7 +128,7 @@ public class NavigationDialogFragment extends DialogFragment {
         final TextView accuracy;
         final TextView destinationBearing;
 
-        public ViewHolder(LayoutInflater inflater, ViewGroup container) {
+        ViewHolder(LayoutInflater inflater, ViewGroup container) {
             view = (ViewGroup) inflater.inflate(R.layout.navigation, container, false);
             navigationCircle = view.findViewById(R.id.navigationCircle);
             destinationCircle = navigationCircle.findViewById((R.id.destinationCircle));
@@ -137,7 +138,7 @@ public class NavigationDialogFragment extends DialogFragment {
             destinationBearing = (TextView) view.findViewById(R.id.navigationDestinationBearing);
         }
 
-        public void refresh(double compassBearing, double bearing, double distance, double accuracy) {
+        void refresh(double compassBearing, double bearing, double distance, double accuracy, ValidationResultFlag validationResultFlag) {
             View navigationCircle = vh.navigationCircle;
             int circleWidth = navigationCircle.getWidth();
 
@@ -151,10 +152,12 @@ public class NavigationDialogFragment extends DialogFragment {
             destinationParams.topMargin = margins[1];
             destinationCircle.setVisibility(View.VISIBLE);
             GradientDrawable background = (GradientDrawable) destinationCircle.getBackground();
-            background.setStroke(5, Color.parseColor("#00ff00"));
-            background.setColor(Color.parseColor("#00ff00"));
+            int color = color(distance, accuracy, validationResultFlag);
+            background.setStroke(5, color);
+            background.setColor(color);
 
             vh.distance.setText(String.valueOf(Math.round(distance)) + "m");
+            vh.distance.setTextColor(color);
             vh.accuracy.setText(String.valueOf(Math.round(accuracy)) + "m");
             vh.destinationBearing.setText(String.valueOf(Math.round(bearing)) + "°");
 
@@ -162,6 +165,16 @@ public class NavigationDialogFragment extends DialogFragment {
 
             view.requestLayout();
             navigationCircle.requestLayout();
+        }
+
+        int color(double distance, double accuracy, ValidationResultFlag validationResultFlag) {
+            if (validationResultFlag == ValidationResultFlag.ERROR)
+                return Color.parseColor("#dc143c");
+            if (validationResultFlag == ValidationResultFlag.WARNING)
+                return Color.parseColor("#ff8c00");
+            if (distance > accuracy)
+                return Color.parseColor("#ffd700");
+            return Color.parseColor("#32cd32");
         }
     }
 
@@ -183,12 +196,15 @@ public class NavigationDialogFragment extends DialogFragment {
                 lastCompassBearing = compassBearing;
                 double[] current = new double[]{location.getLongitude(), location.getLatitude()};
                 double[] destination = ServiceLocator.coordinateDestinationService().destination(attribute);
+                attribute.setX(current[0]);
+                attribute.setY(current[1]);
+                ValidationResultFlag validationResultFlag = ServiceLocator.coordinateDestinationService().validateDistance(attribute);
                 double bearing = CoordinateUtils.bearing(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);
                 double distance = CoordinateUtils.distance(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);
                 double accuracy = location.getAccuracy();
 
 
-                vh.refresh(compassBearing, bearing, distance, accuracy);
+                vh.refresh(compassBearing, bearing, distance, accuracy, validationResultFlag);
             }
         }
 

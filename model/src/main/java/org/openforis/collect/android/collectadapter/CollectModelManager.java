@@ -319,6 +319,23 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         throw new IllegalStateException("No distance check for " + uiAttribute);
     }
 
+    public ValidationResultFlag validateDistance(UiCoordinateAttribute uiAttribute) {
+        CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
+        attribute.setValue(new Coordinate(uiAttribute.getX(), uiAttribute.getY(), uiAttribute.getSpatialReferenceSystem().id));
+        ValidationResultFlag worstFlag = ValidationResultFlag.OK;
+        for (Check<?> check : attribute.getDefinition().getChecks()) {
+            if (check instanceof DistanceCheck) {
+                ValidationResultFlag flag = ((DistanceCheck) check).evaluate(attribute);
+                if (flag == ValidationResultFlag.ERROR)
+                    return flag;
+                if (flag == ValidationResultFlag.WARNING)
+                    worstFlag = flag;
+            }
+        }
+        return worstFlag;
+
+    }
+
     public interface ExportListener {
         void beforeRecordExport(int recordId);
     }

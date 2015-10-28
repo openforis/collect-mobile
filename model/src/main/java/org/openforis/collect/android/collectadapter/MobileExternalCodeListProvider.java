@@ -103,9 +103,11 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         int i = 1;
         while (a != null) {
             String code = a.getValue().getCode();
-            ps.setString(i, code);
+            if (code != null) {
+                ps.setString(i, code);
+                i++;
+            }
             a = a.getCodeParent();
-            i++;
         }
     }
 
@@ -120,7 +122,10 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
     private void appendSingleItemQueryConstraint(CodeAttribute attribute, CodeList codeList, StringBuilder s) {
         int level = attribute.getDefinition().getLevelPosition();
         String levelName = levelName(codeList, level);
-        s.append(" AND ").append(levelName).append('=').append('?');
+        if (attribute.getValue().getCode() == null)
+            s.append(" AND ").append(levelName).append(" is NULL");
+        else
+            s.append(" AND ").append(levelName).append('=').append('?');
         CodeAttribute parent = attribute.getCodeParent();
         if (parent != null)
             appendSingleItemQueryConstraint(parent, codeList, s);

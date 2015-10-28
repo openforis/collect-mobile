@@ -190,7 +190,7 @@ public class ServiceLocator {
             storageDirectory = AppDirs.surveyImagesDir(surveyName, context);
             if (!storageDirectory.exists()) {
                 if (!storageDirectory.mkdirs())
-                    throw new WorkingDirNotWritable();
+                    throw new WorkingDirNotWritable(storageDirectory);
                 AndroidFiles.makeDiscoverable(storageDirectory, context);
             }
         }};

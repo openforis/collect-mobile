@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import org.openforis.collect.android.gui.WorkingDirNotWritable;
 
 import java.io.File;
@@ -20,16 +21,18 @@ public class AppDirs {
 
     public static File root(Context context) throws WorkingDirNotWritable {
         File workingDir = readFromPreference(context);
-        if (workingDir == null)
+        if (workingDir == null) {
             workingDir = defaultWorkingDir(context);
+            Log.i("CollectMobile", "Working dir - trying default: " + workingDir);
+        }
 
         if (!workingDir.exists()) {
             if (!workingDir.mkdirs())
-                throw new WorkingDirNotWritable();
+                throw new WorkingDirNotWritable(workingDir);
             AndroidFiles.makeDiscoverable(workingDir, context);
-        } else if (!workingDir.canWrite()) {
-            throw new WorkingDirNotWritable();
-        }
+        } else if (!workingDir.canWrite())
+            throw new WorkingDirNotWritable(workingDir);
+        Log.i("CollectMobile", "Working dir: " + workingDir);
         return workingDir;
     }
 
@@ -50,11 +53,23 @@ public class AppDirs {
         if (workingDir == null)
             workingDir = sdCardDirFromEnv();
         if (workingDir == null)
-            workingDir = context.getExternalFilesDir(null);
+            workingDir = externalFilesDir(context);
         if (workingDir == null)
-            workingDir = context.getFilesDir();
+            workingDir = filesDir(context);
         updatePreference(workingDir, context);
         AndroidFiles.makeDiscoverable(workingDir, context);
+        return workingDir;
+    }
+
+    private static File filesDir(Context context) {
+        File workingDir = context.getFilesDir();
+        Log.d("CollectMobile", "Working dir - filesDir: " + workingDir);
+        return workingDir;
+    }
+
+    private static File externalFilesDir(Context context) {
+        File workingDir = context.getExternalFilesDir(null);
+        Log.d("CollectMobile", "Working dir - getExternalFilesDir: " + workingDir);
         return workingDir;
     }
 
@@ -70,6 +85,23 @@ public class AppDirs {
         String path = PreferenceManager.getDefaultSharedPreferences(context).getString(PREFERENCE_KEY, null);
         if (path != null)
             workingDir = new File(path);
+        Log.d("CollectMobile", "Working dir - readFromPreference: " + workingDir);
+
+        if (workingDir == null)
+            return null;
+
+        if (!workingDir.exists()) {
+            if (!workingDir.mkdirs()) {
+                Log.d("CollectMobile", "Working dir - readFromPreference - not writable: " + workingDir);
+                return null;
+            }
+        }
+
+        if (!workingDir.canWrite()) {
+            Log.d("CollectMobile", "Working dir - readFromPreference - not writable: " + workingDir);
+            return null;
+        }
+
         return workingDir;
     }
 
@@ -77,10 +109,14 @@ public class AppDirs {
         File[] externalFilesDir = ContextCompat.getExternalFilesDirs(context, null);
         File emulatedStorageDir = Environment.isExternalStorageEmulated() ? context.getExternalFilesDir(null) : null;
 
+        File workingDir = null;
         for (File dir : externalFilesDir)
-            if (dir != null && (emulatedStorageDir == null || !dir.equals(emulatedStorageDir)))
-                return dir;
-        return null;
+            if (dir != null && (emulatedStorageDir == null || !dir.equals(emulatedStorageDir))) {
+                workingDir = dir;
+                break;
+            }
+        Log.d("CollectMobile", "Working dir - sdCardDir: " + workingDir);
+        return workingDir;
     }
 
     private static <T> T first(Collection<T> list) {
@@ -99,10 +135,12 @@ public class AppDirs {
                 if (path.canWrite())
                     secondaryStorageLocations.add(path);
             }
-        File dir = first(secondaryStorageLocations);
-        if (dir != null)
-            dir = new File(dir, "collect-mobile");
-        return dir;
+        Log.d("CollectMobile", "Working dir - secondaryStorageLocations: " + secondaryStorageLocations);
+        File workingDir = first(secondaryStorageLocations);
+        if (workingDir != null)
+            workingDir = new File(workingDir, "collect-mobile");
+        Log.d("CollectMobile", "Working dir - sdCardDirFromEnv: " + workingDir);
+        return workingDir;
     }
 
 }

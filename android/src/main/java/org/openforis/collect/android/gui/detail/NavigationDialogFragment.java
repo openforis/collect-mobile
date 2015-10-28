@@ -49,8 +49,7 @@ public class NavigationDialogFragment extends DialogFragment {
         compassBearingProvider = new BearingToNorthProvider(getActivity());
         compassBearingProvider.setChangeEventListener(new BearingToNorthProvider.ChangeEventListener() {
             public void onBearingChanged(double bearing) {
-                if (getActivity() != null)
-                    updateListener.onUpdate(updateListener.lastLocation);
+                updateListener.onUpdate(updateListener.lastLocation);
             }
         });
         return dialog;
@@ -142,7 +141,7 @@ public class NavigationDialogFragment extends DialogFragment {
             View navigationCircle = vh.navigationCircle;
             int circleWidth = navigationCircle.getWidth();
 
-            int destinationRadius = dpToPx(5);
+            int destinationRadius = dpToPx(10);
             double radius = circleWidth / 2d - destinationRadius;
             int[] margins = CoordinateTranslator.toMargins(0, bearing, radius);
 
@@ -188,16 +187,18 @@ public class NavigationDialogFragment extends DialogFragment {
         double lastCompassBearing;
 
         public void onUpdate(Location location) {
-            if (location == null)
+            if (location == null || getActivity() == null)
                 return;
             double compassBearing = getCompassBearing();
             if (lastCompassBearing != compassBearing || !sameLocation(location, lastLocation)) {
                 lastLocation = location;
                 lastCompassBearing = compassBearing;
                 double[] current = new double[]{location.getLongitude(), location.getLatitude()};
-                double[] destination = ServiceLocator.coordinateDestinationService().destination(attribute);
                 attribute.setX(current[0]);
                 attribute.setY(current[1]);
+                double[] destination = ServiceLocator.coordinateDestinationService().destination(attribute);
+                if (destination == null)
+                    return;
                 ValidationResultFlag validationResultFlag = ServiceLocator.coordinateDestinationService().validateDistance(attribute);
                 double bearing = CoordinateUtils.bearing(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);
                 double distance = CoordinateUtils.distance(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);

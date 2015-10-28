@@ -305,9 +305,12 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     public double[] destination(UiCoordinateAttribute uiAttribute) {
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
+        attribute.setValue(new Coordinate(uiAttribute.getX(), uiAttribute.getY(), uiAttribute.getSpatialReferenceSystem().id));
         for (Check<?> check : attribute.getDefinition().getChecks()) {
             if (check instanceof DistanceCheck) {
                 Coordinate destinationPoint = ((DistanceCheck) check).evaluateDestinationPoint(attribute);
+                if (destinationPoint == null)
+                    return null;
                 return CoordinateUtils.transform(
                         uiAttribute.getSpatialReferenceSystem(),
                         new double[]{destinationPoint.getX(), destinationPoint.getY()},

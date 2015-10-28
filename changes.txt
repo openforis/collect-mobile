@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2015-10-28
+
+    * Added a navigation interface. Device GPS and compass are use to navigate to a location specified in sampling design.
+    * Minor bug fixes
+
 2015-10-21
 
     * Improved sorting of sampling unit codes

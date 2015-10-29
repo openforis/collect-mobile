@@ -303,39 +303,49 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
 
-    public double[] destination(UiCoordinateAttribute uiAttribute) {
+    public double[] destination(UiCoordinateAttribute uiAttribute, double[] coordinate) {
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
-        attribute.setValue(new Coordinate(uiAttribute.getX(), uiAttribute.getY(), uiAttribute.getSpatialReferenceSystem().id));
-        for (Check<?> check : attribute.getDefinition().getChecks()) {
-            if (check instanceof DistanceCheck) {
-                Coordinate destinationPoint = ((DistanceCheck) check).evaluateDestinationPoint(attribute);
-                if (destinationPoint == null)
-                    return null;
-                return CoordinateUtils.transform(
-                        uiAttribute.getSpatialReferenceSystem(),
-                        new double[]{destinationPoint.getX(), destinationPoint.getY()},
-                        UiSpatialReferenceSystem.LAT_LNG_SRS
-                );
+        Coordinate previousValue = attribute.getValue();
+        try {
+            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], uiAttribute.getSpatialReferenceSystem().id));
+            for (Check<?> check : attribute.getDefinition().getChecks()) {
+                if (check instanceof DistanceCheck) {
+                    Coordinate destinationPoint = ((DistanceCheck) check).evaluateDestinationPoint(attribute);
+                    if (destinationPoint == null)
+                        return null;
+                    return CoordinateUtils.transform(
+                            uiAttribute.getSpatialReferenceSystem(),
+                            new double[]{destinationPoint.getX(), destinationPoint.getY()},
+                            UiSpatialReferenceSystem.LAT_LNG_SRS
+                    );
 
+                }
             }
+            throw new IllegalStateException("No distance check for " + uiAttribute);
+        } finally {
+            attribute.setValue(previousValue);
         }
-        throw new IllegalStateException("No distance check for " + uiAttribute);
     }
 
-    public ValidationResultFlag validateDistance(UiCoordinateAttribute uiAttribute) {
+    public ValidationResultFlag validateDistance(UiCoordinateAttribute uiAttribute, double[] coordinate) {
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
-        attribute.setValue(new Coordinate(uiAttribute.getX(), uiAttribute.getY(), uiAttribute.getSpatialReferenceSystem().id));
-        ValidationResultFlag worstFlag = ValidationResultFlag.OK;
-        for (Check<?> check : attribute.getDefinition().getChecks()) {
-            if (check instanceof DistanceCheck) {
-                ValidationResultFlag flag = ((DistanceCheck) check).evaluate(attribute);
-                if (flag == ValidationResultFlag.ERROR)
-                    return flag;
-                if (flag == ValidationResultFlag.WARNING)
-                    worstFlag = flag;
+        Coordinate previousValue = attribute.getValue();
+        try {
+            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], uiAttribute.getSpatialReferenceSystem().id));
+            ValidationResultFlag worstFlag = ValidationResultFlag.OK;
+            for (Check<?> check : attribute.getDefinition().getChecks()) {
+                if (check instanceof DistanceCheck) {
+                    ValidationResultFlag flag = ((DistanceCheck) check).evaluate(attribute);
+                    if (flag == ValidationResultFlag.ERROR)
+                        return flag;
+                    if (flag == ValidationResultFlag.WARNING)
+                        worstFlag = flag;
+                }
             }
+            return worstFlag;
+        } finally {
+            attribute.setValue(previousValue);
         }
-        return worstFlag;
 
     }
 

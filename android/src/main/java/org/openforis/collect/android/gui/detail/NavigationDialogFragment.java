@@ -78,12 +78,14 @@ public class NavigationDialogFragment extends DialogFragment {
             compassBearingProvider.start();
         getView().post(new Runnable() {
             public void run() {
+                if (getActivity() == null)
+                    return;
                 View navigationCircle = vh.navigationCircle;
-                int circleWidth = navigationCircle.getWidth();
-                navigationCircle.getLayoutParams().height = circleWidth;
+                int navigationCircleDiameter = navigationCircle.getWidth();
+                navigationCircle.getLayoutParams().height = navigationCircleDiameter; // Force the height to be set
 
                 int destinationRadius = dpToPx(5);
-                int radius = (int) (circleWidth / 2d - destinationRadius);
+                int radius = (int) (navigationCircleDiameter / 2d - destinationRadius);
                 placeNavigationLabel(R.id.navigationN, radius, destinationRadius);
                 placeNavigationLabel(R.id.navigationE, radius * 2 - destinationRadius, radius);
                 placeNavigationLabel(R.id.navigationS, radius, radius * 2 - 2 * destinationRadius);
@@ -194,12 +196,10 @@ public class NavigationDialogFragment extends DialogFragment {
                 lastLocation = location;
                 lastCompassBearing = compassBearing;
                 double[] current = new double[]{location.getLongitude(), location.getLatitude()};
-                attribute.setX(current[0]);
-                attribute.setY(current[1]);
-                double[] destination = ServiceLocator.coordinateDestinationService().destination(attribute);
+                double[] destination = ServiceLocator.coordinateDestinationService().destination(attribute, current);
                 if (destination == null)
                     return;
-                ValidationResultFlag validationResultFlag = ServiceLocator.coordinateDestinationService().validateDistance(attribute);
+                ValidationResultFlag validationResultFlag = ServiceLocator.coordinateDestinationService().validateDistance(attribute, current);
                 double bearing = CoordinateUtils.bearing(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);
                 double distance = CoordinateUtils.distance(LAT_LNG_SRS, current, LAT_LNG_SRS, destination);
                 double accuracy = location.getAccuracy();

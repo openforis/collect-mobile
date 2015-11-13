@@ -29,6 +29,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     private UiCode parentCode;
     protected final CodeListService codeListService;
     protected UiCodeList codeList;
+    private boolean codeListRefreshForced;
 
     protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -51,9 +52,18 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             if (newParentCode == parentCode) return;
             if (newParentCode == null || !newParentCode.equals(parentCode)) {
                 parentCode = newParentCode;
+                setCodeListRefreshForced(true);
                 initOptions();
             }
         }
+    }
+
+    public synchronized boolean isCodeListRefreshForced() {
+        return codeListRefreshForced;
+    }
+
+    public synchronized void setCodeListRefreshForced(boolean codeListRefreshForced) {
+        this.codeListRefreshForced = codeListRefreshForced;
     }
 
     protected final boolean updateAttributeIfChanged() {
@@ -79,7 +89,8 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     }
 
     protected void initCodeList() {
-        if (codeList == null) {
+        if (codeList == null || isCodeListRefreshForced()) {
+            setCodeListRefreshForced(false);
             codeList = codeListService.codeList(attribute);
             uiHandler.post(new Runnable() {
                 public void run() {

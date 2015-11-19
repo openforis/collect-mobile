@@ -46,9 +46,8 @@ class RecordNodes {
     }
 
     private void put(Node node) {
-        if (node.getId() == null)
-            throw new IllegalStateException("Node id is null: " + node);
-        nodeById.put(node.getId(), node);
+        if (node.getId() != null) // Enumerated entities could have null id
+            nodeById.put(node.getId(), node);
     }
 
     @SuppressWarnings("unchecked")

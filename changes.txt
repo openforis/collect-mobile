@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2015-11-19
+
+    * Bug fixes related to hierarchical code lists and enumerated entities
+
 2015-10-28
 
     * Bug fixes on navigation interface.

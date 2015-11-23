@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2015-11-23
+
+    * Prevented data exported when there are records without their key(s) specified
+    * Bug fixes related to data export
+
 2015-11-19
 
     * Bug fixes related to hierarchical code lists and enumerated entities

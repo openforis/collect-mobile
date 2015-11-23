@@ -15,6 +15,10 @@ public class UiRecordCollection extends UiInternalNode {
         // TODO: We ignore the status of the record collection initially - terribly ugly - fix!
     }
 
+    public UiSurvey getUiSurvey() {
+        return (UiSurvey) getParent();
+    }
+
     public boolean excludeWhenNavigating() {
         return true;
     }

@@ -197,7 +197,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     private void updateCalculatedAttributes(Map<UiNode, UiNodeChange> nodeChanges) {
         Map<UiNode, UiNodeChange> emptyMap = Collections.emptyMap();
         for (UiNode uiNode : nodeChanges.keySet())
-            if (uiNode instanceof UiAttribute && ((UiAttribute) uiNode).isCalculated()) {
+            if (uiNode instanceof UiAttribute && uiNode.isCalculated()) {
                 // TODO: Do this in same transaction as value update, but ideally don't persist at all
                 viewModelManager.updateAttribute((UiAttribute) uiNode, emptyMap);
                 listener.onNodeChanged(UPDATED, uiNode, emptyMap);

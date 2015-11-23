@@ -115,6 +115,8 @@ public class ViewModelManager {
 
     public UiNode selectNode(int nodeId) {
         selectedNode = lookupNode(nodeId);
+        if (selectedNode instanceof UiRecordCollection)
+            selectedRecord = null;
         return selectedNode;
     }
 

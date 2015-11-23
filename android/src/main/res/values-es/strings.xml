@@ -83,5 +83,7 @@
     <string name="settings_switchTextOff_compassEnabled">Desactivar</string>
     <string name="settings_switchTextOn_compassEnabled">Activar</string>
     <string name="settings_title_compass">Brújula del dispositivo</string>
+    <string name="all_key_records_not_specified_message">Con el fin de exportar los datos, %1$s debe especificarse para todos %2$s.</string>
+    <string name="all_key_records_not_specified_title">Todas %1$s atributos clave no se han especificado</string>
 
 </resources>

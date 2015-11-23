@@ -20,6 +20,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
@@ -194,6 +195,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             String message = getResources().getString(R.string.toast_exported_survey_failed);
             Log.e("export", message, e);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
+            DialogFragment dialog = new AllRecordKeysNotSpecifiedDialog();
+            dialog.show(getSupportFragmentManager(), "allRecordKeysNotSpecifiedDialog");
         }
     }
 

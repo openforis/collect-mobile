@@ -3,10 +3,7 @@ package org.openforis.collect.android.collectadapter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.Settings;
-import org.openforis.collect.android.viewmodel.UiNode;
-import org.openforis.collect.android.viewmodel.UiRecord;
-import org.openforis.collect.android.viewmodel.UiRecordCollection;
-import org.openforis.collect.android.viewmodel.UiSurvey;
+import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.io.SurveyBackupInfo;
 import org.openforis.collect.io.SurveyBackupJob;
 import org.openforis.collect.io.data.BackupDataExtractor;
@@ -50,7 +47,8 @@ public class SurveyExporter {
         dataMarshaller = new DataMarshaller();
     }
 
-    public void export(File outputFile) throws IOException {
+    public void export(File outputFile) throws IOException, AllRecordKeysNotSpecified {
+        assertAllRecordKeysSpecified();
         try {
             if (!outputFile.getParentFile().exists())
                 outputFile.getParentFile().mkdirs();
@@ -63,6 +61,13 @@ public class SurveyExporter {
         }
     }
 
+    private void assertAllRecordKeysSpecified() {
+        for (UiNode rc : uiSurvey.getChildren())
+            for (UiNode rp : ((UiRecordCollection) rc).getChildren())
+                for (UiAttribute keyAttribute : ((UiRecord.Placeholder) rp).getKeyAttributes())
+                    if (keyAttribute.isEmpty())
+                        throw new AllRecordKeysNotSpecified();
+    }
 
     private void addInfoFile() throws IOException {
         try {
@@ -147,5 +152,9 @@ public class SurveyExporter {
 
     interface CollectRecordProvider {
         CollectRecord record(int recordId);
+    }
+
+    public static class AllRecordKeysNotSpecified extends RuntimeException {
+
     }
 }

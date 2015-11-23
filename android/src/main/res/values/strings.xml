@@ -19,6 +19,9 @@
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey</string>
+    <string name="all_key_records_not_specified_title">All %1$s key attributes have not been specified</string>
+    <string name="all_key_records_not_specified_message">In order to export the data, %1$s must be specified for all %2$s.</string>
+
     <string name="toast_import_survey">Importing survey</string>
     <string name="toast_import_survey_failed">Failed to import survey from %s</string>
     <string name="toast_backed_up_survey">Backed up survey to %s</string>

@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2016-01-28
+
+    * Supports surveys from latest version of Collect Desktop
+
 2015-11-23
 
     * Prevented data exported when there are records without their key(s) specified

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.jooq.SQLDialect;
+import org.jooq.impl.DefaultConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.*;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
@@ -11,6 +13,7 @@ import org.openforis.collect.manager.*;
 import org.openforis.collect.manager.exception.SurveyValidationException;
 import org.openforis.collect.model.*;
 import org.openforis.collect.persistence.*;
+import org.openforis.collect.persistence.jooq.CollectDSLContext;
 import org.openforis.idm.metamodel.*;
 import org.openforis.idm.metamodel.validation.*;
 import org.openforis.idm.model.*;
@@ -35,6 +38,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     private final CodeListSizeEvaluator codeListSizeEvaluator;
 
     private final User user = new User();
+    private final CollectDSLContext jooqDsl;
 
     private RecordNodes recordNodes;
     private CollectSurvey selectedSurvey;
@@ -54,19 +58,30 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         this.recordFileManager = recordFileManager;
         codeListSizeEvaluator = new CodeListSizeEvaluator(new DatabaseCodeListSizeDao(database));
 
+        DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+        defaultConfiguration.setSettings(defaultConfiguration.settings().withRenderSchema(false));
+        defaultConfiguration
+                .set(database.dataSource())
+                .set(SQLDialect.SQLITE);
+        jooqDsl = new CollectDSLContext(defaultConfiguration);
+
+
         speciesManager = createSpeciesManager(database);
     }
 
     private SpeciesManager createSpeciesManager(Database database) {
         speciesManager = new SpeciesManager();
         TaxonDao taxonDao = new TaxonDao();
+        taxonDao.setDsl(jooqDsl);
         taxonDao.setDataSource(database.dataSource());
         speciesManager.setTaxonDao(taxonDao);
         TaxonomyDao taxonomyDao = new TaxonomyDao();
         taxonomyDao.setDataSource(database.dataSource());
+        taxonDao.setDsl(jooqDsl);
         speciesManager.setTaxonomyDao(taxonomyDao);
         TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
         taxonVernacularNameDao.setDataSource(database.dataSource());
+        taxonVernacularNameDao.setDsl(jooqDsl);
         speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
         ExpressionFactory expressionFactory = new ExpressionFactory();
         expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));

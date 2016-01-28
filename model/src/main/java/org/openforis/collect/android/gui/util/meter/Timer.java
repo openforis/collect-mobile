@@ -24,8 +24,6 @@ public class Timer {
         long start = System.currentTimeMillis();
         try {
             return action.call();
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DefaultConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.SurveyService;
@@ -23,6 +25,7 @@ import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.persistence.jooq.CollectDSLContext;
 import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
@@ -43,6 +46,7 @@ public class ServiceLocator {
     private static File workingDir;
     private static AndroidDatabase modelDatabase;
     private static AndroidDatabase nodeDatabase;
+    private static CollectDSLContext jooqDsl;
 
     public static boolean init(Context applicationContext) {
         if (surveyService == null) {
@@ -53,6 +57,14 @@ public class ServiceLocator {
                 return false;
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
+
+            DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
+            defaultConfiguration.setSettings(defaultConfiguration.settings().withRenderSchema(false));
+            defaultConfiguration
+                    .set(modelDatabase.dataSource())
+                    .set(SQLDialect.SQLITE);
+            jooqDsl = new CollectDSLContext(defaultConfiguration);
+
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
             SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
@@ -153,7 +165,9 @@ public class ServiceLocator {
         DatabaseExternalCodeListProvider externalCodeListProvider = createExternalCodeListProvider(modelDatabase);
 
         CodeListManager codeListManager = new CodeListManager();
-        codeListManager.setCodeListItemDao(new MobileCodeListItemDao(modelDatabase));
+        MobileCodeListItemDao codeListItemDao = new MobileCodeListItemDao(modelDatabase);
+        codeListItemDao.setDsl(jooqDsl);
+        codeListManager.setCodeListItemDao(codeListItemDao);
         codeListManager.setExternalCodeListProvider(externalCodeListProvider);
 
         CollectValidator validator = new CollectValidator();
@@ -165,11 +179,11 @@ public class ServiceLocator {
         CollectCodeListService codeListService = new CollectCodeListService();
         codeListService.setCodeListManager(codeListManager);
         collectSurveyContext.setCodeListService(codeListService);
-        SurveyDao surveyDao = new SurveyDao();
         final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
+        SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveySerializer(surveySerializer);
         surveyDao.setDataSource(modelDatabase.dataSource());
-
+        surveyDao.setDsl(jooqDsl);
         SurveyManager surveyManager = new SurveyManager();
         surveyManager.setSurveySerializer(surveySerializer);
         surveyManager.setSurveyDao(surveyDao);
@@ -203,6 +217,7 @@ public class ServiceLocator {
         DatabaseExternalCodeListProvider externalCodeListProvider = new MobileExternalCodeListProvider(modelDatabase);
         DynamicTableDao dynamicTableDao = new DynamicTableDao();
         dynamicTableDao.setDataSource(modelDatabase.dataSource());
+        dynamicTableDao.setDsl(jooqDsl);
         externalCodeListProvider.setDynamicTableDao(dynamicTableDao);
         return externalCodeListProvider;
     }

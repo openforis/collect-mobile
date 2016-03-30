@@ -58,7 +58,7 @@ class ModelConverter {
         Entity rootEntity = collectRecord.createRootEntity(uiRecord.getName());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);
-        new RecordUpdater().initializeRecord(collectRecord, false);
+        new RecordUpdater().initializeRecord(collectRecord);
         return collectRecord;
     }
 

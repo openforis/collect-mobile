@@ -26,7 +26,6 @@ public class MobileCodeListItemDao extends CodeListItemDao {
     public MobileCodeListItemDao(AndroidDatabase database) {
         super();
         this.database = database;
-        setDataSource(database.dataSource());
         childCodeListItemsRepository = new ChildCodeListItemsRepository(database);
         codeListItemRepository = new CodeListItemRepository(database);
     }

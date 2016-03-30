@@ -120,7 +120,7 @@ class NodeChangeSetParser {
 
     private void parseRequiredValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
         for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
-            if (isCalculated(childNode) || isHidden(childNode))
+            if (isCalculated(childNode) || isHidden(childNode) || childNode.getId() == null)
                 continue;
             UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
             ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());

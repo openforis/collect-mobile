@@ -182,7 +182,6 @@ public class ServiceLocator {
         final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveySerializer(surveySerializer);
-        surveyDao.setDataSource(modelDatabase.dataSource());
         surveyDao.setDsl(jooqDsl);
         SurveyManager surveyManager = new SurveyManager();
         surveyManager.setSurveySerializer(surveySerializer);
@@ -216,7 +215,6 @@ public class ServiceLocator {
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = new MobileExternalCodeListProvider(modelDatabase);
         DynamicTableDao dynamicTableDao = new DynamicTableDao();
-        dynamicTableDao.setDataSource(modelDatabase.dataSource());
         dynamicTableDao.setDsl(jooqDsl);
         externalCodeListProvider.setDynamicTableDao(dynamicTableDao);
         return externalCodeListProvider;

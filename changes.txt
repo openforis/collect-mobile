@@ -20,6 +20,11 @@ Install an update
 Changes
 -------
 
+2016-03-30
+
+    * Bug fixes
+    * Supports surveys from Collect Desktop 3.10.x
+
 2016-01-28
 
     * Supports surveys from latest version of Collect Desktop

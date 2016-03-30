@@ -73,14 +73,11 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         speciesManager = new SpeciesManager();
         TaxonDao taxonDao = new TaxonDao();
         taxonDao.setDsl(jooqDsl);
-        taxonDao.setDataSource(database.dataSource());
         speciesManager.setTaxonDao(taxonDao);
         TaxonomyDao taxonomyDao = new TaxonomyDao();
-        taxonomyDao.setDataSource(database.dataSource());
         taxonDao.setDsl(jooqDsl);
         speciesManager.setTaxonomyDao(taxonomyDao);
         TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
-        taxonVernacularNameDao.setDataSource(database.dataSource());
         taxonVernacularNameDao.setDsl(jooqDsl);
         speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
         ExpressionFactory expressionFactory = new ExpressionFactory();

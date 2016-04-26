@@ -20,6 +20,10 @@ Install an update
 Changes
 -------
 
+2016-04-26
+
+    * Fixed crash for designs where records used numeric keys
+
 2016-03-30
 
     * Bug fixes

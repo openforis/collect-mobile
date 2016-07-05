@@ -3,6 +3,8 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -59,6 +61,13 @@ public class NodeDto {
                     break;
                 case TEXT_ATTRIBUTE:
                     node.text = value;
+                    break;
+                case DATE_ATTRIBUTE:
+                    try {
+                        node.date = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                    } catch (ParseException e) {
+                        throw new IllegalStateException("Unexpected date format: " + value);
+                    }
                     break;
                 default:
                     throw new IllegalStateException("Attribute type cannot be record key: " + attributeType);

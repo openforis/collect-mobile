@@ -92,6 +92,8 @@ public interface RecordUniquenessChecker {
                         return key.intValue == null ? "val_int IS NULL" : "val_int = ?";
                     case TEXT_ATTRIBUTE:
                         return key.text == null ? "val_text IS NULL" : "val_text = ?";
+                    case DATE_ATTRIBUTE:
+                        return key.date == null ? "val_date IS NULL" : "val_date = ?";
                     default:
                         throw new IllegalStateException("Attribute type cannot be record key: " + key.type);
                 }
@@ -119,6 +121,10 @@ public interface RecordUniquenessChecker {
                         case TEXT_ATTRIBUTE:
                             if (key.text != null)
                                 psh.setString(key.text);
+                            break;
+                        case DATE_ATTRIBUTE:
+                            if (key.date != null)
+                                psh.setLongOrNull(key.date.getTime());
                             break;
                         default:
                             throw new IllegalStateException("Attribute type cannot be record key: " + key.type);

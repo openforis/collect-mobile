@@ -20,6 +20,12 @@ Install an update
 Changes
 -------
 
+2016-07-06
+
+    * Allowed dates to be record keys
+    * Fixed bug where default attributes didn't get validated properly
+    * Hid code keys when configured in survey design
+
 2016-04-26
 
     * Fixed crash for designs where records used numeric keys

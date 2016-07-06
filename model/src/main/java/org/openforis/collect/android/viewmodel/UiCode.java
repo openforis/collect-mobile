@@ -11,17 +11,18 @@ public class UiCode {
     private final String value;
     private final String label;
     private final String description;
+    private final boolean valueShown;
 
     public UiCode(String value, String label) {
-        this(value, label, null);
+        this(value, label, null, true);
     }
 
-
-    public UiCode(String value, String label, String description) {
+    public UiCode(String value, String label, String description, boolean valueShown) {
         Validate.notEmpty(value, "value is required");
         this.value = value;
         this.label = StringUtils.normalizeWhiteSpace(label);
         this.description = description;
+        this.valueShown = valueShown;
     }
 
     public String getValue() {
@@ -36,10 +37,14 @@ public class UiCode {
         return description;
     }
 
+    public boolean isValueShown() {
+        return valueShown;
+    }
+
     public String toString() {
         if (label == null)
             return value;
-        return label + (label.equals(value) ? "" : " (" + value + ")");
+        return label + (label.equals(value) || !valueShown ? "" : " (" + value + ")");
     }
 
     public int hashCode() {

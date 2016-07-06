@@ -94,6 +94,10 @@ public class Definitions {
                         spatialReferenceSystems, nodeDescription(nodeDefinition),
                         nodePrompt(nodeDefinition), required,
                         isDestinationPointSpecified((CoordinateAttributeDefinition) nodeDefinition));
+            } else if (nodeDefinition instanceof CodeAttributeDefinition) {
+                return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
+                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition));
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);

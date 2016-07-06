@@ -9,7 +9,7 @@ public class UiCodeAttribute extends UiAttribute {
     private UiCode code;
     private String qualifier;
 
-    public UiCodeAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
+    public UiCodeAttribute(int id, boolean relevant, UiCodeAttributeDefinition definition) {
         super(id, relevant, definition);
     }
 
@@ -27,6 +27,10 @@ public class UiCodeAttribute extends UiAttribute {
 
     public void setQualifier(String qualifier) {
         this.qualifier = qualifier;
+    }
+
+    public UiCodeAttributeDefinition getDefinition() {
+        return (UiCodeAttributeDefinition) super.getDefinition();
     }
 
     public String valueAsString() {

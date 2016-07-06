@@ -187,8 +187,9 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
                     CodeAttribute childCodeAttribute = recordNodes.getCodeAttribute(uiNode.getId());
                     CodeListItem item = codeListManager.loadItemByAttribute(childCodeAttribute);
                     if (item != null) {
-                        UiCode updatedCode = new UiCode(item.getCode(), item.getLabel());
-                        ((UiCodeAttribute) uiNode).setCode(updatedCode);
+                        UiCodeAttribute childUiCodeAttribute = (UiCodeAttribute) uiNode;
+                        UiCode updatedCode = new UiCode(item.getCode(), item.getLabel(), null, childUiCodeAttribute.getDefinition().isValueShown());
+                        childUiCodeAttribute.setCode(updatedCode);
                     }
                 }
             }
@@ -224,7 +225,8 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     public UiCodeList codeList(UiCodeAttribute uiAttribute) {
         CodeAttribute attribute = recordNodes.getCodeAttribute(uiAttribute.getId());
         List<CodeListItem> items = codeListManager.loadValidItems(attribute.getParent(), attribute.getDefinition());
-        return modelConverter.toUiCodeList(items);
+        boolean valueShown = selectedSurvey.getUIOptions().getShowCode(attribute.getDefinition());
+        return modelConverter.toUiCodeList(items, valueShown);
     }
 
     public UiCodeList codeList(UiAttributeCollection uiAttributeCollection) {
@@ -234,7 +236,8 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         Definition definition = uiAttributeCollection.getDefinition().attributeDefinition;
         CodeAttributeDefinition codeAttributeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
         List<CodeListItem> items = codeListManager.loadValidItems(parentEntity, codeAttributeDefinition);
-        return modelConverter.toUiCodeList(items);
+        boolean valueShown = selectedSurvey.getUIOptions().getShowCode(codeAttributeDefinition);
+        return modelConverter.toUiCodeList(items, valueShown);
     }
 
     public boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute) {

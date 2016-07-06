@@ -86,6 +86,8 @@ class UiModelBuilder {
             UiAttribute uiAttribute = instantiateUiAttribute(attribute);
             if (uiAttribute.isEmpty())
                 uiAttribute.setStatus(UiNode.Status.EMPTY);
+            else if (!attributeDefinition.getAttributeDefaults().isEmpty())
+                uiAttribute.setStatus(UiNode.Status.PENDING_VALIDATION); // An attribute with default value should be validated
             return uiAttribute;
         }
 

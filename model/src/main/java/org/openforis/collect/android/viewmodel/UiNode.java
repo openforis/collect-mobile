@@ -198,8 +198,8 @@ public abstract class UiNode {
             parent.removeChild(this);
     }
 
-    public static enum Status {
-        OK, EMPTY, VALIDATION_WARNING, VALIDATION_ERROR;
+    public enum Status {
+        OK, EMPTY, PENDING_VALIDATION, VALIDATION_WARNING, VALIDATION_ERROR;
 
 
         public boolean isWorseThen(Status status) {

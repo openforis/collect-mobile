@@ -104,15 +104,12 @@ public class NodeListAdapter extends BaseAdapter {
         if (!node.isRelevant())
             return 0;
         switch (node.getStatus()) {
-            case OK:
-            case EMPTY:
-                return 0;
             case VALIDATION_WARNING:
                 return R.drawable.yellow_circle;
             case VALIDATION_ERROR:
                 return R.drawable.red_circle;
             default:
-                throw new IllegalStateException("Unexpected node status: " + node.getStatus());
+                return 0;
         }
     }
 

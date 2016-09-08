@@ -248,6 +248,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return parentDefinition != null && parentDefinition.getId() == getDefinition(attribute).getId();
     }
 
+    public boolean isParentCodeAttribute(UiAttribute attribute, UiAttributeCollection attributeCollection) {
+        if (!(attribute instanceof UiCodeAttribute) || !UiCodeAttribute.class.isAssignableFrom(attributeCollection.getDefinition().attributeType))
+            return false;
+        CodeAttributeDefinition definition = (CodeAttributeDefinition) getDefinition(attributeCollection);
+        CodeAttributeDefinition parentDefinition = definition.getParentCodeAttributeDefinition();
+        return parentDefinition != null && parentDefinition.getId() == getDefinition(attribute).getId();
+    }
+
     public int getMaxCodeListSize(UiCodeAttribute uiAttribute) {
         CodeAttribute attribute = recordNodes.getCodeAttribute(uiAttribute.getId());
         return codeListSizeEvaluator.size(attribute.getDefinition());
@@ -260,6 +268,11 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private AttributeDefinition getDefinition(UiAttribute uiAttribute) {
         int definitionId = Integer.parseInt(uiAttribute.getDefinition().id);
+        return (AttributeDefinition) selectedSurvey.getSchema().getDefinitionById(definitionId);
+    }
+
+    private AttributeDefinition getDefinition(UiAttributeCollection attributeCollection) {
+        int definitionId = Integer.parseInt(attributeCollection.getDefinition().id.substring("collection-".length()));
         return (AttributeDefinition) selectedSurvey.getSchema().getDefinitionById(definitionId);
     }
 

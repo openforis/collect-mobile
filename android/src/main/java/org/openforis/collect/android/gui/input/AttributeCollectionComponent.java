@@ -38,12 +38,18 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
     protected abstract Set<UiAttribute> updateChangedAttributes();
 
     public final void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        if (node instanceof UiAttribute)
+            onAttributeChange((UiAttribute) node);
         for (UiNode changedNode : nodeChanges.keySet())
             if (isInAttributeCollection(changedNode)) {
                 Set<UiValidationError> validationErrors = nodeChanges.get(changedNode).validationErrors;
                 if (validationErrors != null && node instanceof UiAttribute)
                     setValidationError((UiAttribute) node, validationErrors);
             }
+    }
+
+    void onAttributeChange(UiAttribute attribute) {
+        // Do nothing
     }
 
     public int getViewResource() {

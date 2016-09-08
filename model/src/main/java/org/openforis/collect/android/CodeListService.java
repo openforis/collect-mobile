@@ -12,6 +12,8 @@ public interface CodeListService {
 
     boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute);
 
+    boolean isParentCodeAttribute(UiAttribute attribute, UiAttributeCollection attributeCollection);
+
     int getMaxCodeListSize(UiCodeAttribute attribute);
 
     int getMaxCodeListSize(Definition definition);

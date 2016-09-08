@@ -25,14 +25,14 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
  * @author Daniel Wiell
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
-    public static final int RADIO_GROUP_MAX_SIZE = 20;
-    public static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
+    static final int RADIO_GROUP_MAX_SIZE = 20;
+    static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
     private UiCode parentCode;
-    protected final CodeListService codeListService;
+    final CodeListService codeListService;
     protected UiCodeList codeList;
     private boolean codeListRefreshForced;
 
-    protected CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+    CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         this.codeListService = codeListService;
     }
@@ -59,11 +59,11 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         }
     }
 
-    public synchronized boolean isCodeListRefreshForced() {
+    private synchronized boolean isCodeListRefreshForced() {
         return codeListRefreshForced;
     }
 
-    public synchronized void setCodeListRefreshForced(boolean codeListRefreshForced) {
+    private synchronized void setCodeListRefreshForced(boolean codeListRefreshForced) {
         this.codeListRefreshForced = codeListRefreshForced;
     }
 
@@ -137,7 +137,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
     protected abstract String qualifier(UiCode selectedCode);
 
-    protected final boolean isAttributeCode(UiCode code) {
+    final boolean isAttributeCode(UiCode code) {
         return code.equals(attribute.getCode());
     }
 }

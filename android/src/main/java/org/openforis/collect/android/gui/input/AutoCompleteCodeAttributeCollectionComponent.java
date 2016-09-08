@@ -56,6 +56,11 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
             attributeComponent.resetValidationErrors();
     }
 
+    protected void initOptions() {
+        for (CodeAttributeComponent component : attributeComponentByAttribute.values())
+            component.initOptions();
+    }
+
     protected Set<UiAttribute> updateChangedAttributes() {
         Set<UiAttribute> changedAttributes = new HashSet<UiAttribute>();
         for (AttributeComponent attributeComponent : attributeComponentByAttribute.values())

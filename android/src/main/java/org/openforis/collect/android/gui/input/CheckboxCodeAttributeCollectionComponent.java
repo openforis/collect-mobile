@@ -91,7 +91,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
 
     }
 
-    private void initOptions() {
+    protected void initOptions() {
         codeByViewId.clear();
         layout.removeAllViews();
         executor.execute(new LoadCodesTask());

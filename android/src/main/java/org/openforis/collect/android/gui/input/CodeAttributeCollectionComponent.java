@@ -12,9 +12,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.detail.CodeListDescriptionDialogFragment;
-import org.openforis.collect.android.viewmodel.UiAttributeCollection;
-import org.openforis.collect.android.viewmodel.UiCode;
-import org.openforis.collect.android.viewmodel.UiCodeList;
+import org.openforis.collect.android.viewmodel.*;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -23,13 +21,17 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 public abstract class CodeAttributeCollectionComponent extends AttributeCollectionComponent {
     private static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
-    protected final CodeListService codeListService;
+    private UiCode parentCode;
+    private boolean codeListRefreshForced;
+    final CodeListService codeListService;
     protected UiCodeList codeList;
 
-    protected CodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+    CodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, surveyService, context);
         this.codeListService = codeListService;
     }
+
+    protected abstract void initOptions();
 
     public static CodeAttributeCollectionComponent create(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();
@@ -46,9 +48,9 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
         return false;
     }
 
-    // TODO: Handle duplication
-    protected void initCodeList() {
-        if (codeList == null) {
+    void initCodeList() {
+        if (codeList == null || isCodeListRefreshForced()) {
+            setCodeListRefreshForced(false);
             codeList = codeListService.codeList(attributeCollection);
             uiHandler.post(new Runnable() {
                 public void run() {
@@ -57,6 +59,26 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
                 }
             });
         }
+    }
+
+    public final void onAttributeChange(UiAttribute changedAttribute) {
+        if (codeListService.isParentCodeAttribute(changedAttribute, attributeCollection)) {
+            UiCode newParentCode = ((UiCodeAttribute) changedAttribute).getCode();
+            if (newParentCode == parentCode) return;
+            if (newParentCode == null || !newParentCode.equals(parentCode)) {
+                parentCode = newParentCode;
+                setCodeListRefreshForced(true);
+                initOptions();
+            }
+        }
+    }
+
+    private synchronized boolean isCodeListRefreshForced() {
+        return codeListRefreshForced;
+    }
+
+    private synchronized void setCodeListRefreshForced(boolean codeListRefreshForced) {
+        this.codeListRefreshForced = codeListRefreshForced;
     }
 
     private void includeDescriptionsButton() {

@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -70,7 +72,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
 
 
     private EditText createQualifierInput() {
-        final EditText editText = new EditText(context);
+        final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
@@ -124,7 +126,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     Integer selectedViewId = null;
                     for (int i = 0; i < codes.size(); i++) {
                         UiCode code = codes.get(i);
-                        RadioButton radioButton = new RadioButton(context);
+                        RadioButton radioButton = new AppCompatRadioButton(context);
                         radioButton.setId(i + 1);
                         radioButton.setText(code.toString());
                         radioGroup.addView(radioButton);

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -17,7 +18,7 @@ import org.openforis.collect.android.viewmodel.UiSurvey;
 
 import java.util.Iterator;
 
-public class AllRecordKeysNotSpecifiedDialog extends DialogFragment {
+public class AllRecordKeysNotSpecifiedDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final TextView message = new TextView(getActivity());
         // TODO: Get record label and key attribute names

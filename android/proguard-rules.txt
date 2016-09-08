@@ -20,6 +20,7 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 
 -ignorewarnings
+-dontwarn
 
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }

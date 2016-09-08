@@ -3,6 +3,9 @@ package org.openforis.collect.android.gui.input;
 import android.graphics.Paint;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -145,7 +148,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
 
         private Spinner createSrsSpinner() {
-            final Spinner srsSpinner = new Spinner(context);
+            final Spinner srsSpinner = new AppCompatSpinner(context);
             adapter = new ArrayAdapter<UiSpatialReferenceSystem>(context,
                     android.R.layout.simple_spinner_dropdown_item,
                     attribute.getDefinition().spatialReferenceSystems);
@@ -164,7 +167,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
 
         private Button createNavigationButton() {
-            Button button = new Button(context);
+            Button button = new AppCompatButton(context);
             button.setTextAppearance(context, android.R.style.TextAppearance_Small);
             button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
             button.setText(context.getResources().getString(R.string.label_navigate));
@@ -189,7 +192,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
 
         private TextView createNumberInput(Double value, String hint) {
-            final TextView input = new EditText(context);
+            final TextView input = new AppCompatEditText(context);
             input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus)

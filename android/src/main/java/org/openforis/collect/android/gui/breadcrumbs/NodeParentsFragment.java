@@ -2,6 +2,9 @@ package org.openforis.collect.android.gui.breadcrumbs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +53,7 @@ public class NodeParentsFragment extends Fragment {
     }
 
     private View createSurveySelectedView() {
-        ImageView imageView = new ImageView(getActivity());
+        ImageView imageView = new AppCompatImageView(getActivity());
         imageView.setImageResource(R.drawable.ic_menu_home);
         return imageView;
     }
@@ -63,7 +66,7 @@ public class NodeParentsFragment extends Fragment {
     }
 
     private View createSeparator() {
-        ImageView imageView = new ImageView(getActivity());
+        ImageView imageView = new AppCompatImageView(getActivity());
         imageView.setImageResource(attrs.resourceId(R.attr.breadcrumbSeparator));
         return imageView;
     }
@@ -96,7 +99,7 @@ public class NodeParentsFragment extends Fragment {
     }
 
     private View createNodeButton(UiInternalNode parentNode) {
-        Button button = new Button(getActivity());
+        Button button = new AppCompatButton(getActivity());
         button.setText(parentNode.getLabel());
 
         int textColor = attrs.color(R.attr.titleIndicatorColor);
@@ -106,7 +109,7 @@ public class NodeParentsFragment extends Fragment {
     }
 
     private View createSurveyButton() {
-        ImageButton button = new ImageButton(getActivity());
+        ImageButton button = new AppCompatImageButton(getActivity());
         button.setImageResource(R.drawable.ic_menu_home);
         return button;
     }

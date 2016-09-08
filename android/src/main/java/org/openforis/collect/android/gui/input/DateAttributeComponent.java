@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatImageButton;
 import android.view.View;
 import android.widget.*;
 import org.openforis.collect.R;
@@ -31,7 +32,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     private final LinearLayout view;
     private TextView selectedDateView;
 
-    protected DateAttributeComponent(UiDateAttribute attribute, SurveyService surveyService, FragmentActivity context) {
+    DateAttributeComponent(UiDateAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         view = new LinearLayout(context);
         view.addView(selectedDateView);
@@ -69,7 +70,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     }
 
     private View createButton() {
-        ImageButton button = new ImageButton(context);
+        ImageButton button = new AppCompatImageButton(context);
         view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         button.setImageResource(new Attrs(context).resourceId(R.attr.goToTodayIcon));
         button.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +88,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         private DateAttributeComponent component;
 
-        public void setComponent(DateAttributeComponent component) {
+        void setComponent(DateAttributeComponent component) {
             this.component = component;
         }
 

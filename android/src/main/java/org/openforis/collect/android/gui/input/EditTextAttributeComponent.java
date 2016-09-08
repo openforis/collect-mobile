@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -66,7 +67,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     }
 
     protected EditText createEditText() {
-        final EditText editText = new EditText(context);
+        final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)

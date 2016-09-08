@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.input;
 
 import android.graphics.Paint;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -62,7 +63,7 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
         View inputView = toInputView();
         ViewGroup parent = (ViewGroup) inputView.getParent();
         if (parent.findViewWithTag(DESCRIPTION_BUTTON_TAG) == null) {
-            Button button = new Button(context);
+            Button button = new AppCompatButton(context);
             button.setTextAppearance(context, android.R.style.TextAppearance_Small);
             button.setTag(DESCRIPTION_BUTTON_TAG);
             button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));

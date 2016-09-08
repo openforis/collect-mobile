@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -16,7 +17,7 @@ import org.openforis.collect.R;
  *
  * @author Michael Derazon
  */
-public class ClearableAutoCompleteTextView extends AutoCompleteTextView {
+public class ClearableAutoCompleteTextView extends AppCompatAutoCompleteTextView {
     // was the text just cleared?
     boolean justCleared = false;
 
@@ -34,7 +35,7 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView {
     private OnClearListener onClearListener = defaultClearListener;
 
     // The image we defined for the clear button
-    public Drawable imgClearButton = getResources().getDrawable(
+    private Drawable imgClearButton = getResources().getDrawable(
             R.drawable.abc_ic_clear_holo_light);
 
     public interface OnClearListener {
@@ -59,7 +60,7 @@ public class ClearableAutoCompleteTextView extends AutoCompleteTextView {
         init();
     }
 
-    void init() {
+    private void init() {
         this.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         // Set the bounds of the button
         this.setCompoundDrawablesWithIntrinsicBounds(null, null,

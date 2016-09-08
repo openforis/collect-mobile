@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -96,7 +98,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     private EditText createQualifierInput() {
-        final EditText editText = new EditText(context);
+        final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
@@ -171,7 +173,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                     for (int i = 0; i < codes.size(); i++) {
                         final UiCode code = codes.get(i);
                         final boolean qualifiable = codeList.isQualifiable(code);
-                        CheckBox checkBox = new CheckBox(context);
+                        CheckBox checkBox = new AppCompatCheckBox(context);
                         checkBox.setId(i + 1);
                         checkBox.setText(code.toString());
                         layout.addView(checkBox);

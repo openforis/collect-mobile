@@ -1,11 +1,14 @@
 package org.openforis.collect.android.gui.input;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.*;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 /**
@@ -29,6 +32,7 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
     }
 
     private final SensorManager mSensorManager;
+    private final Context context;
     private final LocationManager mLocationManager;
     private final Sensor mSensorAccelerometer;
     private final Sensor mSensorMagneticField;
@@ -106,6 +110,7 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
      */
     public BearingToNorthProvider(Context context, int smoothing, double minDiffForEvent, int throttleTime) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        this.context = context;
         mSensorAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         mSensorMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -135,6 +140,9 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
      * Call this method to start bearing updates.
      */
     public void start() {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
         mSensorManager.registerListener(this, mSensorAccelerometer, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, mSensorMagneticField, SensorManager.SENSOR_DELAY_UI);
 
@@ -154,6 +162,9 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
      * call this method to stop bearing updates.
      */
     public void stop() {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
         mSensorManager.unregisterListener(this, mSensorAccelerometer);
         mSensorManager.unregisterListener(this, mSensorMagneticField);
         mLocationManager.removeUpdates(this);
@@ -215,7 +226,8 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) { }
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
 
     //==============================================================================================
     // LocationListener implementation
@@ -231,13 +243,16 @@ public class BearingToNorthProvider implements SensorEventListener, LocationList
     }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) { }
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+    }
 
     @Override
-    public void onProviderEnabled(String s) { }
+    public void onProviderEnabled(String s) {
+    }
 
     @Override
-    public void onProviderDisabled(String s) { }
+    public void onProviderDisabled(String s) {
+    }
 
     //==============================================================================================
     // Private Utilities

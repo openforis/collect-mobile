@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatImageButton;
 import android.view.View;
 import android.widget.*;
 import org.openforis.collect.R;
@@ -64,7 +65,7 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
     }
 
     private View createButton() {
-        ImageButton button = new ImageButton(context);
+        ImageButton button = new AppCompatImageButton(context);
         view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         button.setImageResource(new Attrs(context).resourceId(R.attr.timeIcon));
 //

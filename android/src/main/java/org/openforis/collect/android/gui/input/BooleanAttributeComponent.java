@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -51,7 +52,7 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
     }
 
     private RadioButton createButton(String label, int id) {
-        RadioButton radioButton = new RadioButton(context);
+        RadioButton radioButton = new AppCompatRadioButton(context);
         radioButton.setText(label);
         radioButton.setId(id);
         return radioButton;

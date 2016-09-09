@@ -50,6 +50,8 @@ class NodeChangeSetParser {
             if (nodeChange instanceof AttributeChange && isShown(nodeChange.getNode())) {
                 Attribute attribute = ((AttributeChange) nodeChange).getNode();
                 UiAttribute uiAttribute = getUiAttribute(nodeChange);
+                if (uiAttribute == null)
+                    return;
                 if (uiAttribute.isCalculated()) {
                     AttributeConverter.updateUiValue(attribute, uiAttribute);
                     addNodeChange(uiAttribute, nodeChanges);
@@ -100,6 +102,8 @@ class NodeChangeSetParser {
         if (isCalculated(node) || isHidden(node) || isIrrelevant(node))
             return;
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
+        if (uiAttribute == null)
+            return;
         UiNodeChange nodeChange = addNodeChange(uiAttribute, nodeChanges);
         ValidationResultFlag requiredErrorResult = node.getParent().getMinCountValidationResult(node.getName());
         addRequiredValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult);
@@ -144,10 +148,7 @@ class NodeChangeSetParser {
 
     private UiAttribute getUiAttribute(NodeChange nodeChange) {
         Integer attributeId = nodeChange.getNode().getId();
-        UiAttribute uiAttribute = (UiAttribute) uiRecord.lookupNode(attributeId);
-        if (uiAttribute == null)
-            throw new IllegalStateException("Attribute with id " + attributeId + " not found");
-        return uiAttribute;
+        return (UiAttribute) uiRecord.lookupNode(attributeId);
     }
 
     private UiNodeChange addNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {

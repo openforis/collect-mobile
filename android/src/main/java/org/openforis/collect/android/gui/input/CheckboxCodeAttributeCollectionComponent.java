@@ -97,6 +97,10 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         executor.execute(new LoadCodesTask());
     }
 
+    protected void resetSelection() {
+        attributesByCode.clear();
+    }
+
     private EditText createQualifierInput() {
         final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

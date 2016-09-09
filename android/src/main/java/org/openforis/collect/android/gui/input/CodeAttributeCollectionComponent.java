@@ -33,6 +33,8 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
 
     protected abstract void initOptions();
 
+    protected abstract void resetSelection();
+
     public static CodeAttributeCollectionComponent create(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();
         int maxCodeListSize = codeListService.getMaxCodeListSize(attributeCollection.getDefinition().attributeDefinition);
@@ -66,8 +68,11 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
             UiCode newParentCode = ((UiCodeAttribute) changedAttribute).getCode();
             if (newParentCode == parentCode) return;
             if (newParentCode == null || !newParentCode.equals(parentCode)) {
+                while (attributeCollection.getChildCount() > 0)
+                    surveyService.deletedAttribute(attributeCollection.getChildAt(0).getId());
                 parentCode = newParentCode;
                 setCodeListRefreshForced(true);
+                resetSelection();
                 initOptions();
             }
         }

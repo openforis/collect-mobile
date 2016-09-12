@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.*;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -13,10 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -31,11 +33,12 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
-    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
+    //    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
+    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#333333");
     private boolean selected;
 
     private T node;
-    private ViewGroup overlay;
+    private LinearLayout overlay;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +75,15 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         overlay = new LinearLayout(getActivity());
         overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         overlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
+        AppCompatTextView text = new AppCompatTextView(getContext());
+        text.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
+        text.setGravity(Gravity.CENTER);
+        text.setTextColor(new Attrs(getContext()).color(R.attr.irrelevantTextColor));
+        overlay.setGravity(Gravity.CENTER);
+        // TODO: Use String resource
+        text.setText(node.getLabel() + "\r\n\r\nNot relevant");
+
+        overlay.addView(text);
         updateOverlay();
         return overlay;
     }
@@ -202,8 +214,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private void updateOverlay() {
-        if (node != null && overlay != null)
-            overlay.setVisibility(node.isRelevant() ? View.INVISIBLE : View.VISIBLE);
+        if (node != null && overlay != null) {
+            boolean relevant = node.isRelevant();
+            overlay.setVisibility(relevant ? View.INVISIBLE : View.VISIBLE);
+        }
     }
 
     private void showKeyboard(View view) {

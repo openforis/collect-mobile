@@ -56,13 +56,15 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
     public Value value(UiCoordinateAttribute uiAttribute) {
         UiSpatialReferenceSystem srs = uiAttribute.getSpatialReferenceSystem();
         String srsId = srs == null ? null : srs.id;
-        return new Coordinate(uiAttribute.getX(), uiAttribute.getY(), srsId);
+        Coordinate coordinate = new Coordinate(uiAttribute.getX(), uiAttribute.getY(), srsId);
+        return coordinate.isComplete() ? coordinate : new Coordinate(null, null, null);
     }
 
     protected CoordinateAttribute attribute(UiCoordinateAttribute uiAttribute, NodeDefinition definition) {
         CoordinateAttribute a = new CoordinateAttribute((CoordinateAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
-            a.setValue((Coordinate) value(uiAttribute));
+        if (!uiAttribute.isCalculated()) {
+            Coordinate coordinate = (Coordinate) value(uiAttribute);
+        }
         return a;
     }
 }

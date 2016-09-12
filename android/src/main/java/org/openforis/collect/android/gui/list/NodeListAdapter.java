@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.list;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +24,13 @@ import java.util.List;
  */
 public class NodeListAdapter extends BaseAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
-    protected final Activity activity;
+    protected final FragmentActivity activity;
     protected final UiInternalNode parentNode;
     private final Attrs attrs;
     private List<UiNode> nodes;
 
 
-    public NodeListAdapter(Activity activity, UiInternalNode parentNode) {
+    public NodeListAdapter(FragmentActivity activity, UiInternalNode parentNode) {
         this.activity = activity;
         this.parentNode = parentNode;
         this.nodes = new ArrayList<UiNode>(parentNode.getChildren());

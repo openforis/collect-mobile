@@ -1,12 +1,17 @@
 package org.openforis.collect.android.gui.list;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.*;
 import android.widget.CheckBox;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
-import org.openforis.collect.android.gui.detail.NodeDeleter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -21,17 +26,17 @@ public class EntityListAdapter extends NodeListAdapter {
     private static final int MAX_ATTRIBUTES = 2;
     public static final int MAX_ATTRIBUTE_LABEL_LENGTH = 20;
     public static final int MAX_ATTRIBUTE_VALUE_LENGTH = 20;
-    private final NodeDeleter nodeDeleter;
 
     private final Set<UiNode> nodesToEdit = new HashSet<UiNode>();
     private final Set<CheckBox> checked = new HashSet<CheckBox>();
     private final CodeListService codeListService;
+    private final boolean records;
     private ActionMode actionMode;
 
-    public EntityListAdapter(SurveyNodeActivity activity, UiInternalNode parentNode, NodeDeleter nodeDeleter) {
+    public EntityListAdapter(SurveyNodeActivity activity, boolean records, UiInternalNode parentNode) {
         super(activity, parentNode);
+        this.records = records;
         codeListService = ServiceLocator.codeListService();
-        this.nodeDeleter = nodeDeleter;
     }
 
     public String getText(UiNode node) {
@@ -135,11 +140,15 @@ public class EntityListAdapter extends NodeListAdapter {
         }
 
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            ArrayList<Integer> nodeIdsToRemove = new ArrayList<Integer>();
+            for (UiNode uiNode : nodesToEdit)
+                nodeIdsToRemove.add(uiNode.getId());
             switch (item.getItemId()) {
                 case R.id.delete_selected_nodes:
-                    nodeDeleter.delete(nodesToEdit);
-                    // Need to clear the back stack, to prevent deleted node from being revisited.
-                    ((SurveyNodeActivity) activity).reloadWithoutBackStack();
+                    DeleteConfirmationFragment.show(nodeIdsToRemove, records, activity);
+//                    nodeDeleter.delete(nodesToEdit);
+//                    // Need to clear the back stack, to prevent deleted node from being revisited.
+//                    ((SurveyNodeActivity) activity).reloadWithoutBackStack();
 
                     return true;
                 default:
@@ -154,6 +163,44 @@ public class EntityListAdapter extends NodeListAdapter {
                 checkBox.setChecked(false);
                 checkBox.setSelected(false);
             }
+        }
+    }
+
+    public static final class DeleteConfirmationFragment extends AppCompatDialogFragment {
+        private static final String NODE_IDS_TO_REMOVE = "node_ids_to_remove";
+        private static final String REMOVE_RECORDS = "remove_records";
+
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final ArrayList<Integer> nodeIdsToRemove = getArguments().getIntegerArrayList(NODE_IDS_TO_REMOVE);
+            final boolean records = getArguments().getBoolean(REMOVE_RECORDS);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // TODO: Use string resource
+            String title = records ? "Delete records" : "Delete entities";
+            String message = "You are about to delete " + nodeIdsToRemove.size() + (records ? " records" : " entities.");
+            builder.setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            if (records)
+                                ServiceLocator.surveyService().deleteRecords(nodeIdsToRemove);
+                            else
+                                ServiceLocator.surveyService().deleteEntities(nodeIdsToRemove);
+                            SurveyNodeActivity.restartActivity(getActivity());
+                        }
+                    }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            return builder.create();
+        }
+
+        public static void show(ArrayList<Integer> nodeIdsToRemove, boolean records, FragmentActivity activity) {
+            DeleteConfirmationFragment fragment = new DeleteConfirmationFragment();
+            Bundle arguments = new Bundle();
+            fragment.setArguments(arguments);
+            arguments.putIntegerArrayList(NODE_IDS_TO_REMOVE, nodeIdsToRemove);
+            arguments.putBoolean(REMOVE_RECORDS, records);
+            fragment.show(activity.getSupportFragmentManager(), "confirmEntityDeletion");
         }
     }
 }

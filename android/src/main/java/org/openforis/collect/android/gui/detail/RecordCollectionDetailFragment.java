@@ -7,8 +7,6 @@ import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
-import java.util.Collection;
-
 /**
  * @author Daniel Wiell
  */
@@ -26,9 +24,5 @@ public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetail
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.removeItem(R.id.action_entity_table);
-    }
-
-    protected void deleteNodes(Collection<Integer> nodeIds) {
-        surveyService().deleteRecords(nodeIds);
     }
 }

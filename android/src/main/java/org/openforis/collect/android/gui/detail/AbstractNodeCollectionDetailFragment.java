@@ -14,9 +14,6 @@ import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,14 +64,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     protected abstract UiInternalNode getSelectedNode(int position, T nodeCollection);
 
-    protected abstract void deleteNodes(Collection<Integer> nodeIds);
-
     protected SurveyService surveyService() {
         return ServiceLocator.surveyService();
     }
 
     private void setupNodeCollection(View rootView) {
-        adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), node(), new MyNodeDeleter());
+        adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), this instanceof RecordCollectionDetailFragment, node());
         ListView listView = listView(rootView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -92,14 +87,5 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     private NodeNavigator nodeNavigator() {
         return (NodeNavigator) getActivity();
-    }
-
-    private class MyNodeDeleter implements NodeDeleter {
-        public void delete(Collection<UiNode> nodes) {
-            List<Integer> nodeIds = new ArrayList<Integer>();
-            for (UiNode node : nodes)
-                nodeIds.add(node.getId());
-            deleteNodes(nodeIds);
-        }
     }
 }

@@ -22,7 +22,7 @@ public class SmartNext {
                 return nodeToTry;
             nodeToTry = nextToTry(nodeToTry);
         }
-        return null;
+        return fromNode.getUiSurvey().getFirstChild(); // Back to record collection if no other
     }
 
     private UiNode nextToTry(UiNode node) {
@@ -54,7 +54,7 @@ public class SmartNext {
     }
 
     public boolean hasNext() {
-        return next() != null;
+        return next() != fromNode;
     }
 
     private boolean hasChildren(UiNode node) {

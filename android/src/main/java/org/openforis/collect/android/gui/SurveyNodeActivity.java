@@ -61,6 +61,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 surveyService = ServiceLocator.surveyService();
                 support = createLayoutSupport();
                 selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+                setTitle(selectedNode.getUiSurvey().getLabel());
                 enableUpNavigationIfNeeded(selectedNode);
                 surveyService.setListener(this);
                 support.onCreate(savedState);

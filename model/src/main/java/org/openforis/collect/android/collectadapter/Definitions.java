@@ -90,10 +90,12 @@ public class Definitions {
                         ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
             else if (nodeDefinition instanceof CoordinateAttributeDefinition) {
+                CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) nodeDefinition;
                 return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId, calculated,
                         spatialReferenceSystems, nodeDescription(nodeDefinition),
                         nodePrompt(nodeDefinition), required,
-                        isDestinationPointSpecified((CoordinateAttributeDefinition) nodeDefinition));
+                        isDestinationPointSpecified(coordinateDefn),
+                        collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,

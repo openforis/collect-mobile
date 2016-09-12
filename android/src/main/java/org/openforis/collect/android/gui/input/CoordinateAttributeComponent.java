@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -114,8 +115,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         private ViewHolder() {
             srsSpinner = createSrsSpinner();
             LinearLayout srsLayout = createSrsLayout();
-            this.xView = createNumberInput(attribute.getX(), "x");
-            this.yView = createNumberInput(attribute.getY(), "y");
+            if (attribute.getDefinition().onlyChangedByDevice) {
+                this.xView = createNumberOutput(attribute.getX());
+                this.yView = createNumberOutput(attribute.getY());
+            } else {
+                this.xView = createNumberInput(attribute.getX(), "x");
+                this.yView = createNumberInput(attribute.getY(), "y");
+            }
             button = createButton();
             accuracyView = createAccuracyView();
 
@@ -223,6 +229,16 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
             input.setHint(hint);
             return input;
+        }
+
+
+        private TextView createNumberOutput(Double value) {
+            final TextView output = new AppCompatTextView(context);
+            output.setSingleLine();
+            if (value != null)
+                output.setText(formatDouble(value));
+            output.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+            return output;
         }
 
         private ToggleButton createButton() {

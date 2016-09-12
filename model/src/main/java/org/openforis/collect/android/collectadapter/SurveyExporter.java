@@ -102,6 +102,7 @@ public class SurveyExporter {
                 record.setCreationDate(now);
                 record.setModifiedBy(user);
                 record.setModifiedDate(now);
+                record.setOwner(user);
                 exportRecord(record);
                 exportRecordFiles(record);
             }

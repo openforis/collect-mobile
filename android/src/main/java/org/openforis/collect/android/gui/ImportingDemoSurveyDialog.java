@@ -19,7 +19,9 @@ public class ImportingDemoSurveyDialog extends DialogFragment {
         Linkify.addLinks(s, Linkify.WEB_URLS);
         message.setText(s);
         message.setMovementMethod(LinkMovementMethod.getInstance());
-        message.setPadding(8, 16, 8, 16);
+
+
+        message.setPadding(px(8), px(16), px(8), px(16));
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.import_demo_dialog_title)
@@ -34,5 +36,9 @@ public class ImportingDemoSurveyDialog extends DialogFragment {
                 .create();
     }
 
+    private int px(int dp) {
+        float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
 
 }

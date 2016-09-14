@@ -45,16 +45,14 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
 
     private void setupRemoveButton() {
         Button button = (Button) inputView.findViewById(R.id.file_attribute_remove);
-        if (imageFile.exists()) {
-            button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    showRemoveDialog();
-                }
-            });
-        } else {
+        button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showRemoveDialog();
+            }
+        });
+        if (!imageFile.exists())
             button.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void showRemoveDialog() {

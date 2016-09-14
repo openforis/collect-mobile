@@ -110,7 +110,7 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         if (definition instanceof DateAttributeDefinition)
             return UiDateAttribute.class;
         if (definition instanceof TimeAttributeDefinition)
-            return UiTaxonAttribute.class;
+            return UiTimeAttribute.class;
         if (definition instanceof CodeAttributeDefinition)
             return UiCodeAttribute.class;
         if (definition instanceof CoordinateAttributeDefinition)

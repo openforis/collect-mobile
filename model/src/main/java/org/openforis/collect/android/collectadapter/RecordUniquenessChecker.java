@@ -94,6 +94,13 @@ public interface RecordUniquenessChecker {
                         return key.text == null ? "val_text IS NULL" : "val_text = ?";
                     case DATE_ATTRIBUTE:
                         return key.date == null ? "val_date IS NULL" : "val_date = ?";
+                    case TIME_ATTRIBUTE:
+                        String constraint = "(";
+                        constraint += key.hour == null ? "val_hour IS NULL" : "val_hour = ?";
+                        constraint += " AND ";
+                        constraint += key.minute == null ? "val_minute IS NULL" : "val_minute = ?";
+                        constraint += ")";
+                        return constraint;
                     default:
                         throw new IllegalStateException("Attribute type cannot be record key: " + key.type);
                 }
@@ -125,6 +132,10 @@ public interface RecordUniquenessChecker {
                         case DATE_ATTRIBUTE:
                             if (key.date != null)
                                 psh.setLongOrNull(key.date.getTime());
+                            break;
+                        case TIME_ATTRIBUTE:
+                            psh.setIntOrNull(key.hour);
+                            psh.setIntOrNull(key.minute);
                             break;
                         default:
                             throw new IllegalStateException("Attribute type cannot be record key: " + key.type);

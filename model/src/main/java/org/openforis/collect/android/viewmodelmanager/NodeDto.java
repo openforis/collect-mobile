@@ -69,6 +69,10 @@ public class NodeDto {
                         throw new IllegalStateException("Unexpected date format: " + value);
                     }
                     break;
+                case TIME_ATTRIBUTE:
+                    node.hour = Integer.parseInt(value.substring(0, 2));
+                    node.minute = Integer.parseInt(value.substring(3, 5));
+                    break;
                 default:
                     throw new IllegalStateException("Attribute type cannot be record key: " + attributeType);
             }

@@ -10,6 +10,7 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.openforis.collect.android.NodeEvent.DELETED;
@@ -225,7 +226,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
         String username = Settings.user().getName();
         if (!username.isEmpty())
             fileName += "_" + username;
-        fileName += ".collect-data";
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        fileName += "-" + timestamp + ".collect-data";
         return new File(workingDir, fileName);
     }
 

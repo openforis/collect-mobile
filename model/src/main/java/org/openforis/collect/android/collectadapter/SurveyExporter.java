@@ -52,12 +52,23 @@ public class SurveyExporter {
         try {
             if (!outputFile.getParentFile().exists())
                 outputFile.getParentFile().mkdirs();
+            else
+                removeOldExportFiles(outputFile);
             zipOutputStream = new ZipOutputStream(new FileOutputStream(outputFile));
             addInfoFile();
             addIdmFile();
             exportRecords();
         } finally {
             IOUtils.closeQuietly(zipOutputStream);
+        }
+    }
+
+    private void removeOldExportFiles(File outputFile) {
+        for (File file : outputFile.getParentFile().listFiles()) {
+            String suffix = "\\-\\d{4}\\-\\d{2}-\\d{2}.collect-data";
+            String prefix = outputFile.getName().replaceFirst(suffix, "");
+            if (file.getName().replaceFirst(suffix, "").equals(prefix))
+                file.delete();
         }
     }
 

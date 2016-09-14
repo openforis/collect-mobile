@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.*;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -69,6 +70,9 @@ public class EntityListAdapter extends NodeListAdapter {
             }
         }
         return attributes;
+    }
+
+    protected void setTypeface(TextView text, UiNode node) {
     }
 
     protected void onPrepareView(final UiNode node, View row) {

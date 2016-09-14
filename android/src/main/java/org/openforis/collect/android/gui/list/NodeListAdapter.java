@@ -1,8 +1,6 @@
 package org.openforis.collect.android.gui.list;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.os.Build;
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
-import org.openforis.collect.android.viewmodel.UiInternalNode;
-import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +66,7 @@ public class NodeListAdapter extends BaseAdapter {
 
         UiNode node = nodes.get(position);
         holder.text.setText(getText(node));
+        setTypeface(holder.text, node);
         if (!node.isRelevant())
             holder.text.setTextColor(attrs.color(R.attr.irrelevantTextColor));
         else
@@ -77,6 +75,13 @@ public class NodeListAdapter extends BaseAdapter {
         onPrepareView(node, row);
 
         return row;
+    }
+
+    protected void setTypeface(TextView text, UiNode node) {
+        if (node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity)
+            text.setTypeface(Typeface.DEFAULT_BOLD);
+        else
+            text.setTypeface(Typeface.DEFAULT);
     }
 
     protected void onPrepareView(UiNode node, View row) {

@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,12 +20,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Keyboard;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Set;
 
 public class SurveyListActivity extends ActionBarActivity {
@@ -99,11 +103,39 @@ public class SurveyListActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
-                if (resultCode == RESULT_OK && data != null)
-                    importSurvey(FileUtils.getPath(this, data.getData()), false);
+                if (resultCode == RESULT_OK && data != null) {
+                    String path = getFileNameByUri(data.getData());
+                    importSurvey(path, false);
+                }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private String getFileNameByUri(Uri uri) {
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
+                File file = new File(downloadDir, name);
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    if (inputStream == null)
+                        throw new IllegalStateException("Failed to import survey");
+
+                    IOUtils.copy(inputStream, new FileOutputStream(file));
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                cursor.close();
+                return file.getAbsolutePath();
+            }
+        } else if (uri.getScheme().equals("file"))
+            return FileUtils.getPath(this, uri);
+        throw new IllegalStateException("Failed to import survey");
     }
 
     protected void showImportDialog() {

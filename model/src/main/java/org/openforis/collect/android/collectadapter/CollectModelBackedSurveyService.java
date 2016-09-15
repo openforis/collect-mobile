@@ -226,8 +226,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
         String username = Settings.user().getName();
         if (!username.isEmpty())
             fileName += "_" + username;
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        fileName += "-" + timestamp + ".collect-data";
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm").format(new Date());
+        fileName += "_" + timestamp + ".collect-data";
         return new File(workingDir, fileName);
     }
 

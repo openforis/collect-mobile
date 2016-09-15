@@ -65,7 +65,7 @@ public class SurveyExporter {
 
     private void removeOldExportFiles(File outputFile) {
         for (File file : outputFile.getParentFile().listFiles()) {
-            String suffix = "\\-\\d{4}\\-\\d{2}-\\d{2}.collect-data";
+            String suffix = "_\\d{4}\\-\\d{2}-\\d{2}_\\d{2}\\.\\d{2}.collect-data";
             String prefix = outputFile.getName().replaceFirst(suffix, "");
             if (file.getName().replaceFirst(suffix, "").equals(prefix))
                 file.delete();

@@ -1,24 +1,23 @@
- First installation
-------------------
-
-	* Download your .collect-mobile
-	* Download and install Collect.apk
-	* Start Collect
-	* Choose your downloaded .collect-mobile file in the file chooser
-
-
-Install an update
------------------
-
-    * Stop Collect if it's running
-    * Clear data (this will removed any previously collected data)
-    * Download and install Collect.apk
-    * Start Collect
-    * Choose your .collect-mobile file in the file chooser
-
-
 Changes
 -------
+
+2016-09-15
+
+    * Added confirmation dialog before records and entities are deleted
+    * Prevented non-relevant attributes from being updated
+    * Fixed bug that prevented surveys from being loaded straight from Google Drive
+    * Added timestamp to exported data files
+    * Included option to exclude images from export
+    * Included option to save exported data files in Downloads directory
+    * Set title in action bar to current survey name
+    * Update "Smart next" so it jumps to the record list once at the end of a record
+    * Supported survey designs which restricts manual entry of GPS coordinates
+    * Indicated if a node in the node list sidebar is an attribute or not by using bold text on non-attributes
+    * Added support for Time attributes record keys
+    * Removed redundant incomplete coordinate validation error
+    * Made sure code list for multi-choice code attributes get updated when parent code attribute is changed
+    * Fixed bug with image removal
+    * Updated look and feel to Material Design
 
 2016-07-06
 

@@ -305,8 +305,8 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return versions.get(versions.size() - 1).getName();
     }
 
-    public void exportSurvey(UiSurvey uiSurvey, java.io.File exportFile, final ExportListener exportListener) throws IOException {
-        new SurveyExporter(uiSurvey, selectedSurvey, surveyManager, new SurveyExporter.CollectRecordProvider() {
+    public void exportSurvey(UiSurvey uiSurvey, File exportFile, boolean excludeBinaries, final ExportListener exportListener) throws IOException {
+        new SurveyExporter(uiSurvey, selectedSurvey, surveyManager, excludeBinaries, new SurveyExporter.CollectRecordProvider() {
             public CollectRecord record(int recordId) {
                 exportListener.beforeRecordExport(recordId);
                 return getCollectRecordForExporting(recordId);

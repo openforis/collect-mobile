@@ -205,11 +205,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
     }
 
-    public File exportSurvey() throws IOException {
+    public File exportSurvey(boolean excludeBinaries) throws IOException {
         Integer selectedRecordId = viewModelManager.getSelectedRecordId();
 
         File exportedFile = exportFile();
-        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, new CollectModelManager.ExportListener() {
+        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, new CollectModelManager.ExportListener() {
             public void beforeRecordExport(int recordId) {
                 selectRecord(recordId);
             }

@@ -44,7 +44,7 @@ public interface SurveyService {
 
     void deleteRecords(Collection<Integer> records);
 
-    File exportSurvey() throws IOException;
+    File exportSurvey(boolean excludeBinaries) throws IOException;
 
     void setListener(SurveyListener listener);
 

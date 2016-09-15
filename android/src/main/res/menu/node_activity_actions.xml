@@ -9,7 +9,7 @@
             android:id="@+id/action_export"
             android:title="@string/action_export"
             app:showAsAction="never"
-            android:onClick="export"/>
+            android:onClick="exportDialog"/>
     <item
             android:id="@+id/action_survey_list"
             android:title="@string/action_survey_list"

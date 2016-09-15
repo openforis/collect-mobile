@@ -20,7 +20,9 @@
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey</string>
     <string name="all_key_records_not_specified_title">All %1$s key attributes have not been specified</string>
-    <string name="all_key_records_not_specified_message">In order to export the data, %1$s must be specified for all %2$s.</string>
+    <string name="all_key_records_not_specified_message">In order to export the data, %1$s must be specified for all
+        %2$s.
+    </string>
 
     <string name="toast_import_survey">Importing survey</string>
     <string name="toast_import_survey_failed">Failed to import survey from %s</string>
@@ -67,14 +69,28 @@
     <string name="settings_summaryOff_darkTheme">Collect Mobile uses the light theme.</string>
 
     <string name="settings_title_showKeyboard">Automatically show keyboard</string>
-    <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when accessing an node.</string>
+    <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when
+        accessing an node.
+    </string>
 
     <string name="import_title_failed">Failed to import survey %1$s</string>
-    <string name="import_text_failed">Make sure you are running the latest version of Collect Mobile and have exported your survey for Collect Mobile using a recent Collect Server version.</string>
-    <string name="import_text_wrong_version">Make sure you are running the latest version of Collect Mobile and have exported your survey for Collect Mobile using a recent Collect Server version.</string>
+    <string name="import_text_failed">Make sure you are running the latest version of Collect Mobile and have exported
+        your survey for Collect Mobile using a recent Collect Server version.
+    </string>
+    <string name="import_text_wrong_version">Make sure you are running the latest version of Collect Mobile and have
+        exported your survey for Collect Mobile using a recent Collect Server version.
+    </string>
+
+    <string name="export_dialog_title">Export survey data</string>
+    <string name="export_dialog_option_exclude_binary_file">Exclude binary files</string>
+    <string name="export_dialog_option_save_to_downloads">Save data in Downloads directory</string>
+    <string name="export_share_with_application">Share with %s</string>
+
 
     <string name="import_overwrite_data_dialog_title">Overwrite data</string>
-    <string name="import_overwrite_data_dialog_message">Data you entered for current survey will be deleted if you proceed to import a survey.</string>
+    <string name="import_overwrite_data_dialog_message">Data you entered for current survey will be deleted if you
+        proceed to import a survey.
+    </string>
     <string name="import_overwrite_data_dialog_confirm">Delete data and import</string>
 
     <string name="import_demo_dialog_title">Import demo survey</string>

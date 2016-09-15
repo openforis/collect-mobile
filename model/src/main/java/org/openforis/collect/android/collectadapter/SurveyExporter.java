@@ -33,15 +33,17 @@ public class SurveyExporter {
     private final UiSurvey uiSurvey;
     private final CollectSurvey collectSurvey;
     private final SurveyManager surveyManager;
+    private final boolean excludeBinaries;
     private final CollectRecordProvider collectRecordProvider;
     private final RecordFileManager recordFileManager;
     private final DataMarshaller dataMarshaller;
     private ZipOutputStream zipOutputStream;
 
-    public SurveyExporter(UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyManager surveyManager, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager) throws IOException {
+    public SurveyExporter(UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyManager surveyManager, boolean excludeBinaries, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager) throws IOException {
         this.uiSurvey = uiSurvey;
         this.collectSurvey = collectSurvey;
         this.surveyManager = surveyManager;
+        this.excludeBinaries = excludeBinaries;
         this.collectRecordProvider = collectRecordProvider;
         this.recordFileManager = recordFileManager;
         dataMarshaller = new DataMarshaller();
@@ -115,7 +117,8 @@ public class SurveyExporter {
                 record.setModifiedDate(now);
                 record.setOwner(user);
                 exportRecord(record);
-                exportRecordFiles(record);
+                if (!excludeBinaries)
+                    exportRecordFiles(record);
             }
         }
     }

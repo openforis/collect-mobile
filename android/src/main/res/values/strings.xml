@@ -84,7 +84,7 @@
     <string name="export_dialog_title">Export survey data</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude binary files</string>
     <string name="export_dialog_option_save_to_downloads">Save data in Downloads directory</string>
-    <string name="export_share_with_application">Share with %s</string>
+    <string name="export_share_with_application">Send exported data to</string>
 
 
     <string name="import_overwrite_data_dialog_title">Overwrite data</string>

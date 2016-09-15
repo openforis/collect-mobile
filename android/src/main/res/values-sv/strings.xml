@@ -87,4 +87,8 @@
     <string name="settings_title_compass">Kompass</string>
     <string name="all_key_records_not_specified_title">Alla %1$s nyckerattribute har inte specificerats</string>
     <string name="all_key_records_not_specified_message">För att exportera måste %1$s specificeras för alla %2$s</string>
+    <string name="export_dialog_option_exclude_binary_file">Excludera filer</string>
+    <string name="export_dialog_option_save_to_downloads">Spara bland nerladdade filer</string>
+    <string name="export_dialog_title">Exportera data</string>
+    <string name="export_share_with_application">Skicka data till</string>
 </resources>

@@ -64,6 +64,7 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
         CoordinateAttribute a = new CoordinateAttribute((CoordinateAttributeDefinition) definition);
         if (!uiAttribute.isCalculated()) {
             Coordinate coordinate = (Coordinate) value(uiAttribute);
+            a.setValue(coordinate);
         }
         return a;
     }

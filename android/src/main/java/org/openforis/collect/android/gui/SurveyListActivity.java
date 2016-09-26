@@ -25,7 +25,10 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Keyboard;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 public class SurveyListActivity extends ActionBarActivity {
@@ -114,6 +117,8 @@ public class SurveyListActivity extends ActionBarActivity {
 
 
     private String getFileNameByUri(Uri uri) {
+        if (uri.toString().startsWith("content://com.ianhanniballake.localstorage"))
+            return FileUtils.getPath(this, uri);
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
@@ -124,7 +129,6 @@ public class SurveyListActivity extends ActionBarActivity {
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     if (inputStream == null)
                         throw new IllegalStateException("Failed to import survey");
-
                     IOUtils.copy(inputStream, new FileOutputStream(file));
                     inputStream.close();
                 } catch (IOException e) {

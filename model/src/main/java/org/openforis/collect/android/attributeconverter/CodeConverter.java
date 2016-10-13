@@ -52,18 +52,18 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
         }
         dto.codeQualifier = uiAttribute.getQualifier();
         return dto;
-
     }
 
     public Value value(UiCodeAttribute uiAttribute) {
         UiCode code = uiAttribute.getCode();
-        return new Code(code == null ? null : code.getValue());
+        return new Code(code == null ? null : code.getValue(), uiAttribute.getQualifier());
     }
 
     protected CodeAttribute attribute(UiCodeAttribute uiAttribute, NodeDefinition definition) {
         CodeAttribute a = new CodeAttribute((CodeAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated()) {
             a.setValue((Code) value(uiAttribute));
+        }
 
         return a;
     }

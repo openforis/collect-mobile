@@ -1,6 +1,14 @@
 Changes
 -------
 
+2016-11-22
+
+    * Updated
+
+2016-10-13
+
+    * Fixed bug where code qualifiers weren't included in exports.
+
 2016-10-05
 
     * Fixed another bug where surveys couldn't be imported using the built-in file chooser.

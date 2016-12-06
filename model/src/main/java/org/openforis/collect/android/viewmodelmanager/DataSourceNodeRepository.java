@@ -32,7 +32,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void insert(final List<NodeDto> nodes) {
+    public void insert(final List<NodeDto> nodes, final Map<Integer, StatusChange> statusChanges) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement("" +
@@ -50,6 +50,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                 }
                 ps.executeBatch();
                 ps.close();
+                updateStatusChanges(connection, statusChanges);
                 return null;
             }
         });

@@ -140,7 +140,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return new NodeAddedResult<UiEntity>(uiEntity, nodeChanges);
     }
 
-    public UiAttribute addAttribute(UiAttributeCollection uiAttributeCollection) {
+    public NodeAddedResult<UiAttribute> addAttribute(UiAttributeCollection uiAttributeCollection) {
         Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
         UiAttributeDefinition definition = uiAttributeCollection.getDefinition().attributeDefinition;
 
@@ -149,7 +149,9 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         Attribute attribute = extractAddedAttribute(changeSet);
         attribute.setId(IdGenerator.nextId()); // TODO: Not right place to do this - use converter?
         recordNodes.add(attribute);
-        return AttributeConverter.toUiAttribute(definition, attribute);
+        UiAttribute uiAttribute = AttributeConverter.toUiAttribute(definition, attribute);
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiAttributeCollection.getUiRecord()).extractChanges();
+        return new NodeAddedResult<UiAttribute>(uiAttribute, nodeChanges);
     }
 
     @SuppressWarnings("unchecked")

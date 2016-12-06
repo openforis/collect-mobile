@@ -62,13 +62,13 @@ public class ViewModelManager {
         return record;
     }
 
-    public void addEntity(final UiEntity entity) {
+    public void addEntity(final UiEntity entity, final Map<UiNode, UiNodeChange> nodeChanges) {
         validateRequiredness(entity);
         entity.updateStatusOfNodeAndDescendants(); // TODO: This should sbe done at record.init()? Ugly anyway
         entity.updateStatusOfParents();
         Timer.time(ViewModelRepository.class, "insertEntity", new Runnable() {
             public void run() {
-                repo.insertEntity(entity);
+                repo.insertEntity(entity, statusChanges(nodeChanges));
             }
         });
     }
@@ -120,8 +120,8 @@ public class ViewModelManager {
         return selectedNode;
     }
 
-    public void addAttribute(UiAttribute attribute) {
-        repo.insertAttribute(attribute);
+    public void addAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
+        repo.insertAttribute(attribute, statusChanges(nodeChanges));
     }
 
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {

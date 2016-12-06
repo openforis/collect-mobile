@@ -5,10 +5,7 @@ import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.openforis.collect.android.viewmodelmanager.NodeDto.Collection;
 
@@ -22,9 +19,9 @@ public interface ViewModelRepository {
 
     List<UiRecord.Placeholder> surveyRecords(int surveyId);
 
-    void insertEntity(UiEntity entity);
+    void insertEntity(UiEntity entity, Map<Integer, StatusChange> statusChanges);
 
-    void insertAttribute(UiAttribute attribute);
+    void insertAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges);
 
     void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges);
 
@@ -33,7 +30,7 @@ public interface ViewModelRepository {
     void removeRecord(int recordId);
 
 
-    public static class DatabaseViewModelRepository implements ViewModelRepository {
+    class DatabaseViewModelRepository implements ViewModelRepository {
         private final DefinitionProvider definitionProvider;
         private final NodeRepository repo;
 
@@ -43,7 +40,7 @@ public interface ViewModelRepository {
         }
 
         public void insertRecord(UiRecord record) {
-            repo.insert(toNodeDtoList(record));
+            repo.insert(toNodeDtoList(record), new HashMap<Integer, StatusChange>());
         }
 
         public UiRecord recordById(UiSurvey survey, int recordId) {
@@ -76,18 +73,18 @@ public interface ViewModelRepository {
             return keyAttributes;
         }
 
-        public void insertEntity(UiEntity entity) {
+        public void insertEntity(UiEntity entity, final Map<Integer, StatusChange> statusChanges) {
             final List<NodeDto> nodes = toNodeDtoList(entity);
 
             Timer.time(NodeRepository.class, "insert", new Runnable() {
                 public void run() {
-                    repo.insert(nodes);
+                    repo.insert(nodes, statusChanges);
                 }
             });
         }
 
-        public void insertAttribute(UiAttribute attribute) {
-            repo.insert(Arrays.asList(uiAttributeToDto(attribute)));
+        public void insertAttribute(UiAttribute attribute, final Map<Integer, StatusChange> statusChanges) {
+            repo.insert(Arrays.asList(uiAttributeToDto(attribute)), statusChanges);
         }
 
         public void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges) {

@@ -99,10 +99,9 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public UiEntity addEntity() {
         UiEntityCollection entityCollection = viewModelManager.selectedEntityCollection();
         NodeAddedResult<UiEntity> result = collectModelManager.addEntity(entityCollection);
-        UiEntity entity = result.nodeAdded;
-        viewModelManager.addEntity(entity);
+        viewModelManager.addEntity(result.nodeAdded, result.nodeChanges);
         updateCalculatedAttributes(result.nodeChanges);
-        return entity;
+        return result.nodeAdded;
     }
 
     public UiCodeAttribute addCodeAttribute(UiCode code, String qualifier) {  // TODO: Ugly. Do in transaction, redundant updating...
@@ -132,13 +131,14 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public UiAttribute addAttribute() {
         UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
-        UiAttribute attribute = collectModelManager.addAttribute(attributeCollection);
+        NodeAddedResult<UiAttribute> result = collectModelManager.addAttribute(attributeCollection);
+        UiAttribute attribute = result.nodeAdded;
 
         // TODO: Move this section to viewModelManager
         attributeCollection.addChild(attribute);
         attribute.init(); // TODO: Don't want to care about these life-cycle methods here!!!
         attribute.updateStatusOfParents();
-        viewModelManager.addAttribute(attribute);
+        viewModelManager.addAttribute(attribute, result.nodeChanges);
         updateAttribute(attribute);
         return attribute;
     }

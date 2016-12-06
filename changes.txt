@@ -1,9 +1,14 @@
 Changes
 -------
 
+2016-12-06
+
+    * Fixed bug where relevance and validation status didn't get updated when nodes where added or removed
+
+
 2016-11-22
 
-    * Updated
+    * Added support for latest Collect Desktop version
 
 2016-10-13
 

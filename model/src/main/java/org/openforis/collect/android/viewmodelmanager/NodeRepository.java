@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public interface NodeRepository {
 
-    void insert(List<NodeDto> nodes);
+    void insert(List<NodeDto> nodes, Map<Integer, StatusChange> statusChanges);
 
     NodeDto.Collection recordNodes(int recordId);
 

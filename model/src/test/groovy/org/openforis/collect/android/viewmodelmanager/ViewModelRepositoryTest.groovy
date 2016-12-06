@@ -57,7 +57,7 @@ class ViewModelRepositoryTest extends Specification {
         attribute.text = 'The text'
 
         when:
-        repo.insertEntity(entity)
+        repo.insertEntity(entity, [:])
         def loadedRecord = repo.recordById(nodes.survey, record.id)
 
         then:

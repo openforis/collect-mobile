@@ -127,8 +127,10 @@ class NodeChangeSetParser {
             if (isCalculated(childNode) || isHidden(childNode) || childNode.getId() == null)
                 continue;
             UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
-            ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());
-            addRequiredValidationErrorIfAny(uiChildNode, uiNodeChanges, validationResultFlag);
+            if (uiChildNode != null) {
+                ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());
+                addRequiredValidationErrorIfAny(uiChildNode, uiNodeChanges, validationResultFlag);
+            }
         }
     }
 

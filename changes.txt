@@ -1,6 +1,14 @@
 Changes
 -------
 
+2017-01-04
+
+    * Fixed crash when some devices import survey from Google Drive
+
+2016-12-07
+
+    * Fixed crash when exceeding max entity count
+
 2016-12-06
 
     * Fixed bug where relevance and validation status didn't get updated when nodes where added or removed

@@ -118,7 +118,7 @@ public class SurveyListActivity extends ActionBarActivity {
 
     private String getFileNameByUri(Uri uri) {
         String path = FileUtils.getPath(this, uri);
-        if (new File(path).exists())
+        if (path != null && new File(path).exists())
             return path;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);

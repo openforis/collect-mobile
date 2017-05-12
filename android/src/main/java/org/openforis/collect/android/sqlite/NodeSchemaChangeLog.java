@@ -20,8 +20,13 @@ public class NodeSchemaChangeLog {
         return changes.size() + 1;
     }
 
-    public final void apply(SQLiteDatabase db) {
+    public final void init(SQLiteDatabase db) {
         apply(db, 1, getVersion());
+    }
+
+    public final void apply(SQLiteDatabase db) {
+        int oldVersion = db.getVersion();
+        apply(db, oldVersion, getVersion());
     }
 
     public final void apply(SQLiteDatabase db, final int oldVersion, final int newVersion) {

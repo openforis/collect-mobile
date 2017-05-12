@@ -39,6 +39,7 @@ public class AndroidDatabase implements Database {
         listenToStorageEjectionBroadcasts(context);
         setupDatabase(databasePath);
         AndroidFiles.makeDiscoverable(databasePath, context);
+        schemaChangeLog.apply(openOrCreateDatabase());
     }
 
     public void close() {
@@ -153,7 +154,7 @@ public class AndroidDatabase implements Database {
         }
 
         public void onCreate(SQLiteDatabase db) {
-            schemaChangeLog.apply(db);
+            schemaChangeLog.init(db);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -161,4 +162,3 @@ public class AndroidDatabase implements Database {
         }
     }
 }
-

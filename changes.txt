@@ -1,6 +1,18 @@
 Changes
 -------
 
+2017-05-12
+
+    * Added support for latest Collect Desktop version
+
+2017-04-10
+
+    * Fixed out-of-memory crashes with large records
+
+2017-03-21
+
+    * Added support for latest Collect Desktop version
+
 2017-01-04
 
     * Fixed crash when some devices import survey from Google Drive

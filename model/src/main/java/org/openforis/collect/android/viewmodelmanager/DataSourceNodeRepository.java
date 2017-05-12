@@ -99,8 +99,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                         "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
                         "       val_taxon_code, val_taxon_scientific_name, val_file\n" +
                         "FROM ofc_view_model\n" +
-                        "WHERE record_id = ?\n" +
-                        "ORDER BY id");
+                        "WHERE record_id = ?");
                 ps.setInt(1, recordId);
                 ResultSet rs = ps.executeQuery();
                 NodeDto.Collection collection = new NodeDto.Collection();

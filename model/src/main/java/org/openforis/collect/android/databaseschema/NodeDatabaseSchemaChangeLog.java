@@ -44,7 +44,9 @@ public class NodeDatabaseSchemaChangeLog {
                         "val_taxon_code TEXT,\n" +
                         "val_taxon_scientific_name TEXT,\n" +
                         "val_file TEXT\n" +
-                        ")")
+                        ")"),
+
+                new SchemaChange("CREATE INDEX idx_ofc_view_model_1 ON ofc_view_model(record_id)")
         );
     }
 }

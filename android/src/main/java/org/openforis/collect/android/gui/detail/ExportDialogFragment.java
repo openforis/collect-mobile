@@ -57,7 +57,9 @@ public class ExportDialogFragment extends DialogFragment {
                 File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 if (!downloadDir.exists())
                     downloadDir.mkdirs();
-                IOUtils.copy(new FileInputStream(exportedFile), new FileOutputStream(new File(downloadDir, exportedFile.getName())));
+                File downloadDirDestinationFile = new File(downloadDir, exportedFile.getName());
+                IOUtils.copy(new FileInputStream(exportedFile), new FileOutputStream(downloadDirDestinationFile));
+                AndroidFiles.makeDiscoverable(downloadDirDestinationFile, getActivity());
             } else {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);

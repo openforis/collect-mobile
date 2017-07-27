@@ -114,28 +114,24 @@ public interface RecordUniquenessChecker {
                     // SQLDroid uses SQLite rawQuery, which does not allow null values to be bound.
                     switch (key.type) {
                         case CODE_ATTRIBUTE:
-                            if (key.codeValue != null)
-                                psh.setString(key.codeValue);
+                            psh.setStringIfNotNull(key.codeValue);
                             break;
                         case DOUBLE_ATTRIBUTE:
-                            if (key.doubleValue != null)
-                                psh.setDouble(key.doubleValue);
+                            psh.setDoubleIfNotNull(key.doubleValue);
                             break;
                         case INTEGER_ATTRIBUTE:
-                            if (key.intValue != null)
-                                psh.setInt(key.intValue);
+                            psh.setIntIfNotNull(key.intValue);
                             break;
                         case TEXT_ATTRIBUTE:
-                            if (key.text != null)
-                                psh.setString(key.text);
+                            psh.setStringIfNotNull(key.text);
                             break;
                         case DATE_ATTRIBUTE:
                             if (key.date != null)
                                 psh.setLongOrNull(key.date.getTime());
                             break;
                         case TIME_ATTRIBUTE:
-                            psh.setIntOrNull(key.hour);
-                            psh.setIntOrNull(key.minute);
+                            psh.setIntIfNotNull(key.hour);
+                            psh.setIntIfNotNull(key.minute);
                             break;
                         default:
                             throw new IllegalStateException("Attribute type cannot be record key: " + key.type);

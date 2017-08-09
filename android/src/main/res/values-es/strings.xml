@@ -9,7 +9,7 @@
     <string name="action_next_attribute">Siguiente atributo</string>
     <string name="action_import">Importar</string>
     <string name="action_export">Exportar</string>
-    <string name="action_backup">Copia de seguridad</string>e
+    <string name="action_backup">Copia de seguridad</string>
     <string name="action_settings">Opciones</string>
 
     <string name="backup_insert_sd_card">Inserte una tarjeta SD donde guardar la copia de seguridad</string>

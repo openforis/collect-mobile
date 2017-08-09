@@ -12,7 +12,7 @@
     <string name="action_import">Import</string>
     <string name="action_survey_list">Surveys</string>
     <string name="action_export">Export</string>
-    <string name="action_backup">Backup</string>e
+    <string name="action_backup">Backup</string>
     <string name="action_settings">Settings</string>
 
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>

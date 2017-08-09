@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Collect</string>
+    <string name="survey_list">Questionnaires</string>
+    <string name="settings">Paramètres</string>
+    <string name="button_select">Modifier</string>
+
+    <string name="action_add_node">Ajouter</string>
+    <string name="action_node_list">Lister</string>
+    <string name="action_next_attribute">Suivant</string>
+    <string name="action_import">Importer</string>
+    <string name="action_survey_list">Questionnaires</string>
+    <string name="action_export">Exporter</string>
+    <string name="action_backup">Sauvegarder</string>
+    <string name="action_settings">Paramètres</string>
+
+    <string name="backup_insert_sd_card">Veuillez insérer la carte mémoire SD pour stocker la sauvegarde sur</string>
+
+    <string name="toast_exported_survey">Questionnaire exporté vers %s</string>
+    <string name="toast_exported_survey_failed">Exportation du questionnaire échouée</string>
+    <string name="all_key_records_not_specified_title">Veuillez indiquer tous les attributs clés (%1$s)</string>
+    <string name="all_key_records_not_specified_message">Pour exporter les données, veuillez indiquer les %1$s pour tout %2$s.
+    </string>
+
+    <string name="toast_import_survey">Importation du questionnaire en cours</string>
+    <string name="toast_import_survey_failed">Importation du questionnaire à partir de %s échouée</string>
+    <string name="toast_backed_up_survey">Questionnaire sauvegardé sur %s</string>
+    <string name="toast_backed_up_failed">Sauvegarde échouée</string>
+
+    <string name="storage_not_found_message">Stockage secondaire non trouvée</string>
+    <string name="storage_not_found_retry">Veuillez réessayer</string>
+    <string name="storage_not_found_settings">Veuillez configurez l’emplacement</string>
+
+    <string name="message_invalid_date">Date invalide</string>
+    <string name="message_not_a_number">Ce n’est pas un numéro valide</string>
+
+    <string name="label_unspecified">[Vide]</string>
+    <string name="label_yes">Oui</string>
+    <string name="label_no">Non</string>
+    <string name="label_spatial_reference_system">Système de Référence Spatiale</string>
+    <string name="label_start_gps">Active le GPS</string>
+    <string name="label_stop_gps">Désactive le GPS</string>
+    <string name="label_accuracy">Exactitude</string>
+    <string name="label_navigate">Accéder à l’emplacement attendu</string>
+    <string name="label_distance">Distance</string>
+    <string name="label_destination">Destination</string>
+    <string name="label_empty">…</string>
+
+    <string name="label_show_code_descriptions">Montrer la description des éléments</string>
+
+    <string name="hint_date_pattern">dd MMMM yyyy</string>
+    <string name="hint_time_pattern">hh:mm</string>
+
+    <string name="settings_title_crewId">Identificateur de l’équipe</string>
+
+    <string name="settings_title_compass">Outil compas</string>
+    <string name="settings_switchTextOn_compassEnabled">Activer</string>
+    <string name="settings_switchTextOff_compassEnabled">Désactiver</string>
+    <string name="settings_summaryOn_compassEnabled">L’outils compass est activé</string>
+    <string name="settings_summaryOff_compassEnabled">L’outils compass est désactivé</string>
+
+    <string name="settings_workingDir">Répertoire de travail</string>
+    <string name="settings_title_darkTheme">Thème de Collect Mobile</string>
+    <string name="settings_switchTextOn_darkTheme">Sombre</string>
+    <string name="settings_switchTextOff_darkTheme">Clair</string>
+    <string name="settings_summaryOn_darkTheme">Collect Mobile utilize le thème sombre.</string>
+    <string name="settings_summaryOff_darkTheme">Collect Mobile utilize le thème clair.</string>
+
+    <string name="settings_title_showKeyboard">Montrer le clavier automatiquement</string>
+    <string name="settings_summary_showKeyboard">Détermine si le clavier programmable doit être montré automatiquement en cas d’accès au nœud.
+    </string>
+
+    <string name="import_title_failed">Importation du questionnaire %1$s échouée</string>
+    <string name="import_text_failed">Veulliez vous assurer que vous utilisez la dernière version de Collect Mobile et que vous avez exporté votre questionnaire pour Collect Mobile en utilisant une version récente de Collect Server.
+    </string>
+    <string name="import_text_wrong_version"> Veulliez vous assurer que vous utilisez la dernière version de Collect Mobile et que vous avez exporté votre questionnaire pour Collect Mobile en utilisant une version récente de Collect Server.
+    </string>
+
+    <string name="export_dialog_title">Exporter les données du questionnaire</string>
+    <string name="export_dialog_option_exclude_binary_file">Exclure les fichiers binaires</string>
+    <string name="export_dialog_option_save_to_downloads">Enregistrer les données dans le répertoire Téléchargements</string>
+    <string name="export_share_with_application">Envoyer les données exportées vers</string>
+
+
+    <string name="import_overwrite_data_dialog_title">Remplacer les données</string>
+    <string name="import_overwrite_data_dialog_message">Les données saisies dans ce questionnaire seront supprimées si vous importez un autre questionnaire.
+    </string>
+    <string name="import_overwrite_data_dialog_confirm">Supprimer les données et importer</string>
+
+    <string name="import_demo_dialog_title">Importer un questionnaire de démonstration</string>
+    <string name="import_demo_dialog_message">Puisque aucun autre questionnaire est importé, un questionnaire de démonstration sera utilisé pour illustrer les caractéristiques de Collect Mobile.
+        \n\nRendez-vous sur <a href="http://openforis.org/tools/collect.html">openforis.org</a> pour découvrir comment concevoir vos propres questionnaires.\n
+    </string>
+
+    <string name="amount_selected">%s sélectionné(s).</string>
+    <string name="delete">Supprimer</string>
+
+    <string name="file_attribute_capture_image">Copier l’image</string>
+    <string name="file_attribute_select_image">Sélectionner l’image</string>
+    <string name="file_attribute_remove_image">Supprimer l’image</string>
+</resources>

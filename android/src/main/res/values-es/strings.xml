@@ -85,5 +85,9 @@
     <string name="settings_title_compass">Brújula del dispositivo</string>
     <string name="all_key_records_not_specified_message">Con el fin de exportar los datos, %1$s debe especificarse para todos %2$s.</string>
     <string name="all_key_records_not_specified_title">Todas %1$s atributos clave no se han especificado</string>
+    <string name="export_dialog_option_exclude_binary_file">Excluir archivos de imagen</string>
+    <string name="export_dialog_option_save_to_downloads">Guardar en el directorio \"Download\" del dispositivo Android</string>
+    <string name="export_dialog_title">Exportar datos de la encuesta</string>
+    <string name="export_share_with_application">Enviar datos exportados a</string>
 
 </resources>

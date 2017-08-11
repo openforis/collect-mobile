@@ -83,7 +83,7 @@
 
     <string name="export_dialog_title">Export survey data</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
-    <string name="export_dialog_option_save_to_downloads">Save to Device Memory / Downloads directory</string>
+    <string name="export_dialog_option_save_to_downloads">Save to Android device \"Download\" directory</string>
     <string name="export_share_with_application">Send exported data to</string>
 
 

@@ -79,7 +79,7 @@
 
     <string name="export_dialog_title">Exporter les données du questionnaire</string>
     <string name="export_dialog_option_exclude_binary_file">Exclure les fichiers binaires</string>
-    <string name="export_dialog_option_save_to_downloads">Enregistrer les données dans le répertoire Téléchargements</string>
+    <string name="export_dialog_option_save_to_downloads">Enregistrer les données dans le répertoire \"Download\"</string>
     <string name="export_share_with_application">Envoyer les données exportées vers</string>
 
 

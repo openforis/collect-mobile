@@ -127,7 +127,6 @@ public class SurveyExporter {
         List<FileAttribute> fileAttributes = record.getFileAttributes();
         for (FileAttribute fileAttribute : fileAttributes) {
             if (!fileAttribute.isEmpty()) {
-
                 File file = recordFileManager.getRepositoryFile(fileAttribute);
                 if (file == null || !file.exists()) {
                     LOG.log(Level.WARNING, String.format("Record file not found for record %s (%d) attribute %s (%d)",

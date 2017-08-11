@@ -1,6 +1,11 @@
 Changes
 -------
 
+2017-08-11
+
+    * Added French translation
+    * Fixed bug where surveys, with time attribute as key, crashed
+
 2017-05-12
 
     * Added support for latest Collect Desktop version

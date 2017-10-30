@@ -328,7 +328,9 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         FileAttribute attribute = (FileAttribute) recordNodes.getAttribute(uiFileAttribute.getId());
         FileAttributeDefinition def = attribute.getDefinition();
         File dir = new File(recordFileManager.getDefaultStorageDirectory().getPath() + "/" + RecordFileManager.getRepositoryRelativePath(def));
-        String fileName = String.format("%d_%d.%s", attribute.getRecord().getId(), attribute.getInternalId(), "jpg");
+        String fileName = org.apache.commons.lang3.StringUtils.isEmpty(attribute.getFilename())
+                ? String.format("%d_%d.%s", attribute.getRecord().getId(), attribute.getId(), "jpg")
+                : attribute.getFilename(); // For backwards compatibility - previously internal ids was incorrectly used in filename
         return new File(dir, fileName);
     }
 

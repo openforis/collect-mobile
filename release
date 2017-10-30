@@ -6,6 +6,6 @@
 ##
 ##############################################################################
 set -e
-./gradlew clean build publish -Drelease=true -DversionName=$1
+./gradlew clean build publish -Drelease=true -DversionName=$1 --no-daemon
 git commit -m 'Release: Updated version number' gradle.properties
 git push

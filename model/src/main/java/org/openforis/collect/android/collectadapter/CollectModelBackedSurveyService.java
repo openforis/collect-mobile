@@ -223,7 +223,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private File exportFile() {
         String fileName = viewModelManager.getSelectedSurvey().getName();
-        String username = Settings.user().getName();
+        String username = Settings.user().getUsername();
         if (!username.isEmpty())
             fileName += "_" + username;
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm").format(new Date());

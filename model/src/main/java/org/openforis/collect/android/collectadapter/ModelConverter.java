@@ -52,10 +52,10 @@ class ModelConverter {
     }
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {
-        CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey));
+        CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey), uiRecord.getName());
+        Entity rootEntity = collectRecord.getRootEntity();
         collectRecord.setStep(CollectRecord.Step.CLEANSING);
         collectRecord.setId(uiRecord.getId());
-        Entity rootEntity = collectRecord.createRootEntity(uiRecord.getName());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);
         new RecordUpdater().initializeRecord(collectRecord);

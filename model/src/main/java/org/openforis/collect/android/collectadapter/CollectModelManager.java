@@ -120,14 +120,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     public UiRecord addRecord(String entityName, UiSurvey survey) {
-        try {
-            CollectRecord record = recordManager.create(selectedSurvey, entityName, user, latestSurveyVersion(), null, CollectRecord.Step.CLEANSING);
-            UiRecord uiRecord = modelConverter.toUiRecord(record, survey);
-            recordNodes = new RecordNodes(record);
-            return uiRecord;
-        } catch (RecordPersistenceException e) {
-            throw new SurveyException(e);
-        }
+        CollectRecord record = recordManager.create(selectedSurvey, entityName, user, latestSurveyVersion(), null, CollectRecord.Step.CLEANSING);
+        UiRecord uiRecord = modelConverter.toUiRecord(record, survey);
+        recordNodes = new RecordNodes(record);
+        return uiRecord;
     }
 
     public NodeAddedResult<UiEntity> addEntity(final UiEntityCollection uiEntityCollection) {
@@ -318,7 +314,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private CollectRecord getCollectRecordForExporting(int recordId) {
         Entity rootEntity = recordNodes.getEntityById(recordId);
-        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion());
+        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion(), rootEntity.getName());
         collectRecord.setId(recordId);
         collectRecord.replaceRootEntity(rootEntity);
         return collectRecord;

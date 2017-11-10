@@ -375,6 +375,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     }
 
+    public CollectSurvey getSelectedSurvey() {
+        return selectedSurvey;
+    }
+
     public interface ExportListener {
         void beforeRecordExport(int recordId);
     }

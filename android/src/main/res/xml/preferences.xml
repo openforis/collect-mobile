@@ -32,4 +32,28 @@
             android:summary="@string/settings_summary_showKeyboard"
             android:key="showKeyboard"
             />
+
+    <PreferenceCategory
+        android:title="@string/settings_title_remoteSync"
+        android:key="remoteSync">
+        <CheckBoxPreference
+            android:title="@string/settings_title_remoteSyncEnabled"
+            android:defaultValue="false"
+            android:summary="@string/settings_title_remoteSyncEnabled"
+            android:key="remoteSyncEnabled"
+            />
+        <EditTextPreference
+            android:title="@string/settings_title_remoteCollectAddress"
+            android:key="remoteCollectAddress"
+            />
+        <EditTextPreference
+            android:title="@string/settings_title_remoteCollectUsername"
+            android:key="remoteCollectUsername"
+            />
+        <EditTextPreference
+            android:title="@string/settings_title_remoteCollectPassword"
+            android:key="remoteCollectPassword"
+            android:inputType="textPassword"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

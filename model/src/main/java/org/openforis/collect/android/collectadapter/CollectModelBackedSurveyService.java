@@ -6,6 +6,7 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
+import org.openforis.collect.model.CollectSurvey;
 
 import java.io.File;
 import java.io.IOException;
@@ -237,6 +238,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public File file(UiFileAttribute attribute) {
         return collectModelManager.file(attribute);
+    }
+
+    public CollectSurvey getSelectedSurvey() {
+        return collectModelManager.getSelectedSurvey();
     }
 
     private void notifyNodeSelected(UiNode previous, UiNode selected) {

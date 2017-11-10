@@ -2,14 +2,14 @@ package org.openforis.collect.android.gui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,17 +20,14 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
-import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.Alerts;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -331,6 +328,25 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void showEntityTable(MenuItem menuItem) {
         Keyboard.hide(this);
         EntityTableDialogFragment.show(getSupportFragmentManager());
+    }
+
+    public void navigateToSendDataToCollect(MenuItem menuItem) {
+        navigateToSendDataToCollect();
+    }
+
+    private void navigateToSendDataToCollect() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
+        if (remoteSyncEnabled) {
+            Alerts.confirm(this, R.string.sendtocollect_restoring_data_title, R.string.sendtocollect_confirm_message, new Runnable() {
+                public void run() {
+                    Keyboard.hide(SurveyNodeActivity.this);
+                    SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
+                }
+            });
+        } else {
+            Toast.makeText(this, R.string.sendtocollect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void navigateToSurveyList() {

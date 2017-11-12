@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import static android.view.View.*;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -28,7 +30,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SubmitDataToCollectActivity extends ActionBarActivity {
+public class SubmitDataToCollectActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = SubmitDataToCollectActivity.class.getSimpleName();
     private static final String DATA_RESTORE_ENDPOINT = "/api/surveys/restore/data";
@@ -36,7 +38,7 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
     private static final long RESTORE_DATA_JOB_MONITOR_PERIOD = 3000L;
 
     private enum ViewState {
-        UPLOADING, RESTORING, ERROR, COMPLETE, ABORTED
+        EXPORTING_DATA, UPLOADING, RESTORING, ERROR, COMPLETE, ABORTED
     }
 
     private File exportedFile;
@@ -45,21 +47,22 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
     private String remotePassword;
     private String surveyName;
 
-    private LinearLayout uploadingFileContainer;
-    private ProgressBar uploadingFileProgressBar;
-    private ProgressBar restoringDataProgressBar;
-    private LinearLayout restoringDataContainer;
+    private TextView currentTaskTitleText;
+    private LinearLayout taskRunningContainer;
+    private ProgressBar indeterminateProgressBar;
+    private ProgressBar progressBar;
     private LinearLayout errorContainer;
     private TextView errorMessageText;
-    private TextView jobCancelledMessageText;
-    private Button cancelRemoteDataRestoreButton;
+    private TextView dataSubmitCancelledMessageText;
+    private TextView dataSubmitCompletedMessageText;
+    private Button cancelButton;
     private Timer jobMonitorTimer;
     private AsyncTask uploadTask;
     private ViewState viewState = ViewState.UPLOADING;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.send_to_collect);
+        setContentView(R.layout.submit_data_to_collect);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         remoteAddress = preferences.getString(SettingsActivity.REMOTE_COLLECT_ADDRESS, "");
@@ -69,33 +72,29 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
         errorContainer = (LinearLayout) findViewById(R.id.errorContainer);
         errorMessageText = (TextView) findViewById(R.id.errorMessageText);
 
-        uploadingFileContainer = (LinearLayout) findViewById(R.id.uploadingFileContainer);
-        uploadingFileProgressBar = (ProgressBar) findViewById(R.id.uploadingFileProgressBar);
-        uploadingFileProgressBar.setProgress(0);
+        currentTaskTitleText = (TextView) findViewById(R.id.submitToCollectCurrentTaskText);
+        taskRunningContainer = (LinearLayout) findViewById(R.id.taskRunningContainer);
+        indeterminateProgressBar = (ProgressBar) findViewById(R.id.submitToCollectIndeterminateProgressBar);
+        progressBar = (ProgressBar) findViewById(R.id.submitToCollectProgressBar);
+        progressBar.setProgress(0);
 
-        restoringDataContainer = (LinearLayout) findViewById(R.id.restoringDataContainer);
-        restoringDataProgressBar = (ProgressBar) findViewById(R.id.restoringDataProgressBar);
-        restoringDataProgressBar.setProgress(0);
-
-        cancelRemoteDataRestoreButton = (Button) findViewById(R.id.cancelRemoteDataRestoreBtn);
-        cancelRemoteDataRestoreButton.setOnClickListener(new View.OnClickListener() {
+        cancelButton = (Button) findViewById(R.id.cancelRemoteDataRestoreBtn);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 handleCancelClick();
             }
         });
 
-        jobCancelledMessageText = (TextView) findViewById(R.id.jobCancelledMessageText);
+        dataSubmitCancelledMessageText = (TextView) findViewById(R.id.submitToCollectCancelledMessageText);
+        dataSubmitCompletedMessageText = (TextView) findViewById(R.id.submitToCollectCompletedMessageText);
 
-        try {
-            surveyName = ServiceLocator.surveyService().getSelectedSurvey().getName();
-            exportedFile = ServiceLocator.surveyService().exportSurvey(false);
-            uploadTask = new UploadBackupFileTask().execute();
-        } catch (IOException e) {
-            handleError(e.getMessage());
-        }
+        surveyName = ServiceLocator.surveyService().getSelectedSurvey().getName();
+        updateViewState(ViewState.EXPORTING_DATA);
+        new ExportDataTask().execute();
     }
 
     private void handleCancelClick() {
+        this.cancelButton.setEnabled(false); //avoid double click
         switch(SubmitDataToCollectActivity.this.viewState) {
             case UPLOADING:
                 uploadTask.cancel(true);
@@ -123,35 +122,55 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
     }
 
     private void updateViewState(final ViewState state, final Runnable callback) {
+        Log.d(LOG_TAG, "Update view state : " + state);
         this.viewState = state;
         runOnUiThread(new Runnable() {
             public void run() {
-                errorContainer.setVisibility(View.INVISIBLE);
-                restoringDataContainer.setVisibility(View.INVISIBLE);
-                uploadingFileContainer.setVisibility(View.INVISIBLE);
-                cancelRemoteDataRestoreButton.setVisibility(View.INVISIBLE);
+                indeterminateProgressBar.setVisibility(INVISIBLE);
+                progressBar.setVisibility(INVISIBLE);
+                errorContainer.setVisibility(INVISIBLE);
+                taskRunningContainer.setVisibility(INVISIBLE);
+                cancelButton.setVisibility(INVISIBLE);
+                Integer taskTitleId = null;
                 switch (viewState) {
+                    case EXPORTING_DATA:
+                        taskTitleId = R.string.submit_to_collect_exporting_data_title;
+                        taskRunningContainer.setVisibility(VISIBLE);
+                        indeterminateProgressBar.setVisibility(VISIBLE);
+                        break;
                     case UPLOADING:
-                        uploadingFileContainer.setVisibility(View.VISIBLE);
-                        cancelRemoteDataRestoreButton.setVisibility(View.VISIBLE);
+                        taskTitleId = R.string.submit_to_collect_uploading_file_title;
+                        progressBar.setVisibility(VISIBLE);
+                        taskRunningContainer.setVisibility(VISIBLE);
+                        cancelButton.setVisibility(VISIBLE);
                         break;
                     case RESTORING:
-                        restoringDataContainer.setVisibility(View.VISIBLE);
-                        cancelRemoteDataRestoreButton.setVisibility(View.VISIBLE);
+                        taskTitleId = R.string.submit_to_collect_restoring_data_title;
+                        progressBar.setVisibility(VISIBLE);
+                        taskRunningContainer.setVisibility(VISIBLE);
+                        cancelButton.setVisibility(VISIBLE);
                         break;
                     case ERROR:
-                        errorContainer.setVisibility(View.VISIBLE);
+                        errorContainer.setVisibility(VISIBLE);
                         break;
                     case ABORTED:
-
+                        dataSubmitCancelledMessageText.setVisibility(VISIBLE);
                         break;
                     case COMPLETE:
+                        dataSubmitCompletedMessageText.setVisibility(VISIBLE);
+                        break;
                 }
+                currentTaskTitleText.setText(taskTitleId != null ? getResources().getString(taskTitleId): "");
+
                 if (callback != null) {
                     callback.run();
                 }
             }
         });
+    }
+
+    private void startExportedFileUpload() {
+        uploadTask = new UploadBackupFileTask().execute();
     }
 
     private void startJobMonitor(String url) {
@@ -163,7 +182,7 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
                 if ("RUNNING".equals(status)) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            restoringDataProgressBar.setProgress(response.getJobProgress());
+                            progressBar.setProgress(response.getJobProgress());
                         }
                     });
                 } else {
@@ -183,6 +202,25 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
             }
         });
         jobMonitorTimer.scheduleAtFixedRate(task, 0, RESTORE_DATA_JOB_MONITOR_PERIOD);
+    }
+
+    private class ExportDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                SubmitDataToCollectActivity.this.exportedFile = ServiceLocator.surveyService().exportSurvey(false);
+            } catch (IOException e) {
+                handleError(e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            startExportedFileUpload();
+        }
     }
 
     private class UploadBackupFileTask extends AsyncTask<String, Integer, String> {
@@ -223,7 +261,7 @@ public class SubmitDataToCollectActivity extends ActionBarActivity {
             Log.d(LOG_TAG, String.valueOf(progressPercent));
             runOnUiThread(new Runnable() {
                 public void run() {
-                    uploadingFileProgressBar.setProgress(progressPercent);
+                    progressBar.setProgress(progressPercent);
                 }
             });
         }

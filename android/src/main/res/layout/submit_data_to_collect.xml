@@ -5,37 +5,26 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/uploadingFileContainer"
+        android:id="@+id/taskRunningContainer"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text="@string/sendtocollect_uploading_file_title"
+            android:id="@+id/submitToCollectCurrentTaskText"
+            android:textSize="30sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <ProgressBar
-            android:id="@+id/uploadingFileProgressBar"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/restoringDataContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="invisible">
-        <TextView
-            android:text="@string/sendtocollect_restoring_data_title"
+            android:id="@+id/submitToCollectIndeterminateProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <ProgressBar
-            android:id="@+id/restoringDataProgressBar"
+            android:id="@+id/submitToCollectProgressBar"
+            android:visibility="invisible"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -45,14 +34,17 @@
         android:orientation="vertical"
         android:visibility="invisible">
         <TextView
-            android:text="@string/sendtocollect_error_restoring_data"
+            android:textColor="@color/error_text_color"
+            android:textSize="30sp"
+            android:text="@string/submit_to_collect_error_restoring_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/errorMessageText"
+            android:textColor="@color/error_text_color"
+            android:textSize="30sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -64,11 +56,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel_label" />
-
     </LinearLayout>
 
     <TextView
-        android:id="@+id/jobCancelledMessageText"
+        android:id="@+id/submitToCollectCancelledMessageText"
+        android:visibility="invisible"
+        android:textSize="30sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/submitToCollectCompletedMessageText"
+        android:visibility="invisible"
+        android:textSize="30sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

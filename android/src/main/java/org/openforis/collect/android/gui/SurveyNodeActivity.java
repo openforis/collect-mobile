@@ -338,14 +338,14 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
         if (remoteSyncEnabled) {
-            Alerts.confirm(this, R.string.sendtocollect_restoring_data_title, R.string.sendtocollect_confirm_message, new Runnable() {
+            Alerts.confirm(this, R.string.submit_to_collect_restoring_data_title, R.string.submit_to_collect_confirm_message, new Runnable() {
                 public void run() {
                     Keyboard.hide(SurveyNodeActivity.this);
                     SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
                 }
             });
         } else {
-            Toast.makeText(this, R.string.sendtocollect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.submit_to_collect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();
         }
     }
 

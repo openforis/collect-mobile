@@ -56,11 +56,13 @@
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>
 
-    <string name="sendtocollect_confirm_message">Send all collected records to Collect remote instance?</string>
-    <string name="sendtocollect_remote_sync_not_configured">Remote sync not configured in settings</string>
-    <string name="sendtocollect_uploading_file_title">Uploading file to server</string>
-    <string name="sendtocollect_restoring_data_title">Restoring data</string>
-    <string name="sendtocollect_error_restoring_data">An error occurred:</string>
+    <string name="submit_to_collect_confirm_message">Send all collected records to Collect remote instance?</string>
+    <string name="submit_to_collect_remote_sync_not_configured">Remote sync not configured in settings</string>
+    <string name="submit_to_collect_exporting_data_title">1/3 Exporting data</string>
+    <string name="submit_to_collect_uploading_file_title">2/3  Uploading file to server</string>
+    <string name="submit_to_collect_restoring_data_title">3/3 Restoring data</string>
+    <string name="submit_to_collect_error_restoring_data">An error occurred:</string>
+    <string name="submit_to_collect_submit_completed">Data submit completed</string>
 
     <string name="settings_title_crewId">Crew ID</string>
     <string name="settings_title_compass">Device compass</string>

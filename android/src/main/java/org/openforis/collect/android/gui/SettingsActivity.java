@@ -11,6 +11,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.gui.util.AppDirs;
@@ -26,6 +28,11 @@ import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
+    public static final String REMOTE_SYNC_ENABLED = "remoteSyncEnabled";
+    public static final String REMOTE_COLLECT_ADDRESS = "remoteCollectAddress";
+    public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
+    public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
+
     private DirectoryChooserFragment directoryChooserDialog;
     private SettingsFragment settingsFragment;
 
@@ -47,6 +54,10 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
+        Settings.setRemoteSyncEnabled(preferences.getBoolean(REMOTE_SYNC_ENABLED, false));
+        Settings.setRemoteCollectAddress(preferences.getString(REMOTE_COLLECT_ADDRESS, ""));
+        Settings.setRemoteCollectUsername(preferences.getString(REMOTE_COLLECT_USERNAME, ""));
+        Settings.setRemoteCollectPassword(preferences.getString(REMOTE_COLLECT_PASSWORD, ""));
     }
 
     public void onSelectDirectory(@NonNull String workingDir) {
@@ -73,6 +84,10 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             setupStorageLocationPreference();
             setupCrewIdPreference();
             setupCompassEnabledPreference();
+            setupRemoteSyncEnabledPreference();
+            setupRemoteCollectAddressPreference();
+            setupRemoteCollectUsernamePreference();
+            setupRemoteCollectPasswordPreference();
         }
 
         private void setupStorageLocationPreference() {
@@ -88,23 +103,80 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
 
         private void setupCrewIdPreference() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final Preference crewIdPreference = findPreference(CREW_ID);
-            crewIdPreference.setSummary(preferences.getString(CREW_ID, ""));
-            crewIdPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            Preference preference = findPreference(CREW_ID);
+            preference.setSummary(preferences.getString(CREW_ID, ""));
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String crew = newValue.toString();
-                    crewIdPreference.setSummary(crew);
+                    preference.setSummary(crew);
                     Settings.setCrew(crew);
                     return true;
                 }
             });
         }
+
         private void setupCompassEnabledPreference() {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final Preference preference = findPreference(COMPASS_ENABLED);
+            Preference preference = findPreference(COMPASS_ENABLED);
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Settings.setCompassEnabled((Boolean) newValue);
+                    return true;
+                }
+            });
+        }
+
+        private void setupRemoteSyncEnabledPreference() {
+            Preference preference = findPreference(REMOTE_SYNC_ENABLED);
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean enabled = (Boolean) newValue;
+                    Settings.setRemoteSyncEnabled(enabled);
+
+                    findPreference(REMOTE_COLLECT_ADDRESS).setEnabled(enabled);
+                    findPreference(REMOTE_COLLECT_USERNAME).setEnabled(enabled);
+                    findPreference(REMOTE_COLLECT_PASSWORD).setEnabled(enabled);
+                    return true;
+                }
+            });
+        }
+
+        private void setupRemoteCollectAddressPreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(REMOTE_COLLECT_ADDRESS);
+            preference.setSummary(preferences.getString(REMOTE_COLLECT_ADDRESS, ""));
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String stringVal = newValue.toString();
+                    preference.setSummary(stringVal);
+                    Settings.setRemoteCollectAddress(stringVal);
+                    return true;
+                }
+            });
+        }
+
+        private void setupRemoteCollectUsernamePreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(REMOTE_COLLECT_USERNAME);
+            preference.setSummary(preferences.getString(REMOTE_COLLECT_USERNAME, ""));
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String stringVal = newValue.toString();
+                    preference.setSummary(stringVal);
+                    Settings.setRemoteCollectUsername(stringVal);
+                    return true;
+                }
+            });
+        }
+
+        private void setupRemoteCollectPasswordPreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(REMOTE_COLLECT_PASSWORD);
+            preference.setSummary(StringUtils.isNotBlank(preferences.getString(REMOTE_COLLECT_PASSWORD, "")) ? "*********": "");
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    String stringVal = newValue.toString();
+                    preference.setSummary(StringUtils.isNotBlank(stringVal) ? "*********": "");
+                    Settings.setRemoteCollectPassword(stringVal);
                     return true;
                 }
             });

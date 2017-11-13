@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 }
 
@@ -13,6 +13,7 @@ apply plugin: 'maven-publish'
 
 repositories {
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+    google()
 }
 
 dependencies {
@@ -79,7 +80,7 @@ if (isRelease) {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22

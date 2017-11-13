@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="yes">Yes</string>
+
     <string name="app_name">Collect</string>
     <string name="survey_list">Surveys</string>
     <string name="settings">Settings</string>
@@ -12,6 +14,7 @@
     <string name="action_import">Import</string>
     <string name="action_survey_list">Surveys</string>
     <string name="action_export">Export</string>
+    <string name="action_submit_data_to_collect">Submit data to Collect</string>
     <string name="action_backup">Backup</string>
     <string name="action_settings">Settings</string>
 
@@ -53,8 +56,18 @@
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>
 
-    <string name="settings_title_crewId">Crew ID</string>
+    <string name="submit_to_collect_confirm_title">Send records to Collect</string>
+    <string name="submit_to_collect_confirm_message">Send all collected records to Collect server?</string>
+    <string name="submit_to_collect_remote_sync_not_configured">Collect server not configured in Settings</string>
 
+    <string name="submit_to_collect_exporting_data_title">1/3 Exporting data</string>
+    <string name="submit_to_collect_uploading_file_title">2/3  Uploading file to Collect server</string>
+    <string name="submit_to_collect_restoring_data_title">3/3 Restoring data on Collect server</string>
+    <string name="submit_to_collect_error_restoring_data">An error occurred :</string>
+    <string name="submit_to_collect_submit_completed">Data submit completed</string>
+    <string name="submit_to_collect_submit_cancelled">Data submit cancelled</string>
+
+    <string name="settings_title_crewId">Crew ID</string>
     <string name="settings_title_compass">Device compass</string>
     <string name="settings_switchTextOn_compassEnabled">Enable</string>
     <string name="settings_switchTextOff_compassEnabled">Disable</string>
@@ -72,6 +85,12 @@
     <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when
         accessing an node.
     </string>
+
+    <string name="settings_title_remoteSync">Collect Server</string>
+    <string name="settings_title_remoteSyncEnabled">Collect server connection enabled</string>
+    <string name="settings_title_remoteCollectAddress">Address</string>
+    <string name="settings_title_remoteCollectUsername">Username</string>
+    <string name="settings_title_remoteCollectPassword">Password</string>
 
     <string name="import_title_failed">Failed to import survey %1$s</string>
     <string name="import_text_failed">Make sure you are running the latest version of Collect Mobile and have exported

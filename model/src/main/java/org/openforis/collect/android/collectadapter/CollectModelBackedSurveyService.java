@@ -6,6 +6,7 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
+import org.openforis.collect.model.CollectSurvey;
 
 import java.io.File;
 import java.io.IOException;
@@ -223,7 +224,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private File exportFile() {
         String fileName = viewModelManager.getSelectedSurvey().getName();
-        String username = Settings.user().getName();
+        String username = Settings.user().getUsername();
         if (!username.isEmpty())
             fileName += "_" + username;
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm").format(new Date());
@@ -237,6 +238,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public File file(UiFileAttribute attribute) {
         return collectModelManager.file(attribute);
+    }
+
+    public CollectSurvey getSelectedSurvey() {
+        return collectModelManager.getSelectedSurvey();
     }
 
     private void notifyNodeSelected(UiNode previous, UiNode selected) {

@@ -1,6 +1,7 @@
 package org.openforis.collect.android;
 
 import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.model.CollectSurvey;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,4 +50,6 @@ public interface SurveyService {
     void setListener(SurveyListener listener);
 
     File file(UiFileAttribute attribute);
+
+    CollectSurvey getSelectedSurvey();
 }

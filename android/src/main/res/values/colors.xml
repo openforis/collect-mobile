@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="error_text_color">#FF0000</color>
+
     <color name="dark_disabled_color">#636363</color>
     <color name="light_disabled_color">#9E9E9E</color>
 

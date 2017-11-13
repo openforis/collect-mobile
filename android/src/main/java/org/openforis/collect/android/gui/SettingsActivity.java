@@ -126,7 +126,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         }
 
         private void setupRemoteSyncEnabledPreference() {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Preference preference = findPreference(REMOTE_SYNC_ENABLED);
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {

@@ -17,6 +17,10 @@ class SurveyDaoStub extends SurveyDao {
         return new ArrayList(surveyByName.values())
     }
 
+    @Override
+    List<CollectSurvey> loadAllPublished() {
+        return loadAll()
+    }
 
     void insert(CollectSurvey survey) throws SurveyImportException {
         survey.id = IdGenerator.nextId()

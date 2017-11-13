@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+        maven { url "http://www.openforis.org/nexus/content/repositories/snapshots/" }
     }
 }
 
@@ -15,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile('org.openforis.collect:collect-core:3.20.0') {
+    compile('org.openforis.collect:collect-core:3.20.1-SNAPSHOT') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.apache.poi'
     }

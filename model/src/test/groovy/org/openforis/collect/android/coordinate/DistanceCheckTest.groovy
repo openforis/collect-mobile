@@ -65,8 +65,8 @@ class DistanceCheckTest extends Specification {
         def surveyContext = new TestSurveyContext()
         def parser = new SurveyIdmlBinder(surveyContext)
         def survey = parser.unmarshal(is)
-        def record = new Record(survey, "2.0")
-        def cluster = record.createRootEntity("cluster")
+        def record = new Record(survey, "2.0", "cluster")
+        def cluster = record.getRootEntity()
         EntityBuilder.addValue(cluster, "id", new Code("001"))
         return cluster
     }

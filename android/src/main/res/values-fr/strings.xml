@@ -52,6 +52,17 @@
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>
 
+    <string name="submit_to_collect_confirm_title">Envoyer les données à Collect</string>
+    <string name="submit_to_collect_confirm_message">Envoyer toutes les données collectées au server Collect ?</string>
+    <string name="submit_to_collect_remote_sync_not_configured">Remote sync not configured in settings</string>
+
+    <string name="submit_to_collect_exporting_data_title">1/3 Exportation des données</string>
+    <string name="submit_to_collect_uploading_file_title">2/3  Envoi du fichier au server</string>
+    <string name="submit_to_collect_restoring_data_title">3/3 Restauration des données dans le server</string>
+    <string name="submit_to_collect_error_restoring_data">Une erreur est survenue :</string>
+    <string name="submit_to_collect_submit_completed">Les données ont été envoyées correctement au server Collect</string>
+    <string name="submit_to_collect_submit_cancelled">L\'envoi des données a été annulé</string>
+
     <string name="settings_title_crewId">Identificateur de l’équipe</string>
 
     <string name="settings_title_compass">Outil compas</string>
@@ -70,6 +81,12 @@
     <string name="settings_title_showKeyboard">Montrer le clavier automatiquement</string>
     <string name="settings_summary_showKeyboard">Détermine si le clavier programmable doit être montré automatiquement en cas d’accès au nœud.
     </string>
+
+    <string name="settings_title_remoteSync">Server Collect</string>
+    <string name="settings_title_remoteSyncEnabled">Connexion au server Collect habilitée</string>
+    <string name="settings_title_remoteCollectAddress">Adresse</string>
+    <string name="settings_title_remoteCollectUsername">Nom utilisateur</string>
+    <string name="settings_title_remoteCollectPassword">Mot de passe</string>
 
     <string name="import_title_failed">Importation du questionnaire %1$s échouée</string>
     <string name="import_text_failed">Veulliez vous assurer que vous utilisez la dernière version de Collect Mobile et que vous avez exporté votre questionnaire pour Collect Mobile en utilisant une version récente de Collect Server.

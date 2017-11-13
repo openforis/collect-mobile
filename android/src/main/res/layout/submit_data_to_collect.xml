@@ -58,18 +58,25 @@
             android:text="@string/cancel_label" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/submitToCollectCancelledMessageText"
-        android:visibility="invisible"
-        android:textSize="30sp"
+    <LinearLayout
+        android:id="@+id/taskEndedContainer"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/submitToCollectCancelledMessageText"
+            android:visibility="invisible"
+            android:textSize="30sp"
+            android:text="@string/submit_to_collect_submit_cancelled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/submitToCollectCompletedMessageText"
-        android:visibility="invisible"
-        android:textSize="30sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        <TextView
+            android:id="@+id/submitToCollectCompletedMessageText"
+            android:visibility="invisible"
+            android:textSize="30sp"
+            android:text="@string/submit_to_collect_submit_completed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

@@ -1,6 +1,10 @@
 Changes
 -------
 
+2017-11-13
+
+    * Submit data to remote Collect server (configurable in Settings)
+
 2017-10-30
 
     * Fixed bug where images could disappear second time a record was loaded

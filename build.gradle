@@ -2,3 +2,8 @@
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14.1' //version required
 }
+buildscript {
+    repositories {
+        google()
+    }
+}

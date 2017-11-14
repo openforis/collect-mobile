@@ -98,19 +98,10 @@ android {
     if (isRelease)
         signingConfigs {
             release {
-                def defaultStorePath = System.properties['user.home'] + File.separator + '.android-release-key.keystore'
-                def storePath = System.console().readLine("\n-----------------\n\$ Enter keystore path " +
-                        "[$defaultStorePath]: ")
-                if (!storePath)
-                    storePath = defaultStorePath
-                storeFile file(storePath)
-                storePassword System.console().readPassword("\$ Enter keystore password: ") as String
-                def defaultKeyAlias = 'android-release-key'
-                def selectedKeyAlias = System.console().readLine("\$ Enter key alias [$defaultKeyAlias]:") as String
-                if (!selectedKeyAlias)
-                    selectedKeyAlias = defaultKeyAlias
-                keyAlias selectedKeyAlias
-                keyPassword System.console().readPassword("\$ Enter key password: ") as String
+                storeFile(file(localProps.storeFile))
+                storePassword(localProps.storePassword)
+                keyAlias(localProps.keyAlias)
+                keyPassword(localProps.keyPassword)
             }
         }
     buildTypes {
@@ -120,10 +111,10 @@ android {
             if (isRelease) {
                 signingConfig signingConfigs.release
                 applicationVariants.all { variant ->
-                    variant.outputs.each { output ->
-                        def outputFile = output.outputFile
-                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                            output.outputFile = new File(outputFile.parent, 'Collect.apk')
+                    variant.outputs.all { output ->
+                        def outputFileName = output.outputFileName
+                        if (outputFileName != null && outputFileName.endsWith('.apk')) {
+                            output.outputFileName = 'Collect.apk'
                         }
                     }
                 }
@@ -152,7 +143,7 @@ publishing {
             groupId 'org.openforis.collect.android'
             artifactId 'collect-mobile'
             version actualVersionCode as String
-            artifact file('build/outputs/apk/Collect.apk')
+            artifact file('build/outputs/apk/release/Collect.apk')
         }
     }
     repositories {

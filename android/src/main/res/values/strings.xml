@@ -119,7 +119,7 @@
         surveys.\n
     </string>
 
-    <string name="amount_selected">%s selected.</string>
+    <string name="amount_selected">%d selected.</string>
     <string name="delete">Delete</string>
 
     <string name="file_attribute_capture_image">Capture image</string>

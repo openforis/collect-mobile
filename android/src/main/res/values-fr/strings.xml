@@ -110,7 +110,7 @@
         \n\nRendez-vous sur <a href="http://openforis.org/tools/collect.html">openforis.org</a> pour découvrir comment concevoir vos propres questionnaires.\n
     </string>
 
-    <string name="amount_selected">%s sélectionné(s).</string>
+    <string name="amount_selected">%d sélectionné(s).</string>
     <string name="delete">Supprimer</string>
 
     <string name="file_attribute_capture_image">Copier l’image</string>

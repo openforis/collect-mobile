@@ -170,7 +170,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                 "SET modified_on = ?\n" +
                 "WHERE id = ?");
         PreparedStatementHelper psh = new PreparedStatementHelper(ps);
-        psh.setDate(node.modifiedOn);
+        psh.setTimestamp(node.modifiedOn);
         psh.setInt(node.id);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
@@ -243,8 +243,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
         String filePath = rs.getString("val_file");
         n.file = filePath == null ? null : new File(filePath);
-        n.createdOn = rs.getDate("created_on");
-        n.modifiedOn = rs.getDate("modified_on");
+        n.createdOn = rs.getTimestamp("created_on");
+        n.modifiedOn = rs.getTimestamp("modified_on");
         return n;
     }
 
@@ -308,8 +308,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         psh.setString(node.taxonCode);
         psh.setString(node.taxonScientificName);
         psh.setStringOrNull(node.file == null ? null : node.file.getAbsolutePath());
-        psh.setDate(node.createdOn);
-        psh.setDate(node.modifiedOn);
+        psh.setTimestamp(node.createdOn);
+        psh.setTimestamp(node.modifiedOn);
         psh.setInt(node.id);
     }
 

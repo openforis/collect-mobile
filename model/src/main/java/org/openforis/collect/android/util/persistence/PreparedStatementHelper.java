@@ -90,4 +90,8 @@ public class PreparedStatementHelper {
             ps.setString(++i, value);
     }
 
+    public void setTimestamp(Date timestamp) throws SQLException {
+        ps.setTimestamp(++i, new java.sql.Timestamp(timestamp.getTime()));
+    }
+
 }

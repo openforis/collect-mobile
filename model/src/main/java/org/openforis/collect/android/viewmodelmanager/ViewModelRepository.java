@@ -25,6 +25,8 @@ public interface ViewModelRepository {
 
     void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges);
 
+    void updateRecord(UiRecord record);
+
     void removeNode(UiNode node, Map<Integer, StatusChange> statusChanges);
 
     void removeRecord(int recordId);
@@ -41,6 +43,10 @@ public interface ViewModelRepository {
 
         public void insertRecord(UiRecord record) {
             repo.insert(toNodeDtoList(record), new HashMap<Integer, StatusChange>());
+        }
+
+        public void updateRecord(UiRecord record) {
+            repo.updateRecordModifiedOn(toNodeDto(record));
         }
 
         public UiRecord recordById(UiSurvey survey, int recordId) {
@@ -112,8 +118,11 @@ public interface ViewModelRepository {
             NodeDto recordNode = nodeCollection.getRootNode();
             UiRecordCollection recordCollection = survey.lookupRecordCollection(recordNode.recordCollectionName);
             Definition definition = definitionProvider.getById(recordNode.definitionId);
-            UiRecord record = new UiRecord(recordNode.id, definition, recordCollection, (UiRecord.Placeholder) recordCollection.getChildById(recordNode.id));
+            UiRecord record = new UiRecord(recordNode.id, definition, recordCollection,
+                    (UiRecord.Placeholder) recordCollection.getChildById(recordNode.id));
             record.setStatus(UiNode.Status.valueOf(recordNode.status));
+            record.setCreatedOn(recordNode.createdOn);
+            record.setModifiedOn(recordNode.modifiedOn);
             addChildNodes(record, nodeCollection);
             record.init();
             return record;
@@ -212,6 +221,8 @@ public interface ViewModelRepository {
             dto.recordId = node.getUiRecord().getId();
             dto.type = NodeDto.Type.ofUiNode(node);
             dto.relevant = node.isRelevant();
+            dto.createdOn = node.getCreatedOn();
+            dto.modifiedOn = node.getModifiedOn();
             return dto;
         }
     }

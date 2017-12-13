@@ -42,8 +42,8 @@ public class DataSourceNodeRepository implements NodeRepository {
                         "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "   val_boolean, val_int, val_int_from, val_int_to,\n" +
                         "   val_double, val_double_from, val_double_to, val_x, val_y, val_srs, val_taxon_code,\n" +
-                        "   val_taxon_scientific_name, val_file, id)\n" +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        "   val_taxon_scientific_name, val_file, created_on, modified_on, id)\n" +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 for (NodeDto node : nodes) {
                     bind(ps, node);
                     ps.addBatch();
@@ -97,9 +97,9 @@ public class DataSourceNodeRepository implements NodeRepository {
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
                         "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
-                        "       val_taxon_code, val_taxon_scientific_name, val_file\n" +
-                        "FROM ofc_view_model\n" +
-                        "WHERE record_id = ?");
+                        "       val_taxon_code, val_taxon_scientific_name, val_file, created_on, modified_on\n" +
+                        " FROM ofc_view_model\n" +
+                        " WHERE record_id = ?");
                 ps.setInt(1, recordId);
                 ResultSet rs = ps.executeQuery();
                 NodeDto.Collection collection = new NodeDto.Collection();
@@ -117,6 +117,15 @@ public class DataSourceNodeRepository implements NodeRepository {
             public Void execute(Connection connection) throws SQLException {
                 updateAttribute(connection, node);
                 updateStatusChanges(connection, statusChanges);
+                return null;
+            }
+        });
+    }
+
+    public void updateRecordModifiedOn(final NodeDto record) {
+        database.execute(new ConnectionCallback<Void>() {
+            public Void execute(Connection connection) throws SQLException {
+                updateRecordModifiedOn(connection, record);
                 return null;
             }
         });
@@ -146,10 +155,23 @@ public class DataSourceNodeRepository implements NodeRepository {
                 "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
                 "    val_minute = ?, val_code_value = ?, val_code_qualifier = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
                 "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?, val_y = ?, val_srs = ?,\n" +
-                "    val_taxon_code = ?, val_taxon_scientific_name = ?,\n" +
-                "    val_file = ?\n" +
+                "    val_taxon_code = ?, val_taxon_scientific_name = ?, val_file = ?, created_on = ?, modified_on = ?\n" +
                 "WHERE id = ?");
         bind(ps, node);
+        int rowsUpdated = ps.executeUpdate();
+        if (rowsUpdated != 1)
+            throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
+        ps.close();
+    }
+
+    private void updateRecordModifiedOn(Connection connection, NodeDto record) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement("" +
+                "UPDATE ofc_view_model\n" +
+                "SET modified_on = ?\n" +
+                "WHERE record_id = ?");
+        PreparedStatementHelper psh = new PreparedStatementHelper(ps);
+        psh.setDate(record.modifiedOn);
+        psh.setInt(record.id);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
             throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
@@ -165,7 +187,7 @@ public class DataSourceNodeRepository implements NodeRepository {
                         "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
                         "       val_boolean, val_int, val_int_from,\n" +
                         "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
-                        "       val_taxon_code, val_taxon_scientific_name, val_file\n" +
+                        "       val_taxon_code, val_taxon_scientific_name, val_file, created_on, modified_on\n" +
                         "FROM ofc_view_model\n" +
                         "WHERE survey_id = ? AND (parent_id IS NULL OR record_key_attribute = ?)\n" +
                         "ORDER BY id");
@@ -221,6 +243,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
         String filePath = rs.getString("val_file");
         n.file = filePath == null ? null : new File(filePath);
+        n.createdOn = rs.getDate("created_on");
+        n.modifiedOn = rs.getDate("modified_on");
         return n;
     }
 
@@ -284,6 +308,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         psh.setString(node.taxonCode);
         psh.setString(node.taxonScientificName);
         psh.setStringOrNull(node.file == null ? null : node.file.getAbsolutePath());
+        psh.setDate(node.createdOn);
+        psh.setDate(node.modifiedOn);
         psh.setInt(node.id);
     }
 

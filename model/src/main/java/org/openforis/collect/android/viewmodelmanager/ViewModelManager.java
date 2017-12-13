@@ -3,6 +3,7 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ public class ViewModelManager {
                 repo.insertEntity(entity, statusChanges(nodeChanges));
             }
         });
+        updateRecordModifiedDate(entity.getUiRecord());
     }
 
     private void validateRequiredness(UiInternalNode node) {
@@ -121,16 +123,20 @@ public class ViewModelManager {
     }
 
     public void addAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
+        attribute.getUiRecord().setModifiedOn(new Date());
         repo.insertAttribute(attribute, statusChanges(nodeChanges));
     }
 
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
-        UiRecord uiRecord = attribute.getUiRecord();
+        Date now = new Date();
+        attribute.setModifiedOn(now);
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
         repo.updateAttribute(attribute, statusChanges);
 
-        if (uiRecord.isKeyAttribute(attribute))
-            uiRecord.keyAttributeUpdated();
+        UiRecord record = updateRecordModifiedDate(attribute.getUiRecord());
+
+        if (record.isKeyAttribute(attribute))
+            record.keyAttributeUpdated();
     }
 
     private Map<Integer, StatusChange> statusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
@@ -164,15 +170,26 @@ public class ViewModelManager {
 
     public void removeNode(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
+        Date now = new Date();
+        node.getParent().setModifiedOn(now);
         node.removeFromParent();
         List<UiNode> updatedParents = node.updateStatusOfParents();
         for (UiNode updatedParent : updatedParents)
             statusChanges.put(updatedParent.getId(), new StatusChange(updatedParent));
         repo.removeNode(node, statusChanges);
+
+        updateRecordModifiedDate(node.getUiRecord());
     }
 
     public void removeRecord(UiRecord.Placeholder record) {
         record.removeFromParent();
         repo.removeRecord(record.getId());
     }
+
+    private UiRecord updateRecordModifiedDate(UiRecord record) {
+        record.setModifiedOn(new Date());
+        repo.updateRecord(record);
+        return record;
+    }
+
 }

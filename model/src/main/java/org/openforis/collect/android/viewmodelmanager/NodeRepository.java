@@ -14,6 +14,8 @@ public interface NodeRepository {
 
     void update(NodeDto node, Map<Integer, StatusChange> statusChanges);
 
+    void updateRecordModifiedOn(NodeDto record);
+
     NodeDto.Collection surveyRecords(int surveyId);
 
     void removeAll(List<Integer> ids, Map<Integer, StatusChange> statusChanges);

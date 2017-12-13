@@ -3,6 +3,7 @@ package org.openforis.collect.android.util.persistence;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Date;
 
 /**
  * @author Daniel Wiell
@@ -27,6 +28,10 @@ public class PreparedStatementHelper {
     public void setBooleanIfNotNull(Boolean value) throws SQLException {
         if (value != null)
             ps.setBoolean(++i, value);
+    }
+
+    public void setDate(Date date) throws SQLException {
+        ps.setDate(++i, new java.sql.Date(date.getTime()));
     }
 
     public void setDouble(double value) throws SQLException {

@@ -42,6 +42,8 @@ public class NodeDto {
     public String taxonCode;
     public String taxonScientificName;
     public File file;
+    public Date createdOn = new Date();
+    public Date modifiedOn = new Date();
 
     public static NodeDto recordKeyAttribute(int recordId, String definitionId, String value, Class<? extends UiAttribute> attributeType) {
         NodeDto node = new NodeDto();

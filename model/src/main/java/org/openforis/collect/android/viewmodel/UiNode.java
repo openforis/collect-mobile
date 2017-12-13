@@ -12,6 +12,8 @@ public abstract class UiNode {
     private UiInternalNode parent;
     private Status status;
     private boolean relevant = true;
+    private Date createdOn = new Date();
+    private Date modifiedOn = new Date();
 
     public UiNode(int id, boolean relevant, Definition definition) {
         this.id = id;
@@ -67,6 +69,22 @@ public abstract class UiNode {
 
     public void setRelevant(boolean relevant) {
         this.relevant = relevant;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public Date getModifiedOn() {
+        return modifiedOn;
+    }
+
+    public void setModifiedOn(Date modifiedOn) {
+        this.modifiedOn = modifiedOn;
     }
 
     public List<UiNode> updateStatusOfNodeAndParents(UiNode.Status status) {

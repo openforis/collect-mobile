@@ -46,7 +46,11 @@ public class NodeDatabaseSchemaChangeLog {
                         "val_file TEXT\n" +
                         ")"),
 
-                new SchemaChange("CREATE INDEX idx_ofc_view_model_1 ON ofc_view_model(record_id)")
+                new SchemaChange("CREATE INDEX idx_ofc_view_model_1 ON ofc_view_model(record_id)"),
+
+                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN created_on TIMESTAMP"),
+
+                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN modified_on TIMESTAMP")
         );
     }
 }

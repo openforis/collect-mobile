@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.*;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -40,11 +43,50 @@ public class EntityListAdapter extends NodeListAdapter {
         codeListService = ServiceLocator.codeListService();
     }
 
-    public String getText(UiNode node) {
-        List<UiAttribute> attributes = getKeyAttributes(node);
-        if (attributes.isEmpty())
-            attributes = allChildAttributes(node);
-        return toNodeLabel(attributes);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View row = super.getView(position, convertView, parent);
+        LinearLayout summaryContainer = (LinearLayout) row.findViewById(R.id.nodeSummaryAttributesContainer);
+        UiNode node = getItem(position);
+
+        //summary/key attributes
+        List<String> summaryAttributeValues = getSummaryAttributeValues(node);
+        summaryContainer.setWeightSum(summaryAttributeValues.size());
+        for (String summaryAttrVal : summaryAttributeValues) {
+            TextView textView = new TextView(activity);
+            //same width for every summary item
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            p.weight = 1;
+            textView.setLayoutParams(p);
+            textView.setText(summaryAttrVal);
+            summaryContainer.addView(textView);
+        }
+
+        //modified on
+        TextView modifiedOnTextView = (TextView) row.findViewById(R.id.nodeModifiedOnLabel);
+        if (node instanceof UiRecord.Placeholder) {
+            modifiedOnTextView.setText(DateFormatUtils.format(node.getModifiedOn(),
+                    activity.getString(R.string.entity_list_modified_on_pattern)));
+        } else {
+            modifiedOnTextView.setVisibility(View.INVISIBLE);
+        }
+        return row;
+    }
+
+    public List<UiAttribute> getSummaryAttributes(UiNode node) {
+        List<UiAttribute> keyAttributes = getKeyAttributes(node);
+        if (keyAttributes.isEmpty())
+            keyAttributes = allChildAttributes(node);
+        return keyAttributes;
+    }
+
+    private List<String> getSummaryAttributeValues(UiNode node) {
+        List<String> result = new ArrayList<String>();
+        for (UiAttribute summaryAttr : getSummaryAttributes(node)) {
+            String summaryText = toNodeLabel(summaryAttr);
+            result.add(summaryText);
+        }
+        return result;
     }
 
     private List<UiAttribute> getKeyAttributes(UiNode child) {
@@ -53,6 +95,33 @@ public class EntityListAdapter extends NodeListAdapter {
         if (child instanceof UiRecord.Placeholder)
             return ((UiRecord.Placeholder) child).getKeyAttributes();
         throw new IllegalStateException("Unexpected node type. Expected UiEntity or UiRecord.Placeholder, was " + child.getClass());
+    }
+
+    protected String toNodeLabel(UiAttribute attribute) {
+        String value;
+        if (attribute instanceof UiCodeAttribute) {
+            value = codeString((UiCodeAttribute) attribute);
+        } else if (attribute instanceof UiDateAttribute) {
+            value = dateString((UiDateAttribute) attribute);
+        } else {
+            value = attribute.valueAsString();
+        }
+        return value == null ? activity.getResources().getString(R.string.label_unspecified) : value;
+    }
+
+    private String codeString(UiCodeAttribute attribute) {
+        UiCode code = attribute.getCode();
+        if (code != null && code.getLabel() == null
+                && !(parentNode instanceof UiRecordCollection)) { // Don't look up code labels for record collection
+            UiCodeList codeList = codeListService.codeList(attribute);
+            attribute.setCode(codeList.getCode(attribute.getCode().getValue()));
+        }
+        return attribute.valueAsString();
+    }
+
+    private String dateString(UiDateAttribute attribute) {
+        Date date = attribute.getDate();
+        return date == null ? null : DateFormatUtils.format(date, activity.getString(R.string.entity_list_date_pattern));
     }
 
     protected int layoutResourceId() {
@@ -115,16 +184,6 @@ public class EntityListAdapter extends NodeListAdapter {
                 s.append('\n');
         }
         return s.toString();
-    }
-
-    private String codeString(UiCodeAttribute attribute) {
-        UiCode code = attribute.getCode();
-        if (code != null && code.getLabel() == null
-                && !(parentNode instanceof UiRecordCollection)) { // Don't look up code labels for record collection
-            UiCodeList codeList = codeListService.codeList(attribute);
-            attribute.setCode(codeList.getCode(attribute.getCode().getValue()));
-        }
-        return attribute.valueAsString();
     }
 
     private void setEditTitle(ActionMode mode) {

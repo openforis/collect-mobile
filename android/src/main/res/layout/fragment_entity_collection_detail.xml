@@ -17,12 +17,56 @@
             android:layout_height="wrap_content"
             android:padding="?attr/standardPadding"/>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="?attr/standardPadding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ListView
+        <LinearLayout
+            android:id="@+id/entity_list_header_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="60dp">
+
+                <LinearLayout
+                    android:id="@+id/entity_list_header"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_toLeftOf="@id/entity_list_header_modified_date"
+                    android:paddingRight="40dp">
+                    <!-- to be filled programmatically -->
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/entity_list_header_modified_date"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Modified On"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <View android:id="@+id/separator"
+                android:background="#ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="1dip"/>
+
+        </LinearLayout>
+
+        <ListView
             android:id="@+id/entity_list"
-            android:padding="?attr/standardPadding"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:choiceMode="singleChoice"/>
 
+    </LinearLayout>
 </LinearLayout>

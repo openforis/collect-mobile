@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,6 +50,7 @@ public class NodeListAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
+        UiNode node = nodes.get(position);
         NodeHolder holder;
         if (row == null) {
             LayoutInflater inflater = activity.getLayoutInflater();
@@ -64,17 +67,19 @@ public class NodeListAdapter extends BaseAdapter {
             holder = (NodeHolder) row.getTag();
         }
 
-        UiNode node = nodes.get(position);
-        holder.text.setText(getText(node));
-        setTypeface(holder.text, node);
-        if (!node.isRelevant())
-            holder.text.setTextColor(attrs.color(R.attr.irrelevantTextColor));
-        else
-            holder.text.setTextColor(attrs.color(R.attr.relevantTextColor));
+        if (holder.text != null) {
+            holder.text.setText(getText(node));
+            setTypeface(holder.text, node);
+            holder.text.setTextColor(attrs.color(node.isRelevant() ? R.attr.relevantTextColor : R.attr.irrelevantTextColor));
+        }
         holder.status.setImageResource(iconResource(node));
         onPrepareView(node, row);
 
         return row;
+    }
+
+    private void adjustSummaryViewsWidth() {
+
     }
 
     protected void setTypeface(TextView text, UiNode node) {
@@ -96,9 +101,16 @@ public class NodeListAdapter extends BaseAdapter {
         row.setBackgroundResource(attrs.resourceId(android.R.attr.activatedBackgroundIndicator));
     }
 
-
     public String getText(UiNode node) {
         return node.getLabel();
+    }
+
+    public List<UiAttribute> getSummaryAttributes(UiNode node) {
+        return Collections.emptyList();
+    }
+
+    protected String toNodeLabel(UiAttribute attribute) {
+        return attribute.valueAsString();
     }
 
     public void notifyDataSetChanged() {

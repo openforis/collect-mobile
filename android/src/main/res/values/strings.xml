@@ -125,4 +125,8 @@
     <string name="file_attribute_capture_image">Capture image</string>
     <string name="file_attribute_select_image">Select image</string>
     <string name="file_attribute_remove_image">Remove image</string>
+
+    <string name="entity_list_modified_on">Modified On</string>
+    <string name="entity_list_modified_on_pattern">dd/MM/yyyy HH:mm:ss</string>
+    <string name="entity_list_date_pattern">dd/MM/yyyy</string>
 </resources>

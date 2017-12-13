@@ -65,7 +65,8 @@ public interface ViewModelRepository {
                                 UiNode.Status.valueOf(recordNode.status),
                                 recordNode.recordCollectionName,
                                 definitionProvider.getById(recordNode.definitionId),
-                                getRecordKeyAttributes(nodeCollection, recordNode)
+                                getRecordKeyAttributes(nodeCollection, recordNode),
+                                recordNode.modifiedOn
                         )
                 );
             return placeholders;

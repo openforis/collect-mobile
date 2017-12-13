@@ -189,6 +189,7 @@ public class ViewModelManager {
     private UiRecord updateRecordModifiedDate(UiRecord record) {
         record.setModifiedOn(new Date());
         repo.updateRecord(record);
+        record.modifiedOnUpdated();
         return record;
     }
 

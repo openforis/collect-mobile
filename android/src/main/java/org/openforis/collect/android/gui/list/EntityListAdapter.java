@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.text.format.DateUtils;
 import android.view.*;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -16,7 +17,6 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
-import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.*;
@@ -65,8 +65,7 @@ public class EntityListAdapter extends NodeListAdapter {
         //modified on
         TextView modifiedOnTextView = (TextView) row.findViewById(R.id.nodeModifiedOnLabel);
         if (node instanceof UiRecord.Placeholder) {
-            modifiedOnTextView.setText(DateFormatUtils.format(node.getModifiedOn(),
-                    activity.getString(R.string.entity_list_modified_on_pattern)));
+            modifiedOnTextView.setText(DateUtils.getRelativeTimeSpanString(node.getModifiedOn().getTime()));
         } else {
             modifiedOnTextView.setVisibility(View.INVISIBLE);
         }
@@ -166,24 +165,6 @@ public class EntityListAdapter extends NodeListAdapter {
                     actionMode.finish();
             }
         });
-    }
-
-    private String toNodeLabel(List<UiAttribute> attributes) {
-        StringBuilder s = new StringBuilder();
-        for (Iterator<UiAttribute> iterator = attributes.iterator(); iterator.hasNext(); ) {
-            // TODO: Should assemble the attribute name/value manually,
-            // to so "Unspecified" can be picked up from a resource, and different parts can be styled separately
-            UiAttribute attribute = iterator.next();
-            String value = attribute instanceof UiCodeAttribute
-                    ? codeString((UiCodeAttribute) attribute)
-                    : attribute.valueAsString();
-            value = value == null ? activity.getResources().getString(R.string.label_unspecified) : value;
-            s.append(StringUtils.ellipsisMiddle(attribute.getLabel(), MAX_ATTRIBUTE_LABEL_LENGTH)).append(": ")
-                    .append(StringUtils.ellipsisMiddle(value, MAX_ATTRIBUTE_VALUE_LENGTH));
-            if (iterator.hasNext())
-                s.append('\n');
-        }
-        return s.toString();
     }
 
     private void setEditTitle(ActionMode mode) {

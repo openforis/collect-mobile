@@ -14,7 +14,7 @@ public interface NodeRepository {
 
     void update(NodeDto node, Map<Integer, StatusChange> statusChanges);
 
-    void updateRecordModifiedOn(NodeDto record);
+    void updateModifiedOn(NodeDto record);
 
     NodeDto.Collection surveyRecords(int surveyId);
 

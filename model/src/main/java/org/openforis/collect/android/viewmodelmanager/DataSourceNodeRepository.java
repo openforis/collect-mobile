@@ -122,10 +122,10 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void updateRecordModifiedOn(final NodeDto record) {
+    public void updateModifiedOn(final NodeDto node) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
-                updateRecordModifiedOn(connection, record);
+                updateModifiedOn(connection, node);
                 return null;
             }
         });
@@ -164,14 +164,14 @@ public class DataSourceNodeRepository implements NodeRepository {
         ps.close();
     }
 
-    private void updateRecordModifiedOn(Connection connection, NodeDto record) throws SQLException {
+    private void updateModifiedOn(Connection connection, NodeDto node) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("" +
                 "UPDATE ofc_view_model\n" +
                 "SET modified_on = ?\n" +
-                "WHERE record_id = ?");
+                "WHERE id = ?");
         PreparedStatementHelper psh = new PreparedStatementHelper(ps);
-        psh.setDate(record.modifiedOn);
-        psh.setInt(record.id);
+        psh.setDate(node.modifiedOn);
+        psh.setInt(node.id);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
             throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);

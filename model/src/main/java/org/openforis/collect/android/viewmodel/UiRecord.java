@@ -57,17 +57,25 @@ public class UiRecord extends UiEntity {
         placeholder.keyAttributes = getKeyAttributes();
     }
 
+    public void modifiedOnUpdated() {
+        Placeholder placeholder = (Placeholder) getParent().getChildById(getId());
+        placeholder.setModifiedOn(getModifiedOn());
+    }
+
     public static class Placeholder extends UiNode {
         private final String recordCollectionName;
         private List<UiAttribute> keyAttributes;
 
         private Placeholder(UiRecord record) {
-            this(record.getId(), record.getStatus(), record.getParent().getDefinition().name, record.getDefinition(), record.getKeyAttributes());
+            this(record.getId(), record.getStatus(), record.getParent().getDefinition().name,
+                    record.getDefinition(), record.getKeyAttributes(), record.getModifiedOn());
         }
 
-        public Placeholder(int id, Status status, String recordCollectionName, Definition definition, List<UiAttribute> keyAttributes) {
+        public Placeholder(int id, Status status, String recordCollectionName, Definition definition,
+                           List<UiAttribute> keyAttributes, Date modifiedOn) {
             super(id, true, definition);
             this.setStatus(status);
+            this.setModifiedOn(modifiedOn);
             this.recordCollectionName = recordCollectionName;
             this.keyAttributes = new ArrayList<UiAttribute>(keyAttributes);
         }

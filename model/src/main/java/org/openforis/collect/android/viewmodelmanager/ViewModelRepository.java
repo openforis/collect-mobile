@@ -25,7 +25,7 @@ public interface ViewModelRepository {
 
     void updateAttribute(UiAttribute attribute, Map<Integer, StatusChange> statusChanges);
 
-    void updateRecord(UiRecord record);
+    void updateRecordModifiedOn(UiRecord record);
 
     void removeNode(UiNode node, Map<Integer, StatusChange> statusChanges);
 
@@ -45,8 +45,8 @@ public interface ViewModelRepository {
             repo.insert(toNodeDtoList(record), new HashMap<Integer, StatusChange>());
         }
 
-        public void updateRecord(UiRecord record) {
-            repo.updateRecordModifiedOn(toNodeDto(record));
+        public void updateRecordModifiedOn(UiRecord record) {
+            repo.updateModifiedOn(toNodeDto(record));
         }
 
         public UiRecord recordById(UiSurvey survey, int recordId) {
@@ -65,7 +65,8 @@ public interface ViewModelRepository {
                                 UiNode.Status.valueOf(recordNode.status),
                                 recordNode.recordCollectionName,
                                 definitionProvider.getById(recordNode.definitionId),
-                                getRecordKeyAttributes(nodeCollection, recordNode)
+                                getRecordKeyAttributes(nodeCollection, recordNode),
+                                recordNode.modifiedOn
                         )
                 );
             return placeholders;

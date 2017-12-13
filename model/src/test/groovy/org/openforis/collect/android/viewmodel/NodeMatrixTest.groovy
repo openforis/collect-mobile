@@ -127,7 +127,7 @@ class NodeMatrixTest extends Specification {
     private UiRecord record() {
         def id = nextId
         def definition = new Definition(id as String, 'record', 'record', true)
-        new UiRecord(id, definition, null, new UiRecord.Placeholder(1, null, null, definition, []))
+        new UiRecord(id, definition, null, new UiRecord.Placeholder(1, null, null, definition, [], new Date()))
     }
 
 

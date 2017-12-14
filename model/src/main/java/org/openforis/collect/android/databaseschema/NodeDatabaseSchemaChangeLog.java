@@ -50,11 +50,7 @@ public class NodeDatabaseSchemaChangeLog {
 
                 new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN created_on TIMESTAMP"),
 
-                new SchemaChange("UPDATE ofc_view_model SET created_on = CURRENT_TIMESTAMP"),
-
-                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN modified_on TIMESTAMP"),
-
-                new SchemaChange("UPDATE ofc_view_model SET modified_on = CURRENT_TIMESTAMP")
+                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN modified_on TIMESTAMP")
         );
     }
 }

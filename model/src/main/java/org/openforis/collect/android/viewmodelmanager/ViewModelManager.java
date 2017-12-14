@@ -123,13 +123,12 @@ public class ViewModelManager {
     }
 
     public void addAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
-        attribute.getUiRecord().setModifiedOn(new Date());
+        updateRecordModifiedDate(attribute.getUiRecord());
         repo.insertAttribute(attribute, statusChanges(nodeChanges));
     }
 
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
-        Date now = new Date();
-        attribute.setModifiedOn(now);
+        attribute.setModifiedOn(new Date());
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
         repo.updateAttribute(attribute, statusChanges);
 
@@ -170,8 +169,7 @@ public class ViewModelManager {
 
     public void removeNode(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
-        Date now = new Date();
-        node.getParent().setModifiedOn(now);
+        node.getParent().setModifiedOn(new Date());
         node.removeFromParent();
         List<UiNode> updatedParents = node.updateStatusOfParents();
         for (UiNode updatedParent : updatedParents)

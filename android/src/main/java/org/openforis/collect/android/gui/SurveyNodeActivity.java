@@ -41,6 +41,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
+    private static final int TWO_PANE_MIN_SCREEN_WIDTH = 600;
 
     private LayoutDependentSupport support;
     private SurveyService surveyService;
@@ -57,8 +58,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
                 super.onCreate(savedState);
 
                 surveyService = ServiceLocator.surveyService();
-                support = createLayoutSupport();
                 selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+                support = createLayoutSupport();
                 setTitle(selectedNode.getUiSurvey().getLabel());
                 enableUpNavigationIfNeeded(selectedNode);
                 surveyService.setListener(this);
@@ -251,7 +252,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private LayoutDependentSupport createLayoutSupport() {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        this.twoPane = dpWidth >= 600;
+        UiNode selectedNode = surveyService.selectedNode().getParent();
+        boolean showingListOfRecords = selectedNode instanceof UiSurvey;
+        this.twoPane = dpWidth >= TWO_PANE_MIN_SCREEN_WIDTH && !showingListOfRecords;
         return twoPane ? new TwoPaneSurveySupport() : new SinglePaneSurveySupport();
     }
 

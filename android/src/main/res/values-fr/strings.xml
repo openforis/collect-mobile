@@ -47,6 +47,7 @@
     <string name="label_destination">Destination</string>
     <string name="label_empty">…</string>
 
+    <string name="hint_code_autocomplete">- Appuyer sur espace pour voir la liste des valeurs -</string>
     <string name="label_show_code_descriptions">Montrer la description des éléments</string>
 
     <string name="hint_date_pattern">dd MMMM yyyy</string>
@@ -116,4 +117,7 @@
     <string name="file_attribute_capture_image">Copier l’image</string>
     <string name="file_attribute_select_image">Sélectionner l’image</string>
     <string name="file_attribute_remove_image">Supprimer l’image</string>
+
+    <string name="entity_list_modified">Modifié</string>
+    <string name="entity_list_date_pattern">dd/MM/yyyy</string>
 </resources>

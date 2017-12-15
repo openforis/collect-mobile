@@ -116,9 +116,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
             }
         });
 
-        if (adapterUpdateTimer == null) {
-            adapterUpdateTimer = new Timer();
-        }
+        adapterUpdateTimer = new Timer();
         adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
     }
 
@@ -181,7 +179,11 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private class AdapterUpdaterTask extends TimerTask {
 
         public void run() {
-            adapter.notifyDataSetChanged();
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 }

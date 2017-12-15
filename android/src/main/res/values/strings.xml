@@ -51,7 +51,8 @@
     <string name="label_destination">Destination</string>
     <string name="label_empty">…</string>
 
-    <string name="label_show_code_descriptions">Show code descriptions</string>
+    <string name="hint_code_autocomplete">- Press space to show list of values -</string>
+    <string name="label_show_code_descriptions">Show item descriptions</string>
 
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>

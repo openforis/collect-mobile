@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
@@ -35,6 +36,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         autoComplete = new ClearableAutoCompleteTextView(context);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
+        autoComplete.setHint(R.string.hint_code_autocomplete);
         if (enumerator) {
             autoComplete.setEnabled(false);
         } else {

@@ -51,15 +51,22 @@ public class EntityListAdapter extends NodeListAdapter {
         //summary/key attributes
         List<String> summaryAttributeValues = getSummaryAttributeValues(node);
         summaryContainer.setWeightSum(summaryAttributeValues.size());
-        for (String summaryAttrVal : summaryAttributeValues) {
-            TextView textView = new TextView(activity);
-            //same width for every summary item
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            p.weight = 1;
-            textView.setLayoutParams(p);
-            textView.setText(summaryAttrVal);
-            summaryContainer.addView(textView);
+
+        if (summaryContainer.getChildCount() == 0) {
+            for (String summaryAttrVal : summaryAttributeValues) {
+                TextView textView = new TextView(activity);
+                //same width for every summary item
+                LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                p.weight = 1;
+                textView.setLayoutParams(p);
+                summaryContainer.addView(textView);
+            }
+        }
+
+        for (int i = 0; i < summaryContainer.getChildCount(); i++) {
+            TextView textView = (TextView) summaryContainer.getChildAt(i);
+            textView.setText(summaryAttributeValues.get(i));
         }
 
         //modified on

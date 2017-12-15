@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -26,6 +25,8 @@ import org.openforis.collect.android.viewmodel.UiRecord;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author Daniel Wiell
@@ -34,6 +35,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     private EntityListAdapter adapter;
     private static final Typeface HEADER_TYPEFACE = Typeface.DEFAULT_BOLD;
+    private Timer adapterUpdateTimer;
 
     public View createView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
         return inflater.inflate(R.layout.fragment_entity_collection_detail, container, false);
@@ -57,6 +59,11 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         boolean changedChildNode = node.getParent().equals(node());  // TODO: If removed, can we rely on parent to be present?
         if (changedChildNode || nodeChanges.containsKey(node()))
             adapter.notifyDataSetChanged();
+    }
+
+    public void onPause() {
+        super.onPause();
+        adapterUpdateTimer.cancel();
     }
 
     public void onResume() {
@@ -98,6 +105,11 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 nodeNavigator().navigateTo(selectedNode.getFirstChild().getId());
             }
         });
+
+        if (adapterUpdateTimer == null) {
+            adapterUpdateTimer = new Timer();
+        }
+        adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
     }
 
     private void buildDynamicHeaderPart(final View rootView) {
@@ -148,5 +160,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     private NodeNavigator nodeNavigator() {
         return (NodeNavigator) getActivity();
+    }
+
+    private class AdapterUpdaterTask extends TimerTask {
+
+        public void run() {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

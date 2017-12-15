@@ -97,14 +97,17 @@ public class Definitions {
                         isDestinationPointSpecified(coordinateDefn),
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
+                boolean enumerator = nodeDefinition.getParentEntityDefinition().isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
-                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition));
+                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+        } else {
+            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition),
+                    nodePrompt(nodeDefinition), required);
         }
-        return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
     }
 
     private boolean isDestinationPointSpecified(CoordinateAttributeDefinition nodeDefinition) {
@@ -128,16 +131,18 @@ public class Definitions {
                     collectionLabel(nodeDefinition),
                     AttributeConverter.getUiAttributeType(nodeDefinition),
                     (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
+        } else {
+            boolean enumerated = ((EntityDefinition) nodeDefinition).isEnumerable();
+            return new UiEntityCollectionDefinition(
+                    collectionNodeDefinitionId(nodeDefinition),
+                    nodeDefinition.getName(),
+                    collectionLabel(nodeDefinition),
+                    getKeyOfDefinitionId(nodeDefinition),
+                    nodeDescription(nodeDefinition),
+                    nodePrompt(nodeDefinition),
+                    isRequired(nodeDefinition),
+                    enumerated);
         }
-        return new Definition(
-                collectionNodeDefinitionId(nodeDefinition),
-                nodeDefinition.getName(),
-                collectionLabel(nodeDefinition),
-                getKeyOfDefinitionId(nodeDefinition),
-                nodeDescription(nodeDefinition),
-                nodePrompt(nodeDefinition),
-                isRequired(nodeDefinition)
-        );
     }
 
     private Integer getKeyOfDefinitionId(NodeDefinition nodeDefinition) {

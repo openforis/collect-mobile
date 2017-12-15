@@ -16,6 +16,23 @@ public abstract class Views {
         }
     }
 
+
+    public static void show(View rootView, int viewId) {
+        toggleVisibility(rootView, viewId, true);
+    }
+
+    public static void show(View view) {
+        toggleVisibility(view, true);
+    }
+
+    public static void hide(View rootView, int viewId) {
+        toggleVisibility(rootView, viewId, false);
+    }
+
+    public static void hide(View view) {
+        toggleVisibility(view, false);
+    }
+
     public static void toggleVisibility(View rootView, int viewId, boolean visible) {
         toggleVisibility(rootView.findViewById(viewId), visible);
     }

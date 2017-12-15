@@ -13,6 +13,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,34 +35,38 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         autoComplete = new ClearableAutoCompleteTextView(context);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
-        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
-                saveNode();
-            }
-        });
-        autoComplete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedCode = null;
-            }
-        });
-        autoComplete.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
+        if (enumerator) {
+            autoComplete.setEnabled(false);
+        } else {
+            autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
                     saveNode();
-                return false;
-            }
-        });
-        autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
-            public void onClear() {
-                autoComplete.setText("");
-                saveNode();
-            }
-        });
+                }
+            });
+            autoComplete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
+                }
+
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selectedCode = null;
+                }
+            });
+            autoComplete.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
+                        saveNode();
+                    return false;
+                }
+            });
+            autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
+                public void onClear() {
+                    autoComplete.setText("");
+                    saveNode();
+                }
+            });
+        }
         initOptions();
     }
 

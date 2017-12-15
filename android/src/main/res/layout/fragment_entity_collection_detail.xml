@@ -31,8 +31,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="60dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/entity_list_header"
@@ -52,7 +51,19 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="@string/entity_list_modified"
-                    android:layout_alignParentRight="true" />
+                    android:layout_toLeftOf="@id/entity_list_header_status" />
+
+                <!-- status -->
+                <Space android:id="@+id/entity_list_header_status"
+                    android:layout_height="1dp"
+                    android:layout_width="30dp"
+                    android:layout_toLeftOf="@id/entity_list_header_selection_checkbox" />
+
+                <!-- selection checkbox -->
+                <Space android:id="@+id/entity_list_header_selection_checkbox"
+                    android:layout_height="1dp"
+                    android:layout_width="30dp"
+                    android:layout_alignParentRight="true"/>
 
             </RelativeLayout>
 

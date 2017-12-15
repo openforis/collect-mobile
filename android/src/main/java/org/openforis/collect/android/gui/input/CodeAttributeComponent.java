@@ -16,6 +16,7 @@ import org.openforis.collect.android.gui.detail.CodeListDescriptionDialogFragmen
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCodeList;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -29,12 +30,14 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
     private UiCode parentCode;
     final CodeListService codeListService;
+    final boolean enumerator;
     protected UiCodeList codeList;
     private boolean codeListRefreshForced;
 
     CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         this.codeListService = codeListService;
+        this.enumerator = ((UiCodeAttributeDefinition) attribute.getDefinition()).isEnumerator();
     }
 
     public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, FragmentActivity context) {

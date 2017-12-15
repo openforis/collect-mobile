@@ -15,8 +15,10 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
 import org.openforis.collect.android.gui.util.Views;
+import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
@@ -43,14 +45,18 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        View addEntity = view.findViewById(R.id.action_add_node);
-        if (addEntity != null) {
-            addEntity.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    UiInternalNode node = addNode();
-                    nodeNavigator().navigateTo(node.getFirstChild().getId());
-                }
-            });
+        View addButton = view.findViewById(R.id.action_add_node);
+        if (addButton != null) {
+            if (isEnumeratedEntityCollection()) {
+                Views.hide(addButton);
+            } else {
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        UiInternalNode node = addNode();
+                        nodeNavigator().navigateTo(node.getFirstChild().getId());
+                    }
+                });
+            }
         }
     }
 
@@ -63,7 +69,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onPause() {
         super.onPause();
-        adapterUpdateTimer.cancel();
+        if (adapterUpdateTimer != null)
+            adapterUpdateTimer.cancel();
     }
 
     public void onResume() {
@@ -94,6 +101,9 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         Views.toggleVisibility(rootView, R.id.entity_list_header_wrapper, headerVisible);
         if (headerVisible) {
             buildDynamicHeaderPart(rootView);
+            if (isEnumeratedEntityCollection()) {
+                Views.hide(rootView, R.id.entity_list_header_selection_checkbox);
+            }
         }
 
         ListView listView = (ListView) rootView.findViewById(R.id.entity_list);
@@ -160,6 +170,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     private NodeNavigator nodeNavigator() {
         return (NodeNavigator) getActivity();
+    }
+
+    private boolean isEnumeratedEntityCollection() {
+        UiNode selectedNode = surveyService().selectedNode();
+        Definition nodeDef = selectedNode.getDefinition();
+        return nodeDef instanceof UiEntityCollectionDefinition && ((UiEntityCollectionDefinition) nodeDef).isEnumerated();
     }
 
     private class AdapterUpdaterTask extends TimerTask {

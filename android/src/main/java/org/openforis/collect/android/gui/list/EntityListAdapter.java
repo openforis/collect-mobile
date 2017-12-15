@@ -17,6 +17,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.*;
@@ -152,26 +153,32 @@ public class EntityListAdapter extends NodeListAdapter {
 
     protected void onPrepareView(final UiNode node, View row) {
         final CheckBox checkbox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
-        checkbox.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (checkbox.isChecked()) {
-                    nodesToEdit.add(node);
-                    checked.add(checkbox);
-                } else {
-                    nodesToEdit.remove(node);
-                    checked.remove(checkbox);
-                }
+        Definition parentDef = node.getParent().getDefinition();
+        if (parentDef instanceof UiEntityCollectionDefinition &&
+                ((UiEntityCollectionDefinition) parentDef).isEnumerated()) {
+            Views.hide(checkbox);
+        } else {
+            checkbox.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (checkbox.isChecked()) {
+                        nodesToEdit.add(node);
+                        checked.add(checkbox);
+                    } else {
+                        nodesToEdit.remove(node);
+                        checked.remove(checkbox);
+                    }
 
-                if (!nodesToEdit.isEmpty()) {
-                    if (actionMode == null)
-                        actionMode = activity.startActionMode(new EditCallback());
-                    else
-                        setEditTitle(actionMode);
+                    if (!nodesToEdit.isEmpty()) {
+                        if (actionMode == null)
+                            actionMode = activity.startActionMode(new EditCallback());
+                        else
+                            setEditTitle(actionMode);
+                    }
+                    if (nodesToEdit.isEmpty() && actionMode != null)
+                        actionMode.finish();
                 }
-                if (nodesToEdit.isEmpty() && actionMode != null)
-                    actionMode.finish();
-            }
-        });
+            });
+        }
     }
 
     private void setEditTitle(ActionMode mode) {

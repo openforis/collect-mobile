@@ -12,6 +12,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,15 +36,19 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         radioGroup = new RadioGroup(context);
         layout.addView(radioGroup);
         initOptions();
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (codeList.isQualifiable(selectedCode()))
-                    showQualifier();
-                else
-                    hideQualifier();
-                saveNode();
-            }
-        });
+        if (enumerator) {
+            radioGroup.setEnabled(false);
+        } else {
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if (codeList.isQualifiable(selectedCode()))
+                        showQualifier();
+                    else
+                        hideQualifier();
+                    saveNode();
+                }
+            });
+        }
     }
 
     protected UiCode selectedCode() {
@@ -126,14 +131,16 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     Integer selectedViewId = null;
                     for (int i = 0; i < codes.size(); i++) {
                         UiCode code = codes.get(i);
-                        RadioButton radioButton = new AppCompatRadioButton(context);
-                        radioButton.setId(i + 1);
-                        radioButton.setText(code.toString());
-                        radioGroup.addView(radioButton);
-                        codeByViewId.put(radioButton.getId(), code);
-                        if (isAttributeCode(code)) {
-                            selectedViewId = radioButton.getId();
-                            radioButton.setSelected(true);
+                        if (! enumerator || isAttributeCode(code)) { //if it's enumerator, show only selected code
+                            RadioButton radioButton = new AppCompatRadioButton(context);
+                            radioButton.setId(i + 1);
+                            radioButton.setText(code.toString());
+                            radioGroup.addView(radioButton);
+                            codeByViewId.put(radioButton.getId(), code);
+                            if (isAttributeCode(code)) {
+                                selectedViewId = radioButton.getId();
+                                radioButton.setSelected(true);
+                            }
                         }
                     }
                     if (selectedViewId != null) {

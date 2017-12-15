@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
@@ -52,8 +53,7 @@ public class Definitions {
     }
 
     private void addSurveyDefinitions() {
-        List<LanguageSpecificText> labels = collectSurvey.getProjectNames();
-        String label = labels.isEmpty() ? "Survey" : labels.get(0).getText();
+        String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(), "Survey");
         String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
         addDefinition(
                 new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null, true)

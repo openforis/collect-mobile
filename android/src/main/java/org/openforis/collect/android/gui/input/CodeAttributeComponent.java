@@ -43,7 +43,8 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         CodeListService codeListService = ServiceLocator.codeListService();
         int maxCodeListSize = codeListService.getMaxCodeListSize(attribute);
-        if (maxCodeListSize <= RADIO_GROUP_MAX_SIZE)
+        boolean enumerator = ((UiCodeAttributeDefinition) attribute.getDefinition()).isEnumerator();
+        if (maxCodeListSize <= RADIO_GROUP_MAX_SIZE && ! enumerator)
             return new RadioCodeAttributeComponent(attribute, codeListService, surveyService, context);
         return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
     }

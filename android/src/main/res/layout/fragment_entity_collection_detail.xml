@@ -40,15 +40,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_toLeftOf="@id/entity_list_header_modified_date"
-                    android:paddingRight="40dp">
+                    android:layout_toLeftOf="@id/entity_list_header_modified_date">
                     <!-- to be filled programmatically -->
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/entity_list_header_modified_date"
                     android:textAlignment="center"
-                    android:layout_width="80dp"
+                    android:gravity="center_horizontal"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="@string/entity_list_modified"
                     android:layout_toLeftOf="@id/entity_list_header_status" />

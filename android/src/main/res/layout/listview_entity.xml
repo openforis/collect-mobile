@@ -18,8 +18,8 @@
 
     <TextView
         android:id="@+id/nodeModifiedOnLabel"
-        android:layout_width="80dp"
-        android:lines="2"
+        android:layout_width="100dp"
+        android:maxLines="2"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/nodeStatus"

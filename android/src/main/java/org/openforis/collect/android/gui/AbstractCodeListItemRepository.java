@@ -8,6 +8,7 @@ import java.util.List;
 import static org.openforis.collect.persistence.jooq.tables.OfcCodeList.OFC_CODE_LIST;
 
 public abstract class AbstractCodeListItemRepository {
+
     protected final PersistedCodeListItem createCodeListItem(Cursor cursor, CodeList codeList) {
         PersistedCodeListItem item;
         int itemId = cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.ITEM_ID.getName()));
@@ -35,12 +36,10 @@ public abstract class AbstractCodeListItemRepository {
         item.removeAllLabels();
         List<String> languages = survey.getLanguages();
         String[] labelColumnNames = {OFC_CODE_LIST.LABEL1.getName(), OFC_CODE_LIST.LABEL2.getName(), OFC_CODE_LIST.LABEL3.getName()};
-        for (int i = 0; i < languages.size(); i++) {
+        for (int i = 0; i < languages.size() && i < labelColumnNames.length; i++) {
             String lang = languages.get(i);
             String label = crs.getString(crs.getColumnIndex(labelColumnNames[i]));
             item.setLabel(lang, label);
-            if (i >= 3)
-                break;
         }
     }
 
@@ -49,12 +48,10 @@ public abstract class AbstractCodeListItemRepository {
         item.removeAllDescriptions();
         List<String> languages = survey.getLanguages();
         String[] descrColumnNames = {OFC_CODE_LIST.DESCRIPTION1.getName(), OFC_CODE_LIST.DESCRIPTION2.getName(), OFC_CODE_LIST.DESCRIPTION3.getName()};
-        for (int i = 0; i < languages.size(); i++) {
+        for (int i = 0; i < languages.size() && i < descrColumnNames.length; i++) {
             String lang = languages.get(i);
             String label = crs.getString(crs.getColumnIndex(descrColumnNames[i]));
             item.setDescription(lang, label);
-            if (i >= 3)
-                break;
         }
     }
 

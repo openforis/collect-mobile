@@ -11,6 +11,7 @@ import android.view.*;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -20,11 +21,13 @@ import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
 /**
@@ -38,7 +41,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private boolean selected;
 
     private T node;
-    private LinearLayout overlay;
+    View contentFrame;
+    View notRelevantOverlay;
+    View loadingOverlay;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +63,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
 
         FrameLayout frameLayout = new FrameLayout(getActivity());
-        frameLayout.addView(rootView);
-        frameLayout.addView(createOverlay());
+        frameLayout.addView(contentFrame = rootView);
+        frameLayout.addView(notRelevantOverlay = createNotRelevantOverlay());
+        frameLayout.addView(loadingOverlay = createLoadingOverlay());
         return frameLayout;
     }
 
@@ -71,21 +77,56 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         super.onResume();
     }
 
-    private View createOverlay() {
-        overlay = new LinearLayout(getActivity());
-        overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        overlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
+    private View createNotRelevantOverlay() {
+        LinearLayout notRelevantOverlay = new LinearLayout(getActivity());
+        notRelevantOverlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        notRelevantOverlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
         AppCompatTextView text = new AppCompatTextView(getContext());
         text.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
         text.setGravity(Gravity.CENTER);
         text.setTextColor(new Attrs(getContext()).color(R.attr.irrelevantTextColor));
-        overlay.setGravity(Gravity.CENTER);
+        notRelevantOverlay.setGravity(Gravity.CENTER);
         // TODO: Use String resource
         text.setText(node.getLabel() + "\r\n\r\nNot relevant");
+        notRelevantOverlay.addView(text);
+        Views.hide(notRelevantOverlay);
+        toggleNotRelevantOverlayVisibility();
+        return notRelevantOverlay;
+    }
 
-        overlay.addView(text);
-        updateOverlay();
+    private View createLoadingOverlay() {
+        LinearLayout overlay = new LinearLayout(getActivity());
+        overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        overlay.setGravity(Gravity.CENTER);
+        ProgressBar pb = new ProgressBar(getActivity());
+        pb.setIndeterminate(true);
+        pb.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        overlay.addView(pb);
+        Views.hide(overlay);
         return overlay;
+    }
+
+    protected void showContentFrame() {
+        showFrame(contentFrame);
+    }
+
+    protected void showNotRelevantOverlay() {
+        showFrame(notRelevantOverlay);
+    }
+
+    protected void showLoadingOverlay() {
+        showFrame(loadingOverlay);
+    }
+
+    protected void showFrame(View view) {
+        FrameLayout mainLayout = (FrameLayout) getView();
+        for (int i = 0; i < mainLayout.getChildCount(); i++) {
+            View child = mainLayout.getChildAt(i);
+            if (child != view) {
+                Views.hide(child);
+            }
+        }
+        Views.show(view);
     }
 
     private void setOrRemoveText(View rootView, int textViewId, String text) {
@@ -160,7 +201,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
-        updateOverlay();
+        toggleNotRelevantOverlayVisibility();
     }
 
     public void onDeselect() {
@@ -213,10 +254,14 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return (T) surveyService.lookupNode(nodeId);
     }
 
-    private void updateOverlay() {
-        if (node != null && overlay != null) {
+    private void toggleNotRelevantOverlayVisibility() {
+        if (node != null && notRelevantOverlay != null) {
             boolean relevant = node.isRelevant();
-            overlay.setVisibility(relevant ? View.INVISIBLE : View.VISIBLE);
+            if (relevant) {
+                showContentFrame();
+            } else {
+                showNotRelevantOverlay();
+            }
         }
     }
 

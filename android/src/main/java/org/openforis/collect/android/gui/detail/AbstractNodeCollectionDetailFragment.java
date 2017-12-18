@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
@@ -30,6 +31,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 /**
  * @author Daniel Wiell
  */
@@ -52,8 +56,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
             } else {
                 addButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        UiInternalNode node = addNode();
-                        nodeNavigator().navigateTo(node.getFirstChild().getId());
+                        startAddNodeTask();
                     }
                 });
             }
@@ -92,6 +95,30 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     protected SurveyService surveyService() {
         return ServiceLocator.surveyService();
+    }
+
+    private void startAddNodeTask() {
+        showLoadingOverlay();
+
+        new AsyncTask<Void, Void, Void>() {
+            protected Void doInBackground(Void... voids) {
+                addNode();
+                UiInternalNode node = addNode();
+                nodeNavigator().navigateTo(node.getFirstChild().getId());
+
+                //restore content frame, wait for the navigation to complete
+                new Timer().schedule(new TimerTask() {
+                    public void run() {
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                showContentFrame();
+                            }
+                        });
+                    }
+                }, 1000);
+                return null;
+            }
+        }.execute();
     }
 
     private void setupNodeCollection(View rootView) {

@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
@@ -25,6 +26,8 @@ import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -38,12 +41,17 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_NODE_ID = "node_id";
     //    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
     private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#333333");
-    private boolean selected;
 
+    protected enum ViewState {
+        DEFAULT, LOADING, NOT_RELEVANT;
+    }
+
+    private boolean selected;
     private T node;
-    View contentFrame;
-    View notRelevantOverlay;
-    View loadingOverlay;
+    private ViewState viewState = ViewState.DEFAULT;
+    private View contentFrame;
+    private View notRelevantOverlay;
+    private View loadingOverlay;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,23 +83,22 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onResume() {
         super.onResume();
+        onViewStateChange();
     }
 
     private View createNotRelevantOverlay() {
-        LinearLayout notRelevantOverlay = new LinearLayout(getActivity());
-        notRelevantOverlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        notRelevantOverlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
+        LinearLayout overlay = new LinearLayout(getActivity());
+        overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        overlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
         AppCompatTextView text = new AppCompatTextView(getContext());
         text.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
         text.setGravity(Gravity.CENTER);
         text.setTextColor(new Attrs(getContext()).color(R.attr.irrelevantTextColor));
-        notRelevantOverlay.setGravity(Gravity.CENTER);
+        overlay.setGravity(Gravity.CENTER);
         // TODO: Use String resource
         text.setText(node.getLabel() + "\r\n\r\nNot relevant");
-        notRelevantOverlay.addView(text);
-        Views.hide(notRelevantOverlay);
-        toggleNotRelevantOverlayVisibility();
-        return notRelevantOverlay;
+        overlay.addView(text);
+        return overlay;
     }
 
     private View createLoadingOverlay() {
@@ -106,27 +113,35 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return overlay;
     }
 
-    protected void showContentFrame() {
-        showFrame(contentFrame);
+    protected void setViewState(ViewState viewState) {
+        this.viewState = viewState;
+        onViewStateChange();
     }
 
-    protected void showNotRelevantOverlay() {
-        showFrame(notRelevantOverlay);
-    }
-
-    protected void showLoadingOverlay() {
-        showFrame(loadingOverlay);
+    protected void onViewStateChange() {
+        switch(viewState) {
+            case LOADING:
+                showFrame(loadingOverlay);
+                break;
+            case NOT_RELEVANT:
+                showFrame(notRelevantOverlay);
+                break;
+            default:
+                showFrame(contentFrame);
+        }
     }
 
     protected void showFrame(View view) {
         FrameLayout mainLayout = (FrameLayout) getView();
-        for (int i = 0; i < mainLayout.getChildCount(); i++) {
-            View child = mainLayout.getChildAt(i);
-            if (child != view) {
-                Views.hide(child);
+        if (mainLayout != null) {
+            for (int i = 0; i < mainLayout.getChildCount(); i++) {
+                View child = mainLayout.getChildAt(i);
+                if (child != view) {
+                    Views.hide(child);
+                }
             }
+            Views.show(view);
         }
-        Views.show(view);
     }
 
     private void setOrRemoveText(View rootView, int textViewId, String text) {
@@ -139,12 +154,12 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        toggleNotRelevantOverlayVisibility();
+        onViewStateChange();
         if (selected)
             onSelected();
     }
 
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.node_detail_fragment_actions, menu);
         SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
@@ -257,11 +272,40 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private void toggleNotRelevantOverlayVisibility() {
         if (node != null && notRelevantOverlay != null) {
             boolean relevant = node.isRelevant();
-            if (relevant) {
-                showContentFrame();
-            } else {
-                showNotRelevantOverlay();
-            }
+            setViewState(relevant ? ViewState.DEFAULT: ViewState.NOT_RELEVANT);
+        }
+    }
+
+    protected void processSlowTask(final Runnable runnable) {
+        setViewState(ViewState.LOADING);
+
+        new SlowProcessTask(this, runnable).execute();
+    }
+
+    private static class SlowProcessTask extends AsyncTask<Void, Void, Void> {
+
+        private final NodeDetailFragment fragment;
+        private final Runnable runnable;
+
+        SlowProcessTask(NodeDetailFragment fragment, Runnable runnable) {
+            super();
+            this.fragment = fragment;
+            this.runnable = runnable;
+        }
+
+        protected Void doInBackground(Void... voids) {
+            runnable.run();
+            //restore content frame, wait for the navigation to complete
+            new Timer().schedule(new TimerTask() {
+                public void run() {
+                    fragment.getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            fragment.setViewState(ViewState.DEFAULT);
+                        }
+                    });
+                }
+            }, 1000);
+            return null;
         }
     }
 

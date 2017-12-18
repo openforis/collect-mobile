@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.AdapterView;
@@ -30,9 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * @author Daniel Wiell
@@ -98,27 +94,23 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void startAddNodeTask() {
-        showLoadingOverlay();
-
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... voids) {
+        processSlowTask(new Runnable() {
+             public void run() {
                 addNode();
                 UiInternalNode node = addNode();
                 nodeNavigator().navigateTo(node.getFirstChild().getId());
-
-                //restore content frame, wait for the navigation to complete
-                new Timer().schedule(new TimerTask() {
-                    public void run() {
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                showContentFrame();
-                            }
-                        });
-                    }
-                }, 1000);
-                return null;
             }
-        }.execute();
+        });
+    }
+
+    private void startEditNodeTask(final int position) {
+        processSlowTask(new Runnable() {
+            public void run() {
+                T nodeCollection = node();
+                UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
+                nodeNavigator().navigateTo(selectedNode.getFirstChild().getId());
+            }
+        });
     }
 
     private void setupNodeCollection(View rootView) {
@@ -137,9 +129,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                T nodeCollection = node();
-                UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
-                nodeNavigator().navigateTo(selectedNode.getFirstChild().getId());
+                startEditNodeTask(position);
             }
         });
 

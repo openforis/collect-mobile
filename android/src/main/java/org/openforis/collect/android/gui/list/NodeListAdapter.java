@@ -1,10 +1,14 @@
 package org.openforis.collect.android.gui.list;
 
+import android.animation.ValueAnimator;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +16,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.ArrayList;
@@ -27,7 +32,6 @@ public class NodeListAdapter extends BaseAdapter {
     protected final UiInternalNode parentNode;
     private final Attrs attrs;
     private List<UiNode> nodes;
-
 
     public NodeListAdapter(FragmentActivity activity, UiInternalNode parentNode) {
         this.activity = activity;
@@ -52,25 +56,28 @@ public class NodeListAdapter extends BaseAdapter {
         View row = convertView;
         UiNode node = nodes.get(position);
         NodeHolder holder;
+        boolean newRow;
         if (row == null) {
+            newRow = true;
             LayoutInflater inflater = activity.getLayoutInflater();
             row = inflater.inflate(layoutResourceId(), parent, false);
             if (AndroidVersion.greaterThan10())
                 setBackground(row);
 
             holder = new NodeHolder();
+            holder.row = row;
             holder.text = (TextView) row.findViewById(R.id.nodeLabel);
             holder.status = (ImageView) row.findViewById(R.id.nodeStatus);
 
             row.setTag(holder);
         } else {
+            newRow = false;
             holder = (NodeHolder) row.getTag();
         }
 
         if (holder.text != null) {
             holder.text.setText(getText(node));
-            setTypeface(holder.text, node);
-            holder.text.setTextColor(attrs.color(node.isRelevant() ? R.attr.relevantTextColor : R.attr.irrelevantTextColor));
+            setRowStyle(holder, node, newRow);
         }
         holder.status.setImageResource(iconResource(node));
         onPrepareView(node, row);
@@ -78,15 +85,68 @@ public class NodeListAdapter extends BaseAdapter {
         return row;
     }
 
-    private void adjustSummaryViewsWidth() {
+    protected void setRowStyle(final NodeHolder holder, UiNode node, boolean newRow) {
+        if (node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity)
+            holder.text.setTypeface(Typeface.DEFAULT_BOLD);
+        else
+            holder.text.setTypeface(Typeface.DEFAULT);
 
+        boolean visible = node.isRelevant();
+        final View view = holder.row;
+
+        toggleListItemVisibility(holder, view, visible, !newRow, new Runnable() {
+            public void run() {
+                holder.animating = false;
+            }
+        });
     }
 
-    protected void setTypeface(TextView text, UiNode node) {
-        if (node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity)
-            text.setTypeface(Typeface.DEFAULT_BOLD);
-        else
-            text.setTypeface(Typeface.DEFAULT);
+    private void toggleListItemVisibility(final NodeHolder holder, final View listItem, boolean visible, boolean animate, final Runnable animationEndCallback) {
+        final int newVisibility = visible ? View.VISIBLE : View.GONE;
+        final int initialMinHeight = visible ? 1 : Views.dpsToPixels(activity, 48);
+        final int finalMinHeight = visible ? Views.dpsToPixels(activity, 48) : 1;
+        final int finalLayoutHeight = visible ? ViewGroup.LayoutParams.WRAP_CONTENT : 1;
+        final AbsListView.LayoutParams finalLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, finalLayoutHeight);
+
+        if (!animate && !visible) {
+            listItem.setMinimumHeight(finalMinHeight);
+            listItem.setLayoutParams(finalLayoutParams);
+            Views.hide(listItem);
+        } else {
+            int oldVisibility = listItem.getVisibility();
+
+            if (oldVisibility != newVisibility && !holder.animating) {
+                holder.animating = true;
+                final int animResId = visible ? R.anim.scale_up : R.anim.scale_down;
+                final AbsListView.LayoutParams initialLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                ValueAnimator minHeightAnimator = ValueAnimator.ofInt(initialMinHeight, finalMinHeight);
+                minHeightAnimator.setDuration(1000);
+                minHeightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        listItem.setMinimumHeight((Integer) animator.getAnimatedValue());
+                    }
+                });
+                minHeightAnimator.start();
+
+                Animation anim = AnimationUtils.loadAnimation(activity, animResId);
+                anim.setAnimationListener(new Animation.AnimationListener() {
+                    public void onAnimationStart(Animation animation) {
+                        listItem.setVisibility(View.VISIBLE);
+                        listItem.setLayoutParams(initialLayoutParams);
+                    }
+
+                    public void onAnimationEnd(Animation animation) {
+                        animationEndCallback.run();
+                        listItem.setLayoutParams(finalLayoutParams);
+                        listItem.setVisibility(newVisibility);
+                    }
+
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                listItem.startAnimation(anim);
+            }
+        }
     }
 
     protected void onPrepareView(UiNode node, View row) {
@@ -132,7 +192,9 @@ public class NodeListAdapter extends BaseAdapter {
     }
 
     private static class NodeHolder {
+        View row;
         TextView text;
         ImageView status;
+        boolean animating;
     }
 }

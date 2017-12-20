@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.util;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,6 +39,11 @@ public abstract class Views {
     }
 
     public static void toggleVisibility(View view, boolean visible) {
-        view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        view.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public static int dpsToPixels(Context context, int dps) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dps * scale + 0.5f);
     }
 }

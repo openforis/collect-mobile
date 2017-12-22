@@ -34,6 +34,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
     private final CodeListManager codeListManager;
+    private final SpeciesManager speciesManager;
     private final RecordFileManager recordFileManager;
     private final CodeListSizeEvaluator codeListSizeEvaluator;
 
@@ -45,16 +46,16 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     private ModelConverter modelConverter;
     private Definitions definitions;
 
-    private SpeciesManager speciesManager;
-
     public CollectModelManager(SurveyManager surveyManager,
                                RecordManager recordManager,
                                CodeListManager codeListManager,
+                               SpeciesManager speciesManager,
                                RecordFileManager recordFileManager,
                                Database database) {
         this.surveyManager = surveyManager;
         this.recordManager = recordManager;
         this.codeListManager = codeListManager;
+        this.speciesManager = speciesManager;
         this.recordFileManager = recordFileManager;
         codeListSizeEvaluator = new CodeListSizeEvaluator(new DatabaseCodeListSizeDao(database));
 
@@ -64,26 +65,6 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
                 .set(database.dataSource())
                 .set(SQLDialect.SQLITE);
         jooqDsl = new CollectDSLContext(defaultConfiguration);
-
-
-        speciesManager = createSpeciesManager(database);
-    }
-
-    private SpeciesManager createSpeciesManager(Database database) {
-        speciesManager = new SpeciesManager();
-        TaxonDao taxonDao = new TaxonDao();
-        taxonDao.setDsl(jooqDsl);
-        speciesManager.setTaxonDao(taxonDao);
-        TaxonomyDao taxonomyDao = new TaxonomyDao();
-        taxonDao.setDsl(jooqDsl);
-        speciesManager.setTaxonomyDao(taxonomyDao);
-        TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
-        taxonVernacularNameDao.setDsl(jooqDsl);
-        speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
-        ExpressionFactory expressionFactory = new ExpressionFactory();
-        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));
-        speciesManager.setExpressionFactory(expressionFactory);
-        return speciesManager; // TODO: Shouldn't be here - separate class, and provide as dependency
     }
 
     public UiSurvey importSurvey(InputStream inputStream) {

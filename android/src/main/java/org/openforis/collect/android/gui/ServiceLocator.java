@@ -19,15 +19,21 @@ import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordFileManager;
 import org.openforis.collect.manager.RecordManager;
+import org.openforis.collect.manager.SpeciesManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.persistence.TaxonDao;
+import org.openforis.collect.persistence.TaxonVernacularNameDao;
+import org.openforis.collect.persistence.TaxonomyDao;
 import org.openforis.collect.persistence.jooq.CollectDSLContext;
 import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.collect.service.CollectCodeListService;
+import org.openforis.collect.service.CollectSpeciesListService;
+import org.openforis.idm.metamodel.SpeciesListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.File;
@@ -179,6 +185,12 @@ public class ServiceLocator {
         CollectCodeListService codeListService = new CollectCodeListService();
         codeListService.setCodeListManager(codeListManager);
         collectSurveyContext.setCodeListService(codeListService);
+
+        SpeciesManager speciesManager = createSpeciesManager(modelDatabase);
+        CollectSpeciesListService speciesListService = new CollectSpeciesListService();
+        speciesListService.setSpeciesManager(speciesManager);
+        collectSurveyContext.setSpeciesListService(speciesListService);
+
         final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveySerializer(surveySerializer);
@@ -209,7 +221,7 @@ public class ServiceLocator {
         }};
         recordFileManager.setDefaultRootStoragePath(AppDirs.surveyDatabasesDir(surveyName, context).getAbsolutePath());
 
-        return new CollectModelManager(surveyManager, recordManager, codeListManager, recordFileManager, modelDatabase);
+        return new CollectModelManager(surveyManager, recordManager, codeListManager, speciesManager, recordFileManager, modelDatabase);
     }
 
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {
@@ -220,6 +232,22 @@ public class ServiceLocator {
         return externalCodeListProvider;
     }
 
+    private static SpeciesManager createSpeciesManager(Database database) {
+        SpeciesManager speciesManager = new SpeciesManager();
+        TaxonDao taxonDao = new TaxonDao();
+        taxonDao.setDsl(jooqDsl);
+        speciesManager.setTaxonDao(taxonDao);
+        TaxonomyDao taxonomyDao = new TaxonomyDao();
+        taxonomyDao.setDsl(jooqDsl);
+        speciesManager.setTaxonomyDao(taxonomyDao);
+        TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
+        taxonVernacularNameDao.setDsl(jooqDsl);
+        speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
+        ExpressionFactory expressionFactory = new ExpressionFactory();
+        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));
+        speciesManager.setExpressionFactory(expressionFactory);
+        return speciesManager;
+    }
 
     private static TaxonService createTaxonService(Database modelDatabase) {
         return new TaxonRepository(modelDatabase);

@@ -13,7 +13,7 @@ import org.openforis.collect.android.viewmodel.UiRecordCollection;
 public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetailFragment<UiRecordCollection> {
 
     protected UiInternalNode addNode() {
-        return surveyService().addRecord(node().getName());
+         return surveyService().addRecord(node().getName());
     }
 
     protected UiInternalNode getSelectedNode(int position, UiRecordCollection recordCollection) {

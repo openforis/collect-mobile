@@ -39,7 +39,7 @@ public abstract class Views {
     }
 
     public static void toggleVisibility(View view, boolean visible) {
-        view.setVisibility(visible ? View.VISIBLE : View.GONE);
+        view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 
     public static int dpsToPixels(Context context, int dps) {

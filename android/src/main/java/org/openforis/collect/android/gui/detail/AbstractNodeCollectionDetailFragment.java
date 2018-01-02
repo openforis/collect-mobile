@@ -136,30 +136,28 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
     }
 
-    private void buildDynamicHeaderPart(final View rootView) {
-        final LinearLayout header = (LinearLayout) rootView.findViewById(R.id.entity_list_header);
-        header.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            public void onGlobalLayout() {
-                int maxWidth = header.getMeasuredWidth();
-                List<String> headings = getDynamicHeadings();
-                if (! headings.isEmpty()) {
-                    int maxWidthPerColumn = Double.valueOf(Math.floor(maxWidth / headings.size())).intValue();
-                    for (String heading : headings) {
-                        TextView textView = new TextView(getContext());
-                        textView.setWidth(maxWidthPerColumn);
-                        textView.setMaxLines(2);
-                        textView.setText(heading);
-                        textView.setTypeface(HEADER_TYPEFACE);
-                        header.addView(textView);
-                    }
-                    UiNode firstChild = node().getChildAt(0);
-                    boolean includeModifiedDate = firstChild instanceof UiRecord.Placeholder;
-                    TextView modifiedDateTextView = (TextView) rootView.findViewById(R.id.entity_list_header_modified_date);
-                    modifiedDateTextView.setTypeface(HEADER_TYPEFACE);
-                    Views.toggleVisibility(modifiedDateTextView, includeModifiedDate);
-                }
+    private void buildDynamicHeaderPart(View rootView) {
+        List<String> headings = getDynamicHeadings();
+        if (! headings.isEmpty()) {
+            LinearLayout header = (LinearLayout) rootView.findViewById(R.id.entity_list_header);
+            header.setWeightSum(headings.size());
+            for (String heading : headings) {
+                TextView textView = new TextView(getContext());
+                LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                p.weight = 1;
+                textView.setLayoutParams(p);
+                textView.setMaxLines(2);
+                textView.setText(heading);
+                textView.setTypeface(HEADER_TYPEFACE);
+                header.addView(textView);
             }
-        });
+            UiNode firstChild = node().getChildAt(0);
+            boolean includeModifiedDate = firstChild instanceof UiRecord.Placeholder;
+            TextView modifiedDateTextView = (TextView) rootView.findViewById(R.id.entity_list_header_modified_date);
+            modifiedDateTextView.setTypeface(HEADER_TYPEFACE);
+            Views.toggleVisibility(modifiedDateTextView, includeModifiedDate);
+        }
     }
 
     private List<String> getDynamicHeadings() {

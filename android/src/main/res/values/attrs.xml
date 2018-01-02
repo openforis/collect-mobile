@@ -8,6 +8,7 @@
     <attr name="irrelevantTextColor" format="reference|color"/>
     <attr name="titleIndicatorColor" format="reference|color"/>
     <attr name="nodePathDetailsBackground" format="reference|color"/>
+    <attr name="entityListHeaderBorderColor" format="reference|color"/>
 
     <attr name="breadcrumbButton" format="reference"/>
     <attr name="breadcrumbSeparator" format="reference"/>

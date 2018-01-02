@@ -68,7 +68,7 @@
             </RelativeLayout>
 
             <View android:id="@+id/separator"
-                android:background="#ffffff"
+                android:background="?entityListHeaderBorderColor"
                 android:layout_width="match_parent"
                 android:layout_height="1dip"/>
 

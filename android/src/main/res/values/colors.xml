@@ -8,6 +8,9 @@
     <color name="light_title_indicator_text_color">#BBFFFFFF</color>
     <color name="dark_title_indicator_text_color">#BB000000</color>
 
-    <color name="dark_node_path_details_background_color">#FF494949</color>
     <color name="light_node_path_details_background_color">#FFEFEFEF</color>
+    <color name="dark_node_path_details_background_color">#FF494949</color>
+
+    <color name="light_entity_list_header_border_color">#000000</color>
+    <color name="dark_entity_list_header_border_color">#FFFFFF</color>
 </resources>

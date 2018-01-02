@@ -22,6 +22,7 @@
         <item name="removeIcon">@drawable/ic_action_remove</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
+        <item name="entityListHeaderBorderColor">@color/dark_entity_list_header_border_color</item>
     </style>
 
     <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
@@ -45,6 +46,7 @@
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewLight</item>
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>
+        <item name="entityListHeaderBorderColor">@color/light_entity_list_header_border_color</item>
     </style>
 
     <style name="AutoCompleteTextViewLight" parent="@android:style/Widget.AutoCompleteTextView">

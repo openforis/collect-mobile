@@ -96,7 +96,6 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private void startAddNodeTask() {
         processSlowTask(new Runnable() {
              public void run() {
-                addNode();
                 UiInternalNode node = addNode();
                 nodeNavigator().navigateTo(node.getFirstChild().getId());
             }

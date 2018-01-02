@@ -1,6 +1,7 @@
 package org.openforis.collect.android.viewmodelmanager;
 
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
@@ -8,8 +9,9 @@ import org.openforis.collect.android.util.persistence.PreparedStatementHelper;
 
 import java.io.File;
 import java.sql.*;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * @author Daniel Wiell
@@ -243,8 +245,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
         String filePath = rs.getString("val_file");
         n.file = filePath == null ? null : new File(filePath);
-        n.createdOn = rs.getTimestamp("created_on");
-        n.modifiedOn = rs.getTimestamp("modified_on");
+        n.createdOn = getTimestamp("created_on", rs);
+        n.modifiedOn = getTimestamp("modified_on", rs);
         return n;
     }
 
@@ -274,6 +276,24 @@ public class DataSourceNodeRepository implements NodeRepository {
         if (rs.wasNull())
             return null;
         return value;
+    }
+
+    private Timestamp getTimestamp(String columnName, ResultSet rs) throws SQLException {
+        Timestamp result = rs.getTimestamp(columnName);
+        if (rs.wasNull()) {
+            return null;
+        } else if(result == null) {
+            //try to parse value from string
+            String timestampStr = rs.getString(columnName);
+            try {
+                java.util.Date parsedDate = DateUtils.parseDate(timestampStr, "yyyy-MM-dd hh:mm:ss.S", "yyyy-MM-dd hh:mm:ss");
+                return new Timestamp(parsedDate.getTime());
+            } catch(ParseException e) {
+                return null;
+            }
+        } else {
+            return result;
+        }
     }
 
     private void bind(PreparedStatement ps, NodeDto node) throws SQLException {

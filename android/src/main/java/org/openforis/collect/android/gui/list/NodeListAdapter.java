@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.list;
 
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
@@ -96,30 +98,30 @@ public class NodeListAdapter extends BaseAdapter {
 
         toggleListItemVisibility(holder, view, visible, !newRow, new Runnable() {
             public void run() {
-                holder.animating = false;
+                holder.fadingIn = holder.fadingOut = false;
             }
         });
     }
 
     private void toggleListItemVisibility(final NodeHolder holder, final View listItem, boolean visible, boolean animate, final Runnable animationEndCallback) {
-        final int newVisibility = visible ? View.VISIBLE : View.GONE;
+        final int newVisibility = visible ? View.VISIBLE : View.INVISIBLE;
         final int initialMinHeight = visible ? 1 : Views.dpsToPixels(activity, 48);
         final int finalMinHeight = visible ? Views.dpsToPixels(activity, 48) : 1;
         final int finalLayoutHeight = visible ? ViewGroup.LayoutParams.WRAP_CONTENT : 1;
         final AbsListView.LayoutParams finalLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, finalLayoutHeight);
 
-        if (!animate && !visible) {
-            listItem.setMinimumHeight(finalMinHeight);
-            listItem.setLayoutParams(finalLayoutParams);
-            Views.hide(listItem);
-        } else {
+        if (animate) {
             int oldVisibility = listItem.getVisibility();
 
-            if (oldVisibility != newVisibility && !holder.animating) {
-                holder.animating = true;
-                final int animResId = visible ? R.anim.scale_up : R.anim.scale_down;
-                final AbsListView.LayoutParams initialLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            if (oldVisibility != newVisibility && !holder.fadingIn && !holder.fadingOut //not animating
+                    || holder.fadingIn && !visible
+                    || holder.fadingOut && visible
+                    ) {
+                holder.cancelAnimations();
+                holder.fadingIn = visible;
+                holder.fadingOut = !visible;
 
+                //change min height with animator
                 ValueAnimator minHeightAnimator = ValueAnimator.ofInt(initialMinHeight, finalMinHeight);
                 minHeightAnimator.setDuration(1000);
                 minHeightAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -127,25 +129,42 @@ public class NodeListAdapter extends BaseAdapter {
                         listItem.setMinimumHeight((Integer) animator.getAnimatedValue());
                     }
                 });
-                minHeightAnimator.start();
+                holder.animators = new AnimatorSet();
+                holder.animators.setDuration(1000);
+                holder.animators.play(minHeightAnimator);
+                holder.animators.start();
 
-                Animation anim = AnimationUtils.loadAnimation(activity, animResId);
-                anim.setAnimationListener(new Animation.AnimationListener() {
+                //scale up/down with animation
+                final int animResId = visible ? R.anim.scale_up : R.anim.scale_down;
+                Animation scaleAnimation = AnimationUtils.loadAnimation(activity, animResId);
+
+                final AbsListView.LayoutParams initialLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
                     public void onAnimationStart(Animation animation) {
                         listItem.setVisibility(View.VISIBLE);
                         listItem.setLayoutParams(initialLayoutParams);
                     }
 
                     public void onAnimationEnd(Animation animation) {
-                        animationEndCallback.run();
                         listItem.setLayoutParams(finalLayoutParams);
                         listItem.setVisibility(newVisibility);
+                        animationEndCallback.run();
                     }
 
                     public void onAnimationRepeat(Animation animation) {}
                 });
-                listItem.startAnimation(anim);
+
+                holder.animations = new AnimationSet(true);
+                holder.animations.setDuration(1000);
+                holder.animations.addAnimation(scaleAnimation);
+
+                listItem.startAnimation(holder.animations);
             }
+        } else if (!visible) {
+            listItem.setMinimumHeight(finalMinHeight);
+            listItem.setLayoutParams(finalLayoutParams);
+            Views.hide(listItem);
         }
     }
 
@@ -195,6 +214,19 @@ public class NodeListAdapter extends BaseAdapter {
         View row;
         TextView text;
         ImageView status;
-        boolean animating;
+        boolean fadingIn;
+        boolean fadingOut;
+        AnimatorSet animators;
+        AnimationSet animations;
+
+        void cancelAnimations() {
+            row.clearAnimation();
+            if (animators != null) {
+                animators.cancel();
+            }
+            if (animations != null) {
+                animations.cancel();
+            }
+        }
     }
 }

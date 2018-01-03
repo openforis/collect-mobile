@@ -53,7 +53,7 @@ public class Definitions {
     }
 
     private void addSurveyDefinitions() {
-        String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(), "Survey");
+        String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(), "Project label");
         String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
         addDefinition(
                 new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null, true)

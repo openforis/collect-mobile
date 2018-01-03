@@ -14,6 +14,7 @@ import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
+import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
@@ -94,7 +95,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void startAddNodeTask() {
-        processSlowTask(new Runnable() {
+        Tasks.runSlowTask(getActivity(), new Runnable() {
              public void run() {
                 UiInternalNode node = addNode();
                 nodeNavigator().navigateTo(node.getFirstChild().getId());
@@ -103,7 +104,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void startEditNodeTask(final int position) {
-        processSlowTask(new Runnable() {
+        Tasks.runSlowTask(getActivity(), new Runnable() {
             public void run() {
                 T nodeCollection = node();
                 UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);

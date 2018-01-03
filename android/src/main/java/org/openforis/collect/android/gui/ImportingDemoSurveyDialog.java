@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.widget.TextView;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.Tasks;
 
 public class ImportingDemoSurveyDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,9 +28,13 @@ public class ImportingDemoSurveyDialog extends DialogFragment {
                 .setTitle(R.string.import_demo_dialog_title)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        SurveyListActivity activity = (SurveyListActivity) getActivity();
-                        ServiceLocator.importDefaultSurvey(activity);
-                        activity.startImportedSurveyNodeActivity();
+                        Tasks.runSlowTask(getActivity(), new Runnable() {
+                            public void run() {
+                                SurveyListActivity activity = (SurveyListActivity) getActivity();
+                                ServiceLocator.importDefaultSurvey(activity);
+                                activity.startImportedSurveyNodeActivity();
+                            }
+                        }, R.string.import_demo_processing_title, R.string.please_wait);
                     }
                 })
                 .setView(message)

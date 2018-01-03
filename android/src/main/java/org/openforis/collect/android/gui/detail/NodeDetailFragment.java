@@ -22,6 +22,7 @@ import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -273,39 +274,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (node != null && notRelevantOverlay != null) {
             boolean relevant = node.isRelevant();
             setViewState(relevant ? ViewState.DEFAULT: ViewState.NOT_RELEVANT);
-        }
-    }
-
-    protected void processSlowTask(final Runnable runnable) {
-        setViewState(ViewState.LOADING);
-
-        new SlowProcessTask(this, runnable).execute();
-    }
-
-    private static class SlowProcessTask extends AsyncTask<Void, Void, Void> {
-
-        private final NodeDetailFragment fragment;
-        private final Runnable runnable;
-
-        SlowProcessTask(NodeDetailFragment fragment, Runnable runnable) {
-            super();
-            this.fragment = fragment;
-            this.runnable = runnable;
-        }
-
-        protected Void doInBackground(Void... voids) {
-            runnable.run();
-            //restore content frame, wait for the navigation to complete
-            new Timer().schedule(new TimerTask() {
-                public void run() {
-                    fragment.getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            fragment.setViewState(ViewState.DEFAULT);
-                        }
-                    });
-                }
-            }, 1000);
-            return null;
         }
     }
 

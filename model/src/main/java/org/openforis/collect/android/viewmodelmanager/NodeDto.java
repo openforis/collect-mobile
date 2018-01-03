@@ -7,10 +7,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.util.Locale.ENGLISH;
+
 /**
  * @author Daniel Wiell
  */
 public class NodeDto {
+
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
+
     public int id;
     public boolean relevant;
     public String status;
@@ -66,7 +71,7 @@ public class NodeDto {
                     break;
                 case DATE_ATTRIBUTE:
                     try {
-                        node.date = new SimpleDateFormat("yyyy-MM-dd").parse(value);
+                        node.date = DATE_FORMATTER.parse(value);
                     } catch (ParseException e) {
                         throw new IllegalStateException("Unexpected date format: " + value);
                     }

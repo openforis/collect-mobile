@@ -1,16 +1,15 @@
 package org.openforis.collect.android.viewmodelmanager;
 
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.util.persistence.PreparedStatementHelper;
+import org.openforis.collect.android.util.persistence.ResultSetHelper;
 
 import java.io.File;
 import java.sql.*;
 import java.sql.Date;
-import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -212,11 +211,12 @@ public class DataSourceNodeRepository implements NodeRepository {
 
     private NodeDto toNode(ResultSet rs) throws SQLException {
         NodeDto n = new NodeDto();
+        ResultSetHelper helper = new ResultSetHelper(rs);
         n.id = rs.getInt("id");
         n.relevant = rs.getBoolean("relevant");
         n.status = rs.getString("status");
-        n.parentId = getInteger("parent_id", rs);
-        n.parentEntityId = getInteger("parent_entity_id", rs);
+        n.parentId = helper.getInteger("parent_id");
+        n.parentEntityId = helper.getInteger("parent_entity_id");
         n.definitionId = rs.getString("definition_id");
         n.surveyId = rs.getInt("survey_id");
         n.recordId = rs.getInt("record_id");
@@ -224,76 +224,30 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.recordKeyAttribute = rs.getBoolean("record_key_attribute");
         n.type = NodeDto.Type.byId(rs.getInt("node_type"));
         n.text = rs.getString("val_text");
-        Long dateMillis = getLong("val_date", rs);
+        Long dateMillis = helper.getLong("val_date");
         n.date = dateMillis == null ? null : new Date(dateMillis);
-        n.hour = getInteger("val_hour", rs);
-        n.minute = getInteger("val_minute", rs);
+        n.hour = helper.getInteger("val_hour");
+        n.minute = helper.getInteger("val_minute");
         n.codeValue = rs.getString("val_code_value");
         n.codeQualifier = rs.getString("val_code_qualifier");
         n.codeLabel = rs.getString("val_code_label");
-        n.booleanValue = getBoolean("val_boolean", rs);
-        n.intValue = getInteger("val_int", rs);
-        n.intFrom = getInteger("val_int_from", rs);
-        n.intTo = getInteger("val_int_to", rs);
-        n.doubleValue = getDouble("val_double", rs);
-        n.doubleFrom = getDouble("val_double_from", rs);
-        n.doubleTo = getDouble("val_double_to", rs);
-        n.x = getDouble("val_x", rs);
-        n.y = getDouble("val_y", rs);
+        n.booleanValue = helper.getBoolean("val_boolean");
+        n.intValue = helper.getInteger("val_int");
+        n.intFrom = helper.getInteger("val_int_from");
+        n.intTo = helper.getInteger("val_int_to");
+        n.doubleValue = helper.getDouble("val_double");
+        n.doubleFrom = helper.getDouble("val_double_from");
+        n.doubleTo = helper.getDouble("val_double_to");
+        n.x = helper.getDouble("val_x");
+        n.y = helper.getDouble("val_y");
         n.srs = rs.getString("val_srs");
         n.taxonCode = rs.getString("val_taxon_code");
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
         String filePath = rs.getString("val_file");
         n.file = filePath == null ? null : new File(filePath);
-        n.createdOn = getTimestamp("created_on", rs);
-        n.modifiedOn = getTimestamp("modified_on", rs);
+        n.createdOn = helper.getTimestamp("created_on");
+        n.modifiedOn = helper.getTimestamp("modified_on");
         return n;
-    }
-
-    private Integer getInteger(String columnName, ResultSet rs) throws SQLException {
-        int value = rs.getInt(columnName);
-        if (rs.wasNull())
-            return null;
-        return value;
-    }
-
-    private Long getLong(String columnName, ResultSet rs) throws SQLException {
-        long value = rs.getLong(columnName);
-        if (rs.wasNull())
-            return null;
-        return value;
-    }
-
-    private Double getDouble(String columnName, ResultSet rs) throws SQLException {
-        double value = rs.getDouble(columnName);
-        if (rs.wasNull())
-            return null;
-        return value;
-    }
-
-    private Boolean getBoolean(String columnName, ResultSet rs) throws SQLException {
-        boolean value = rs.getBoolean(columnName);
-        if (rs.wasNull())
-            return null;
-        return value;
-    }
-
-    private Timestamp getTimestamp(String columnName, ResultSet rs) throws SQLException {
-        Timestamp result = rs.getTimestamp(columnName);
-        if (rs.wasNull()) {
-            return null;
-        } else if(result == null) {
-            //try to parse value from string
-            String timestampStr = rs.getString(columnName);
-            try {
-                java.util.Date parsedDate = DateUtils.parseDate(timestampStr, "yyyy-MM-dd hh:mm:ss.S", "yyyy-MM-dd hh:mm:ss");
-                return new Timestamp(parsedDate.getTime());
-            } catch(ParseException e) {
-                return null;
-            }
-        } else {
-            return result;
-        }
     }
 
     private void bind(PreparedStatement ps, NodeDto node) throws SQLException {

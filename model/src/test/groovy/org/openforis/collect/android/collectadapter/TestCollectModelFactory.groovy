@@ -39,7 +39,7 @@ class TestCollectModelFactory {
         )
     }
     static CollectModelManager collectModelManager(Database database) {
-        new CollectModelManager(surveyManager, recordManager, null, null, database)
+        new CollectModelManager(surveyManager, recordManager, null, null, null, database)
     }
 
     public static RecordManager getRecordManager() {

@@ -1,8 +1,8 @@
 buildscript {
     repositories {
+        mavenCentral()
         mavenLocal()
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
-        maven { url "http://www.openforis.org/nexus/content/repositories/snapshots/" }
     }
 }
 
@@ -12,11 +12,13 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 repositories {
+    mavenCentral()
+    mavenLocal()
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
 }
 
 dependencies {
-    compile('org.openforis.collect:collect-core:3.20.1-SNAPSHOT') {
+    compile ('org.openforis.collect:collect-core:3.20.11') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.apache.poi'
     }
@@ -33,4 +35,5 @@ task copyTestResources(type: Copy) {
     from "${projectDir}/src/test/resources"
     into "${buildDir}/classes/test"
 }
+
 processTestResources.dependsOn copyTestResources

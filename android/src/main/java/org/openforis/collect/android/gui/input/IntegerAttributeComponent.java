@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.widget.EditText;
 import org.apache.commons.lang3.StringUtils;
@@ -27,5 +28,6 @@ public class IntegerAttributeComponent extends EditTextAttributeComponent<UiInte
 
     protected void onEditTextCreated(EditText input) {
         input.setInputType(InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED);
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)}); //10 digits
     }
 }

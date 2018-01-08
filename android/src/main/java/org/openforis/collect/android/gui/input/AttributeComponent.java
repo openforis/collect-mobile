@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
@@ -13,6 +14,7 @@ import org.openforis.collect.android.viewmodel.UiValidationError;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -21,7 +23,11 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * @author Daniel Wiell
  */
 public abstract class AttributeComponent<T extends UiAttribute> extends SavableComponent {
+
+    private static final int SAVE_NODE_DELAY = 1000;
+
     protected final T attribute;
+    private Timer saveNodeTimer;
 
     protected AttributeComponent(T attribute,
                                  SurveyService surveyService,
@@ -101,6 +107,22 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
         resetValidationErrors(); // TODO: Will reset even if attribute hasn't changed
         if (updateAttributeIfChanged())
             notifyAboutAttributeChange();
+    }
+
+    protected void startSaveNodeTimer() {
+        stopSaveNodeTimer();
+
+        saveNodeTimer = Tasks.runDelayedOnUiThread(context, new Runnable() {
+            public void run() {
+                saveNode();
+            }
+        }, SAVE_NODE_DELAY);
+    }
+
+    protected void stopSaveNodeTimer() {
+        if (saveNodeTimer != null) {
+            saveNodeTimer.cancel();
+        }
     }
 
     public final void validateNode() {

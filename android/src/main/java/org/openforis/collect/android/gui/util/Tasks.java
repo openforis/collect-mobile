@@ -21,10 +21,20 @@ public class Tasks {
                 .execute();
     }
 
-    public static void runDelayed(final Runnable runnable, int delay) {
-        new Timer().schedule(new TimerTask() {
+    public static Timer runDelayed(final Runnable runnable, int delay) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
             public void run() {
                 runnable.run();
+            }
+        }, delay);
+        return timer;
+    }
+
+    public static Timer runDelayedOnUiThread(final Activity context, final Runnable runnable, int delay) {
+        return runDelayed(new Runnable() {
+            public void run() {
+                context.runOnUiThread(runnable);
             }
         }, delay);
     }

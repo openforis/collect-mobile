@@ -221,6 +221,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
                 public void afterTextChanged(Editable s) {
                     input.setError(null);
+                    startSaveNodeTimer();
                 }
             });
             input.setSingleLine();

@@ -11,11 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.viewmodel.UiAttribute;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Daniel Wiell
@@ -95,7 +91,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
             public void afterTextChanged(Editable s) {
                 editText.setError(null);
-                startSaveNodeTimer();
+                delaySaveNode();
             }
         });
         editText.setText(attributeValue());

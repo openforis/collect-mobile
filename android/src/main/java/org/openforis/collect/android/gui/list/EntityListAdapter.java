@@ -148,9 +148,6 @@ public class EntityListAdapter extends NodeListAdapter {
         return attributes;
     }
 
-    protected void setTypeface(TextView text, UiNode node) {
-    }
-
     protected void onPrepareView(final UiNode node, View row) {
         final CheckBox checkbox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
         Definition parentDef = node.getParent().getDefinition();

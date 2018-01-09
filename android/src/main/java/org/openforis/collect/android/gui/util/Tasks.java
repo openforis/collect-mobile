@@ -3,11 +3,9 @@ package org.openforis.collect.android.gui.util;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Handler;
 
 import org.openforis.collect.R;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Tasks {
 
@@ -21,17 +19,13 @@ public class Tasks {
                 .execute();
     }
 
-    public static Timer runDelayed(final Runnable runnable, int delay) {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
-                runnable.run();
-            }
-        }, delay);
-        return timer;
+    public static Handler runDelayed(final Runnable runnable, int delay) {
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, delay);
+        return handler;
     }
 
-    public static Timer runDelayedOnUiThread(final Activity context, final Runnable runnable, int delay) {
+    public static Handler runDelayedOnUiThread(final Activity context, final Runnable runnable, int delay) {
         return runDelayed(new Runnable() {
             public void run() {
                 context.runOnUiThread(runnable);

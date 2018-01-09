@@ -26,6 +26,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     private final File workingDir;
 
     private SurveyListener listener;
+    private boolean updating;
 
     public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager, File workingDir) {
         this.viewModelManager = viewModelManager;
@@ -98,14 +99,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public UiEntity addEntity() {
+        this.updating = true;
         UiEntityCollection entityCollection = viewModelManager.selectedEntityCollection();
         NodeAddedResult<UiEntity> result = collectModelManager.addEntity(entityCollection);
         viewModelManager.addEntity(result.nodeAdded, result.nodeChanges);
         updateCalculatedAttributes(result.nodeChanges);
+        this.updating = false;
         return result.nodeAdded;
     }
 
     public UiCodeAttribute addCodeAttribute(UiCode code, String qualifier) {  // TODO: Ugly. Do in transaction, redundant updating...
+        this.updating = true;
         // Remove validation errors from the unspecified attribute
 
         UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
@@ -127,10 +131,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
         nodeChanges.putAll(resetErrorChanges);
         viewModelManager.updateAttribute(attribute, nodeChanges);
         handleNodeChanges(UPDATED, attribute, nodeChanges);
+
+        this.updating = false;
         return attribute;
     }
 
     public UiAttribute addAttribute() {
+        this.updating = true;
         UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
         NodeAddedResult<UiAttribute> result = collectModelManager.addAttribute(attributeCollection);
         UiAttribute attribute = result.nodeAdded;
@@ -141,10 +148,12 @@ public class CollectModelBackedSurveyService implements SurveyService {
         attribute.updateStatusOfParents();
         viewModelManager.addAttribute(attribute, result.nodeChanges);
         updateAttribute(attribute);
+        this.updating = false;
         return attribute;
     }
 
     public void deletedAttribute(int attributeId) {
+        this.updating = true;
         UiNode node = selectedNode().getUiRecord().lookupNode(attributeId);
         if (!(node instanceof UiAttribute))
             throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
@@ -152,9 +161,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeAttribute(attribute);
         viewModelManager.removeNode(attribute, nodeChanges);
         handleNodeChanges(DELETED, attribute, nodeChanges);
+        this.updating = false;
     }
 
     public void deleteEntities(Collection<Integer> entityIds) {
+        this.updating = true;
         // TODO: Do in transaction
         for (Integer entityId : entityIds) {
             UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
@@ -165,6 +176,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
             viewModelManager.removeNode(entity, nodeChanges);
             handleNodeChanges(DELETED, entity, nodeChanges);
         }
+        this.updating = false;
     }
 
     public void deleteRecords(Collection<Integer> recordIds) {
@@ -184,9 +196,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public void updateAttribute(UiAttribute attributeToUpdate) {
+        this.updating = true;
         Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
         viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
         handleNodeChanges(UPDATED, attributeToUpdate, nodeChanges);
+        this.updating = false;
     }
 
     private void handleNodeChanges(NodeEvent event, UiNode updatedNode, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -242,6 +256,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public CollectSurvey getSelectedSurvey() {
         return collectModelManager.getSelectedSurvey();
+    }
+
+    public boolean isUpdating() {
+        return updating;
     }
 
     private void notifyNodeSelected(UiNode previous, UiNode selected) {

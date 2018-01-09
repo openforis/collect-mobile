@@ -13,4 +13,7 @@
 
     <color name="light_entity_list_header_border_color">#000000</color>
     <color name="dark_entity_list_header_border_color">#FFFFFF</color>
+
+    <color name="light_node_list_selected_background_color">@color/selection_background_color</color>
+    <color name="dark_node_list_selected_background_color">#FFFFFF</color>
 </resources>

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -14,8 +13,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
+
+import com.android.internal.util.Predicate;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
@@ -23,8 +24,9 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
-import org.openforis.collect.android.gui.pager.NodePagerFragment;
-import org.openforis.collect.android.gui.util.Alerts;
+import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
+import org.openforis.collect.android.gui.pager.SimpleNodePagerFragment;
+import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
@@ -103,7 +105,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
         nodePagerFragment().getView().post(new Runnable() {
             public void run() {
-                NodePagerFragment nodePagerFragment = nodePagerFragment();
+                SimpleNodePagerFragment nodePagerFragment = nodePagerFragment();
                 if (nodePagerFragment != null)
                     nodePagerFragment.onNodeSelected(previous, selected);
             }
@@ -136,7 +138,30 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void smartNextAttribute(MenuItem item) {
-        UiNode next = new SmartNext(selectedNode).next();
+        final UiNode next = new SmartNext(selectedNode).next();
+        boolean nextNodeDependsOnCurrentNode = next.getDefinition().relevanceSources.contains(selectedNode.getDefinition());
+
+        if (nextNodeDependsOnCurrentNode) {
+            Dialogs.showProgressDialogWhile(this, new Predicate<Void>() {
+                public boolean apply(Void aVoid) {
+                    return surveyService.isUpdating();
+                }
+            }, new Runnable() {
+                public void run() {
+                    if (next.isRelevant()) {
+                        performNavigateToNextAttribute(next);
+                    } else {
+                        UiNode anotherNext = new SmartNext(selectedNode).next();
+                        performNavigateToNextAttribute(anotherNext);
+                    }
+                }
+            });
+        } else {
+            performNavigateToNextAttribute(next);
+        }
+    }
+
+    private void performNavigateToNextAttribute(UiNode next) {
         if (next.getParent() == selectedNode.getParent()) {
             ViewPager pager = nodePager();
             pager.setCurrentItem(next.getIndexInParent());
@@ -296,8 +321,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private NodePagerFragment nodePagerFragment() {
-        return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
+    private SimpleNodePagerFragment nodePagerFragment() {
+        return (SimpleNodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -341,7 +366,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
         if (remoteSyncEnabled) {
-            Alerts.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
+            Dialogs.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
                 public void run() {
                     Keyboard.hide(SurveyNodeActivity.this);
                     SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
@@ -369,7 +394,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_single_pane_node);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
+                    .replace(R.id.attribute_detail_pager_container, new SimpleNodePagerFragment(), "nodePagerFragment")
                     .commit();
         }
     }
@@ -378,29 +403,33 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_two_pane_node);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
+                    .replace(R.id.attribute_detail_pager_container, new SimpleNodePagerFragment(), "nodePagerFragment")
                     .commit();
         }
 
         public void onNodeSelected(UiNode previous, UiNode selected) {
-            final ListFragment nodeListFragment = listFragment();
+            SimpleNodeListFragment nodeListFragment = listFragment();
             if (nodeListFragment != null)
                 setNodeSelected(selected, nodeListFragment);
         }
 
         void onNodeChanged(UiNode attribute) {
-            listFragment().getListView().invalidateViews();
+            listFragment().notifyNodeChanged(attribute);
+            //listFragment().getListView().invalidateViews();
         }
 
-        private ListFragment listFragment() {
-            return (ListFragment) getSupportFragmentManager().findFragmentById(R.id.attribute_list);
+        private SimpleNodeListFragment listFragment() {
+            return (SimpleNodeListFragment) getSupportFragmentManager().findFragmentById(R.id.attribute_list);
         }
 
-        private void setNodeSelected(UiNode selected, ListFragment nodeListFragment) {
+        private void setNodeSelected(UiNode selected, SimpleNodeListFragment nodeListFragment) {
+            nodeListFragment.selectNode(selected);
+            /*
             ListView listView = nodeListFragment.getListView();
             int i = selected.getIndexInParent();
             listView.setItemChecked(i, true);
             listView.smoothScrollToPosition(i);
+            */
         }
     }
 }

@@ -3,7 +3,6 @@ package org.openforis.collect.android.viewmodel;
 /**
  * @author S. Ricci
  */
-
 public class UiEntityCollectionDefinition extends Definition {
 
     private final boolean enumerated;

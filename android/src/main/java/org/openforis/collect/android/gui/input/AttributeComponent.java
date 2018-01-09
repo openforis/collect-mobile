@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,7 +15,6 @@ import org.openforis.collect.android.viewmodel.UiValidationError;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -27,7 +27,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     private static final int SAVE_NODE_DELAY = 1000;
 
     protected final T attribute;
-    private Timer saveNodeTimer;
+    private Handler delayedSaveNodeHandler;
 
     protected AttributeComponent(T attribute,
                                  SurveyService surveyService,
@@ -104,24 +104,26 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     public final void saveNode() {
+        stopDelayedSaveNodeHandler();
         resetValidationErrors(); // TODO: Will reset even if attribute hasn't changed
         if (updateAttributeIfChanged())
             notifyAboutAttributeChange();
     }
 
-    protected void startSaveNodeTimer() {
-        stopSaveNodeTimer();
+    protected void delaySaveNode() {
+        stopDelayedSaveNodeHandler();
 
-        saveNodeTimer = Tasks.runDelayedOnUiThread(context, new Runnable() {
+        delayedSaveNodeHandler = Tasks.runDelayedOnUiThread(context, new Runnable() {
             public void run() {
                 saveNode();
             }
         }, SAVE_NODE_DELAY);
     }
 
-    protected void stopSaveNodeTimer() {
-        if (saveNodeTimer != null) {
-            saveNodeTimer.cancel();
+    protected void stopDelayedSaveNodeHandler() {
+        if (delayedSaveNodeHandler != null) {
+            delayedSaveNodeHandler.removeCallbacksAndMessages(null);
+            delayedSaveNodeHandler = null;
         }
     }
 

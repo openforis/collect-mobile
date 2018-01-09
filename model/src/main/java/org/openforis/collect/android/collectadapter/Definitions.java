@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
@@ -62,6 +63,21 @@ public class Definitions {
 
         for (EntityDefinition entityDefinition : rootEntityDefinitions)
             addNodeDefinition(entityDefinition);
+
+        for (Map.Entry<String, Definition> defEntry : definitionById.entrySet()) {
+            Definition def = defEntry.getValue();
+            if (NumberUtils.isNumber(def.id)) {
+                int nodeDefId = Integer.parseInt(def.id);
+                NodeDefinition nodeDef = collectSurvey.getSchema().getDefinitionById(nodeDefId);
+                Set<NodeDefinition> relevanceSourceNodeDefs = nodeDef.getSurvey().getRelevantSourceNodeDefinitions(nodeDef);
+                for (NodeDefinition sourceNodeDef : relevanceSourceNodeDefs) {
+                    Definition sourceDef = toDefinition(sourceNodeDef);
+                    if (sourceDef != null) {
+                        def.relevanceSources.add(sourceDef);
+                    }
+                }
+            }
+        }
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {

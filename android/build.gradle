@@ -30,6 +30,7 @@ dependencies {
     compile 'com.inqbarna:tablefixheaders:1.0.0@aar'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile(project(':model')) {
         exclude group: 'org.springframework'
         exclude group: 'commons-collections'

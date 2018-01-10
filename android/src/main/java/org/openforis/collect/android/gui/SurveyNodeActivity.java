@@ -25,7 +25,7 @@ import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
-import org.openforis.collect.android.gui.pager.SimpleNodePagerFragment;
+import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
@@ -105,7 +105,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
         nodePagerFragment().getView().post(new Runnable() {
             public void run() {
-                SimpleNodePagerFragment nodePagerFragment = nodePagerFragment();
+                NodePagerFragment nodePagerFragment = nodePagerFragment();
                 if (nodePagerFragment != null)
                     nodePagerFragment.onNodeSelected(previous, selected);
             }
@@ -186,7 +186,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private boolean hasNextSibling() {
         ViewPager pager = nodePager();
         int attributeIndex = pager.getCurrentItem();
-        return attributeIndex < selectedNode.getSiblingCount() - 1;
+        return attributeIndex < pager.getChildCount() - 1;
     }
 
     private boolean hasPrevSibling() {
@@ -321,8 +321,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private SimpleNodePagerFragment nodePagerFragment() {
-        return (SimpleNodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
+    private NodePagerFragment nodePagerFragment() {
+        return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -394,7 +394,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_single_pane_node);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new SimpleNodePagerFragment(), "nodePagerFragment")
+                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
                     .commit();
         }
     }
@@ -403,7 +403,7 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         public void onCreate(Bundle savedState) {
             setContentView(R.layout.activity_two_pane_node);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new SimpleNodePagerFragment(), "nodePagerFragment")
+                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
                     .commit();
         }
 

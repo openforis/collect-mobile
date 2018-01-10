@@ -1,5 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.commons.collection.CollectionUtils;
+import org.openforis.commons.collection.Predicate;
+
 import java.util.*;
 
 /**
@@ -143,6 +146,22 @@ public abstract class UiNode {
         if (parent == null)
             throw new IllegalStateException("Parent is null");
         return parent.getChildAt(index);
+    }
+
+    public UiNode getRelevantSiblingAt(int index) {
+        List<UiNode> relevantSiblings = getRelevantSiblings();
+        return relevantSiblings.get(index);
+    }
+
+    public List<UiNode> getRelevantSiblings() {
+        List<UiNode> siblings = parent.getChildren();
+        List<UiNode> relevantSiblings = new ArrayList<UiNode>(siblings);
+        CollectionUtils.filter(relevantSiblings, new Predicate<UiNode>() {
+            public boolean evaluate(UiNode item) {
+                return item.isRelevant();
+            }
+        });
+        return relevantSiblings;
     }
 
     public UiRecord getUiRecord() {  // TODO: Can this be removed or moved? This doesn't make sense for UiRecordCollection and UiSurvey

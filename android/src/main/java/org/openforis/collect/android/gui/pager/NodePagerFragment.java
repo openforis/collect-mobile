@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.pager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +20,6 @@ import org.openforis.collect.android.viewmodel.UiNodeChange;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Daniel Wiell
@@ -30,6 +28,7 @@ public class NodePagerFragment extends Fragment {
     private Map<UiNode, NodeDetailFragment> fragmentsByNode;
     private SurveyService surveyService;
     private NodePathDetailsFragment nodePathDetailsFragment;
+    private NodePagerAdapter pagerAdapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,13 +95,15 @@ public class NodePagerFragment extends Fragment {
         for (NodeDetailFragment fragment : fragmentsByNode.values())
             fragment.onNodeChange(node, nodeChanges);
 
+        pagerAdapter.notifyDataSetChanged();
+
         if (nodePathDetailsFragment != null)
             nodePathDetailsFragment.nodeChanged(node);
     }
 
     private void setupPager(View view) {
         final ViewPager pager = (ViewPager) view.findViewById(R.id.attributePager);
-        PagerAdapter pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode, pagerNode());
+        this.pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode, pagerNode());
         pager.setAdapter(pagerAdapter);
 
         final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
@@ -110,8 +111,9 @@ public class NodePagerFragment extends Fragment {
         int selectedIndex = selectedNode().getIndexInParent();
         ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             public void onPageSelected(int position) {
-                UiNode selectedNode = surveyService.selectedNode().getSiblingAt(position);
-                surveyService.selectNode(selectedNode.getId());
+                UiNode selectedNode = surveyService.selectedNode();
+                UiNode nextNode = selectedNode.getRelevantSiblingAt(position);
+                surveyService.selectNode(nextNode.getId());
             }
 
             public void onPageScrollStateChanged(int state) {

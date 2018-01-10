@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SmartNext {
@@ -46,7 +47,12 @@ public class SmartNext {
     }
 
     private boolean hasNextSibling(UiNode node) {
-        return node.getParent() != null && node.getIndexInParent() < node.getSiblingCount() - 1;
+        if (node.getParent() == null) {
+            return false;
+        } else {
+            List<UiNode> relevantSiblings = node.getRelevantSiblings();
+            return relevantSiblings.indexOf(node) < relevantSiblings.size() - 1;
+        }
     }
 
     private UiNode firstChild(UiNode node) {

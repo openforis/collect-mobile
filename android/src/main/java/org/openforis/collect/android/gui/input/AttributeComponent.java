@@ -24,7 +24,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 public abstract class AttributeComponent<T extends UiAttribute> extends SavableComponent {
 
-    private static final int SAVE_NODE_DELAY = 1000;
+    private static final int SAVE_NODE_DELAY = 500;
 
     protected final T attribute;
     private Handler delayedSaveNodeHandler;

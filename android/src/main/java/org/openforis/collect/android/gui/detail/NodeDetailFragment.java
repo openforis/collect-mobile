@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.detail;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -180,27 +182,35 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     private void setupPrevNodeMenuItem(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_prev_attribute);
-        boolean isFirst = node.getIndexInParent() == 0;
-        if (menuItem != null && isFirst)
-            disable(menuItem);
+        if (menuItem != null) {
+            List<UiNode> relevantSiblings = node.getRelevantSiblings();
+            boolean isFirst = relevantSiblings.indexOf(node) == 0;
+            disable(menuItem, isFirst);
+        }
     }
 
     private void setupNextNodeMenuItem(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_next_attribute);
-        boolean isLast = node.getIndexInParent() == node.getSiblingCount() - 1;
-        if (menuItem != null && isLast)
-            disable(menuItem);
+        if (menuItem != null) {
+            List<UiNode> relevantSiblings = node.getRelevantSiblings();
+            boolean isLast = relevantSiblings.indexOf(node) == relevantSiblings.size() - 1;
+            disable(menuItem, isLast);
+        }
     }
 
     private void setupSmartNextMenuItem(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_smart_next_attribute);
-        if (!new SmartNext(node).hasNext())
-            disable(menuItem);
+        boolean hasNext = new SmartNext(node).hasNext();
+        disable(menuItem, !hasNext);
     }
 
-    private void disable(MenuItem menuItem) {
-        menuItem.setEnabled(false);
-        menuItem.getIcon().mutate().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+    private void disable(MenuItem menuItem, boolean disabled) {
+        menuItem.setEnabled(!disabled);
+        if (disabled) {
+            menuItem.getIcon().setAlpha(130);
+        } else {
+            menuItem.getIcon().setAlpha(255);
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -214,6 +224,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         toggleNotRelevantOverlayVisibility();
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.invalidateOptionsMenu();
+        }
     }
 
     public void onDeselect() {

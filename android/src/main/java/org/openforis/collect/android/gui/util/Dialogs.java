@@ -25,7 +25,7 @@ public class Dialogs {
     }
 
     public static void alert(Context context, String title, String message, final Runnable runOnPositiveButtonClick) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context)
             .setCancelable(false)
             .setTitle(title)
             .setMessage(message)
@@ -35,8 +35,8 @@ public class Dialogs {
                         runOnPositiveButtonClick.run();
                     }
                 }
-            });
-        AlertDialog dialog = builder.create();
+            })
+            .create();
         dialog.show();
     }
 
@@ -61,7 +61,7 @@ public class Dialogs {
     public static void confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
                                int positiveButtonLabelKey, int negativeButtonLabelKey) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context)
             .setCancelable(true)
             .setTitle(context.getResources().getString(titleKey))
             .setMessage(context.getResources().getString(messageKey))
@@ -76,8 +76,8 @@ public class Dialogs {
                         runOnNegativeButtonClick.run();
                     }
                 }
-            });
-        AlertDialog dialog = builder.create();
+            })
+            .create();
         dialog.show();
     }
 

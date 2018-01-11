@@ -69,7 +69,7 @@ public class Definitions {
             if (NumberUtils.isNumber(def.id)) {
                 int nodeDefId = Integer.parseInt(def.id);
                 NodeDefinition nodeDef = collectSurvey.getSchema().getDefinitionById(nodeDefId);
-                Set<NodeDefinition> relevanceSourceNodeDefs = nodeDef.getSurvey().getRelevantSourceNodeDefinitions(nodeDef);
+                Set<NodeDefinition> relevanceSourceNodeDefs = nodeDef.getSurvey().getRelevanceSourceNodeDefinitions(nodeDef);
                 for (NodeDefinition sourceNodeDef : relevanceSourceNodeDefs) {
                     Definition sourceDef = toDefinition(sourceNodeDef);
                     if (sourceDef != null) {

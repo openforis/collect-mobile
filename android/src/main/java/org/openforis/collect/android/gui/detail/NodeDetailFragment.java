@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.detail;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.internal.view.SupportMenuItem;
@@ -42,7 +41,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#333333");
 
     protected enum ViewState {
-        DEFAULT, LOADING, NOT_RELEVANT;
+        DEFAULT, LOADING, NOT_RELEVANT
     }
 
     private boolean selected;

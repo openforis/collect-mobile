@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -14,16 +15,19 @@ import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
+import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiRecord;
+import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +57,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
             } else {
                 addButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        startAddNodeTask();
+                        if (isMaxItemsLimitReached()) {
+                            String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
+                            Dialogs.alert(getActivity(), getString(R.string.warning), message);
+                        } else {
+                            startAddNodeTask();
+                        }
                     }
                 });
             }
@@ -95,22 +104,32 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void startAddNodeTask() {
-        Tasks.runSlowTask(getActivity(), new Runnable() {
-             public void run() {
-                UiInternalNode node = addNode();
-                nodeNavigator().navigateTo(node.getFirstChild().getId());
+        Runnable task = new Runnable() {
+            public void run() {
+                final UiInternalNode newNode = addNode();
+                nodeNavigator().navigateTo(newNode.getFirstChild().getId());
             }
-        });
+        };
+        if (node() instanceof UiRecordCollection) {
+            Tasks.runSlowTask(getActivity(), task);
+        } else {
+            task.run();
+        }
     }
 
     private void startEditNodeTask(final int position) {
-        Tasks.runSlowTask(getActivity(), new Runnable() {
+        final T nodeCollection = node();
+        Runnable task = new Runnable() {
             public void run() {
-                T nodeCollection = node();
                 UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
                 nodeNavigator().navigateTo(selectedNode.getFirstChild().getId());
             }
-        });
+        };
+        if (nodeCollection instanceof UiRecordCollection) {
+            Tasks.runSlowTask(getActivity(), task);
+        } else {
+            task.run();
+        }
     }
 
     private void setupNodeCollection(View rootView) {
@@ -173,7 +192,6 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 keyAttributes = ((UiEntity) firstChild).getKeyAttributes();
             }
             for (UiAttribute key : keyAttributes) {
-                TextView keyTextView = new TextView(getContext());
                 String heading = key.getDefinition().label;
                 headings.add(heading);
             }
@@ -189,6 +207,23 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         UiNode selectedNode = surveyService().selectedNode();
         Definition nodeDef = selectedNode.getDefinition();
         return nodeDef instanceof UiEntityCollectionDefinition && ((UiEntityCollectionDefinition) nodeDef).isEnumerated();
+    }
+
+    private boolean isMaxItemsLimitReached() {
+        UiNode selectedNode = surveyService().selectedNode();
+        Integer maxLimit = getMaxLimit();
+        return maxLimit != null && selectedNode instanceof UiEntityCollection &&
+                ((UiEntityCollection) selectedNode).getChildCount() >= maxLimit;
+    }
+
+    private Integer getMaxLimit() {
+        UiNode selectedNode = surveyService().selectedNode();
+        if (selectedNode.getDefinition() instanceof UiEntityCollectionDefinition) {
+            UiEntityCollectionDefinition def = (UiEntityCollectionDefinition) selectedNode.getDefinition();
+            return def.getFixedMaxCount();
+        } else {
+            return null;
+        }
     }
 
     private class AdapterUpdaterTask extends TimerTask {

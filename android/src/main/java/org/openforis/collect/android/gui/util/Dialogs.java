@@ -12,6 +12,34 @@ import org.openforis.collect.R;
 
 public class Dialogs {
 
+    public static void alert(Context context, int titleKey, int messageKey) {
+        alert(context, titleKey, messageKey, null);
+    }
+
+    public static void alert(Context context, int titleKey, int messageKey, final Runnable runOnPositiveButtonClick) {
+        alert(context, context.getResources().getString(titleKey), context.getResources().getString(messageKey), runOnPositiveButtonClick);
+    }
+
+    public static void alert(Context context, String title, String message) {
+        alert(context, title, message, null);
+    }
+
+    public static void alert(Context context, String title, String message, final Runnable runOnPositiveButtonClick) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (runOnPositiveButtonClick != null) {
+                        runOnPositiveButtonClick.run();
+                    }
+                }
+            });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public static void confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick) {
         confirm(context, titleKey, messageKey, runOnPositiveButtonClick, null);
@@ -33,22 +61,22 @@ public class Dialogs {
     public static void confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
                                int positiveButtonLabelKey, int negativeButtonLabelKey) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(true);
-        builder.setTitle(context.getResources().getString(titleKey));
-        builder.setMessage(context.getResources().getString(messageKey));
-        builder.setPositiveButton(positiveButtonLabelKey, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                runOnPositiveButtonClick.run();
-            }
-        });
-        builder.setNegativeButton(negativeButtonLabelKey, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (runOnNegativeButtonClick != null) {
-                    runOnNegativeButtonClick.run();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+            .setCancelable(true)
+            .setTitle(context.getResources().getString(titleKey))
+            .setMessage(context.getResources().getString(messageKey))
+            .setPositiveButton(positiveButtonLabelKey, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    runOnPositiveButtonClick.run();
                 }
-            }
-        });
+            })
+            .setNegativeButton(negativeButtonLabelKey, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (runOnNegativeButtonClick != null) {
+                        runOnNegativeButtonClick.run();
+                    }
+                }
+            });
         AlertDialog dialog = builder.create();
         dialog.show();
     }

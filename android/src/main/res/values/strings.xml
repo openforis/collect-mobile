@@ -3,6 +3,8 @@
 
     <string name="yes">Yes</string>
 
+    <string name="warning">Warning</string>
+
     <string name="app_name">Collect</string>
     <string name="survey_list">Surveys</string>
     <string name="settings">Settings</string>
@@ -139,4 +141,6 @@
     <string name="navigate_to_record_list_confirm_message">Go back to record list?</string>
     <string name="navigate_to_record_list_with_errors_confirm_title">Errors in the record</string>
     <string name="navigate_to_record_list_with_errors_confirm_message">There are errors in the record.\n\nGo back to record list anyway?</string>
+
+    <string name="entity_collection_cannot_add_more_items">Cannot add more than %d items</string>
 </resources>

@@ -148,7 +148,8 @@ public class Definitions {
                     AttributeConverter.getUiAttributeType(nodeDefinition),
                     (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
         } else {
-            boolean enumerated = ((EntityDefinition) nodeDefinition).isEnumerable();
+            EntityDefinition entityDef = (EntityDefinition) nodeDefinition;
+            boolean enumerated = entityDef.isEnumerable() && !entityDef.isRoot();
             return new UiEntityCollectionDefinition(
                     collectionNodeDefinitionId(nodeDefinition),
                     nodeDefinition.getName(),
@@ -157,7 +158,9 @@ public class Definitions {
                     nodeDescription(nodeDefinition),
                     nodePrompt(nodeDefinition),
                     isRequired(nodeDefinition),
-                    enumerated);
+                    enumerated,
+                    entityDef.getFixedMinCount(),
+                    entityDef.getFixedMaxCount());
         }
     }
 

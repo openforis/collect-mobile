@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Handler;
 
+
 import org.openforis.collect.R;
 
 public class Tasks {
@@ -65,6 +66,7 @@ public class Tasks {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 }

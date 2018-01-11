@@ -12,23 +12,37 @@ import org.openforis.collect.R;
 
 public class Dialogs {
 
-    public static void confirm(Context context, int title, int message,
+    public static void confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick) {
-        confirm(context, title, message, runOnPositiveButtonClick, null);
+        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, null);
     }
 
     public static void confirm(Context context, int titleKey, int messageKey,
-                               final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick) {
+                               final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick) {
+        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
+                R.string.confirm_label);
+    }
+
+    public static void confirm(Context context, int titleKey, int messageKey,
+                               final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick,
+                               int positiveButtonLabelKey) {
+        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
+                positiveButtonLabelKey, android.R.string.cancel);
+    }
+
+    public static void confirm(Context context, int titleKey, int messageKey,
+                               final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
+                               int positiveButtonLabelKey, int negativeButtonLabelKey) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(context.getResources().getString(titleKey));
         builder.setMessage(context.getResources().getString(messageKey));
-        builder.setPositiveButton(R.string.confirm_label, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(positiveButtonLabelKey, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 runOnPositiveButtonClick.run();
             }
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(negativeButtonLabelKey, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (runOnNegativeButtonClick != null) {
                     runOnNegativeButtonClick.run();

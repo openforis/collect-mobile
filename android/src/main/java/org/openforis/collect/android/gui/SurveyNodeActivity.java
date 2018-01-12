@@ -1,9 +1,9 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -14,9 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.android.internal.util.Predicate;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
@@ -32,6 +31,7 @@ import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -139,28 +139,37 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     }
 
     public void smartNextAttribute(MenuItem item) {
-        final UiNode next = new SmartNext(selectedNode).next();
-        boolean nextNodeDependsOnCurrentNode = next.getDefinition().relevanceSources.contains(selectedNode.getDefinition());
+        List<UiNode> fullNextNodePath = new SmartNext(selectedNode).fullNextNodePath();
+        boolean relevanceDependentNodeInPath = false;
+        for (UiNode n : fullNextNodePath) {
+            if (n.getDefinition().relevanceSources.contains(selectedNode.getDefinition())) {
+                relevanceDependentNodeInPath = true;
+                break;
+            }
+        }
+        if (relevanceDependentNodeInPath) {
+            //TODO trigger node save properly
+            nodePagerFragment().prepareNodeDeselect(selectedNode);
 
-        if (nextNodeDependsOnCurrentNode) {
-            //wait until survey service completes its computation
-            Dialogs.showProgressDialogWhile(this, new Predicate<Void>() {
-                public boolean apply(Void aVoid) {
-                    return surveyService.isUpdating();
-                }
-            }, new Runnable() {
+            UiNode anotherNext = new SmartNext(selectedNode).next();
+            performNavigateToSmartNextAttribute(anotherNext);
+
+            //wait for record update process to complete
+            /*
+            final ProgressDialog progressDialog = Dialogs.showProgressDialog(this);
+
+            surveyService.registerRecordUpdateCallback(new Runnable() {
                 public void run() {
-                    if (next.isRelevant()) {
-                        //next node is still relevant after computation, navigate to it
-                        performNavigateToSmartNextAttribute(next);
-                    } else {
-                        //calculate a new next node to navigate to
-                        UiNode anotherNext = new SmartNext(selectedNode).next();
-                        performNavigateToSmartNextAttribute(anotherNext);
-                    }
+                    progressDialog.dismiss();
+                    //calculate a new next node to navigate to
+                    UiNode anotherNext = new SmartNext(selectedNode).next();
+                    performNavigateToSmartNextAttribute(anotherNext);
                 }
             });
+            nodePagerFragment().prepareNodeDeselect(selectedNode);
+            */
         } else {
+            UiNode next = fullNextNodePath.get(fullNextNodePath.size() - 1);
             performNavigateToSmartNextAttribute(next);
         }
     }
@@ -183,7 +192,9 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         } else {
             if (next.getParent() == selectedNode.getParent()) {
                 ViewPager pager = nodePager();
-                pager.setCurrentItem(next.getIndexInParent());
+                List<UiNode> relevantSiblings = next.getRelevantSiblings();
+                int nextIndex = relevantSiblings.indexOf(next);
+                pager.setCurrentItem(nextIndex);
             } else
                 navigateTo(next);
         }
@@ -442,12 +453,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
 
         private void setNodeSelected(UiNode selected, SimpleNodeListFragment nodeListFragment) {
             nodeListFragment.selectNode(selected);
-            /*
-            ListView listView = nodeListFragment.getListView();
-            int i = selected.getIndexInParent();
-            listView.setItemChecked(i, true);
-            listView.smoothScrollToPosition(i);
-            */
+            List<UiNode> relevantSiblings = selected.getRelevantSiblings();
+            nodeListFragment.scrollToPosition(relevantSiblings.indexOf(selected));
         }
     }
 }

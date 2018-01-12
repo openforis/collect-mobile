@@ -39,6 +39,10 @@ public class NodePagerAdapter extends FragmentPagerAdapter {
         return getRelevantChildren().size();
     }
 
+    public int getItemPosition(Object object) {
+        return POSITION_NONE; //forces view update when relevance changes
+    }
+
     private UiNode getRelevantChildAt(int position) {
         List<UiNode> relevantChildren = getRelevantChildren();
         return relevantChildren.get(position);

@@ -54,4 +54,6 @@ public interface SurveyService {
     CollectSurvey getSelectedSurvey();
 
     boolean isUpdating();
+
+    void registerRecordUpdateCallback(Runnable runnable);
 }

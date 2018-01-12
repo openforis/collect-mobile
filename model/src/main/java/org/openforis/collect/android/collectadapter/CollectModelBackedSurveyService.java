@@ -27,6 +27,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private SurveyListener listener;
     private boolean updating;
+    private List<Runnable> recordUpdateCallbacks = new ArrayList<Runnable>();
 
     public CollectModelBackedSurveyService(ViewModelManager viewModelManager, CollectModelManager collectModelManager, File workingDir) {
         this.viewModelManager = viewModelManager;
@@ -100,83 +101,96 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public UiEntity addEntity() {
         this.updating = true;
-        UiEntityCollection entityCollection = viewModelManager.selectedEntityCollection();
-        NodeAddedResult<UiEntity> result = collectModelManager.addEntity(entityCollection);
-        viewModelManager.addEntity(result.nodeAdded, result.nodeChanges);
-        updateCalculatedAttributes(result.nodeChanges);
-        this.updating = false;
-        return result.nodeAdded;
+        try {
+            UiEntityCollection entityCollection = viewModelManager.selectedEntityCollection();
+            NodeAddedResult<UiEntity> result = collectModelManager.addEntity(entityCollection);
+            viewModelManager.addEntity(result.nodeAdded, result.nodeChanges);
+            updateCalculatedAttributes(result.nodeChanges);
+            return result.nodeAdded;
+        } finally {
+            onRecordUpdateComplete();
+        }
     }
 
     public UiCodeAttribute addCodeAttribute(UiCode code, String qualifier) {  // TODO: Ugly. Do in transaction, redundant updating...
         this.updating = true;
-        // Remove validation errors from the unspecified attribute
+        try {
+            // Remove validation errors from the unspecified attribute
+            UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
+            attribute.setCode(code);
+            attribute.setQualifier(qualifier);
 
-        UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
-        attribute.setCode(code);
-        attribute.setQualifier(qualifier);
+            UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
+            Map<UiNode, UiNodeChange> resetErrorChanges = new HashMap<UiNode, UiNodeChange>();
+            for (UiNode sibling : attributeCollection.getChildren())
+                if (attribute != sibling
+                        && ((UiCodeAttribute) sibling).getCode() == null
+                        && sibling.getStatus() != UiNode.Status.OK) {
+                    sibling.setValidationErrors(Collections.<UiValidationError>emptySet());
+                    sibling.setStatus(UiNode.Status.OK);
+                    resetErrorChanges.put(sibling, UiNodeChange.statusChanged());
+                }
 
-        UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
-        Map<UiNode, UiNodeChange> resetErrorChanges = new HashMap<UiNode, UiNodeChange>();
-        for (UiNode sibling : attributeCollection.getChildren())
-            if (attribute != sibling
-                    && ((UiCodeAttribute) sibling).getCode() == null
-                    && sibling.getStatus() != UiNode.Status.OK) {
-                sibling.setValidationErrors(Collections.<UiValidationError>emptySet());
-                sibling.setStatus(UiNode.Status.OK);
-                resetErrorChanges.put(sibling, UiNodeChange.statusChanged());
-            }
-
-        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attribute);
-        nodeChanges.putAll(resetErrorChanges);
-        viewModelManager.updateAttribute(attribute, nodeChanges);
-        handleNodeChanges(UPDATED, attribute, nodeChanges);
-
-        this.updating = false;
-        return attribute;
+            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attribute);
+            nodeChanges.putAll(resetErrorChanges);
+            viewModelManager.updateAttribute(attribute, nodeChanges);
+            handleNodeChanges(UPDATED, attribute, nodeChanges);
+            return attribute;
+        } finally {
+            onRecordUpdateComplete();
+        }
     }
 
     public UiAttribute addAttribute() {
         this.updating = true;
-        UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
-        NodeAddedResult<UiAttribute> result = collectModelManager.addAttribute(attributeCollection);
-        UiAttribute attribute = result.nodeAdded;
+        try {
+            UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
+            NodeAddedResult<UiAttribute> result = collectModelManager.addAttribute(attributeCollection);
+            UiAttribute attribute = result.nodeAdded;
 
-        // TODO: Move this section to viewModelManager
-        attributeCollection.addChild(attribute);
-        attribute.init(); // TODO: Don't want to care about these life-cycle methods here!!!
-        attribute.updateStatusOfParents();
-        viewModelManager.addAttribute(attribute, result.nodeChanges);
-        updateAttribute(attribute);
-        this.updating = false;
-        return attribute;
+            // TODO: Move this section to viewModelManager
+            attributeCollection.addChild(attribute);
+            attribute.init(); // TODO: Don't want to care about these life-cycle methods here!!!
+            attribute.updateStatusOfParents();
+            viewModelManager.addAttribute(attribute, result.nodeChanges);
+            updateAttribute(attribute);
+            return attribute;
+        } finally {
+            onRecordUpdateComplete();
+        }
     }
 
     public void deletedAttribute(int attributeId) {
         this.updating = true;
-        UiNode node = selectedNode().getUiRecord().lookupNode(attributeId);
-        if (!(node instanceof UiAttribute))
-            throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
-        UiAttribute attribute = (UiAttribute) node;
-        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeAttribute(attribute);
-        viewModelManager.removeNode(attribute, nodeChanges);
-        handleNodeChanges(DELETED, attribute, nodeChanges);
-        this.updating = false;
+        try {
+            UiNode node = selectedNode().getUiRecord().lookupNode(attributeId);
+            if (!(node instanceof UiAttribute))
+                throw new IllegalArgumentException("Node with id " + attributeId + " is not an attribute: " + node);
+            UiAttribute attribute = (UiAttribute) node;
+            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeAttribute(attribute);
+            viewModelManager.removeNode(attribute, nodeChanges);
+            handleNodeChanges(DELETED, attribute, nodeChanges);
+        } finally {
+            onRecordUpdateComplete();
+        }
     }
 
     public void deleteEntities(Collection<Integer> entityIds) {
         this.updating = true;
-        // TODO: Do in transaction
-        for (Integer entityId : entityIds) {
-            UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
-            if (!(node instanceof UiEntity))
-                throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
-            UiEntity entity = (UiEntity) node;
-            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeEntity(entity);
-            viewModelManager.removeNode(entity, nodeChanges);
-            handleNodeChanges(DELETED, entity, nodeChanges);
+        try {
+            // TODO: Do in transaction
+            for (Integer entityId : entityIds) {
+                UiNode node = selectedNode().getUiRecord().lookupNode(entityId);
+                if (!(node instanceof UiEntity))
+                    throw new IllegalArgumentException("Node with id " + entityId + " is not an entity: " + node);
+                UiEntity entity = (UiEntity) node;
+                Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.removeEntity(entity);
+                viewModelManager.removeNode(entity, nodeChanges);
+                handleNodeChanges(DELETED, entity, nodeChanges);
+            }
+        } finally {
+            onRecordUpdateComplete();
         }
-        this.updating = false;
     }
 
     public void deleteRecords(Collection<Integer> recordIds) {
@@ -197,10 +211,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public void updateAttribute(UiAttribute attributeToUpdate) {
         this.updating = true;
-        Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
-        viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
-        handleNodeChanges(UPDATED, attributeToUpdate, nodeChanges);
-        this.updating = false;
+        try {
+            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.updateAttribute(attributeToUpdate);
+            viewModelManager.updateAttribute(attributeToUpdate, nodeChanges);
+            handleNodeChanges(UPDATED, attributeToUpdate, nodeChanges);
+        } finally {
+            onRecordUpdateComplete();
+        }
     }
 
     private void handleNodeChanges(NodeEvent event, UiNode updatedNode, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -262,8 +279,26 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return updating;
     }
 
+    public void registerRecordUpdateCallback(Runnable runnable) {
+        recordUpdateCallbacks.add(runnable);
+    }
+
     private void notifyNodeSelected(UiNode previous, UiNode selected) {
         if (listener != null)
             listener.onNodeSelected(previous, selected);
+    }
+
+    private void onRecordUpdateComplete() {
+        updating = false;
+        Iterator<Runnable> callbacksIt = recordUpdateCallbacks.iterator();
+        while (callbacksIt.hasNext()) {
+            Runnable callback = callbacksIt.next();
+            try {
+                callback.run();
+            } catch(Exception e) {
+                //do nothing
+            }
+            callbacksIt.remove();
+        }
     }
 }

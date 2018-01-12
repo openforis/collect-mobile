@@ -19,6 +19,7 @@ import org.openforis.collect.android.viewmodel.UiNodeChange;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,9 +107,6 @@ public class NodePagerFragment extends Fragment {
         this.pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode, pagerNode());
         pager.setAdapter(pagerAdapter);
 
-        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
-        indicator.setViewPager(pager);
-        int selectedIndex = selectedNode().getIndexInParent();
         ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             public void onPageSelected(int position) {
                 UiNode selectedNode = surveyService.selectedNode();
@@ -125,8 +123,13 @@ public class NodePagerFragment extends Fragment {
                 }
             }
         };
+        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
+        indicator.setViewPager(pager);
+        List<UiNode> relevantSiblings = selectedNode().getRelevantSiblings();
+        int selectedIndex = relevantSiblings.indexOf(selectedNode());
         indicator.setOnPageChangeListener(pageChangeListener);
         indicator.setCurrentItem(selectedIndex);
+
         fragmentsByNode.get(selectedNode()).onSelect();
     }
 
@@ -140,5 +143,10 @@ public class NodePagerFragment extends Fragment {
 
     private NodeDetailFragment selectedFragment() {
         return fragmentsByNode.get(surveyService.selectedNode());
+    }
+
+    public void prepareNodeDeselect(UiNode node) {
+        NodeDetailFragment fragment = fragmentsByNode.get(node);
+        fragment.onDeselect();
     }
 }

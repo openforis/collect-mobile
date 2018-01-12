@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ public class SimpleNodeListFragment extends Fragment {
 
     private View view;
     private SimpleNodeListAdapter listAdapter;
+    private RecyclerView nodeListView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,8 +35,8 @@ public class SimpleNodeListFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_node_list, container, false);
+        this.nodeListView = (RecyclerView) view.findViewById(R.id.node_list_view);
 
-        final RecyclerView nodeListView = (RecyclerView) view.findViewById(R.id.node_list_view);
         nodeListView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
@@ -78,24 +80,36 @@ public class SimpleNodeListFragment extends Fragment {
 
     public void notifyNodeChanged(UiNode node) {
         RecyclerView nodeListView = (RecyclerView) view.findViewById(R.id.node_list_view);
-        List<UiNode> siblings = node.getParent().getChildren();
-        List<UiNode> shownNodes = listAdapter.getNodes();
-        int currentPosition = 0;
-        for(UiNode sibling : siblings) {
-            if (sibling.isRelevant()) {
-                if (shownNodes.contains(sibling)) {
-                    listAdapter.notifyNodeChanged(node);
+        if (listAdapter.parentNode == node.getParent()) {
+            List<UiNode> siblings = node.getParent().getChildren();
+            List<UiNode> shownNodes = listAdapter.getNodes();
+            int currentPosition = 0;
+            for (UiNode sibling : siblings) {
+                if (sibling.isRelevant()) {
+                    if (shownNodes.contains(sibling)) {
+                        listAdapter.notifyNodeChanged(node);
+                    } else {
+                        listAdapter.insert(currentPosition, sibling);
+                    }
+                    currentPosition++;
                 } else {
-                    listAdapter.insert(currentPosition, sibling);
+                    listAdapter.remove(sibling);
                 }
-                currentPosition++;
-            } else {
-                listAdapter.remove(sibling);
             }
         }
     }
 
     public void selectNode(UiNode node) {
         listAdapter.selectNode(node);
+    }
+
+    public void scrollToPosition(int position) {
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getActivity()) {
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        smoothScroller.setTargetPosition(position);
+        nodeListView.getLayoutManager().startSmoothScroll(smoothScroller);
     }
 }

@@ -81,12 +81,17 @@ public class Dialogs {
         dialog.show();
     }
 
-    public static void showProgressDialogWhile(final Activity context, final Predicate<Void> predicate, final Runnable callback) {
+    public static ProgressDialog showProgressDialog(Context context) {
+        ProgressDialog dialog = ProgressDialog.show(context, context.getString(R.string.processing),
+                context.getString(R.string.please_wait), true);
+        return dialog;
+    }
+
+    public static void showProgressDialogWhile(final Context context, final Predicate<Void> predicate, final Runnable callback) {
         if (predicate.apply(null)) {
             callback.run();
         } else {
-            final ProgressDialog progressDialog = ProgressDialog.show(context, context.getString(R.string.processing),
-                    context.getString(R.string.please_wait), true);
+            final ProgressDialog progressDialog = showProgressDialog(context);
             Runnable predicateVerifier = new Runnable() {
                 public void run() {
                     if (predicate.apply(null)) {

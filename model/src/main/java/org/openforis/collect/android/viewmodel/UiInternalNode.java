@@ -1,5 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.commons.collection.CollectionUtils;
+import org.openforis.commons.collection.Predicate;
+
 import java.util.*;
 
 /**
@@ -36,6 +39,16 @@ public class UiInternalNode extends UiNode {
 
     public List<UiNode> getChildren() {
         return Collections.unmodifiableList(children);
+    }
+
+    public List<UiNode> getRelevantChildren() {
+        List<UiNode> result = new ArrayList(children);
+        CollectionUtils.filter(result, new Predicate<UiNode>() {
+            public boolean evaluate(UiNode node) {
+                return node.isRelevant();
+            }
+        });
+        return result;
     }
 
     public void addChild(UiNode node) {

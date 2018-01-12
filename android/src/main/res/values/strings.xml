@@ -137,7 +137,7 @@
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>
 
     <string name="go_to_record_list">Go to record list</string>
-    <string name="navigate_to_record_list_confirm_title">Data entry complete</string>
+    <string name="navigate_to_record_list_confirm_title">Record completed</string>
     <string name="navigate_to_record_list_confirm_message">Go back to record list?</string>
     <string name="navigate_to_record_list_with_errors_confirm_title">Errors in the record</string>
     <string name="navigate_to_record_list_with_errors_confirm_message">There are errors in the record.\n\nGo back to record list anyway?</string>

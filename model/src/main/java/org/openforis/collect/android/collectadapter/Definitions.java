@@ -113,7 +113,8 @@ public class Definitions {
                         isDestinationPointSpecified(coordinateDefn),
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
-                boolean enumerator = nodeDefinition.getParentEntityDefinition().isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
+                EntityDefinition parentDef = nodeDefinition.getParentEntityDefinition();
+                boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);

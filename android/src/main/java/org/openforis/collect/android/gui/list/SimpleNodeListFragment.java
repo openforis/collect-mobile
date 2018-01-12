@@ -79,7 +79,6 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     public void notifyNodeChanged(UiNode node) {
-        RecyclerView nodeListView = (RecyclerView) view.findViewById(R.id.node_list_view);
         if (listAdapter.parentNode == node.getParent()) {
             List<UiNode> siblings = node.getParent().getChildren();
             List<UiNode> shownNodes = listAdapter.getNodes();

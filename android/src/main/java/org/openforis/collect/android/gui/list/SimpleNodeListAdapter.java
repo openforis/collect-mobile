@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.list;
 
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,12 +11,12 @@ import android.widget.TextView;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
-import org.openforis.commons.collection.CollectionUtils;
-import org.openforis.commons.collection.Predicate;
+import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     public SimpleNodeListAdapter(FragmentActivity activity, UiInternalNode parentNode) {
         this.activity = activity;
         this.parentNode = parentNode;
-        this.nodes = getRelevantChildren(parentNode);
+        this.nodes = parentNode.getRelevantChildren();
         this.attrs = new Attrs(this.activity);
     }
 
@@ -47,15 +48,18 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     public NodeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Inflate the layout, initialize the View Holder
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(LAYOUT_RESOURCE_ID, parent, false);
-        NodeHolder holder = new NodeHolder(v);
-        return holder;
+        return new NodeHolder(v);
     }
 
     public void onBindViewHolder(NodeHolder holder, final int position) {
         UiNode node = nodes.get(position);
 
         if (holder.text != null) {
-            holder.text.setText(getText(node));;
+            holder.text.setText(getText(node));
+            if (isNodeCollection(node))
+                holder.text.setTypeface(Typeface.DEFAULT_BOLD);
+            else
+                holder.text.setTypeface(Typeface.DEFAULT);
         }
         holder.status.setImageResource(iconResource(node));
 
@@ -68,17 +72,8 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     }
 
     public String getText(UiNode node) {
-        return node.getLabel();
-    }
-
-    private List<UiNode> getRelevantChildren(UiInternalNode parentNode) {
-        List<UiNode> relevantChildren = new ArrayList<UiNode>(parentNode.getChildren());
-        CollectionUtils.filter(relevantChildren, new Predicate<UiNode>() {
-            public boolean evaluate(UiNode node) {
-                return node.isRelevant();
-            }
-        });
-        return relevantChildren;
+        String prefix = isNodeCollection(node) ? "+ ": "";
+        return prefix + node.getLabel();
     }
 
     public List<UiNode> getNodes() {
@@ -112,6 +107,17 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         }
     }
 
+    public void notifyNodeChanged(UiNode node) {
+        int index = nodes.indexOf(node);
+        if (index >= 0) {
+            notifyItemChanged(index);
+        }
+    }
+
+    private boolean isNodeCollection(UiNode node) {
+        return node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity;
+    }
+
     private int iconResource(UiNode node) {
         if (!node.isRelevant())
             return 0;
@@ -122,13 +128,6 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
                 return R.drawable.red_circle;
             default:
                 return 0;
-        }
-    }
-
-    public void notifyNodeChanged(UiNode node) {
-        int index = nodes.indexOf(node);
-        if (index >= 0) {
-            notifyItemChanged(index);
         }
     }
 

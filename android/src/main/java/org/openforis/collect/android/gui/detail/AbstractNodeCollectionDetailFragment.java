@@ -40,8 +40,8 @@ import java.util.TimerTask;
  */
 public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalNode> extends NodeDetailFragment<T> {
 
-    private EntityListAdapter adapter;
     private static final Typeface HEADER_TYPEFACE = Typeface.DEFAULT_BOLD;
+    private EntityListAdapter adapter;
     private Timer adapterUpdateTimer;
 
     public View createView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {

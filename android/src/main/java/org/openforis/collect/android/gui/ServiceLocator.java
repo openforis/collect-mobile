@@ -33,7 +33,6 @@ import org.openforis.collect.persistence.jooq.CollectDSLContext;
 import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.collect.service.CollectSpeciesListService;
-import org.openforis.idm.metamodel.SpeciesListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.File;

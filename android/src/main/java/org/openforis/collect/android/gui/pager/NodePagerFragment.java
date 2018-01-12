@@ -96,7 +96,8 @@ public class NodePagerFragment extends Fragment {
         for (NodeDetailFragment fragment : fragmentsByNode.values())
             fragment.onNodeChange(node, nodeChanges);
 
-        pagerAdapter.notifyDataSetChanged();
+        if (! nodeChanges.isEmpty())
+            pagerAdapter.notifyDataSetChanged();
 
         if (nodePathDetailsFragment != null)
             nodePathDetailsFragment.nodeChanged(node);

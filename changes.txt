@@ -1,5 +1,11 @@
 Changes
 -------
+2017-01
+
+    * Dynamically hide not relevant attributes from side bar
+    * Prevent automatically generated list of items from editing
+    * Improved list of items layout
+    * Performance improvements
 
 2017-11-13
 

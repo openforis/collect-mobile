@@ -110,7 +110,7 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (isShown(survey, childDefinition))
+                if (isShown(childDefinition))
                     nodes.add(createUiNode(childDefinition, entity));
             return nodes;
         }

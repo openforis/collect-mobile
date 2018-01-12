@@ -17,6 +17,7 @@ import java.util.*;
  * @author Daniel Wiell
  */
 public class Definitions {
+    private static final String COLLECTION_ID_PREFIX = "collection-";
     private static final String SURVEY_DEFINITION_ID = "survey";
     private final CollectSurvey collectSurvey;
     private Map<String, Definition> definitionById = new HashMap<String, Definition>();
@@ -81,7 +82,7 @@ public class Definitions {
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
-        if (AttributeUtils.isHidden(collectSurvey, nodeDefinition))
+        if (AttributeUtils.isHidden(nodeDefinition))
             return;
         Definition definition = createDefinition(nodeDefinition);
         addDefinition(definition);
@@ -191,6 +192,19 @@ public class Definitions {
         return definitionById(collectionNodeDefinitionId(nodeDefinition));
     }
 
+    public static int extractOriginalDefinitionId(UiAttributeCollectionDefinition def) {
+        return extractOriginalDefinitionId(def.id);
+    }
+
+    public static int extractOriginalDefinitionId(UiEntityCollectionDefinition def) {
+        return extractOriginalDefinitionId(def.id);
+    }
+
+    private static int extractOriginalDefinitionId(String id) {
+        int definitionId = Integer.parseInt(id.substring(COLLECTION_ID_PREFIX.length()));
+        return definitionId;
+    }
+
     public Definition toDefinition(Node node) {
         return toDefinition(node.getDefinition());
     }
@@ -208,7 +222,7 @@ public class Definitions {
     }
 
     private String collectionNodeDefinitionId(NodeDefinition nodeDefinition) {
-        return "collection-" + nodeDefinition.getId();
+        return COLLECTION_ID_PREFIX + nodeDefinition.getId();
     }
 
     private String label(NodeDefinition nodeDefinition) { // TODO: Take language into account

@@ -9,7 +9,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.*;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,9 +46,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private boolean selected;
     private T node;
     private ViewState viewState = ViewState.DEFAULT;
-    private View contentFrame;
-    private View notRelevantOverlay;
-    private View loadingOverlay;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,20 +64,11 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
 
-        FrameLayout frameLayout = new FrameLayout(getActivity());
-        frameLayout.addView(contentFrame = rootView);
-        frameLayout.addView(notRelevantOverlay = createNotRelevantOverlay());
-        frameLayout.addView(loadingOverlay = createLoadingOverlay());
-        return frameLayout;
+        return rootView;
     }
 
     public void onPause() {
         super.onPause();
-    }
-
-    public void onResume() {
-        super.onResume();
-        onViewStateChange();
     }
 
     private View createNotRelevantOverlay() {
@@ -111,37 +98,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return overlay;
     }
 
-    protected void setViewState(ViewState viewState) {
-        this.viewState = viewState;
-        onViewStateChange();
-    }
-
-    protected void onViewStateChange() {
-        switch(viewState) {
-            case LOADING:
-                showFrame(loadingOverlay);
-                break;
-            case NOT_RELEVANT:
-                showFrame(notRelevantOverlay);
-                break;
-            default:
-                showFrame(contentFrame);
-        }
-    }
-
-    protected void showFrame(View view) {
-        FrameLayout mainLayout = (FrameLayout) getView();
-        if (mainLayout != null) {
-            for (int i = 0; i < mainLayout.getChildCount(); i++) {
-                View child = mainLayout.getChildAt(i);
-                if (child != view) {
-                    Views.hide(child);
-                }
-            }
-            Views.show(view);
-        }
-    }
-
     private void setOrRemoveText(View rootView, int textViewId, String text) {
         TextView textView = (TextView) rootView.findViewById(textViewId);
         if (text == null)
@@ -150,10 +106,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
             textView.setText(text);
     }
 
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        toggleNotRelevantOverlayVisibility();
-        onViewStateChange();
+    @Override
+    public void onResume() {
+        super.onResume();
         if (selected)
             onSelected();
     }
@@ -222,7 +177,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
-        toggleNotRelevantOverlayVisibility();
         Activity activity = getActivity();
         if (activity != null) {
             activity.invalidateOptionsMenu();
@@ -277,13 +231,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (recordId > 0 && !surveyService.isRecordSelected(recordId))
             surveyService.selectRecord(recordId);
         return (T) surveyService.lookupNode(nodeId);
-    }
-
-    private void toggleNotRelevantOverlayVisibility() {
-        if (node != null && notRelevantOverlay != null) {
-            boolean relevant = node.isRelevant();
-            setViewState(relevant ? ViewState.DEFAULT: ViewState.NOT_RELEVANT);
-        }
     }
 
     private void showKeyboard(View view) {

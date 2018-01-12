@@ -102,10 +102,19 @@ public abstract class UiNode {
         UiInternalNode parentNode = getParent();
         if (parentNode == null)
             return Collections.emptyList();
-        UiNode.Status newParentStatus = UiNode.Status.values()[0];
-        for (UiNode child : parentNode.getChildren()) {
-            if (child.isRelevant() && child.getStatus().ordinal() > newParentStatus.ordinal())
-                newParentStatus = child.getStatus();
+
+        UiNode.Status defaultStatus = UiNode.Status.values()[0];
+        UiNode.Status newParentStatus = parentNode.getValidationErrors() == null || parentNode.getValidationErrors().isEmpty() ?
+                defaultStatus: Status.VALIDATION_ERROR;
+        if (! parentNode.getChildren().isEmpty()) {
+            UiNode.Status descendantStatus = defaultStatus;
+            for (UiNode child : parentNode.getChildren()) {
+                if (child.isRelevant() && child.getStatus().ordinal() > descendantStatus.ordinal())
+                    descendantStatus = child.getStatus();
+            }
+            if (descendantStatus.ordinal() > newParentStatus.ordinal()) {
+                newParentStatus = descendantStatus;
+            }
         }
         if (newParentStatus != parentNode.getStatus()) {
             return parentNode.updateStatusOfNodeAndParents(newParentStatus);

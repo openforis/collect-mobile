@@ -9,13 +9,14 @@ import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.validation.SpecifiedValidator;
 import org.openforis.collect.model.validation.ValidationMessageBuilder;
+import org.openforis.idm.metamodel.AttributeDefinition;
+import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
 
 import java.util.*;
 
@@ -84,7 +85,7 @@ class NodeChangeSetParser {
         UiInternalNode parentUiNode = (UiInternalNode) uiRecord.lookupNode(parentNode.getId());
         for (Map.Entry<String, Boolean> relevanceEntry : entityChange.getChildrenRelevance().entrySet()) {
             NodeDefinition nodeDefinition = parentNode.getDefinition().getChildDefinition(relevanceEntry.getKey());
-            if (isHidden(parentNode.getSurvey(), nodeDefinition))
+            if (isHidden(nodeDefinition))
                 continue;
 
             boolean relevant = relevanceEntry.getValue();
@@ -123,15 +124,33 @@ class NodeChangeSetParser {
     }
 
     private void parseRequiredValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
-        for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
+        Entity entity = entityChange.getNode();
+        UiEntity parentNode = (UiEntity) uiRecord.lookupNode(entity.getId());
+        for (Map.Entry<String, ValidationResultFlag> validationEntry : entityChange.getChildrenMinCountValidation().entrySet()) {
+            String childDefName = validationEntry.getKey();
+            NodeDefinition childDef = entity.getDefinition().getChildDefinition(childDefName);
+            ValidationResultFlag validationResultFlag = validationEntry.getValue();
+            Collection<UiNode> childrenNodes = parentNode.findAllByName(childDefName);
+
+            for (UiNode childNode : childrenNodes) {
+                if (childDef instanceof AttributeDefinition && !((AttributeDefinition) childDef).isCalculated() && isShown(childDef)
+                        || childNode instanceof UiEntityCollection) {
+                    addRequiredValidationErrorIfAny(childNode, uiNodeChanges, validationResultFlag);
+                }
+            }
+        }
+        /*
+        for (Node<? extends NodeDefinition> childNode : entity.getChildren()) {
             if (isCalculated(childNode) || isHidden(childNode) || childNode.getId() == null)
                 continue;
+
             UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
             if (uiChildNode != null) {
                 ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());
                 addRequiredValidationErrorIfAny(uiChildNode, uiNodeChanges, validationResultFlag);
             }
         }
+        */
     }
 
     private void addRequiredValidationErrorIfAny(UiNode uiNode, Map<UiNode, UiNodeChange> nodeChanges, ValidationResultFlag validationResultFlag) {

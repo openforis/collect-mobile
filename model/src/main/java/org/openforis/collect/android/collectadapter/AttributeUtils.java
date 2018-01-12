@@ -17,16 +17,16 @@ public class AttributeUtils {
         return nodeDefinition instanceof Calculable && ((Calculable) nodeDefinition).isCalculated();
     }
 
-    public static boolean isHidden(Survey survey, NodeDefinition definition) {
-        return ((CollectSurvey) survey).getUIOptions().isHidden(definition);
+    public static boolean isHidden(NodeDefinition definition) {
+        return ((CollectSurvey) definition.getSurvey()).getUIOptions().isHidden(definition);
     }
 
-    public static boolean isShown(Survey survey, NodeDefinition definition) {
-        return !isHidden(survey, definition);
+    public static boolean isShown(NodeDefinition definition) {
+        return !isHidden(definition);
     }
 
     public static boolean isHidden(Node node) {
-        return isHidden(node.getSurvey(), node.getDefinition());
+        return isHidden(node.getDefinition());
     }
 
     public static boolean isShown(Node node) {

@@ -1,8 +1,11 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultConfiguration;
+
+import org.jooq.Configuration;
+import org.jooq.ConnectionProvider;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DialectAwareJooqConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.SurveyService;
@@ -63,12 +66,9 @@ public class ServiceLocator {
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
 
-            DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
-            defaultConfiguration.setSettings(defaultConfiguration.settings().withRenderSchema(false));
-            defaultConfiguration
-                    .set(modelDatabase.dataSource())
-                    .set(SQLDialect.SQLITE);
-            jooqDsl = new CollectDSLContext(defaultConfiguration);
+            ConnectionProvider connectionProvider = new DataSourceConnectionProvider(modelDatabase.dataSource());
+            Configuration jooqConf = new DialectAwareJooqConfiguration(connectionProvider);
+            jooqDsl = new CollectDSLContext(jooqConf);
 
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);

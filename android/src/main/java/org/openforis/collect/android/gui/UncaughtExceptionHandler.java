@@ -14,6 +14,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.jooq.tools.StringUtils;
@@ -29,14 +30,16 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 
     private Context context;
 
-    public UncaughtExceptionHandler(Context context) {
+    UncaughtExceptionHandler(Context context) {
         this.context = context;
     }
 
-    public void uncaughtException(Thread thread, Throwable exception) {
+    public void uncaughtException(Thread thread, Throwable e) {
+        Log.e(UncaughtExceptionHandler.class.getName(), e.getMessage(), e);
+
         writeLogToFile();
 
-        String logs = extractLogInformation(exception);
+        String logs = extractLogInformation(e);
         reportLogs(logs);
 
         android.os.Process.killProcess(android.os.Process.myPid());
@@ -49,47 +52,66 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         StringWriter stackTrace = new StringWriter();
         exception.printStackTrace(new PrintWriter(stackTrace));
 
-        sb.append("************ CAUSE OF ERROR ************" + LINE_SEPARATOR);
+        sb.append("************ CAUSE OF ERROR ************");
+        sb.append(LINE_SEPARATOR);
         sb.append(stackTrace.toString());
 
-        sb.append( "************ Timestamp ************" + System.currentTimeMillis());
+        sb.append( "************ Timestamp ************");
+        sb.append(System.currentTimeMillis());
 
-        sb.append(LINE_SEPARATOR+ "************ DEVICE INFORMATION ***********" + LINE_SEPARATOR);
-        sb.append("Brand: "+Build.BRAND);
         sb.append(LINE_SEPARATOR);
-        sb.append("Device: "+Build.DEVICE);
+        sb.append("************ DEVICE INFORMATION ***********");
         sb.append(LINE_SEPARATOR);
-        sb.append("Model: "+Build.MODEL);
+        sb.append("Brand: ");
+        sb.append(Build.BRAND);
         sb.append(LINE_SEPARATOR);
-        sb.append("Id: "+Build.ID);
+        sb.append("Device: ");
+        sb.append(Build.DEVICE);
         sb.append(LINE_SEPARATOR);
-        sb.append("Product: "+Build.PRODUCT);
+        sb.append("Model: ");
+        sb.append(Build.MODEL);
+        sb.append(LINE_SEPARATOR);
+        sb.append("Id: ");
+        sb.append(Build.ID);
+        sb.append(LINE_SEPARATOR);
+        sb.append("Product: ");
+        sb.append(Build.PRODUCT);
         sb.append(LINE_SEPARATOR);
 
-        sb.append(LINE_SEPARATOR + "************ BUILD INFO ************" + LINE_SEPARATOR);
-        sb.append("SDK: "+Build.VERSION.SDK_INT);
         sb.append(LINE_SEPARATOR);
-        sb.append("Release: "+Build.VERSION.RELEASE);
+        sb.append("************ BUILD INFO ************");
         sb.append(LINE_SEPARATOR);
-        sb.append("Incremental: "+Build.VERSION.INCREMENTAL);
+        sb.append("SDK: ");
+        sb.append(Build.VERSION.SDK_INT);
+        sb.append(LINE_SEPARATOR);
+        sb.append("Release: ");
+        sb.append(Build.VERSION.RELEASE);
+        sb.append(LINE_SEPARATOR);
+        sb.append("Incremental: ");
+        sb.append(Build.VERSION.INCREMENTAL);
         sb.append(LINE_SEPARATOR);
 
         PackageManager manager = context.getPackageManager();
-        PackageInfo info = null;
+        PackageInfo info;
         try {
             info = manager.getPackageInfo (context.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e2) {
+            info = null;
         }
-        sb.append(LINE_SEPARATOR + "************ APP INFO ************" + LINE_SEPARATOR);
-        sb.append("Version name: "+ (info == null ? "-" : info.versionName));
         sb.append(LINE_SEPARATOR);
-        sb.append("Version code: "+ (info == null ? "-" : info.versionCode));
+        sb.append("************ APP INFO ************")
+        ;sb.append(LINE_SEPARATOR);
+        sb.append("Version name: ");
+        sb.append(info == null ? "-" : info.versionName);
+        sb.append(LINE_SEPARATOR);
+        sb.append("Version code: ");
+        sb.append(info == null ? "-" : info.versionCode);
         sb.append(LINE_SEPARATOR);
 
         return sb.toString();
     }
 
-    private File writeLogToFile() {
+    private void writeLogToFile() {
         //File must be saved to external storage or it wont be readable by the email app.
         LOG_DIRECTORY.mkdirs();
 
@@ -105,10 +127,11 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             makeDiscoverable(logFile, context);
 
             PackageManager manager = context.getPackageManager();
-            PackageInfo info = null;
+            PackageInfo info;
             try {
                 info = manager.getPackageInfo (context.getPackageName(), 0);
             } catch (PackageManager.NameNotFoundException e2) {
+                info = null;
             }
             String model = Build.MODEL;
             if (!model.startsWith(Build.MANUFACTURER))
@@ -126,9 +149,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         } catch (IOException e) {
             IOUtils.closeQuietly(logFileWriter);
             // You might want to write a failure message to the log here.
-            return null;
         }
-        return logFile;
     }
 
     private void writeLogcat(FileWriter writer) throws IOException {
@@ -151,12 +172,11 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     }
 
     private void reportLogs(String errorLogs) {
-        //Logger.LogError("custom error",errorLogs.toString());
         //Open Send log activity
         Intent intent = new Intent();
         intent.setAction(".android.gui.SendLogActivity");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
-        intent.putExtra("logs", errorLogs.toString());
+        intent.putExtra("logs", errorLogs);
         context.startActivity(intent);
     }
 }

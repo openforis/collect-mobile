@@ -195,6 +195,9 @@ public abstract class UiNode {
         this.parent = parent;
     }
 
+    public boolean hasValidationErrors() {
+        return ! (validationErrors == null || validationErrors.isEmpty());
+    }
 
     public Set<UiValidationError> getValidationErrors() {
         return validationErrors;

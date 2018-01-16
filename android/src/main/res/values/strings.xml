@@ -143,4 +143,11 @@
     <string name="navigate_to_record_list_with_errors_confirm_message">There are errors in the record.\n\nGo back to record list anyway?</string>
 
     <string name="entity_collection_cannot_add_more_items">Cannot add more than %d items</string>
+
+    <string name="report_error_dialog_title">Collect Mobile - Error!</string>
+    <string name="report_error_dialog_confirm_button">Report</string>
+    <string name="report_error_dialog_message">Seems like Open Foris Collect Mobile faced an unexpected error.
+        \n\nWould you like to report it to the developer team?
+        \n\n(Private information won\'t be shared)</string>
+
 </resources>

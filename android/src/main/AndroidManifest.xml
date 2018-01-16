@@ -5,6 +5,8 @@
 
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="22"/>
 
+    <!-- needed for Android 4.0.x and eariler -->
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -18,7 +20,7 @@
     <uses-feature android:name="android.hardware.location.network" android:required="false"/>
 
     <application
-            android:name="android.support.multidex.MultiDexApplication"
+            android:name=".android.gui.CollectMobileApplication"
             android:allowBackup="true"
             android:largeHeap="true"
             android:icon="@drawable/ic_launcher"
@@ -59,6 +61,17 @@
                 <category android:name="android.intent.category.OPENABLE"/>
 
                 <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".android.gui.SendLogActivity"
+            android:theme="@android:style/Theme.Dialog"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name=".android.gui.SendLogActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 

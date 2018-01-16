@@ -12,19 +12,19 @@ import org.openforis.collect.R;
 
 public class Dialogs {
 
-    public static void alert(Context context, int titleKey, int messageKey) {
-        alert(context, titleKey, messageKey, null);
+    public static AlertDialog alert(Context context, int titleKey, int messageKey) {
+        return alert(context, titleKey, messageKey, null);
     }
 
-    public static void alert(Context context, int titleKey, int messageKey, final Runnable runOnPositiveButtonClick) {
-        alert(context, context.getResources().getString(titleKey), context.getResources().getString(messageKey), runOnPositiveButtonClick);
+    public static AlertDialog alert(Context context, int titleKey, int messageKey, final Runnable runOnPositiveButtonClick) {
+        return alert(context, context.getResources().getString(titleKey), context.getResources().getString(messageKey), runOnPositiveButtonClick);
     }
 
-    public static void alert(Context context, String title, String message) {
-        alert(context, title, message, null);
+    public static AlertDialog alert(Context context, String title, String message) {
+        return alert(context, title, message, null);
     }
 
-    public static void alert(Context context, String title, String message, final Runnable runOnPositiveButtonClick) {
+    public static AlertDialog alert(Context context, String title, String message, final Runnable runOnPositiveButtonClick) {
         AlertDialog dialog = new AlertDialog.Builder(context)
             .setCancelable(false)
             .setTitle(title)
@@ -38,27 +38,28 @@ public class Dialogs {
             })
             .create();
         dialog.show();
+        return dialog;
     }
 
-    public static void confirm(Context context, int titleKey, int messageKey,
+    public static AlertDialog confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick) {
-        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, null);
+        return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, null);
     }
 
-    public static void confirm(Context context, int titleKey, int messageKey,
+    public static AlertDialog confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick) {
-        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
+        return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
                 R.string.confirm_label);
     }
 
-    public static void confirm(Context context, int titleKey, int messageKey,
+    public static AlertDialog confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick,
                                int positiveButtonLabelKey) {
-        confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
+        return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
                 positiveButtonLabelKey, android.R.string.cancel);
     }
 
-    public static void confirm(Context context, int titleKey, int messageKey,
+    public static AlertDialog confirm(Context context, int titleKey, int messageKey,
                                final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
                                int positiveButtonLabelKey, int negativeButtonLabelKey) {
         AlertDialog dialog = new AlertDialog.Builder(context)
@@ -79,6 +80,7 @@ public class Dialogs {
             })
             .create();
         dialog.show();
+        return dialog;
     }
 
     public static ProgressDialog showProgressDialog(Context context) {

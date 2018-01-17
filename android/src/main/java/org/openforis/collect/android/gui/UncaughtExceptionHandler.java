@@ -19,6 +19,8 @@ import android.util.Log;
 import org.apache.commons.io.IOUtils;
 import org.jooq.tools.StringUtils;
 import static org.openforis.collect.android.gui.util.AndroidFiles.*;
+
+import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.utils.Dates;
 
 
@@ -126,13 +128,6 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 
             makeDiscoverable(logFile, context);
 
-            PackageManager manager = context.getPackageManager();
-            PackageInfo info;
-            try {
-                info = manager.getPackageInfo (context.getPackageName(), 0);
-            } catch (PackageManager.NameNotFoundException e2) {
-                info = null;
-            }
             String model = Build.MODEL;
             if (!model.startsWith(Build.MANUFACTURER))
                 model = Build.MANUFACTURER + " " + model;
@@ -141,7 +136,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             logFileWriter = new FileWriter(logFile);
             logFileWriter.write ("Android version: " +  Build.VERSION.SDK_INT + "\n");
             logFileWriter.write ("Device: " + model + "\n");
-            logFileWriter.write ("App version: " + (info == null ? "(null)" : info.versionCode) + "\n");
+            logFileWriter.write ("App version: " + App.versionName(context) + "\n");
 
             writeLogcat(logFileWriter);
 

@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Keyboard;
 
@@ -32,17 +34,35 @@ import java.io.InputStream;
 import java.util.Set;
 
 public class SurveyListActivity extends ActionBarActivity {
+
     private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
+    private static final String OPEN_IMPORT_DIALOG = "openImportDialog";
+
     private boolean showOverwriteDialog;
     private String surveyPath;
 
+    public static void showImportDialog(Activity context) {
+        Bundle extras = new Bundle();
+        extras.putBoolean(OPEN_IMPORT_DIALOG, true);
+        Activities.startActivity(context, SurveyListActivity.class, extras);
+    }
+
+    public static void startActivity(Activity context) {
+        Activities.startActivity(context, SurveyListActivity.class);
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final SurveyListAdapter adapter = new SurveyListAdapter(this);
-        if (adapter.isEmpty())
+        showSurveyList(adapter);
+
+        Boolean openImportDialog = Activities.getExtra(this, OPEN_IMPORT_DIALOG);
+        if (Boolean.TRUE.equals(openImportDialog)) {
+            showImportDialog();
+        } else if (adapter.isEmpty()) {
             showDemoSurveyDialog();
-        else
-            showSurveyList(adapter);
+        }
     }
 
     private void showSurveyList(final SurveyListAdapter adapter) {
@@ -97,11 +117,9 @@ public class SurveyListActivity extends ActionBarActivity {
         return true;
     }
 
-
     public void surveyImportRequested(MenuItem item) {
         showImportDialog();
     }
-
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -149,7 +167,6 @@ public class SurveyListActivity extends ActionBarActivity {
                 target, "Select survey to import");
         startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
     }
-
 
     protected void importSurvey(String surveyPath, boolean overwrite) {
         String message = getResources().getString(R.string.toast_import_survey);

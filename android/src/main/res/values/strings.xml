@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- home screen -->
+    <string name="main_title">Open Foris Collect Mobile</string>
+    <string name="version_label">Version:</string>
+    <string name="go_to_data_entry">Go to Data Entry</string>
+    <string name="survey_label">Select a survey:</string>
+    <string name="empty_survey_list">Empty survey list</string>
+    <string name="empty_survey_list_detailed_message">Import the demo survey\nor a survey generated with\nOpen Foris Collect Survey Designer</string>
+    <string name="import_new_survey_list_item">--- Import New Survey ---</string>
+    <string name="import_new_survey">Import New Survey</string>
+    <string name="import_demo_survey">Import Demo Survey</string>
+
     <string name="yes">Yes</string>
 
     <string name="warning">Warning</string>

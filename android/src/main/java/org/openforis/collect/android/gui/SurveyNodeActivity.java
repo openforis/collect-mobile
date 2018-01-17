@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -53,27 +52,15 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
     private boolean twoPane;
 
     public void onCreate(Bundle savedState) {
-        try {
-            if (ServiceLocator.init(this)) {
-                ThemeInitializer.init(this);
-                super.onCreate(savedState);
+        super.onCreate(savedState);
 
-                surveyService = ServiceLocator.surveyService();
-                selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
-                support = createLayoutSupport();
-                setTitle(selectedNode.getUiSurvey().getLabel());
-                enableUpNavigationIfNeeded(selectedNode);
-                surveyService.setListener(this);
-                support.onCreate(savedState);
-            } else {
-                super.onCreate(savedState); // TODO: Try to more this to beginning of method
-                navigateToSurveyList();
-            }
-        } catch (WorkingDirNotWritable ignore) {
-            super.onCreate(savedState);
-            DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
-            newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
-        }
+        surveyService = ServiceLocator.surveyService();
+        selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+        support = createLayoutSupport();
+        setTitle(selectedNode.getUiSurvey().getLabel());
+        enableUpNavigationIfNeeded(selectedNode);
+        surveyService.setListener(this);
+        support.onCreate(savedState);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

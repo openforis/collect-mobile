@@ -25,4 +25,11 @@
     <attr name="openIcon" format="reference"/>
     <attr name="removeIcon" format="reference"/>
     <attr name="viewAsListIcon" format="reference"/>
+
+    <attr name="moreIcon" format="reference" />
+    <attr name="backupIcon" format="reference" />
+    <attr name="exportIcon" format="reference" />
+    <attr name="submitToCollectIcon" format="reference" />
+    <attr name="surveyListIcon" format="reference" />
+    <attr name="settingsIcon" format="reference" />
 </resources>

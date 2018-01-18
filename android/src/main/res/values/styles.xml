@@ -2,6 +2,8 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat">
+        <item name="android:itemTextAppearance">@style/actionMenuItem</item>
+        <item name="android:listPreferredItemHeightSmall">72dp</item>
         <item name="moreIcon">@drawable/ic_more_vert_white_24dp</item>
         <item name="backupIcon">@drawable/ic_settings_backup_restore_white_24dp</item>
         <item name="exportIcon">@drawable/ic_file_download_white_24dp</item>
@@ -34,6 +36,8 @@
     </style>
 
     <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="android:itemTextAppearance">@style/actionMenuItem</item>
+        <item name="android:listPreferredItemHeightSmall">72dp</item>
         <item name="moreIcon">@drawable/ic_more_vert_black_24dp</item>
         <item name="backupIcon">@drawable/ic_settings_backup_restore_black_24dp</item>
         <item name="exportIcon">@drawable/ic_file_download_black_24dp</item>
@@ -63,6 +67,10 @@
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>
         <item name="entityListHeaderBorderColor">@color/light_entity_list_header_border_color</item>
         <item name="nodeListSelectedBackgroundColor">@color/light_node_list_selected_background_color</item>
+    </style>
+
+    <style name="actionMenuItem">
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="AutoCompleteTextViewLight" parent="@android:style/Widget.AutoCompleteTextView">

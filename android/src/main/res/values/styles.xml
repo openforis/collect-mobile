@@ -28,6 +28,7 @@
         <item name="tableIcon">@drawable/ic_action_table</item>
         <item name="cameraIcon">@drawable/ic_action_camera</item>
         <item name="openIcon">@drawable/ic_action_collection</item>
+        <item name="closeIcon">@drawable/ic_close_white_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
@@ -60,6 +61,7 @@
         <item name="tableIcon">@drawable/ic_action_table_light</item>
         <item name="cameraIcon">@drawable/ic_action_camera_light</item>
         <item name="openIcon">@drawable/ic_action_collection_light</item>
+        <item name="closeIcon">@drawable/ic_close_black_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove_light</item>
         <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>

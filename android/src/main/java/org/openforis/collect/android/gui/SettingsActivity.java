@@ -15,6 +15,7 @@ import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 
 import java.io.File;
@@ -69,7 +70,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         workingDirPreference.setSummary(workingDir);
         directoryChooserDialog.dismiss();
         ServiceLocator.reset(this);
-        SurveyNodeActivity.restartActivity(this);
+        Activities.start(this, MainActivity.class);
         this.finish();
     }
 

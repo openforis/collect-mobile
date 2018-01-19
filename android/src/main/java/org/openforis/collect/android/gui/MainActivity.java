@@ -27,14 +27,11 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedState) {
+        super.onCreate(savedState);
         try {
             ServiceLocator.init(this);
 
-            super.onCreate(savedState);
-
             surveyAdapter = new SurveySpinnerAdapter(this);
-
-            final MainActivity context = this;
 
             setContentView(R.layout.activity_main);
 
@@ -51,7 +48,7 @@ public class MainActivity extends BaseActivity {
                 ((Button) findViewById(R.id.importDemoSurvey)).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         //empty survey list, show survey list activity
-                        SurveyListActivity.startActivity(context);
+                        SurveyListActivity.startActivity(MainActivity.this);
                     }
                 });
 
@@ -75,7 +72,6 @@ public class MainActivity extends BaseActivity {
                 });
             }
         } catch (WorkingDirNotWritable ignore) {
-            super.onCreate(savedState);
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
         }

@@ -42,11 +42,11 @@ public class SurveyListActivity extends BaseActivity {
     public static void showImportDialog(Activity context) {
         Bundle extras = new Bundle();
         extras.putBoolean(OPEN_IMPORT_DIALOG, true);
-        Activities.startActivity(context, SurveyListActivity.class, extras);
+        Activities.start(context, SurveyListActivity.class, extras);
     }
 
     public static void startActivity(Activity context) {
-        Activities.startActivity(context, SurveyListActivity.class);
+        Activities.start(context, SurveyListActivity.class);
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class SurveyListActivity extends BaseActivity {
         final SurveyListAdapter adapter = new SurveyListAdapter(this);
         showSurveyList(adapter);
 
-        Boolean openImportDialog = Activities.getExtra(this, OPEN_IMPORT_DIALOG);
+        Boolean openImportDialog = Activities.getIntentExtra(this, OPEN_IMPORT_DIALOG);
         if (Boolean.TRUE.equals(openImportDialog)) {
             showImportDialog();
         } else if (adapter.isEmpty()) {

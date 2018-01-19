@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
-import org.openforis.collect.android.gui.util.Keyboard;
 
 /**
  * @author Stefano Ricci
@@ -26,7 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void navigateToSurveyList() {
-        Activities.startActivity(this, SurveyListActivity.class);
+        Activities.start(this, SurveyListActivity.class);
     }
 
     protected void navigateToSettings(MenuItem item) {
@@ -34,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void navigateToSettings() {
-        Activities.startActivity(this, SettingsActivity.class);
+        Activities.start(this, SettingsActivity.class);
     }
 
     protected void exit(MenuItem item) {

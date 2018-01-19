@@ -57,9 +57,8 @@ public class ServiceLocator {
     private static CollectDSLContext jooqDsl;
 
     /**
-     *
-     * @param applicationContext
-     * @return false if there is not a selected survey, true otherwise
+     * Initializes the ServiceLocator.
+     * Returns true if there is a selected survey, false otherwise
      */
     public static boolean init(Context applicationContext) throws WorkingDirNotWritable {
         if (surveyService == null) {

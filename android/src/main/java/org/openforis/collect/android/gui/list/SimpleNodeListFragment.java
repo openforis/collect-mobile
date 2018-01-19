@@ -50,7 +50,15 @@ public class SimpleNodeListFragment extends Fragment {
             }
         });
         nodeListView.setAdapter(listAdapter);
-        listAdapter.selectNode(node());
+
+        //scroll list to selected node when layout changes (e.g. keyboard appears/disappears)
+        nodeListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                selectNode(node());
+            }
+        });
+        selectNode(node());
         return rootView;
     }
 
@@ -85,6 +93,9 @@ public class SimpleNodeListFragment extends Fragment {
 
     public void selectNode(UiNode node) {
         listAdapter.selectNode(node);
+        List<UiNode> siblings = node.getRelevantSiblings();
+        int index = siblings.indexOf(node);
+        nodeListView.scrollToPosition(index);
     }
 
     public void scrollToPosition(int position) {

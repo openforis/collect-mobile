@@ -284,8 +284,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private LayoutDependentSupport createLayoutSupport() {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        UiNode selectedNode = surveyService.selectedNode().getParent();
-        boolean showingListOfRecords = selectedNode instanceof UiSurvey;
+        UiNode selectedNodeParent = surveyService.selectedNode().getParent();
+        boolean showingListOfRecords = selectedNodeParent instanceof UiSurvey;
         this.twoPane = dpWidth >= TWO_PANE_MIN_SCREEN_WIDTH && !showingListOfRecords;
         return twoPane ? new TwoPaneSurveySupport() : new SinglePaneSurveySupport();
     }

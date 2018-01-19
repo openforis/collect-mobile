@@ -2,7 +2,7 @@ package org.openforis.collect.android.gui.detail;
 
 import android.view.Menu;
 import android.view.MenuInflater;
-import org.openforis.collect.R;
+
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;

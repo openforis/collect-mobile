@@ -20,8 +20,8 @@ public class EntityCollectionDetailFragment extends AbstractNodeCollectionDetail
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.validationMessagesContainer = view.findViewById(R.id.entity_validation_error_container);
-        this.validationMessagesTextView = (TextView) view.findViewById(R.id.entity_validation_error_messages);
+        this.validationMessagesContainer = view.findViewById(R.id.validation_error_container);
+        this.validationMessagesTextView = (TextView) view.findViewById(R.id.validation_error_messages);
     }
 
     protected UiInternalNode addNode() {

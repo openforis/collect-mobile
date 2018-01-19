@@ -18,19 +18,19 @@
             android:padding="?attr/standardPadding"/>
 
     <LinearLayout
-        android:id="@+id/entity_validation_error_container"
+        android:id="@+id/validation_error_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="?attr/standardPadding"
-        android:visibility="invisible">
+        android:visibility="gone">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:src="@drawable/red_circle"/>
         <TextView
-            android:id="@+id/entity_validation_error_messages"
+            android:id="@+id/validation_error_messages"
             android:textColor="#FF0000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -45,14 +44,14 @@ public class MainActivity extends BaseActivity {
                 Views.hide(findViewById(R.id.notEmptySurveyListFrame));
                 Views.show(findViewById(R.id.emptySurveyListFrame));
 
-                ((Button) findViewById(R.id.importDemoSurvey)).setOnClickListener(new View.OnClickListener() {
+                findViewById(R.id.importDemoSurvey).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         //empty survey list, show survey list activity
                         SurveyListActivity.startActivity(MainActivity.this);
                     }
                 });
 
-                ((Button) findViewById(R.id.importNewSurvey)).setOnClickListener(new View.OnClickListener() {
+                findViewById(R.id.importNewSurvey).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         handleImportNewSurvey();
                     }
@@ -63,7 +62,7 @@ public class MainActivity extends BaseActivity {
 
                 initializeSurveySpinner();
 
-                ((Button) findViewById(R.id.goToDataEntry)).setOnClickListener(new View.OnClickListener() {
+                findViewById(R.id.goToDataEntry).setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         int selectedSurveyPosition = surveySpinner.getSelectedItemPosition();
                         boolean surveySelected = surveyAdapter.isSurveyItem(selectedSurveyPosition);

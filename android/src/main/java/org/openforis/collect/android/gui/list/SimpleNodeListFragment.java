@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,10 +20,10 @@ import java.util.List;
 
 /**
  * @author Daniel Wiell
+ * @author Stefano Ricci
  */
 public class SimpleNodeListFragment extends Fragment {
 
-    private View view;
     private SimpleNodeListAdapter listAdapter;
     private RecyclerView nodeListView;
 
@@ -34,28 +33,8 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.fragment_node_list, container, false);
-        this.nodeListView = (RecyclerView) view.findViewById(R.id.node_list_view);
-
-        nodeListView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                View child = nodeListView.findChildViewUnder(e.getX(), e.getY());
-                if (child != null) {
-                    onAttributeSelected(nodeListView.getChildLayoutPosition(child));
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
+        View rootView = inflater.inflate(R.layout.fragment_node_list, container, false);
+        nodeListView = (RecyclerView) rootView.findViewById(R.id.node_list_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         nodeListView.setLayoutManager(linearLayoutManager);
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
@@ -63,10 +42,14 @@ public class SimpleNodeListFragment extends Fragment {
         itemAnimator.setRemoveDuration(1000);
         nodeListView.setItemAnimator(itemAnimator);
 
-        listAdapter = new SimpleNodeListAdapter(getActivity(), node().getParent());
+        listAdapter = new SimpleNodeListAdapter(getActivity(), node().getParent(), new SimpleNodeListAdapter.OnItemClickListener() {
+            public void onItemClick(int position, UiNode node) {
+                onAttributeSelected(position);
+            }
+        });
         nodeListView.setAdapter(listAdapter);
         listAdapter.selectNode(node());
-        return view;
+        return rootView;
     }
 
     private UiNode node() {

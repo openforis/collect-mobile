@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,12 +30,14 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     private final Attrs attrs;
     private List<UiNode> nodes;
     private UiNode selectedNode;
+    private OnItemClickListener onItemClickListener;
 
-    public SimpleNodeListAdapter(FragmentActivity activity, UiInternalNode parentNode) {
+    public SimpleNodeListAdapter(FragmentActivity activity, UiInternalNode parentNode, OnItemClickListener onItemClickListener) {
         this.activity = activity;
         this.parentNode = parentNode;
         this.nodes = parentNode.getRelevantChildren();
         this.attrs = new Attrs(this.activity);
+        this.onItemClickListener = onItemClickListener;
     }
 
     public UiNode getItem(int position) {
@@ -52,7 +55,7 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     }
 
     public void onBindViewHolder(NodeHolder holder, final int position) {
-        UiNode node = nodes.get(position);
+        final UiNode node = nodes.get(position);
 
         if (holder.text != null) {
             holder.text.setText(getText(node));
@@ -65,6 +68,14 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
 
         boolean selected = selectedNode == node;
         holder.row.setSelected(selected);
+
+        holder.row.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(position, node);
+                }
+            }
+        });
     }
 
     public int getItemCount() {
@@ -143,4 +154,11 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
             this.status = (ImageView) this.row.findViewById(R.id.nodeStatus);
         }
     }
+
+    public interface OnItemClickListener {
+
+        void onItemClick(int position, UiNode node);
+
+    }
+
 }

@@ -1,16 +1,10 @@
 package org.openforis.collect.android.gui.detail;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.internal.view.SupportMenuItem;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.*;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -18,16 +12,11 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
-import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.util.List;
 import java.util.Map;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
 /**
@@ -36,16 +25,9 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
-    //    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#88333333");
-    private static final int IRRELEVANT_OVERLAY_COLOR = Color.parseColor("#333333");
-
-    protected enum ViewState {
-        DEFAULT, LOADING, NOT_RELEVANT
-    }
 
     private boolean selected;
     private T node;
-    private ViewState viewState = ViewState.DEFAULT;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,33 +51,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onPause() {
         super.onPause();
-    }
-
-    private View createNotRelevantOverlay() {
-        LinearLayout overlay = new LinearLayout(getActivity());
-        overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        overlay.setBackgroundColor(IRRELEVANT_OVERLAY_COLOR);
-        AppCompatTextView text = new AppCompatTextView(getContext());
-        text.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
-        text.setGravity(Gravity.CENTER);
-        text.setTextColor(new Attrs(getContext()).color(R.attr.irrelevantTextColor));
-        overlay.setGravity(Gravity.CENTER);
-        // TODO: Use String resource
-        text.setText(node.getLabel() + "\r\n\r\nNot relevant");
-        overlay.addView(text);
-        return overlay;
-    }
-
-    private View createLoadingOverlay() {
-        LinearLayout overlay = new LinearLayout(getActivity());
-        overlay.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        overlay.setGravity(Gravity.CENTER);
-        ProgressBar pb = new ProgressBar(getActivity());
-        pb.setIndeterminate(true);
-        pb.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        overlay.addView(pb);
-        Views.hide(overlay);
-        return overlay;
     }
 
     private void setOrRemoveText(View rootView, int textViewId, String text) {
@@ -125,13 +80,15 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setupSmartNextMenuItem(menu);
         setupPrevNodeMenuItem(menu);
 
-        boolean attributeListDisplayed = getActivity().findViewById(R.id.attribute_list) != null; // TODO: Ugly
-        if (!attributeListDisplayed) {
+        /*
+        SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
+        if (! activity.isTwoPane()) {
             MenuItem attributeListItem = menu.findItem(R.id.action_attribute_list);
             if (attributeListItem != null) {// TODO: This should always be the case?
                 MenuItemCompat.setShowAsAction(attributeListItem, SupportMenuItem.SHOW_AS_ACTION_IF_ROOM);
             }
         }
+        */
     }
 
     private void setupPrevNodeMenuItem(Menu menu) {
@@ -252,7 +209,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private static NodeDetailFragment createInstance(UiNode node) {
-        if (node instanceof UiAttribute && ((UiAttribute) node).isCalculated())
+        if (node instanceof UiAttribute && node.isCalculated())
             return new CalculatedAttributeFragment();
         if (node instanceof UiAttribute || node instanceof UiAttributeCollection)
             return new SavableNodeDetailFragment();

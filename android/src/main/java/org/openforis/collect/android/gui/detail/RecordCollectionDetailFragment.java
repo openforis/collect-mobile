@@ -22,7 +22,11 @@ public class RecordCollectionDetailFragment extends AbstractNodeCollectionDetail
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.removeItem(R.id.action_entity_table);
+        //hide action menu
     }
+
+    public void onPrepareOptionsMenu(Menu menu) {
+        //action menu is hidden
+    }
+
 }

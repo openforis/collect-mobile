@@ -17,5 +17,5 @@
     <color name="light_node_list_selected_background_color">@color/selection_background_color</color>
     <color name="dark_node_list_selected_background_color">#FFFFFF</color>
 
-    <color name="of_button_background_color">#6699CC</color>
+    <color name="button_background_color">#6699CC</color>
 </resources>

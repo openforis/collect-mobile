@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
-public class SurveyListActivity extends ActionBarActivity {
+public class SurveyListActivity extends BaseActivity {
 
     private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
     private static final String OPEN_IMPORT_DIALOG = "openImportDialog";

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 
 public class SecondaryStorageNotFoundFragment extends DialogFragment {
@@ -16,7 +17,7 @@ public class SecondaryStorageNotFoundFragment extends DialogFragment {
                 .setMessage(AppDirs.root(getActivity()).getAbsolutePath())
                 .setPositiveButton(R.string.storage_not_found_retry, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SurveyNodeActivity.restartActivity(getActivity());
+                        Activities.startActivity(getActivity(), MainActivity.class);
                     }
                 }).setNeutralButton(R.string.storage_not_found_settings, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

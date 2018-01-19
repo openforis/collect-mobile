@@ -28,4 +28,13 @@
 
     <attr name="spinnerItemTextColor" format="reference|color" />
     <attr name="spinnerItemBackground" format="reference|color" />
+
+    <attr name="moreIcon" format="reference" />
+    <attr name="backupIcon" format="reference" />
+    <attr name="exportIcon" format="reference" />
+    <attr name="submitToCollectIcon" format="reference" />
+    <attr name="surveyListIcon" format="reference" />
+    <attr name="settingsIcon" format="reference" />
+    <attr name="exitIcon" format="reference" />
+
 </resources>

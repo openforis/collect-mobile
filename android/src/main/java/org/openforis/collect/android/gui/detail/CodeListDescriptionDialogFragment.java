@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.*;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -36,7 +38,7 @@ public class CodeListDescriptionDialogFragment extends DialogFragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.code_item_descriptions, container, false);
+        View view = inflater.inflate(R.layout.code_item_descriptions, container, false);
         TableLayout tableLayout = (TableLayout) view.findViewById(R.id.code_item_descriptions);
 
         for (UiCode code : codeList.getCodes()) {
@@ -56,6 +58,13 @@ public class CodeListDescriptionDialogFragment extends DialogFragment {
 
             tableLayout.addView(tableRow, rowParams);
         }
+
+        ImageButton closeButton = (ImageButton) view.findViewById(R.id.close_btn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         return view;
     }
 

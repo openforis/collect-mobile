@@ -2,14 +2,13 @@ package org.openforis.collect.android.gui;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import org.openforis.collect.android.gui.util.Views;
 /**
  * @author Stefano Ricci
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private SurveySpinnerAdapter surveyAdapter;
     private Spinner surveySpinner;
@@ -29,12 +28,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedState) {
         try {
-            if (ServiceLocator.init(this)) {
-                ThemeInitializer.init(this);
-                super.onCreate(savedState);
-            } else {
-                super.onCreate(savedState); // TODO: Try to move this to beginning of method
-            }
+            ServiceLocator.init(this);
+
+            super.onCreate(savedState);
+
             surveyAdapter = new SurveySpinnerAdapter(this);
 
             final MainActivity context = this;
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             TextView versionText = (TextView) findViewById(R.id.appVersion);
             versionText.setText(App.versionName(this));
 
-            if (surveyAdapter.getCount() == 1) {
+            if (surveyAdapter.isSurveyListEmpty()) {
                 Views.hide(findViewById(R.id.notEmptySurveyListFrame));
                 Views.show(findViewById(R.id.emptySurveyListFrame));
 
@@ -77,13 +74,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-
-
         } catch (WorkingDirNotWritable ignore) {
             super.onCreate(savedState);
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return true;
     }
 
     private void initializeSurveySpinner() {

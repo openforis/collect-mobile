@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +34,7 @@ import java.util.Set;
 /**
  * @author Daniel Wiell
  */
-public class SurveyNodeActivity extends ActionBarActivity implements SurveyListener, NodeNavigator {
+public class SurveyNodeActivity extends BaseActivity implements SurveyListener, NodeNavigator {
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
     public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
 
@@ -78,14 +77,8 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         if (id == android.R.id.home) {
             navigateUp();
             return true;
-        } else if (id == R.id.action_settings) {
-            settings();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void settings() {
-        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     public void onNodeSelected(final UiNode previous, final UiNode selected) {
@@ -363,10 +356,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         activity.startActivity(intent);
     }
 
-    public void navigateToSurveyList(MenuItem item) {
-        navigateToSurveyList();
-    }
-
     public void showEntityTable(MenuItem menuItem) {
         Keyboard.hide(this);
         EntityTableDialogFragment.show(getSupportFragmentManager());
@@ -389,11 +378,6 @@ public class SurveyNodeActivity extends ActionBarActivity implements SurveyListe
         } else {
             Toast.makeText(this, R.string.submit_to_collect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void navigateToSurveyList() {
-        Keyboard.hide(this);
-        this.startActivity(new Intent(this, SurveyListActivity.class));
     }
 
     private abstract class LayoutDependentSupport {

@@ -33,6 +33,7 @@
     <string name="action_submit_data_to_collect">Submit data to Collect</string>
     <string name="action_backup">Backup</string>
     <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
 
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
 
@@ -161,4 +162,5 @@
         \n\nWould you like to report it to the developer team?
         \n\n(Private information won\'t be shared)</string>
 
+    <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

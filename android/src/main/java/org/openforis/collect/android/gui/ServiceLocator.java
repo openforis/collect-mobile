@@ -56,7 +56,12 @@ public class ServiceLocator {
     private static AndroidDatabase nodeDatabase;
     private static CollectDSLContext jooqDsl;
 
-    public static boolean init(Context applicationContext) {
+    /**
+     *
+     * @param applicationContext
+     * @return false if there is not a selected survey, true otherwise
+     */
+    public static boolean init(Context applicationContext) throws WorkingDirNotWritable {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
             workingDir = AppDirs.root(applicationContext);

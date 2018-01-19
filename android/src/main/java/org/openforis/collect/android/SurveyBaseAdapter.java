@@ -97,6 +97,10 @@ public abstract class SurveyBaseAdapter extends BaseAdapter {
         }
     }
 
+    public boolean isSurveyListEmpty() {
+        return surveys.isEmpty();
+    }
+
     protected static class SurveyHolder {
         TextView text;
     }

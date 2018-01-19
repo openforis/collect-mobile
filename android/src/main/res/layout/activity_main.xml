@@ -71,13 +71,9 @@
             <Button
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/goToDataEntry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:text="@string/go_to_data_entry"
-                android:background="@color/of_button_background_color"
-                android:textColor="#FFFFFF"
-                android:padding="10dp"/>
+                style="@style/button" />
         </LinearLayout>
 
         <LinearLayout
@@ -104,24 +100,16 @@
             <Button
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/importDemoSurvey"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:text="@string/import_demo_survey"
-                android:background="@color/of_button_background_color"
-                android:textColor="#FFFFFF"
-                android:padding="10dp"/>
+                style="@style/button" />
 
             <Button
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/importNewSurvey"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:text="@string/import_new_survey"
-                android:background="@color/of_button_background_color"
-                android:textColor="#FFFFFF"
-                android:padding="10dp"/>
+                style="@style/button" />
         </LinearLayout>
     </FrameLayout>
 

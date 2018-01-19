@@ -1,15 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/close_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:background="@null"
+            android:src="?attr/closeIcon" />
+
+    </LinearLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/header"
         android:fillViewport="true">
 
-    <TableLayout
+        <TableLayout
             android:id="@+id/code_item_descriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="*"
             android:shrinkColumns="*"/>
 
-</ScrollView>
+    </ScrollView>
+
+</RelativeLayout>

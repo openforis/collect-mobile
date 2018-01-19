@@ -2,6 +2,16 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat">
+        <item name="android:itemTextAppearance">@style/actionMenuItem</item>
+        <item name="android:listPreferredItemHeightSmall">72dp</item>
+        <item name="moreIcon">@drawable/ic_more_vert_white_24dp</item>
+        <item name="backupIcon">@drawable/ic_settings_backup_restore_white_24dp</item>
+        <item name="exportIcon">@drawable/ic_file_download_white_24dp</item>
+        <item name="submitToCollectIcon">@drawable/ic_cloud_upload_white_24dp</item>
+        <item name="surveyListIcon">@drawable/ic_list_white_24dp</item>
+        <item name="settingsIcon">@drawable/ic_settings_white_24dp</item>
+        <item name="exitIcon">@drawable/ic_exit_to_app_white_24dp</item>
+
         <item name="standardPadding">16dp</item>
         <item name="standardLargePadding">32dp</item>
         <item name="relevantTextColor">@android:color/white</item>
@@ -19,16 +29,27 @@
         <item name="tableIcon">@drawable/ic_action_table</item>
         <item name="cameraIcon">@drawable/ic_action_camera</item>
         <item name="openIcon">@drawable/ic_action_collection</item>
+        <item name="closeIcon">@drawable/ic_close_white_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
         <item name="entityListHeaderBorderColor">@color/dark_entity_list_header_border_color</item>
         <item name="nodeListSelectedBackgroundColor">@color/dark_node_list_selected_background_color</item>
-        <item name="spinnerItemTextColor">#000000</item>
-        <item name="spinnerItemBackground">#FFFFFF</item>
+        <item name="spinnerItemTextColor">#FFFFFF</item>
+        <item name="spinnerItemBackground">#10FFFFFF</item>
     </style>
 
     <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="android:itemTextAppearance">@style/actionMenuItem</item>
+        <item name="android:listPreferredItemHeightSmall">72dp</item>
+        <item name="moreIcon">@drawable/ic_more_vert_black_24dp</item>
+        <item name="backupIcon">@drawable/ic_settings_backup_restore_black_24dp</item>
+        <item name="exportIcon">@drawable/ic_file_download_black_24dp</item>
+        <item name="submitToCollectIcon">@drawable/ic_cloud_upload_black_24dp</item>
+        <item name="surveyListIcon">@drawable/ic_list_black_24dp</item>
+        <item name="settingsIcon">@drawable/ic_settings_black_24dp</item>
+        <item name="exitIcon">@drawable/ic_exit_to_app_black_24dp</item>
+
         <item name="relevantTextColor">@android:color/black</item>
         <item name="irrelevantTextColor">@color/light_disabled_color</item>
         <item name="breadcrumbButton">@drawable/breadcrumb_button_light</item>
@@ -44,6 +65,7 @@
         <item name="tableIcon">@drawable/ic_action_table_light</item>
         <item name="cameraIcon">@drawable/ic_action_camera_light</item>
         <item name="openIcon">@drawable/ic_action_collection_light</item>
+        <item name="closeIcon">@drawable/ic_close_black_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove_light</item>
         <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
@@ -51,9 +73,13 @@
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>
         <item name="entityListHeaderBorderColor">@color/light_entity_list_header_border_color</item>
         <item name="nodeListSelectedBackgroundColor">@color/light_node_list_selected_background_color</item>
-        <item name="spinnerItemTextColor">#FFFFFF</item>
-        <item name="spinnerItemBackground">#000000</item>
+        <item name="spinnerItemTextColor">#000000</item>
+        <item name="spinnerItemBackground">#10000000</item>
 
+    </style>
+
+    <style name="actionMenuItem">
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="AutoCompleteTextViewLight" parent="@android:style/Widget.AutoCompleteTextView">
@@ -81,4 +107,12 @@
         <item name="android:textSize">30dp</item>
     </style>
 
+    <style name="button" parent="android:Widget.Button">
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/button_background_color</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

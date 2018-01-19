@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import static android.view.View.*;
 
@@ -30,7 +29,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SubmitDataToCollectActivity extends AppCompatActivity {
+public class SubmitDataToCollectActivity extends BaseActivity {
 
     private static final String LOG_TAG = SubmitDataToCollectActivity.class.getSimpleName();
     private static final String DATA_RESTORE_ENDPOINT = "/api/surveys/restore/data";

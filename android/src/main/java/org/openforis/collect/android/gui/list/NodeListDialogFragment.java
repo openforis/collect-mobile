@@ -24,14 +24,16 @@ public class NodeListDialogFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.fragment_node_list, container, false);
         rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.node_list_view);
+        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.node_list_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
 
         RecyclerView.Adapter adapter = new SimpleNodeListAdapter(getActivity(), selectedNode.getParent(),
                 new SimpleNodeListAdapter.OnItemClickListener() {
             public void onItemClick(int position, UiNode node) {
-                onNodeSelected(position);
+                if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                    onNodeSelected(position);
+                }
             }
         });
         recyclerView.setAdapter(adapter);

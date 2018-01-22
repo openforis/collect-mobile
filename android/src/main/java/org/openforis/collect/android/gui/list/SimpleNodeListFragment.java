@@ -45,12 +45,12 @@ public class SimpleNodeListFragment extends Fragment {
         listAdapter = new SimpleNodeListAdapter(getActivity(), node().getParent(), new SimpleNodeListAdapter.OnItemClickListener() {
             public void onItemClick(int position, UiNode node) {
                 if (nodeListView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                    onAttributeSelected(position);
+                    onNodeSelected(position);
                 }
             }
         });
         nodeListView.setAdapter(listAdapter);
-
+        /*
         //scroll list to selected node when layout changes (e.g. keyboard appears/disappears)
         nodeListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
@@ -58,6 +58,7 @@ public class SimpleNodeListFragment extends Fragment {
                 selectNode(node());
             }
         });
+        */
         selectNode(node());
         return rootView;
     }
@@ -66,9 +67,11 @@ public class SimpleNodeListFragment extends Fragment {
         return ServiceLocator.surveyService().selectedNode();
     }
 
-    private void onAttributeSelected(int attributeIndex) {
+    private void onNodeSelected(int nodeIndex) {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.attributePager);
-        viewPager.setCurrentItem(attributeIndex);
+        viewPager.setCurrentItem(nodeIndex);
+        UiNode node = listAdapter.getItem(nodeIndex);
+        ServiceLocator.surveyService().selectNode(node.getId());
     }
 
     public void notifyNodeChanged(UiNode node) {
@@ -92,10 +95,12 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     public void selectNode(UiNode node) {
-        listAdapter.selectNode(node);
-        List<UiNode> siblings = node.getRelevantSiblings();
-        int index = siblings.indexOf(node);
-        nodeListView.scrollToPosition(index);
+        if (node != null) {
+            listAdapter.selectNode(node);
+            List<UiNode> siblings = node.getRelevantSiblings();
+            int index = siblings.indexOf(node);
+            nodeListView.scrollToPosition(index);
+        }
     }
 
     public void scrollToPosition(int position) {

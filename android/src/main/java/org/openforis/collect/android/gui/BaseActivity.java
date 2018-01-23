@@ -20,24 +20,27 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
     }
 
-    protected void navigateToSurveyList(MenuItem item) {
+    public boolean navigateToSurveyList(MenuItem item) {
         navigateToSurveyList();
+        return true;
     }
 
     protected void navigateToSurveyList() {
         Activities.start(this, SurveyListActivity.class);
     }
 
-    protected void navigateToSettings(MenuItem item) {
+    public boolean navigateToSettings(MenuItem item) {
         navigateToSettings();
+        return true;
     }
 
     protected void navigateToSettings() {
         Activities.start(this, SettingsActivity.class);
     }
 
-    protected void exit(MenuItem item) {
+    public boolean exit(MenuItem item) {
         exit();
+        return true;
     }
 
     protected void exit() {

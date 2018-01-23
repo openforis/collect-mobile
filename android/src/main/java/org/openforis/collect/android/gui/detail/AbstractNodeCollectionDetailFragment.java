@@ -3,11 +3,13 @@ package org.openforis.collect.android.gui.detail;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -43,6 +45,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private static final Typeface HEADER_TYPEFACE = Typeface.DEFAULT_BOLD;
     private EntityListAdapter adapter;
     private Timer adapterUpdateTimer;
+    private ViewSwitcher addButtonSwitcher;
+    private View addButton;
 
     public View createView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
         return inflater.inflate(R.layout.fragment_entity_collection_detail, container, false);
@@ -50,23 +54,37 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        View addButton = view.findViewById(R.id.action_add_node);
-        if (addButton != null) {
+        addButtonSwitcher = (ViewSwitcher) view.findViewById(R.id.add_button_switcher);
+        if (addButtonSwitcher != null) {
             if (isEnumeratedEntityCollection()) {
-                Views.hide(addButton);
+                Views.hide(addButtonSwitcher);
             } else {
-                addButton.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if (isMaxItemsLimitReached()) {
-                            String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
-                            Dialogs.alert(getActivity(), getString(R.string.warning), message);
-                        } else {
-                            startAddNodeTask();
-                        }
-                    }
-                });
+                initializeAddButton();
             }
         }
+    }
+
+    public void initializeAddButton() {
+        addButton = addButtonSwitcher.findViewById(R.id.action_add_node);
+
+        Animation in = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
+        Animation out = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out);
+
+        // set the animation type to ViewSwitcher
+        addButtonSwitcher.setInAnimation(in);
+        addButtonSwitcher.setOutAnimation(out);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (isMaxItemsLimitReached()) {
+                    String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
+                    Dialogs.alert(getActivity(), getString(R.string.warning), message);
+                } else {
+                    addButton.setEnabled(false);
+                    startAddNodeTask();
+                }
+            }
+        });
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -104,10 +122,13 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void startAddNodeTask() {
+        switchToProcessingAddButton();
+
         Runnable task = new Runnable() {
             public void run() {
                 final UiInternalNode newNode = addNode();
                 nodeNavigator().navigateTo(newNode.getFirstChild().getId());
+                switchToIdleAddButton();
             }
         };
         if (node() instanceof UiRecordCollection) {
@@ -115,6 +136,24 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         } else {
             task.run();
         }
+    }
+
+    private void switchToProcessingAddButton() {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                addButton.setEnabled(false);
+                addButtonSwitcher.showNext();
+            }
+        });
+    }
+
+    private void switchToIdleAddButton() {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                addButton.setEnabled(true);
+                addButtonSwitcher.showPrevious();
+            }
+        });
     }
 
     private void startEditNodeTask(final int position) {

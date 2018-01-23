@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
@@ -27,7 +26,6 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_node;
     protected final FragmentActivity activity;
     protected final UiInternalNode parentNode;
-    private final Attrs attrs;
     private List<UiNode> nodes;
     private UiNode selectedNode;
     private OnItemClickListener onItemClickListener;
@@ -36,7 +34,6 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         this.activity = activity;
         this.parentNode = parentNode;
         this.nodes = parentNode.getRelevantChildren();
-        this.attrs = new Attrs(this.activity);
         this.onItemClickListener = onItemClickListener;
     }
 
@@ -44,7 +41,7 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         return nodes.get(position);
     }
 
-    public int getCount() {
+    public int getItemCount() {
         return nodes.size();
     }
 
@@ -54,7 +51,7 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         return new NodeHolder(v);
     }
 
-    public void onBindViewHolder(NodeHolder holder, final int position) {
+    public void onBindViewHolder(final NodeHolder holder, int position) {
         final UiNode node = nodes.get(position);
 
         if (holder.text != null) {
@@ -72,14 +69,11 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         holder.row.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (onItemClickListener != null) {
+                    int position = holder.getAdapterPosition();
                     onItemClickListener.onItemClick(position, node);
                 }
             }
         });
-    }
-
-    public int getItemCount() {
-        return nodes.size();
     }
 
     public String getText(UiNode node) {

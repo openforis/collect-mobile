@@ -422,8 +422,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
         private void setNodeSelected(UiNode selected, SimpleNodeListFragment nodeListFragment) {
             nodeListFragment.selectNode(selected);
-            List<UiNode> relevantSiblings = selected.getRelevantSiblings();
-            nodeListFragment.scrollToPosition(relevantSiblings.indexOf(selected));
         }
     }
 }

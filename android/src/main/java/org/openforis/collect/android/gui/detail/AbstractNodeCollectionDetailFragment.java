@@ -66,24 +66,23 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         }
     }
 
-    public void initializeAddButton(final ViewHolder holder) {
-        holder.addButton = holder.addButtonSwitcher.findViewById(R.id.action_add_node);
-
+    public void initializeAddButton(final ViewHolder h) {
         Animation in = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
         Animation out = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out);
 
         // set the animation type to ViewSwitcher
-        holder.addButtonSwitcher.setInAnimation(in);
-        holder.addButtonSwitcher.setOutAnimation(out);
+        h.addButtonSwitcher.setInAnimation(in);
+        h.addButtonSwitcher.setOutAnimation(out);
 
-        holder.addButton.setOnClickListener(new View.OnClickListener() {
+        h.addButton = h.addButtonSwitcher.findViewById(R.id.action_add_node);
+        h.addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isMaxItemsLimitReached()) {
                     String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
                     Dialogs.alert(getActivity(), getString(R.string.warning), message);
                 } else {
-                    holder.addButton.setEnabled(false);
-                    startAddNodeTask(v);
+                    v.setEnabled(false);
+                    startAddNodeTask(h);
                 }
             }
         });
@@ -123,14 +122,14 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         return ServiceLocator.surveyService();
     }
 
-    private void startAddNodeTask(final View v) {
-        switchToProcessingAddButton(v);
+    private void startAddNodeTask(final ViewHolder h) {
+        switchToProcessingAddButton(h);
 
         Runnable task = new Runnable() {
             public void run() {
                 final UiInternalNode newNode = addNode();
                 nodeNavigator().navigateTo(newNode.getFirstChild().getId());
-                switchToIdleAddButton(v);
+                switchToIdleAddButton(h);
             }
         };
         if (node() instanceof UiRecordCollection) {
@@ -140,22 +139,20 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         }
     }
 
-    private void switchToProcessingAddButton(final View v) {
+    private void switchToProcessingAddButton(final ViewHolder h) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                ViewHolder holder = (ViewHolder) v.getTag();
-                holder.addButton.setEnabled(false);
-                holder.addButtonSwitcher.showNext();
+                h.addButton.setEnabled(false);
+                h.addButtonSwitcher.showNext();
             }
         });
     }
 
-    private void switchToIdleAddButton(final View v) {
+    private void switchToIdleAddButton(final ViewHolder h) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                ViewHolder holder = (ViewHolder) v.getTag();
-                holder.addButton.setEnabled(true);
-                holder.addButtonSwitcher.showPrevious();
+                h.addButton.setEnabled(true);
+                h.addButtonSwitcher.showPrevious();
             }
         });
     }

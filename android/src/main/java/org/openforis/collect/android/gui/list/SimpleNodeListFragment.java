@@ -44,7 +44,7 @@ public class SimpleNodeListFragment extends Fragment {
 
         listAdapter = new SimpleNodeListAdapter(getActivity(), node().getParent(), new SimpleNodeListAdapter.OnItemClickListener() {
             public void onItemClick(int position, UiNode node) {
-                if (nodeListView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                if (position >= 0 && nodeListView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
                     onNodeSelected(position);
                 }
             }

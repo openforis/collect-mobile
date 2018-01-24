@@ -1,4 +1,4 @@
-package org.openforis.collect.android;
+package org.openforis.collect.android.gui;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

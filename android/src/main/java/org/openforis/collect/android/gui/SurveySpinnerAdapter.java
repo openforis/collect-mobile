@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.openforis.collect.R;
-import org.openforis.collect.android.SurveyBaseAdapter;
 
 /**
  * @author Stefano Ricci

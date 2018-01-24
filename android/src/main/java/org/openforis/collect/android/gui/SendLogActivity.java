@@ -15,7 +15,7 @@ import org.openforis.collect.android.gui.util.Dialogs;
 
 public class SendLogActivity extends Activity implements View.OnClickListener {
 
-    private static final String EMAIL_ADDRESS = "openforislogs@gmail.com";
+    private static final String EMAIL_ADDRESS = "openforislogs" + "@" + "gmail.com";
     private static final String EMAIL_SUBJECT = "Open Foris Collect Mobile - ERROR";
 
     private String logs;

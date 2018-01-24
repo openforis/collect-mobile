@@ -37,13 +37,14 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     }
 
     public void uncaughtException(Thread thread, Throwable e) {
-        Log.e(UncaughtExceptionHandler.class.getName(), e.getMessage(), e);
-
-        writeLogToFile();
-
-        String logs = extractLogInformation(e);
-        reportLogs(logs);
-
+        Log.e(CollectMobileApplication.LOG_TAG, e.getMessage(), e);
+        try {
+            writeLogToFile();
+            String logs = extractLogInformation(e);
+            reportLogs(logs);
+        } catch(Exception ex) {
+            //do nothing
+        }
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
     }
@@ -101,8 +102,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             info = null;
         }
         sb.append(LINE_SEPARATOR);
-        sb.append("************ APP INFO ************")
-        ;sb.append(LINE_SEPARATOR);
+        sb.append("************ APP INFO ************");
+        sb.append(LINE_SEPARATOR);
         sb.append("Version name: ");
         sb.append(info == null ? "-" : info.versionName);
         sb.append(LINE_SEPARATOR);
@@ -115,35 +116,32 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 
     private void writeLogToFile() {
         //File must be saved to external storage or it wont be readable by the email app.
-        LOG_DIRECTORY.mkdirs();
+        if (LOG_DIRECTORY.exists() || LOG_DIRECTORY.mkdirs()) {
+            String logFileName = String.format("error_%s.log", Dates.format(new Date(), "yyyyMMdd_HHmmss_SSS"));
 
-        String logFileName = String.format("error_%s.log", Dates.format(new Date(), "yyyyMMdd_HHmmssSSS"));
+            // Extract to file
+            File logFile = new File(LOG_DIRECTORY, logFileName);
 
-        // Extract to file
-        File logFile = new File(LOG_DIRECTORY, logFileName);
+            FileWriter logFileWriter = null;
+            try {
+                if (logFile.createNewFile()) {
+                    makeDiscoverable(logFile, context);
 
-        FileWriter logFileWriter = null;
-        try {
-            logFile.createNewFile();
+                    String model = Build.MODEL;
+                    if (!model.startsWith(Build.MANUFACTURER))
+                        model = Build.MANUFACTURER + " " + model;
 
-            makeDiscoverable(logFile, context);
+                    // write output stream
+                    logFileWriter = new FileWriter(logFile);
+                    logFileWriter.write("Android version: " + Build.VERSION.SDK_INT + "\n");
+                    logFileWriter.write("Device: " + model + "\n");
+                    logFileWriter.write("App version: " + App.versionName(context) + "\n");
 
-            String model = Build.MODEL;
-            if (!model.startsWith(Build.MANUFACTURER))
-                model = Build.MANUFACTURER + " " + model;
-
-            // write output stream
-            logFileWriter = new FileWriter(logFile);
-            logFileWriter.write ("Android version: " +  Build.VERSION.SDK_INT + "\n");
-            logFileWriter.write ("Device: " + model + "\n");
-            logFileWriter.write ("App version: " + App.versionName(context) + "\n");
-
-            writeLogcat(logFileWriter);
-
-            logFileWriter.close();
-        } catch (IOException e) {
-            IOUtils.closeQuietly(logFileWriter);
-            // You might want to write a failure message to the log here.
+                    writeLogcat(logFileWriter);
+                }
+            } catch (IOException e) {
+                IOUtils.closeQuietly(logFileWriter);
+            }
         }
     }
 
@@ -153,9 +151,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             // For Android 4.0 and earlier, you will get all app's log output, so filter it to
             // mostly limit it to your app's output.  In later versions, the filtering isn't needed.
             String cmd = (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) ?
-                    "logcat -d -v time MyApp:v dalvikvm:v System.err:v *:s" :
+                    "logcat -d -v time " + CollectMobileApplication.LOG_TAG + ":v dalvikvm:v System.err:v *:s":
                     "logcat -d -v time";
-
             // get input stream
             Process printLogcatProcess = Runtime.getRuntime().exec(cmd);
             logCatReader = new InputStreamReader(printLogcatProcess.getInputStream());

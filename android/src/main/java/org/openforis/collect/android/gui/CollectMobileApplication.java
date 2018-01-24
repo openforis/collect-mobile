@@ -7,6 +7,8 @@ import android.support.multidex.MultiDexApplication;
  */
 public class CollectMobileApplication extends MultiDexApplication {
 
+    public static final String LOG_TAG = "CollectMobile";
+
     @Override
     public void onCreate() {
         super.onCreate();

@@ -12,7 +12,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.openforis.collect.R;
-import org.openforis.collect.android.SurveyBaseAdapter;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.Views;
 

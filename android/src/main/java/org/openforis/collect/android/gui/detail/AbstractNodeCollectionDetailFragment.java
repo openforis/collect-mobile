@@ -45,8 +45,6 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private static final Typeface HEADER_TYPEFACE = Typeface.DEFAULT_BOLD;
     private EntityListAdapter adapter;
     private Timer adapterUpdateTimer;
-    private ViewSwitcher addButtonSwitcher;
-    private View addButton;
 
     public View createView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
         return inflater.inflate(R.layout.fragment_entity_collection_detail, container, false);
@@ -54,34 +52,38 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addButtonSwitcher = (ViewSwitcher) view.findViewById(R.id.add_button_switcher);
-        if (addButtonSwitcher != null) {
-            if (isEnumeratedEntityCollection()) {
-                Views.hide(addButtonSwitcher);
-            } else {
-                initializeAddButton();
+        if (view.getTag() == null) {
+            ViewHolder holder = new ViewHolder();
+            holder.addButtonSwitcher = (ViewSwitcher) view.findViewById(R.id.add_button_switcher);
+            if (holder.addButtonSwitcher != null) {
+                if (isEnumeratedEntityCollection()) {
+                    Views.hide(holder.addButtonSwitcher);
+                } else {
+                    initializeAddButton(holder);
+                }
             }
+            view.setTag(holder);
         }
     }
 
-    public void initializeAddButton() {
-        addButton = addButtonSwitcher.findViewById(R.id.action_add_node);
+    public void initializeAddButton(final ViewHolder holder) {
+        holder.addButton = holder.addButtonSwitcher.findViewById(R.id.action_add_node);
 
         Animation in = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in);
         Animation out = AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out);
 
         // set the animation type to ViewSwitcher
-        addButtonSwitcher.setInAnimation(in);
-        addButtonSwitcher.setOutAnimation(out);
+        holder.addButtonSwitcher.setInAnimation(in);
+        holder.addButtonSwitcher.setOutAnimation(out);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        holder.addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isMaxItemsLimitReached()) {
                     String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
                     Dialogs.alert(getActivity(), getString(R.string.warning), message);
                 } else {
-                    addButton.setEnabled(false);
-                    startAddNodeTask();
+                    holder.addButton.setEnabled(false);
+                    startAddNodeTask(v);
                 }
             }
         });
@@ -121,14 +123,14 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         return ServiceLocator.surveyService();
     }
 
-    private void startAddNodeTask() {
-        switchToProcessingAddButton();
+    private void startAddNodeTask(final View v) {
+        switchToProcessingAddButton(v);
 
         Runnable task = new Runnable() {
             public void run() {
                 final UiInternalNode newNode = addNode();
                 nodeNavigator().navigateTo(newNode.getFirstChild().getId());
-                switchToIdleAddButton();
+                switchToIdleAddButton(v);
             }
         };
         if (node() instanceof UiRecordCollection) {
@@ -138,20 +140,22 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         }
     }
 
-    private void switchToProcessingAddButton() {
+    private void switchToProcessingAddButton(final View v) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                addButton.setEnabled(false);
-                addButtonSwitcher.showNext();
+                ViewHolder holder = (ViewHolder) v.getTag();
+                holder.addButton.setEnabled(false);
+                holder.addButtonSwitcher.showNext();
             }
         });
     }
 
-    private void switchToIdleAddButton() {
+    private void switchToIdleAddButton(final View v) {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                addButton.setEnabled(true);
-                addButtonSwitcher.showPrevious();
+                ViewHolder holder = (ViewHolder) v.getTag();
+                holder.addButton.setEnabled(true);
+                holder.addButtonSwitcher.showPrevious();
             }
         });
     }
@@ -274,5 +278,11 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 }
             });
         }
+    }
+
+    private class ViewHolder {
+        ViewSwitcher addButtonSwitcher;
+        View addButton;
+
     }
 }

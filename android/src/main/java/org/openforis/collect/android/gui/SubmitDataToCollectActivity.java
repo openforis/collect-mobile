@@ -1,5 +1,7 @@
 package org.openforis.collect.android.gui;
 
+import static org.openforis.collect.android.gui.CollectMobileApplication.*;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +33,6 @@ import java.util.TimerTask;
 
 public class SubmitDataToCollectActivity extends BaseActivity {
 
-    private static final String LOG_TAG = SubmitDataToCollectActivity.class.getSimpleName();
     private static final String DATA_RESTORE_ENDPOINT = "/api/surveys/restore/data";
     private static final String DATA_RESTORE_JOB_ENDPOINT = "/api/surveys/data/restorejobs/%s/status.json";
     private static final long RESTORE_DATA_JOB_MONITOR_PERIOD = 3000L;
@@ -103,7 +104,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
     }
 
     private void handleError(final String error) {
-        Log.i(LOG_TAG, "Error: " + error);
+        Log.i(LOG_TAG, "Send data to Collect error: " + error);
 
         updateViewState(ViewState.ERROR, new Runnable() {
             public void run() {

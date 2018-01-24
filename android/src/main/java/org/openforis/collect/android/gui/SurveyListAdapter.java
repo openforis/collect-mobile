@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.*;
 import android.widget.CheckBox;
 import org.openforis.collect.R;
-import org.openforis.collect.android.SurveyBaseAdapter;
 
 import java.util.*;
 

@@ -69,6 +69,10 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
+        editText.setSingleLine();
+
+        editText.setText(attributeValue());
+
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
@@ -94,8 +98,6 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
                 delaySaveNode();
             }
         });
-        editText.setText(attributeValue());
-        editText.setSingleLine();
         onEditTextCreated(editText);
         return editText;
     }

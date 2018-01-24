@@ -100,11 +100,11 @@
     </style>
 
     <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
-        <item name="android:textSize">30dp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
-        <item name="android:textSize">30dp</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="button" parent="android:Widget.Button">
@@ -113,6 +113,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@color/button_background_color</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 </resources>

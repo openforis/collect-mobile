@@ -1,8 +1,8 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
 
 
@@ -17,15 +18,23 @@ public class SendLogActivity extends Activity implements View.OnClickListener {
 
     private static final String EMAIL_ADDRESS = "openforislogs" + "@" + "gmail.com";
     private static final String EMAIL_SUBJECT = "Open Foris Collect Mobile - ERROR";
+    public static final String LOGS_INTENT_EXTRA = "logs";
 
     private String logs;
+
+    public static void startActivity(Context context, String logs) {
+        Intent intent = new Intent(context, SendLogActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
+        intent.putExtra(LOGS_INTENT_EXTRA, logs);
+        context.startActivity(intent);
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE); // make a dialog without a titlebar
         setFinishOnTouchOutside(false); // prevent users from dismissing the dialog by tapping outside
         setContentView(R.layout.send_log);
-        logs = getIntent().getStringExtra("logs");
+        logs = Activities.getIntentExtra(this, LOGS_INTENT_EXTRA);
 
         showConfirmDialog();
     }
@@ -44,10 +53,12 @@ public class SendLogActivity extends Activity implements View.OnClickListener {
                     public void run() {
                         sendLogFile();
                         finish();
+                        CollectMobileApplication.exit(SendLogActivity.this);
                     }
                 }, new Runnable() {
                     public void run() {
                         finish();
+                        CollectMobileApplication.exit(SendLogActivity.this);
                     }
                 }, R.string.report_error_dialog_confirm_button);
     }

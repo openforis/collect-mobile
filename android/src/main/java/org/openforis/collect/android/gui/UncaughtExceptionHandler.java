@@ -9,7 +9,6 @@ import java.io.StringWriter;
 import java.util.Date;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -164,11 +163,6 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     }
 
     private void reportLogs(String errorLogs) {
-        //Open Send log activity
-        Intent intent = new Intent();
-        intent.setAction(".android.gui.SendLogActivity");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
-        intent.putExtra("logs", errorLogs);
-        context.startActivity(intent);
+        SendLogActivity.startActivity(context, errorLogs);
     }
 }

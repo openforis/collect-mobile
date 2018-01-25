@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void exit() {
         Dialogs.confirm(this, R.string.confirm_label, R.string.exit_confirm_message, new Runnable() {
             public void run() {
-                BaseActivity.this.finish();
+                CollectMobileApplication.exit(BaseActivity.this);
             }
         });
     }

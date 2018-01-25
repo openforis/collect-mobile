@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import static android.content.Intent.*;
 import android.os.Bundle;
 
 /**
@@ -19,10 +20,18 @@ public abstract class Activities {
         start(context, activityClass, 0, extras);
     }
 
+    public static <A extends Activity> void startNewClearTask(Context context, Class<A> activityClass) {
+        startNewClearTask(context, activityClass, null);
+    }
+
+    public static <A extends Activity> void startNewClearTask(Context context, Class<A> activityClass, Bundle extras) {
+        start(context, activityClass, FLAG_ACTIVITY_CLEAR_TASK | FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_NEW_TASK, extras);
+    }
+
     public static <A extends Activity> void start(Context context, Class<A> activityClass, int newActivityFlags, Bundle extras) {
         Keyboard.hide(context);
         Intent intent = new Intent(context, activityClass);
-        int flags = Intent.FLAG_ACTIVITY_NEW_TASK | newActivityFlags;
+        int flags = FLAG_ACTIVITY_NEW_TASK | newActivityFlags;
         intent.setFlags(flags);
         if (extras != null) {
             intent.putExtras(extras);
@@ -31,11 +40,16 @@ public abstract class Activities {
     }
 
     public static <T extends Object> T getIntentExtra(Activity activity, String key) {
+        return getIntentExtra(activity, key, null);
+    }
+
+    public static <T extends Object> T getIntentExtra(Activity activity, String key, T defaultValue) {
         Bundle extras = activity.getIntent().getExtras();
         if (extras == null) {
-            return null;
+            return defaultValue;
         } else {
-            return (T) extras.get(key);
+            Object val = extras.get(key);
+            return val == null ? defaultValue : (T) val;
         }
     }
 }

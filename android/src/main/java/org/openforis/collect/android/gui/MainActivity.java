@@ -20,12 +20,20 @@ import org.openforis.collect.android.gui.util.Views;
  */
 public class MainActivity extends BaseActivity {
 
+    static final String EXIT_FLAG = "EXIT";
+
     private SurveySpinnerAdapter surveyAdapter;
     private Spinner surveySpinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
+
+        if (getIntent().getBooleanExtra(EXIT_FLAG, false)) {
+            finish();
+            return;
+        }
+
         try {
             ServiceLocator.init(this);
 

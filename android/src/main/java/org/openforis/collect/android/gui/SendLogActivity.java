@@ -70,6 +70,8 @@ public class SendLogActivity extends Activity implements View.OnClickListener {
         boolean hasEmailApp = emailApp != null && !emailApp.equals(unsupportedAction);
 
         if (hasEmailApp) {
+            emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
             String mailto = "mailto:" + Uri.encode(address) +
                             "?subject=" + Uri.encode(subject) +
                             "&body=" + Uri.encode(bodyText);
@@ -79,6 +81,7 @@ public class SendLogActivity extends Activity implements View.OnClickListener {
             startActivity(emailIntent);
         } else {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             shareIntent.setType("plain/text");
             shareIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {EMAIL_ADDRESS});
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, EMAIL_SUBJECT);

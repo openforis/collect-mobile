@@ -55,8 +55,7 @@ public class SurveyListActivity extends BaseActivity {
         final SurveyListAdapter adapter = new SurveyListAdapter(this);
         showSurveyList(adapter);
 
-        Boolean openImportDialog = Activities.getIntentExtra(this, OPEN_IMPORT_DIALOG);
-        if (Boolean.TRUE.equals(openImportDialog)) {
+        if (Activities.getIntentExtra(this, OPEN_IMPORT_DIALOG, false)) {
             showImportDialog();
         } else if (adapter.isEmpty()) {
             showDemoSurveyDialog();

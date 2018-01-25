@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_gravity="center_horizontal"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
         android:layout_marginTop="50dp"
-        app:srcCompat="@drawable/ic_launcher" />
+        android:layout_gravity="center_horizontal"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_logo" />
 
     <TextView
         android:id="@+id/mainTitle"

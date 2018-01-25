@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class EntityListAdapter extends NodeListAdapter {
     private static final int LAYOUT_RESOURCE_ID = R.layout.listview_entity;
-    private static final int MAX_ATTRIBUTES = 2;
+    public static final int MAX_SUMMARY_ATTRIBUTES = 3;
     public static final int MAX_ATTRIBUTE_LABEL_LENGTH = 20;
     public static final int MAX_ATTRIBUTE_VALUE_LENGTH = 20;
 
@@ -47,13 +47,13 @@ public class EntityListAdapter extends NodeListAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = super.getView(position, convertView, parent);
         LinearLayout summaryContainer = (LinearLayout) row.findViewById(R.id.nodeSummaryAttributesContainer);
-        UiNode node = getItem(position);
 
-        //summary/key attributes
+        UiNode node = getItem(position);
         List<String> summaryAttributeValues = getSummaryAttributeValues(node);
-        summaryContainer.setWeightSum(summaryAttributeValues.size());
 
         if (summaryContainer.getChildCount() == 0) {
+            summaryContainer.setWeightSum(summaryAttributeValues.size());
+
             for (String summaryAttrVal : summaryAttributeValues) {
                 TextView textView = new TextView(activity);
                 //same width for every summary item
@@ -75,7 +75,7 @@ public class EntityListAdapter extends NodeListAdapter {
         if (node instanceof UiRecord.Placeholder) {
             modifiedOnTextView.setText(DateUtils.getRelativeTimeSpanString(node.getModifiedOn().getTime()));
         } else {
-            modifiedOnTextView.setVisibility(View.INVISIBLE);
+            modifiedOnTextView.setVisibility(View.GONE);
         }
         return row;
     }
@@ -141,7 +141,7 @@ public class EntityListAdapter extends NodeListAdapter {
             for (UiNode potentialAttribute : ((UiInternalNode) node).getChildren()) {
                 if (potentialAttribute instanceof UiAttribute)
                     attributes.add((UiAttribute) potentialAttribute);
-                if (attributes.size() >= MAX_ATTRIBUTES)
+                if (attributes.size() >= MAX_SUMMARY_ATTRIBUTES)
                     return attributes;
             }
         }

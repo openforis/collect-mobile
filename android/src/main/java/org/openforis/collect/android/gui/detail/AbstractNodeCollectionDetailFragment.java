@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,6 +33,8 @@ import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -223,20 +226,44 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private List<String> getDynamicHeadings() {
         List<String> headings = new ArrayList<String>();
         T node = node();
-        if (! node.getChildren().isEmpty()) {
-            UiNode firstChild = node.getChildren().get(0);
-            List<UiAttribute> keyAttributes;
-            if (firstChild instanceof UiRecord.Placeholder) {
-                keyAttributes = ((UiRecord.Placeholder) firstChild).getKeyAttributes();
-            } else {
-                keyAttributes = ((UiEntity) firstChild).getKeyAttributes();
-            }
-            for (UiAttribute key : keyAttributes) {
-                String heading = key.getDefinition().label;
+        List<UiNode> children = node.getChildren();
+        if (! children.isEmpty()) {
+            UiNode firstChild = children.get(0);
+            List<UiAttribute> summaryAttributes = getSummaryAttributes(firstChild);
+            for (UiAttribute attr : summaryAttributes) {
+                String heading = attr.getDefinition().label;
                 headings.add(heading);
             }
         }
         return headings;
+    }
+
+    private List<UiAttribute> getSummaryAttributes(UiNode node) {
+        List<UiAttribute> keyAttributes = getKeyAttributes(node);
+        if (!keyAttributes.isEmpty()) {
+            return keyAttributes;
+        } else if (node instanceof UiEntity) {
+            List<UiAttribute> summaryAttributes = new ArrayList<UiAttribute>();
+            for (UiNode child : ((UiEntity) node).getChildren()) {
+                if (child instanceof  UiAttribute &&
+                        summaryAttributes.size() < EntityListAdapter.MAX_SUMMARY_ATTRIBUTES) {
+                    summaryAttributes.add((UiAttribute) child);
+                }
+            }
+            return summaryAttributes;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private List<UiAttribute> getKeyAttributes(UiNode node) {
+        List<UiAttribute> keyAttributes;
+        if (node instanceof UiRecord.Placeholder) {
+            keyAttributes = ((UiRecord.Placeholder) node).getKeyAttributes();
+        } else {
+            keyAttributes = ((UiEntity) node).getKeyAttributes();
+        }
+        return keyAttributes;
     }
 
     private NodeNavigator nodeNavigator() {

@@ -34,7 +34,7 @@ public class UiCodeAttribute extends UiAttribute {
     }
 
     public String valueAsString() {
-        return code == null ? null : (code.toString() + (qualifier == null ? "" : ", " + qualifier));
+        return code == null ? null : (code.toString() + (StringUtils.isEmpty(qualifier) ? "" : ", " + qualifier));
     }
 
     public boolean isEmpty() {

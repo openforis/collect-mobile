@@ -5,10 +5,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
-import org.openforis.commons.collection.CollectionUtils;
-import org.openforis.commons.collection.Predicate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +46,6 @@ public class NodePagerAdapter extends FragmentPagerAdapter {
     }
 
     private List<UiNode> getRelevantChildren() {
-        List<UiNode> children = pagerNode.getChildren();
-        List<UiNode> relevantChildren = new ArrayList<UiNode>(children);
-        CollectionUtils.filter(relevantChildren, new Predicate<UiNode>() {
-            public boolean evaluate(UiNode item) {
-                return item.isRelevant();
-            }
-        });
-        return relevantChildren;
+        return pagerNode.getRelevantChildren();
     }
 }

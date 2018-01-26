@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.pager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -96,8 +97,9 @@ public class NodePagerFragment extends Fragment {
         for (NodeDetailFragment fragment : fragmentsByNode.values())
             fragment.onNodeChange(node, nodeChanges);
 
-        if (! nodeChanges.isEmpty())
+        if (! nodeChanges.isEmpty()) {
             pagerAdapter.notifyDataSetChanged();
+        }
 
         if (nodePathDetailsFragment != null)
             nodePathDetailsFragment.nodeChanged(node);

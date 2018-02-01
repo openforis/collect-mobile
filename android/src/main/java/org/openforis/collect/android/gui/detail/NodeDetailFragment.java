@@ -171,7 +171,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     protected abstract View createView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
 
-    protected T node() {
+    public T node() {
         return node;
     }
 

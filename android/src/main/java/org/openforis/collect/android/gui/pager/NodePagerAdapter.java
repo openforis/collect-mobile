@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.pager;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
@@ -22,6 +23,7 @@ public class NodePagerAdapter extends FragmentPagerAdapter {
         this.pagerNode = pagerNode;
     }
 
+    @Override
     public NodeDetailFragment getItem(int position) {
         UiNode node = getRelevantChildAt(position);
         return fragmentByNode.get(node);
@@ -37,7 +39,13 @@ public class NodePagerAdapter extends FragmentPagerAdapter {
     }
 
     public int getItemPosition(Object object) {
-        return POSITION_NONE; //forces view update when relevance changes
+        NodeDetailFragment fragment = (NodeDetailFragment) object;
+        UiNode node = fragment.node();
+        if (node.isRelevant()) {
+            return pagerNode.getRelevantChildren().indexOf(node);
+        } else {
+            return POSITION_NONE; //forces view update when relevance changes
+        }
     }
 
     private UiNode getRelevantChildAt(int position) {

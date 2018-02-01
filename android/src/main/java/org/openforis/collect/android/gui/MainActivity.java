@@ -47,36 +47,26 @@ public class MainActivity extends BaseActivity {
             TextView versionText = (TextView) findViewById(R.id.appVersion);
             versionText.setText(App.versionName(this));
 
-            if (surveyAdapter.isSurveyListEmpty()) {
-                Views.hide(findViewById(R.id.notEmptySurveyListFrame));
-                Views.show(findViewById(R.id.emptySurveyListFrame));
+            initializeSurveySpinner();
 
-                findViewById(R.id.importDemoSurvey).setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        //empty survey list, show survey list activity
-                        SurveyListActivity.startActivity(MainActivity.this);
-                    }
-                });
-
-                findViewById(R.id.importNewSurvey).setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        handleImportNewSurvey();
-                    }
-                });
-            } else {
-                Views.hide(findViewById(R.id.emptySurveyListFrame));
-                Views.show(findViewById(R.id.notEmptySurveyListFrame));
-
-                initializeSurveySpinner();
-
-                findViewById(R.id.goToDataEntry).setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        int selectedSurveyPosition = surveySpinner.getSelectedItemPosition();
-                        boolean surveySelected = surveyAdapter.isSurveyItem(selectedSurveyPosition);
-                        handleGoToDataEntryButtonClick(surveySelected);
-                    }
-                });
-            }
+            findViewById(R.id.goToDataEntry).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    int selectedSurveyPosition = surveySpinner.getSelectedItemPosition();
+                    boolean surveySelected = surveyAdapter.isSurveyItem(selectedSurveyPosition);
+                    handleGoToDataEntryButtonClick(surveySelected);
+                }
+            });
+            findViewById(R.id.importDemoSurvey).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //empty survey list, show survey list activity
+                    SurveyListActivity.startActivity(MainActivity.this);
+                }
+            });
+            findViewById(R.id.importNewSurvey).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    handleImportNewSurvey();
+                }
+            });
         } catch (WorkingDirNotWritable ignore) {
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
@@ -89,9 +79,27 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        surveyAdapter.reloadSurveys();
+
+        if (surveyAdapter.isSurveyListEmpty()) {
+            Views.hide(findViewById(R.id.notEmptySurveyListFrame));
+            Views.show(findViewById(R.id.emptySurveyListFrame));
+        } else {
+            Views.hide(findViewById(R.id.emptySurveyListFrame));
+            Views.show(findViewById(R.id.notEmptySurveyListFrame));
+        }
+    }
+
     private void initializeSurveySpinner() {
         surveySpinner = (Spinner) findViewById(R.id.surveySpinner);
         surveySpinner.setAdapter(surveyAdapter);
+
+        String currentSurveyName = SurveyImporter.selectedSurvey(this);
+        surveySpinner.setSelection(surveyAdapter.getItemPosition(currentSurveyName));
+
         surveySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
@@ -107,9 +115,6 @@ public class MainActivity extends BaseActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        String currentSurveyName = SurveyImporter.selectedSurvey(this);
-        surveySpinner.setSelection(surveyAdapter.getItemPosition(currentSurveyName));
     }
 
     private void handleSurveySelected(String selectedSurveyName) {
@@ -126,7 +131,9 @@ public class MainActivity extends BaseActivity {
 
     private void handleGoToDataEntryButtonClick(boolean surveySelected) {
         if (surveySelected) {
-            SurveyNodeActivity.restartActivity(this);
+            if (ServiceLocator.init(this)) {
+                SurveyNodeActivity.restartActivity(this);
+            }
         } else {
             SurveyListActivity.startActivity(this);
         }

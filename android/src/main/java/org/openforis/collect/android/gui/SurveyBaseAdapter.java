@@ -27,11 +27,15 @@ public abstract class SurveyBaseAdapter extends BaseAdapter {
     protected List<SurveyItem> surveys;
     protected final Attrs attrs;
 
-
     public SurveyBaseAdapter(Activity activity) {
         this.activity = activity;
         this.surveys = surveys();
         attrs = new Attrs(activity);
+    }
+
+    public void reloadSurveys() {
+        this.surveys = surveys();
+        super.notifyDataSetChanged();
     }
 
     private List<SurveyItem> surveys() {

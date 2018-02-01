@@ -70,7 +70,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         workingDirPreference.setSummary(workingDir);
         directoryChooserDialog.dismiss();
         ServiceLocator.reset(this);
-        Activities.start(this, MainActivity.class);
+        Activities.startNewClearTask(this, MainActivity.class);
         this.finish();
     }
 

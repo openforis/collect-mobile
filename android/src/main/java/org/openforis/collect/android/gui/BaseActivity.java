@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.Keyboard;
 
 /**
  * @author Stefano Ricci
@@ -18,6 +19,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeInitializer.init(this);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Keyboard.hide(this);
     }
 
     public boolean navigateToSurveyList(MenuItem item) {

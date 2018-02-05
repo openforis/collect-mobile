@@ -200,9 +200,10 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void buildDynamicHeaderPart(View rootView) {
+        LinearLayout header = (LinearLayout) rootView.findViewById(R.id.entity_list_header);
+        header.removeAllViews();
         List<String> headings = getDynamicHeadings();
         if (! headings.isEmpty()) {
-            LinearLayout header = (LinearLayout) rootView.findViewById(R.id.entity_list_header);
             header.setWeightSum(headings.size());
             for (String heading : headings) {
                 TextView textView = new TextView(getContext());

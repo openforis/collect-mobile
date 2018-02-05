@@ -23,10 +23,9 @@ public class SendLogActivity extends Activity implements View.OnClickListener {
     private String logs;
 
     public static void startActivity(Context context, String logs) {
-        Intent intent = new Intent(context, SendLogActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // required when starting from Application
-        intent.putExtra(LOGS_INTENT_EXTRA, logs);
-        context.startActivity(intent);
+        Bundle extras = new Bundle();
+        extras.putString(LOGS_INTENT_EXTRA, logs);
+        Activities.startNewClearTask(context, SendLogActivity.class, extras);
     }
 
     public void onCreate(Bundle savedInstanceState) {

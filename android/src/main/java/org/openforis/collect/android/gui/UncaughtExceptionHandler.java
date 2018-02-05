@@ -20,6 +20,7 @@ import org.jooq.tools.StringUtils;
 import static org.openforis.collect.android.gui.util.AndroidFiles.*;
 
 import org.openforis.collect.android.gui.util.App;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.utils.Dates;
 
 
@@ -38,6 +39,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     public void uncaughtException(Thread thread, Throwable e) {
         Log.e(CollectMobileApplication.LOG_TAG, e.getMessage(), e);
         try {
+            Keyboard.hide(context);
             writeLogToFile();
             String logs = extractLogInformation(e);
             reportLogs(logs);

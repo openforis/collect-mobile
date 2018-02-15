@@ -28,7 +28,7 @@ public class NodeListDialogFragment extends DialogFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
 
-        RecyclerView.Adapter adapter = new SimpleNodeListAdapter(getActivity(), selectedNode.getParent(),
+        SimpleNodeListAdapter adapter = new SimpleNodeListAdapter(getActivity(), selectedNode.getParent(),
                 new SimpleNodeListAdapter.OnItemClickListener() {
             public void onItemClick(int position, UiNode node) {
                 if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {

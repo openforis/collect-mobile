@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
+import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
 import java.util.List;
@@ -75,14 +78,23 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     public void notifyNodeChanged(UiNode node) {
-        if (listAdapter.parentNode == node.getParent()) {
-            List<UiNode> siblings = node.getParent().getChildren();
+        UiInternalNode parent = node.getParent();
+        boolean insideCollection = parent instanceof UiAttributeCollection || parent instanceof UiEntityCollection;
+        if (insideCollection) {
+            parent = parent.getParent();
+        }
+        if (listAdapter.parentNode == parent) {
+            List<UiNode> siblings = parent.getChildren();
             List<UiNode> shownNodes = listAdapter.getNodes();
             int currentPosition = 0;
             for (UiNode sibling : siblings) {
                 if (sibling.isRelevant()) {
                     if (shownNodes.contains(sibling)) {
-                        listAdapter.notifyNodeChanged(node);
+                        if (insideCollection) {
+                            listAdapter.notifyNodeChanged(node.getParent());
+                        } else {
+                            listAdapter.notifyNodeChanged(node);
+                        }
                     } else {
                         listAdapter.insert(currentPosition, sibling);
                     }

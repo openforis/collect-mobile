@@ -17,13 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
+import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.gui.util.Tasks;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,9 +36,6 @@ public class SurveyListActivity extends BaseActivity {
 
     private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
     private static final String OPEN_IMPORT_DIALOG = "openImportDialog";
-
-    private boolean showOverwriteDialog;
-    private String surveyPath;
 
     public static void showImportDialog(Activity context) {
         Bundle extras = new Bundle();
@@ -123,13 +121,12 @@ public class SurveyListActivity extends BaseActivity {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
                     String path = getFileNameByUri(data.getData());
-                    importSurvey(path, false);
+                    importSurvey(path);
                 }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     private String getFileNameByUri(Uri uri) {
         String path = FileUtils.getPath(this, uri);
@@ -165,41 +162,12 @@ public class SurveyListActivity extends BaseActivity {
         startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
     }
 
-    protected void importSurvey(String surveyPath, boolean overwrite) {
-        String message = getResources().getString(R.string.toast_import_survey);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-        try {
-            if (ServiceLocator.importSurvey(surveyPath, overwrite, this) || overwrite)
-                startImportedSurveyNodeActivity();
-            else {
-                showOverwriteDialog = true;
-                this.surveyPath = surveyPath;
-            }
-        } catch (MalformedSurvey malformedSurvey) {
-            importFailedDialog(
-                    malformedSurvey.sourceName,
-                    getString(R.string.import_text_failed)
-            );
-        } catch (WrongSurveyVersion wrongSurveyVersion) {
-            importFailedDialog(
-                    wrongSurveyVersion.sourceName,
-                    getString(R.string.import_text_wrong_version)
-            );
-        }
+    protected void importSurvey(String surveyPath) {
+        new ImportSurveyRunnable(surveyPath).run();
     }
 
-    protected void onResumeFragments() {
-        super.onResumeFragments();
-        if (showOverwriteDialog)
-            showImportOwerwriteDialog(surveyPath);
-        showOverwriteDialog = false;
-        surveyPath = null;
-    }
-
-    private void showImportOwerwriteDialog(String surveyPath) {
-        ImportOverwriteDataConfirmation dialog = ImportOverwriteDataConfirmation.create(surveyPath);
-        dialog.show(getSupportFragmentManager(), "confirmDataDeletionAndImport");
+    public void onSurveyImportComplete() {
+        startImportedSurveyNodeActivity();
     }
 
     public void startImportedSurveyNodeActivity() {
@@ -230,5 +198,51 @@ public class SurveyListActivity extends BaseActivity {
                 listView.setItemChecked(position, true);
             }
         }
+    }
+
+    private class ImportSurveyRunnable implements Runnable {
+
+        private String surveyPath;
+        private boolean overwrite = false;
+
+        ImportSurveyRunnable(String surveyPath) {
+            this(surveyPath, false);
+        }
+
+        ImportSurveyRunnable(String surveyPath, boolean overwrite) {
+            this.surveyPath = surveyPath;
+            this.overwrite = overwrite;
+        }
+
+        public void run() {
+            final Activity context = SurveyListActivity.this;
+            Tasks.runSlowTask(context, new Runnable() {
+                public void run() {
+                    try {
+                        if (ServiceLocator.importSurvey(surveyPath, overwrite, context) || overwrite) {
+                            onSurveyImportComplete();
+                        } else {
+                            context.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Dialogs.confirm(context, R.string.import_overwrite_data_dialog_title, R.string.import_overwrite_data_dialog_message,
+                                            new ImportSurveyRunnable(surveyPath, true), null);
+                                }
+                            });
+                        }
+                    } catch (MalformedSurvey malformedSurvey) {
+                        importFailedDialog(
+                                malformedSurvey.sourceName,
+                                getString(R.string.import_text_failed)
+                        );
+                    } catch (WrongSurveyVersion wrongSurveyVersion) {
+                        importFailedDialog(
+                                wrongSurveyVersion.sourceName,
+                                getString(R.string.import_text_wrong_version)
+                        );
+                    }
+                }
+            }, R.string.toast_import_survey, R.string.please_wait);
+        }
+
     }
 }

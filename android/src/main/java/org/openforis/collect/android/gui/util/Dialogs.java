@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.util;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -84,9 +83,8 @@ public class Dialogs {
     }
 
     public static ProgressDialog showProgressDialog(Context context) {
-        ProgressDialog dialog = ProgressDialog.show(context, context.getString(R.string.processing),
+        return ProgressDialog.show(context, context.getString(R.string.processing),
                 context.getString(R.string.please_wait), true);
-        return dialog;
     }
 
     public static void showProgressDialogWhile(final Context context, final Predicate<Void> predicate, final Runnable callback) {

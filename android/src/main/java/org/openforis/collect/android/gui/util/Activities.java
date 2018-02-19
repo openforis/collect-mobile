@@ -7,9 +7,8 @@ import static android.content.Intent.*;
 import android.os.Bundle;
 
 /**
- * Created by ricci on 17/01/18.
+ * @author Stefano Ricci
  */
-
 public abstract class Activities {
 
     public static <A extends Activity> void start(Context context, Class<A> activityClass) {
@@ -39,11 +38,12 @@ public abstract class Activities {
         context.startActivity(intent);
     }
 
-    public static <T extends Object> T getIntentExtra(Activity activity, String key) {
+    public static <T> T getIntentExtra(Activity activity, String key) {
         return getIntentExtra(activity, key, null);
     }
 
-    public static <T extends Object> T getIntentExtra(Activity activity, String key, T defaultValue) {
+    @SuppressWarnings("unchecked")
+    public static <T> T getIntentExtra(Activity activity, String key, T defaultValue) {
         Bundle extras = activity.getIntent().getExtras();
         if (extras == null) {
             return defaultValue;

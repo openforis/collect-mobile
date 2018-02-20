@@ -1,11 +1,16 @@
 package org.openforis.collect.android.gui.input;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
@@ -143,6 +148,27 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
     final boolean isAttributeCode(UiCode code) {
         return code.equals(attribute.getCode());
+    }
+
+    protected static EditText createQualifierInput(Context context, String text, final Runnable onChangeHandler) {
+        final EditText editText = new AppCompatEditText(context);
+        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    onChangeHandler.run();
+            }
+        });
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
+                    onChangeHandler.run();
+                return false;
+            }
+        });
+        editText.setText(text);
+        editText.setSingleLine();
+        editText.setHint(R.string.hint_code_qualifier_specify);
+        return editText;
     }
 }
 

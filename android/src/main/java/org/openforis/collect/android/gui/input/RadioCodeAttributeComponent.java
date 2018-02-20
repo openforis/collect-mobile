@@ -32,7 +32,11 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         super(attribute, codeListService, surveyService, context);
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        qualifierInput = createQualifierInput();
+        qualifierInput = CodeAttributeComponent.createQualifierInput(context, attribute.getQualifier(), new Runnable() {
+            public void run() {
+                saveNode();
+            }
+        });
         radioGroup = new RadioGroup(context);
         layout.addView(radioGroup);
         initOptions();
@@ -75,27 +79,6 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         return qualifierInput.getText().toString();
     }
 
-
-    private EditText createQualifierInput() {
-        final EditText editText = new AppCompatEditText(context);
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    saveNode();
-            }
-        });
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT)
-                    saveNode();
-                return false;
-            }
-        });
-        editText.setText(attribute.getQualifier());
-        editText.setSingleLine();
-        return editText;
-    }
-
     private void showQualifier() {
         uiHandler.post(new Runnable() {
             public void run() {
@@ -106,7 +89,6 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             }
         });
     }
-
 
     private void hideQualifier() {
         uiHandler.post(new Runnable() {

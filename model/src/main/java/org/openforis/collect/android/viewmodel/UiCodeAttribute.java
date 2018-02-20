@@ -6,6 +6,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author Daniel Wiell
  */
 public class UiCodeAttribute extends UiAttribute {
+
+    private static final String QUALIFIER_SEPARATOR = ": ";
+
     private UiCode code;
     private String qualifier;
 
@@ -34,7 +37,7 @@ public class UiCodeAttribute extends UiAttribute {
     }
 
     public String valueAsString() {
-        return code == null ? null : (code.toString() + (StringUtils.isEmpty(qualifier) ? "" : ", " + qualifier));
+        return code == null ? null : (code.toString() + (StringUtils.isEmpty(qualifier) ? "" : QUALIFIER_SEPARATOR + qualifier));
     }
 
     public boolean isEmpty() {

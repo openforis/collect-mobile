@@ -69,6 +69,7 @@
     <string name="label_empty">…</string>
 
     <string name="hint_code_autocomplete">- Press space to show list of values -</string>
+    <string name="hint_code_qualifier_specify">- Specify -</string>
     <string name="label_show_code_descriptions">Show item descriptions</string>
 
     <string name="hint_date_pattern">dd MMMM yyyy</string>

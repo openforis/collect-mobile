@@ -16,8 +16,6 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
-import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
-import org.openforis.collect.metamodel.ui.UICodeField;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +59,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
                 }
 
                 public void onNothingSelected(AdapterView<?> parent) {
-                    selectedCode = null;
+                    setSelectedCode(null);
                 }
             });
             autoComplete.setOnEditorActionListener(new TextView.OnEditorActionListener() {

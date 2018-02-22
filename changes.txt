@@ -1,11 +1,13 @@
 Changes
 -------
-2017-01
+2018-02-22
 
-    * Dynamically hide not relevant attributes from side bar
+    * Hide not relevant attributes
+    * New landing screen
     * Prevent automatically generated list of items from editing
-    * Improved list of items layout
+    * Improved record list layout
     * Performance improvements
+    * Bug fixes
 
 2017-11-13
 

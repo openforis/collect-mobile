@@ -15,11 +15,4 @@ public class CollectMobileApplication extends MultiDexApplication {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
     }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
-    }
 }

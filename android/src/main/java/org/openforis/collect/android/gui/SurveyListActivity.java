@@ -250,13 +250,11 @@ public class SurveyListActivity extends BaseActivity {
         @Override
         protected void handleException(Exception e) {
             super.handleException(e);
-            String sourceName = surveyPath;
             String errorMessage;
-            int errorMessageKey;
             if (e instanceof UnsupportedFileType) {
                 UnsupportedFileType ex = (UnsupportedFileType) e;
                 errorMessage = getString(R.string.import_text_unsupported_file_type_selected,
-                        ex.getExpectedExtention(), ex.getFoundExtension());
+                        ex.getExpectedExtention());
             } else if (e instanceof MalformedSurvey) {
                 errorMessage = getString(R.string.import_text_failed);
             } else if (e instanceof WrongSurveyVersion) {
@@ -267,7 +265,7 @@ public class SurveyListActivity extends BaseActivity {
                 errorMessage = getString(R.string.import_text_failed);
             }
             showImportFailedDialog(context,
-                    sourceName,
+                    surveyPath,
                     errorMessage
             );
         }

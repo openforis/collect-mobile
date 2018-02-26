@@ -115,9 +115,8 @@
     <string name="import_text_failed">Make sure you are running the latest version of Collect Mobile and have exported
         your survey for Collect Mobile using a recent Collect Server version.
     </string>
-    <string name="import_text_wrong_version">Make sure you are running the latest version of Collect Mobile and have
-        exported your survey for Collect Mobile using a recent Collect Server version.
-    </string>
+    <string name="import_text_wrong_version">Survey design exported with Collect version %s but this version of Collect Mobile supports survey designs generated with Collect up to version %s.\nPlease consider updating Collect Mobile to the latest version.</string>
+    <string name="import_text_unsupported_file_type_selected">Please select a valid Collect Mobile survey file (.%s)</string>
 
     <string name="export_dialog_title">Export survey data</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>

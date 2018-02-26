@@ -98,7 +98,7 @@ public class ServiceLocator {
         return new File(AppDirs.surveyDatabasesDir(surveyName, context), databaseName);
     }
 
-    public static boolean importSurvey(String surveyDatabasePath, boolean overwrite, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {
+    public static boolean importSurvey(String surveyDatabasePath, boolean overwrite, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion, UnsupportedFileType {
         boolean imported = new SurveyImporter(surveyDatabasePath, applicationContext).importSurvey(overwrite);
         if (imported) {
             surveyService = null;

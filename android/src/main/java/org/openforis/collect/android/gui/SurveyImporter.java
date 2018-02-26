@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.preference.PreferenceManager;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -15,12 +17,18 @@ import org.openforis.collect.android.util.Unzipper;
 import org.openforis.collect.io.SurveyBackupInfo;
 import org.openforis.commons.versioning.Version;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class SurveyImporter {
     public static final String DATABASE_NAME = "collect.db";
     public static final String INFO_PROPERTIES_NAME = "info.properties";
     public static final String SELECTED_SURVEY = "org.openforis.collect.android.SelectedSurvey";
+    private static final String SURVEY_FILE_EXTENSION = "collect-mobile";
     private final String sourceSurveyPath;
     private final Context applicationContext;
 
@@ -29,7 +37,8 @@ public class SurveyImporter {
         this.applicationContext = context;
     }
 
-    public boolean importSurvey(boolean overwrite) throws MalformedSurvey, WrongSurveyVersion {
+    public boolean importSurvey(boolean overwrite) throws MalformedSurvey, WrongSurveyVersion, UnsupportedFileType {
+        checkSupportedFileType();
         try {
             File tempDir = unzipSurveyDefinition(sourceSurveyPath);
             String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
@@ -61,6 +70,13 @@ public class SurveyImporter {
             throw new MalformedSurvey(sourceSurveyPath, e);
         } catch (SQLiteException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
+        }
+    }
+
+    private void checkSupportedFileType() throws UnsupportedFileType {
+        String foundExtension = FilenameUtils.getExtension(sourceSurveyPath);
+        if (!SURVEY_FILE_EXTENSION.equalsIgnoreCase(foundExtension)) {
+            throw new UnsupportedFileType(SURVEY_FILE_EXTENSION, foundExtension);
         }
     }
 
@@ -99,7 +115,7 @@ public class SurveyImporter {
             IOUtils.copy(sourceInput, intermediateOutput);
             new SurveyImporter(intermediateSurveyPath.getAbsolutePath(), context).importSurvey(true);
             FileUtils.deleteDirectory(tempDir);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
 

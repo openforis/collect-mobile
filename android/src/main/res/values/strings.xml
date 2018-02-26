@@ -48,6 +48,7 @@
     <string name="toast_import_survey_failed">Failed to import survey from %s</string>
     <string name="toast_backed_up_survey">Backed up survey to %s</string>
     <string name="toast_backed_up_failed">Backed up failed</string>
+    <string name="toast_not_relevant_attribute_selected">This attribute is not relevant</string>
 
     <string name="storage_not_found_message">Secondary storage not found</string>
     <string name="storage_not_found_retry">Retry</string>

@@ -32,8 +32,7 @@ public class NodeMatrix {
 
     public UiNode nodeAt(int row, int column) {
         UiInternalNode rowNode = rows().get(row);
-        List<UiNode> relevantChildren = rowNode.getRelevantChildren();
-        return relevantChildren.get(column);
+        return rowNode.getChildAt(column);
     }
 
     public Definition headerAt(int column) {
@@ -42,7 +41,7 @@ public class NodeMatrix {
 
     private List<Definition> headerRows(UiInternalNode node) {
         ArrayList<Definition> childDefinitions = new ArrayList<Definition>();
-        for (UiNode childNode : node.getRelevantChildren())
+        for (UiNode childNode : node.getChildren())
             childDefinitions.add(childNode.getDefinition());
         return childDefinitions;
     }

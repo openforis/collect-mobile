@@ -1,5 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.commons.collection.CollectionUtils;
+import org.openforis.commons.collection.Predicate;
+
 import java.util.*;
 
 /**
@@ -99,10 +102,19 @@ public abstract class UiNode {
         UiInternalNode parentNode = getParent();
         if (parentNode == null)
             return Collections.emptyList();
-        UiNode.Status newParentStatus = UiNode.Status.values()[0];
-        for (UiNode child : parentNode.getChildren()) {
-            if (child.isRelevant() && child.getStatus().ordinal() > newParentStatus.ordinal())
-                newParentStatus = child.getStatus();
+
+        UiNode.Status defaultStatus = UiNode.Status.values()[0];
+        UiNode.Status newParentStatus = parentNode.getValidationErrors() == null || parentNode.getValidationErrors().isEmpty() ?
+                defaultStatus: Status.VALIDATION_ERROR;
+        if (! parentNode.getChildren().isEmpty()) {
+            UiNode.Status descendantStatus = defaultStatus;
+            for (UiNode child : parentNode.getChildren()) {
+                if (child.isRelevant() && child.getStatus().ordinal() > descendantStatus.ordinal())
+                    descendantStatus = child.getStatus();
+            }
+            if (descendantStatus.ordinal() > newParentStatus.ordinal()) {
+                newParentStatus = descendantStatus;
+            }
         }
         if (newParentStatus != parentNode.getStatus()) {
             return parentNode.updateStatusOfNodeAndParents(newParentStatus);
@@ -145,6 +157,22 @@ public abstract class UiNode {
         return parent.getChildAt(index);
     }
 
+    public UiNode getRelevantSiblingAt(int index) {
+        List<UiNode> relevantSiblings = getRelevantSiblings();
+        return relevantSiblings.get(index);
+    }
+
+    public List<UiNode> getRelevantSiblings() {
+        List<UiNode> siblings = parent.getChildren();
+        List<UiNode> relevantSiblings = new ArrayList<UiNode>(siblings);
+        CollectionUtils.filter(relevantSiblings, new Predicate<UiNode>() {
+            public boolean evaluate(UiNode item) {
+                return item.isRelevant();
+            }
+        });
+        return relevantSiblings;
+    }
+
     public UiRecord getUiRecord() {  // TODO: Can this be removed or moved? This doesn't make sense for UiRecordCollection and UiSurvey
         if (this instanceof UiRecord)
             return (UiRecord) this;
@@ -167,6 +195,9 @@ public abstract class UiNode {
         this.parent = parent;
     }
 
+    public boolean hasValidationErrors() {
+        return ! (validationErrors == null || validationErrors.isEmpty());
+    }
 
     public Set<UiValidationError> getValidationErrors() {
         return validationErrors;

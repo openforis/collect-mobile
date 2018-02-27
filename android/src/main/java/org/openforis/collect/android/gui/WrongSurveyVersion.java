@@ -17,4 +17,11 @@ public class WrongSurveyVersion extends RuntimeException {
         this.version = version;
     }
 
+    public String getSurveyVersion() {
+        return SurveyImporter.surveyMinorVersion(version);
+    }
+
+    public String getCollectVersion() {
+        return SurveyImporter.surveyMinorVersion(Collect.VERSION);
+    }
 }

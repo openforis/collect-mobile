@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.inqbarna.tablefixheaders.adapters.BaseTableAdapter;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
@@ -79,17 +81,25 @@ public class NodeMatrixTableAdapter extends BaseTableAdapter {
         final TextView textView;
         if (convertView == null) {
             textView = (TextView) inflater.inflate(R.layout.entity_table_cell, parent, false);
-            textView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Object tag = v.getTag();
-                    if (tag != null)
-                        ((SurveyNodeActivity) context).navigateTo(Integer.parseInt(tag.toString()));
-                }
-            });
+            if (!isHeader(row, column)) {
+                textView.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Object tag = v.getTag();
+                        if (tag != null) {
+                            UiNode node = (UiNode) tag;
+                            if (node.isRelevant()) {
+                                ((SurveyNodeActivity) context).navigateTo(node.getId());
+                            } else {
+                                Toast.makeText(context, R.string.toast_not_relevant_attribute_selected, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+            }
         } else
             textView = (TextView) convertView;
         if (!isHeader(row, column))
-            textView.setTag(String.valueOf(nodeMatrix.nodeAt(row, column).getId()));
+            textView.setTag(nodeMatrix.nodeAt(row, column));
 
         textView.setText(text(row, column));
         styleView(row, column, textView);

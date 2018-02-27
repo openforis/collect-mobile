@@ -1,5 +1,11 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.idm.metamodel.NodeDefinition;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Daniel Wiell
  */
@@ -11,12 +17,14 @@ public class Definition {
     public final String description;
     public final String prompt;
     public final boolean required;
+    public Set<Definition> relevanceSources = new HashSet<Definition>();
 
     public Definition(String id, String name, String label, boolean required) {
         this(id, name, label, null, null, null, required);
     }
 
-    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description, String prompt, boolean required) {
+    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description,
+                      String prompt, boolean required) {
         this.id = id;
         this.name = name;
         this.label = label == null ? name : label; // Use the name as label if not specified

@@ -81,6 +81,7 @@ public class NodeMatrix {
 
     public int columnIndex(UiNode node) {
         UiInternalNode row = node.getParent();
-        return row.getChildIndex(node.getId());
+        List<UiNode> relevantChildren = row.getRelevantChildren();
+        return relevantChildren.indexOf(node);
     }
 }

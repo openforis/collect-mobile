@@ -1,8 +1,11 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultConfiguration;
+
+import org.jooq.Configuration;
+import org.jooq.ConnectionProvider;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DialectAwareJooqConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.SurveyService;
@@ -33,7 +36,6 @@ import org.openforis.collect.persistence.jooq.CollectDSLContext;
 import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.collect.service.CollectSpeciesListService;
-import org.openforis.idm.metamodel.SpeciesListService;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import java.io.File;
@@ -54,7 +56,11 @@ public class ServiceLocator {
     private static AndroidDatabase nodeDatabase;
     private static CollectDSLContext jooqDsl;
 
-    public static boolean init(Context applicationContext) {
+    /**
+     * Initializes the ServiceLocator.
+     * Returns true if there is a selected survey, false otherwise
+     */
+    public static boolean init(Context applicationContext) throws WorkingDirNotWritable {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
             workingDir = AppDirs.root(applicationContext);
@@ -64,12 +70,9 @@ public class ServiceLocator {
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
 
-            DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
-            defaultConfiguration.setSettings(defaultConfiguration.settings().withRenderSchema(false));
-            defaultConfiguration
-                    .set(modelDatabase.dataSource())
-                    .set(SQLDialect.SQLITE);
-            jooqDsl = new CollectDSLContext(defaultConfiguration);
+            ConnectionProvider connectionProvider = new DataSourceConnectionProvider(modelDatabase.dataSource());
+            Configuration jooqConf = new DialectAwareJooqConfiguration(connectionProvider);
+            jooqDsl = new CollectDSLContext(jooqConf);
 
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
             collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
@@ -95,7 +98,7 @@ public class ServiceLocator {
         return new File(AppDirs.surveyDatabasesDir(surveyName, context), databaseName);
     }
 
-    public static boolean importSurvey(String surveyDatabasePath, boolean overwrite, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion {
+    public static boolean importSurvey(String surveyDatabasePath, boolean overwrite, Context applicationContext) throws MalformedSurvey, WrongSurveyVersion, UnsupportedFileType {
         boolean imported = new SurveyImporter(surveyDatabasePath, applicationContext).importSurvey(overwrite);
         if (imported) {
             surveyService = null;

@@ -53,8 +53,9 @@
 
     <string name="import_title_failed">Misslyckades att importera %1$s</string>
     <string name="import_text_failed">Se till att du har den senaste versionen av Collect Mobile  och exporterat din survey till Collect Mobile med en uppdaterad version av Collect Server</string>
+    <!--
     <string name="import_text_wrong_version">Se till att du har den senaste versionen av Collect Mobile  och exporterat din survey till Collect Mobile med en uppdaterad version av Collect Server</string>
-
+    -->
     <string name="import_overwrite_data_dialog_title">Ta bort datan</string>
     <string name="import_overwrite_data_dialog_message">Din data kommer att tas bort om du fortsätter och importerar en ny survey.</string>
     <string name="import_overwrite_data_dialog_confirm">Ta bort datan och importera</string>

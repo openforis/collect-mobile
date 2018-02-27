@@ -27,11 +27,19 @@ public abstract class Views {
     }
 
     public static void hide(View rootView, int viewId) {
-        toggleVisibility(rootView, viewId, false);
+        hide(rootView, viewId, true);
+    }
+
+    public static void hide(View rootView, int viewId, boolean gone) {
+        hide(rootView.findViewById(viewId), gone);
     }
 
     public static void hide(View view) {
-        toggleVisibility(view, false);
+        hide(view, true);
+    }
+
+    public static void hide(View view, boolean gone) {
+        view.setVisibility(gone ? View.GONE : View.INVISIBLE);
     }
 
     public static void toggleVisibility(View rootView, int viewId, boolean visible) {
@@ -39,7 +47,7 @@ public abstract class Views {
     }
 
     public static void toggleVisibility(View view, boolean visible) {
-        view.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        view.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     public static int dpsToPixels(Context context, int dps) {

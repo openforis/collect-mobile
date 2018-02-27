@@ -2,35 +2,74 @@ package org.openforis.collect.android.gui.pager;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
-import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Daniel Wiell
  */
 public class NodePagerAdapter extends FragmentPagerAdapter {
-    private final Map<UiNode, NodeDetailFragment> fragmentByNode;
-    private final UiInternalNode pagerNode;
+    private Map<UiNode, NodeDetailFragment> fragmentByNode;
+    private List<UiNode> visibleNodes = new ArrayList<UiNode>();
+    private List<UiNode> previouslyVisibleNodes = new ArrayList<UiNode>();
 
-    public NodePagerAdapter(FragmentManager fragmentManager, Map<UiNode, NodeDetailFragment> fragmentByNode, UiInternalNode pagerNode) {
+    public NodePagerAdapter(FragmentManager fragmentManager, Map<UiNode, NodeDetailFragment> fragmentByNode) {
         super(fragmentManager);
         this.fragmentByNode = fragmentByNode;
-        this.pagerNode = pagerNode;
     }
 
+    @Override
     public NodeDetailFragment getItem(int position) {
-        UiNode node = pagerNode.getChildAt(position);
+        UiNode node = visibleNodes.get(position);
         return fragmentByNode.get(node);
     }
 
-    public CharSequence getPageTitle(int position) {
-        return pagerNode.getChildAt(position).getLabel();
+    @Override
+    public long getItemId(int position) {
+        UiNode node = visibleNodes.get(position);
+        return node.getId();
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        UiNode node = visibleNodes.get(position);
+        return node.getLabel();
+    }
+
+    @Override
     public int getCount() {
-        return pagerNode.getChildCount();
+        return visibleNodes.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        NodeDetailFragment fragment = (NodeDetailFragment) object;
+        UiNode node = fragment.node();
+        if (node.isRelevant()) {
+            int currentPosition = visibleNodes.indexOf(node);
+            int oldPosition = previouslyVisibleNodes.indexOf(node);
+            if (currentPosition >= 0) {
+                if (currentPosition == oldPosition) {
+                    return POSITION_UNCHANGED;
+                } else {
+                    return currentPosition;
+                }
+            } else {
+                return POSITION_NONE;
+            }
+        } else {
+            return POSITION_NONE; //forces view update when relevance changes
+        }
+    }
+
+    public void setVisibleNodes(List<UiNode> nodes) {
+        previouslyVisibleNodes = this.visibleNodes;
+        this.visibleNodes = nodes;
+        notifyDataSetChanged();
     }
 }

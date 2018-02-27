@@ -1,10 +1,11 @@
 package org.openforis.collect.android.gui;
 
+import static org.openforis.collect.android.gui.CollectMobileApplication.*;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import static android.view.View.*;
 
@@ -30,9 +31,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SubmitDataToCollectActivity extends AppCompatActivity {
+public class SubmitDataToCollectActivity extends BaseActivity {
 
-    private static final String LOG_TAG = SubmitDataToCollectActivity.class.getSimpleName();
     private static final String DATA_RESTORE_ENDPOINT = "/api/surveys/restore/data";
     private static final String DATA_RESTORE_JOB_ENDPOINT = "/api/surveys/data/restorejobs/%s/status.json";
     private static final long RESTORE_DATA_JOB_MONITOR_PERIOD = 3000L;
@@ -104,7 +104,7 @@ public class SubmitDataToCollectActivity extends AppCompatActivity {
     }
 
     private void handleError(final String error) {
-        Log.i(LOG_TAG, "Error: " + error);
+        Log.i(LOG_TAG, "Send data to Collect error: " + error);
 
         updateViewState(ViewState.ERROR, new Runnable() {
             public void run() {

@@ -6,6 +6,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
@@ -14,7 +16,6 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
-import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +29,18 @@ import java.util.concurrent.Executors;
 class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     private final ClearableAutoCompleteTextView autoComplete;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final LinearLayout layout;
+    private EditText qualifierInput;
+
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
 
     AutoCompleteCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
+        layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
         autoComplete = new ClearableAutoCompleteTextView(context);
+        layout.addView(autoComplete);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         autoComplete.setHint(R.string.hint_code_autocomplete);
@@ -42,17 +49,17 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         } else {
             autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
+                    setSelectedCode((UiCode) autoComplete.getAdapter().getItem(position));
                     saveNode();
                 }
             });
             autoComplete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    selectedCode = (UiCode) autoComplete.getAdapter().getItem(position);
+                    setSelectedCode((UiCode) autoComplete.getAdapter().getItem(position));
                 }
 
                 public void onNothingSelected(AdapterView<?> parent) {
-                    selectedCode = null;
+                    setSelectedCode(null);
                 }
             });
             autoComplete.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -69,6 +76,11 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
                 }
             });
         }
+        qualifierInput = createQualifierInput(context, attribute.getQualifier(), new Runnable() {
+            public void run() {
+                saveNode();
+            }
+        });
         initOptions();
     }
 
@@ -76,40 +88,42 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         return autoComplete;
     }
 
+    protected void setSelectedCode(UiCode code) {
+        this.selectedCode = code;
+        if (codeList.isQualifiable(selectedCode))
+            showQualifier();
+        else
+            hideQualifier();
+    }
+
     protected UiCode selectedCode() {
         String text = autoComplete.getText().toString();
         if (selectedCode == null || !selectedCode.toString().equals(text)) {
             if (StringUtils.isEmpty(text))
-                selectedCode = null;
+                setSelectedCode(null);
             else
-                selectedCode = uiCodeByValue.get(text.trim());
+                setSelectedCode(uiCodeByValue.get(text.trim()));
         }
-        if (selectedCode == null && codeList.isQualifiable() && !StringUtils.isEmpty(text)) {
-            selectedCode = codeList.getQualifiableCode();
-            return selectedCode;
-        }
-
         if (selectedCode == null) {
             setText("");
             return null;
+        } else {
+            setText(selectedCode.toString());
+            return selectedCode;
         }
-        setText(selectedCode.toString());
-        return selectedCode;
     }
 
     protected String qualifier(UiCode selectedCode) {
-        return codeList.isQualifiable() ? autoComplete.getText().toString().trim() : null;
+        return codeList.isQualifiable(selectedCode) ? qualifierInput.getText().toString(): null;
     }
 
     protected View toInputView() {
-        return autoComplete;
+        return layout;
     }
 
     protected void initOptions() {
         if (attribute.getCode() != null) {
-            setText(attribute.getQualifier() == null
-                    ? attribute.getCode().toString()
-                    : attribute.getQualifier());
+            setText(attribute.getCode().toString());
             selectedCode = attribute.getCode();
         }
         executor.execute(new LoadCodesTask());
@@ -130,6 +144,26 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         autoComplete.setAdapter(adapter);
     }
 
+    private void showQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                if (layout.getChildCount() == 1) {
+                    layout.addView(qualifierInput);
+                    showKeyboard(qualifierInput);
+                }
+            }
+        });
+    }
+
+    private void hideQualifier() {
+        uiHandler.post(new Runnable() {
+            public void run() {
+                hideKeyboard();
+                layout.removeView(qualifierInput);
+            }
+        });
+    }
+
     private class LoadCodesTask implements Runnable {
         /**
          * Handle bound to main thread, to post updates to AutoCompleteTextView on the main thread.
@@ -143,6 +177,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
             for (UiCode code : codes)
                 uiCodeByValue.put(code.getValue(), code);
             setAdapter(codes, uiHandler);
+            if (codeList.isQualifiable(attribute.getCode()))
+                showQualifier();
         }
 
         private void setAdapter(final List<UiCode> codes, Handler uiHandler) {

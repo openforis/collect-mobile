@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.pager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,8 +19,8 @@ import org.openforis.collect.android.viewmodel.UiNodeChange;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Daniel Wiell
@@ -30,6 +29,8 @@ public class NodePagerFragment extends Fragment {
     private Map<UiNode, NodeDetailFragment> fragmentsByNode;
     private SurveyService surveyService;
     private NodePathDetailsFragment nodePathDetailsFragment;
+    private NodePagerAdapter pagerAdapter;
+    private ViewPager pager;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,26 +59,20 @@ public class NodePagerFragment extends Fragment {
         selectedFragment.onPrepareOptionsMenu(menu);
     }
 
-    public void onPause() {
-        super.onPause();
-    }
-
     public void onResume() {
         super.onResume();
-    }
-
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+        List<UiNode> siblings = pagerNode().getRelevantChildren();
+        pagerAdapter.setVisibleNodes(siblings);
+        UiNode selectedNode = selectedNode();
+        if (selectedNode != null) {
+            pager.setCurrentItem(siblings.indexOf(selectedNode));
+        }
     }
 
     private Map<UiNode, NodeDetailFragment> createDetailFragments() {
         HashMap<UiNode, NodeDetailFragment> fragmentsByNode = new LinkedHashMap<UiNode, NodeDetailFragment>();
-        UiInternalNode selectedNode = pagerNode();
-        for (UiNode uiNode : selectedNode.getChildren())
+        UiInternalNode pagerNode = pagerNode();
+        for (UiNode uiNode : pagerNode.getChildren())
             fragmentsByNode.put(uiNode, NodeDetailFragment.create(uiNode));
         return fragmentsByNode;
     }
@@ -92,26 +87,28 @@ public class NodePagerFragment extends Fragment {
             selectedFragment.onSelect();
     }
 
-    public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
-        for (NodeDetailFragment fragment : fragmentsByNode.values())
+    synchronized  public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+        for (NodeDetailFragment fragment : fragmentsByNode.values()) {
             fragment.onNodeChange(node, nodeChanges);
+        }
+        if (! nodeChanges.isEmpty()) {
+            pagerAdapter.setVisibleNodes(pagerNode().getRelevantChildren());
+        }
 
         if (nodePathDetailsFragment != null)
             nodePathDetailsFragment.nodeChanged(node);
     }
 
     private void setupPager(View view) {
-        final ViewPager pager = (ViewPager) view.findViewById(R.id.attributePager);
-        PagerAdapter pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode, pagerNode());
+        pager = (ViewPager) view.findViewById(R.id.attributePager);
+        pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode);
         pager.setAdapter(pagerAdapter);
 
-        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
-        indicator.setViewPager(pager);
-        int selectedIndex = selectedNode().getIndexInParent();
         ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             public void onPageSelected(int position) {
-                UiNode selectedNode = surveyService.selectedNode().getSiblingAt(position);
-                surveyService.selectNode(selectedNode.getId());
+                UiNode selectedNode = surveyService.selectedNode();
+                UiNode nextNode = selectedNode.getRelevantSiblingAt(position);
+                surveyService.selectNode(nextNode.getId());
             }
 
             public void onPageScrollStateChanged(int state) {
@@ -123,8 +120,13 @@ public class NodePagerFragment extends Fragment {
                 }
             }
         };
+        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
+        indicator.setViewPager(pager);
         indicator.setOnPageChangeListener(pageChangeListener);
+        List<UiNode> relevantSiblings = selectedNode().getRelevantSiblings();
+        int selectedIndex = relevantSiblings.indexOf(selectedNode());
         indicator.setCurrentItem(selectedIndex);
+
         fragmentsByNode.get(selectedNode()).onSelect();
     }
 
@@ -138,5 +140,10 @@ public class NodePagerFragment extends Fragment {
 
     private NodeDetailFragment selectedFragment() {
         return fragmentsByNode.get(surveyService.selectedNode());
+    }
+
+    public void prepareNodeDeselect(UiNode node) {
+        NodeDetailFragment fragment = fragmentsByNode.get(node);
+        fragment.onDeselect();
     }
 }

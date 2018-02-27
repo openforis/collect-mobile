@@ -2,7 +2,10 @@ package org.openforis.collect.android.gui;
 
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SmartNext {
@@ -16,23 +19,31 @@ public class SmartNext {
     }
 
     public UiNode next() {
-        UiNode nodeToTry = fromNode;
-        while (nodeToTry != null) {
-            if (isNext(nodeToTry))
-                return nodeToTry;
-            nodeToTry = nextToTry(nodeToTry);
-        }
-        return fromNode.getUiSurvey().getFirstChild(); // Back to record collection if no other
+        List<UiNode> fullPath = fullNextNodePath();
+        return fullPath.get(fullPath.size() - 1);
     }
 
-    private UiNode nextToTry(UiNode node) {
+    public List<UiNode> fullNextNodePath() {
+        List<UiNode> result = new ArrayList<UiNode>();
+        UiNode nodeToTry = fromNode;
+        while (nodeToTry != null) {
+            result.add(nodeToTry);
+            if (isNext(nodeToTry))
+                return result;
+            nodeToTry = nextToTry(nodeToTry, true);
+        }
+        result.add(fromNode.getUiSurvey().getFirstChild()); // Back to record collection if no other
+        return result;
+    }
+
+    private UiNode nextToTry(UiNode node, boolean includeNotRelevant) {
         boolean branchTried = branchesTried.contains(node);
         branchesTried.add(node.getParent());
 
         if (hasChildren(node) && !branchTried)
             return firstChild(node);
-        if (hasNextSibling(node))
-            return nextSibling(node);
+        if (hasNextSibling(node, includeNotRelevant))
+            return nextSibling(node, includeNotRelevant);
         if (node.getParent() != null)
             return nextParent(node);
         return null;
@@ -45,8 +56,15 @@ public class SmartNext {
         return parent.getParent();
     }
 
-    private boolean hasNextSibling(UiNode node) {
-        return node.getParent() != null && node.getIndexInParent() < node.getSiblingCount() - 1;
+    private boolean hasNextSibling(UiNode node, boolean includeNotRelevantNodes) {
+        if (node.getParent() == null) {
+            return false;
+        } else if (includeNotRelevantNodes) {
+            return node.getIndexInParent() < node.getSiblingCount() - 1;
+        } else {
+            List<UiNode> relevantSiblings = node.getRelevantSiblings();
+            return relevantSiblings.indexOf(node) < relevantSiblings.size() - 1;
+        }
     }
 
     private UiNode firstChild(UiNode node) {
@@ -61,8 +79,14 @@ public class SmartNext {
         return node instanceof UiInternalNode && !node.excludeWhenNavigating() && !((UiInternalNode) node).getChildren().isEmpty();
     }
 
-    private UiNode nextSibling(UiNode node) {
-        return node.getSiblingAt(node.getIndexInParent() + 1);
+    private UiNode nextSibling(UiNode node, boolean includeNotRelevant) {
+        if (includeNotRelevant) {
+            return node.getSiblingAt(node.getIndexInParent() + 1);
+        } else {
+            List<UiNode> relevantSiblings = node.getRelevantSiblings();
+            int nodeIndex = relevantSiblings.indexOf(node);
+            return relevantSiblings.get(nodeIndex + 1);
+        }
     }
 
     public boolean isNext(UiNode node) {

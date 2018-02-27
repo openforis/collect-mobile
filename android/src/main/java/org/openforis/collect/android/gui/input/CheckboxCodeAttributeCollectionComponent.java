@@ -122,7 +122,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     private void saveQualifier() {
-        if (codeList == null)
+        if (codeList == null || qualifierInput == null)
             return;
         UiCode code = codeList.getQualifiableCode();
         if (code == null)

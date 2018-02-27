@@ -140,8 +140,9 @@ public class ViewModelManager {
 
     private Map<Integer, StatusChange> statusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         Map<Integer, StatusChange> statusChanges = new HashMap<Integer, StatusChange>();
-        for (final UiNode changedNode : nodeChanges.keySet()) {
-            UiNodeChange nodeChange = nodeChanges.get(changedNode);
+        for (Map.Entry<UiNode, UiNodeChange> nodeChangeEntry : nodeChanges.entrySet()) {
+            UiNode changedNode = nodeChangeEntry.getKey();
+            UiNodeChange nodeChange = nodeChangeEntry.getValue();
             changedNode.setValidationErrors(nodeChange.validationErrors);
             if (nodeChange.relevanceChange || nodeChange.statusChange) {
                 if (nodeChange.relevanceChange)
@@ -151,13 +152,13 @@ public class ViewModelManager {
             }
         }
 
-        for (UiNode uiNode : nodeChanges.keySet()) {
-            List<UiNode> updatedParents = uiNode.updateStatusOfParents();
+        for (Map.Entry<UiNode, UiNodeChange> nodeChangeEntry : nodeChanges.entrySet()) {
+            UiNode changedNode = nodeChangeEntry.getKey();
+            List<UiNode> updatedParents = changedNode.updateStatusOfParents();
             for (UiNode updatedParent : updatedParents) {
                 statusChanges.put(updatedParent.getId(), new StatusChange(updatedParent));
             }
         }
-
         return statusChanges;
     }
 

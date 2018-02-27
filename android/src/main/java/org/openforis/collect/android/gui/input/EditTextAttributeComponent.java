@@ -17,6 +17,7 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
  * @author Daniel Wiell
  */
 public abstract class EditTextAttributeComponent<T extends UiAttribute> extends AttributeComponent<T> {
+
     private final EditText editText;
 
     protected EditTextAttributeComponent(T attribute, SurveyService surveyService, FragmentActivity context) {
@@ -68,6 +69,10 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
+        editText.setSingleLine();
+
+        editText.setText(attributeValue());
+
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
@@ -90,10 +95,9 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
             public void afterTextChanged(Editable s) {
                 editText.setError(null);
+                delaySaveNode();
             }
         });
-        editText.setText(attributeValue());
-        editText.setSingleLine();
         onEditTextCreated(editText);
         return editText;
     }

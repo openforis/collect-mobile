@@ -52,4 +52,8 @@ public interface SurveyService {
     File file(UiFileAttribute attribute);
 
     CollectSurvey getSelectedSurvey();
+
+    boolean isUpdating();
+
+    void registerRecordUpdateCallback(Runnable runnable);
 }

@@ -9,13 +9,33 @@
             android:id="@+id/node_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="?attr/standardPadding"/>
+            android:padding="?attr/standardPadding" />
 
     <TextView
             android:id="@+id/node_prompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="?attr/standardPadding"/>
+
+    <LinearLayout
+        android:id="@+id/validation_error_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="?attr/standardPadding"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/red_circle"/>
+        <TextView
+            android:id="@+id/validation_error_messages"
+            android:textColor="#FF0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -35,35 +55,49 @@
 
                 <LinearLayout
                     android:id="@+id/entity_list_header"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_toLeftOf="@id/entity_list_header_modified_date">
+                    android:layout_toLeftOf="@id/entity_list_header_modified_date_contaienr"
+                    android:orientation="horizontal">
                     <!-- to be filled programmatically -->
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/entity_list_header_modified_date"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:layout_width="100dp"
+                <LinearLayout
+                    android:id="@+id/entity_list_header_modified_date_contaienr"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/entity_list_modified"
-                    android:layout_toLeftOf="@id/entity_list_header_status" />
+                    android:layout_toLeftOf="@id/entity_list_header_status"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/entity_list_header_modified_date"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/entity_list_modified"
+                        android:textAlignment="center" />
+                </LinearLayout>
 
                 <!-- status -->
-                <Space android:id="@+id/entity_list_header_status"
-                    android:layout_height="1dp"
+                <Space
+                    android:id="@+id/entity_list_header_status"
                     android:layout_width="30dp"
-                    android:layout_toLeftOf="@id/entity_list_header_selection_checkbox" />
+                    android:layout_height="1dp"
+                    android:layout_toLeftOf="@id/entity_list_header_selection_checkbox_container" />
 
                 <!-- selection checkbox -->
-                <Space android:id="@+id/entity_list_header_selection_checkbox"
-                    android:layout_height="1dp"
-                    android:layout_width="30dp"
-                    android:layout_alignParentRight="true"/>
+                <LinearLayout
+                    android:id="@+id/entity_list_header_selection_checkbox_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true">
+
+                    <Space
+                        android:id="@+id/entity_list_header_selection_checkbox"
+                        android:layout_width="30dp"
+                        android:layout_height="1dp" />
+                </LinearLayout>
 
             </RelativeLayout>
 

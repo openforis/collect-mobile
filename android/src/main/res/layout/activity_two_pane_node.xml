@@ -21,7 +21,7 @@
 
         <fragment
                 android:id="@+id/attribute_list"
-                android:name="org.openforis.collect.android.gui.list.NodeListFragment"
+                android:name="org.openforis.collect.android.gui.list.SimpleNodeListFragment"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

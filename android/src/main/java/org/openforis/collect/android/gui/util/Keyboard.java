@@ -18,15 +18,21 @@ public class Keyboard {
         }
     }
 
-    public static void hide(Activity activity) {
-        InputMethodManager inputMethodManager = inputMethodManager(activity);
-        if (inputMethodManager == null || activity == null)
+    public static void hide(Context context) {
+        if (context == null) {
             return;
-        View currentFocus = activity.getCurrentFocus();
-        if (!(currentFocus instanceof EditText) || currentFocus.getWindowToken() == null)
-            inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
-        else
-            inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+        }
+        InputMethodManager inputMethodManager = inputMethodManager(context);
+        if (inputMethodManager == null)
+            return;
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            View currentFocus = activity.getCurrentFocus();
+            if (!(currentFocus instanceof EditText) || currentFocus.getWindowToken() == null)
+                inputMethodManager.hideSoftInputFromWindow(activity.getWindow().getDecorView().getRootView().getWindowToken(), 0);
+            else
+                inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+        }
     }
 
     private static InputMethodManager inputMethodManager(Context context) {

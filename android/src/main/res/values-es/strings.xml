@@ -53,8 +53,9 @@
 
     <string name="import_title_failed">Error al importar la encuesta %1$s</string>
     <string name="import_text_failed">Asegúrate de estar ejecutando la versión más reciente de Collect Mobile y de haber exportado la encuesta para Collect Mobile usando una versión reciente de Collect Server.</string>
+    <!--
     <string name="import_text_wrong_version">Asegúrate de estar ejecutando la versión más reciente de Collect Mobile y de haber exportado la encuesta para Collect Mobile usando una versión reciente de Collect Server.</string>
-
+    -->
     <string name="import_overwrite_data_dialog_title">Reemplazar datos</string>
     <string name="import_overwrite_data_dialog_message">Los datos introducidos para la encuesta actual seran borrados si importa la encuesta.</string>
     <string name="import_overwrite_data_dialog_confirm">Borrar los datos e importar.</string>

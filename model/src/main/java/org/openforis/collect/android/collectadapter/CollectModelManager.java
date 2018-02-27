@@ -251,7 +251,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     private AttributeDefinition getDefinition(UiAttributeCollection attributeCollection) {
-        int definitionId = Integer.parseInt(attributeCollection.getDefinition().id.substring("collection-".length()));
+        int definitionId = Definitions.extractOriginalDefinitionId(attributeCollection.getDefinition());
         return (AttributeDefinition) selectedSurvey.getSchema().getDefinitionById(definitionId);
     }
 

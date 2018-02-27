@@ -13,7 +13,9 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.gui.NodeNavigator;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
+import org.openforis.collect.android.viewmodel.UiNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +63,7 @@ public class NodeParentsFragment extends Fragment {
     private View createCurrentNodeView(UiInternalNode node) {
         TextView nodeLabel = new TextView(getActivity());
         nodeLabel.setTextAppearance(getActivity(), R.style.BreadcrumbSelectedNode);
-        nodeLabel.setText(node.getLabel());
+        nodeLabel.setText(getLabel(node));
         return nodeLabel;
     }
 
@@ -100,7 +102,7 @@ public class NodeParentsFragment extends Fragment {
 
     private View createNodeButton(UiInternalNode parentNode) {
         Button button = new AppCompatButton(getActivity());
-        button.setText(parentNode.getLabel());
+        button.setText(getLabel(parentNode));
 
         int textColor = attrs.color(R.attr.titleIndicatorColor);
         button.setTextColor(textColor);
@@ -116,5 +118,13 @@ public class NodeParentsFragment extends Fragment {
 
     private NodeNavigator nodeNavigator() {
         return (NodeNavigator) getActivity();
+    }
+
+    private String getLabel(UiNode node) {
+        String label = node.getLabel();
+        if (node.getParent() != null && node.getParent() instanceof UiEntityCollection) {
+            label += " [" + (node.getIndexInParent() + 1) + "]";
+        }
+        return label;
     }
 }

@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        app:showAsAction="always"
+        android:title="More"
+        android:icon="?attr/moreIcon"
+        android:orderInCategory="1000"> <!-- always shown at the end -->
+        <menu>
+            <item
+                android:id="@+id/action_survey_list"
+                android:title="@string/action_survey_list"
+                android:icon="?attr/surveyListIcon"
+                app:showAsAction="never"
+                android:onClick="navigateToSurveyList"/>
+            <item
+                android:id="@+id/action_settings"
+                android:title="@string/action_settings"
+                android:icon="?attr/settingsIcon"
+                app:showAsAction="never"
+                android:onClick="navigateToSettings"/>
+            <item
+                android:id="@+id/action_exit"
+                android:title="@string/action_exit"
+                android:icon="?attr/exitIcon"
+                app:showAsAction="never"
+                android:onClick="exit"/>
+        </menu>
+    </item>
+
+</menu>

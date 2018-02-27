@@ -9,13 +9,13 @@ import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.validation.SpecifiedValidator;
 import org.openforis.collect.model.validation.ValidationMessageBuilder;
+import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResultFlag;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
 
 import java.util.*;
 
@@ -54,7 +54,7 @@ class NodeChangeSetParser {
                     return;
                 if (uiAttribute.isCalculated()) {
                     AttributeConverter.updateUiValue(attribute, uiAttribute);
-                    addNodeChange(uiAttribute, nodeChanges);
+                    getOrAddNodeChange(uiAttribute, nodeChanges);
                 }
             }
         }
@@ -62,7 +62,7 @@ class NodeChangeSetParser {
 
     private void determineStatusChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         for (UiNode uiNode : nodeChanges.keySet()) {
-            UiNodeChange nodeChange = addNodeChange(uiNode, nodeChanges);
+            UiNodeChange nodeChange = getOrAddNodeChange(uiNode, nodeChanges);
             UiNode.Status newStatus = uiNode.determineStatus(nodeChange.validationErrors);
             nodeChange.statusChange = newStatus != uiNode.getStatus();
         }
@@ -73,7 +73,8 @@ class NodeChangeSetParser {
             if (nodeChange instanceof AttributeChange)
                 parseValidationErrors((AttributeChange) nodeChange, nodeChanges);
             else if (nodeChange instanceof EntityChange) {
-                parseRequiredValidation((EntityChange) nodeChange, nodeChanges);
+                parseMinCountValidation((EntityChange) nodeChange, nodeChanges);
+                parseMaxCountValidation((EntityChange) nodeChange, nodeChanges);
                 parseRelevanceChanges((EntityChange) nodeChange, nodeChanges);
             }
         }
@@ -84,14 +85,14 @@ class NodeChangeSetParser {
         UiInternalNode parentUiNode = (UiInternalNode) uiRecord.lookupNode(parentNode.getId());
         for (Map.Entry<String, Boolean> relevanceEntry : entityChange.getChildrenRelevance().entrySet()) {
             NodeDefinition nodeDefinition = parentNode.getDefinition().getChildDefinition(relevanceEntry.getKey());
-            if (isHidden(parentNode.getSurvey(), nodeDefinition))
+            if (isHidden(nodeDefinition))
                 continue;
 
             boolean relevant = relevanceEntry.getValue();
             for (UiNode uiNode : parentUiNode.findAllByName(nodeDefinition.getName())) {
                 boolean previouslyRelevant = uiNode.isRelevant();
                 if (relevant != previouslyRelevant)
-                    addNodeChange(uiNode, nodeChanges).relevanceChange = true;
+                    getOrAddNodeChange(uiNode, nodeChanges).relevanceChange = true;
 
             }
         }
@@ -104,9 +105,10 @@ class NodeChangeSetParser {
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
         if (uiAttribute == null)
             return;
-        UiNodeChange nodeChange = addNodeChange(uiAttribute, nodeChanges);
+        UiNodeChange nodeChange = getOrAddNodeChange(uiAttribute, nodeChanges);
         ValidationResultFlag requiredErrorResult = node.getParent().getMinCountValidationResult(node.getName());
-        addRequiredValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult);
+        addCountValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult, node.getParent().getMinCount(node.getDefinition()),
+                "validation.requiredField", "validation.minCount");
 
         ValidationResults validationResults = attributeChange.getValidationResults();
         List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
@@ -122,22 +124,55 @@ class NodeChangeSetParser {
         return !node.getParent().isRelevant(node.getName());
     }
 
-    private void parseRequiredValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
-        for (Node<? extends NodeDefinition> childNode : entityChange.getNode().getChildren()) {
-            if (isCalculated(childNode) || isHidden(childNode) || childNode.getId() == null)
-                continue;
-            UiNode uiChildNode = uiRecord.lookupNode(childNode.getId());
-            if (uiChildNode != null) {
-                ValidationResultFlag validationResultFlag = entityChange.getChildrenMinCountValidation().get(uiChildNode.getName());
-                addRequiredValidationErrorIfAny(uiChildNode, uiNodeChanges, validationResultFlag);
+    private void parseMinCountValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
+        parseMinMaxCountValidation(entityChange, true, uiNodeChanges);
+    }
+
+    private void parseMaxCountValidation(EntityChange entityChange, Map<UiNode, UiNodeChange> uiNodeChanges) {
+        parseMinMaxCountValidation(entityChange, false, uiNodeChanges);
+    }
+
+    private void parseMinMaxCountValidation(EntityChange entityChange, boolean min, Map<UiNode, UiNodeChange> uiNodeChanges) {
+        Entity entity = entityChange.getNode();
+        UiEntity parentNode = (UiEntity) uiRecord.lookupNode(entity.getId());
+        Map<String, ValidationResultFlag> childrenValidation = entityChange.getChildrenMinCountValidation();
+        for (Map.Entry<String, ValidationResultFlag> validationEntry : childrenValidation.entrySet()) {
+            String childDefName = validationEntry.getKey();
+            NodeDefinition childDef = entity.getDefinition().getChildDefinition(childDefName);
+            ValidationResultFlag validationResultFlag = validationEntry.getValue();
+            Collection<UiNode> childrenNodes = parentNode.findAllByName(childDefName);
+
+            for (UiNode childNode : childrenNodes) {
+                if (childDef instanceof AttributeDefinition && !((AttributeDefinition) childDef).isCalculated() && isShown(childDef)
+                        || childNode instanceof UiEntityCollection) {
+                    if (validationResultFlag.isError()) {
+                        Integer requiredCount = min ? entity.getMinCount(childDef) : entity.getMaxCount(childDef);
+                        if (requiredCount != null && requiredCount > 0) {
+                            if (min) {
+                                addCountValidationErrorIfAny(childNode, uiNodeChanges, validationResultFlag, requiredCount,
+                                        "validation.requiredField", "validation.minCount");
+                            } else {
+                                addCountValidationErrorIfAny(childNode, uiNodeChanges, validationResultFlag, requiredCount,
+                                        "validation.maxCount", "validation.maxCount");
+                            }
+                        }
+                    } else if (validationResultFlag.isOk() && childNode.hasValidationErrors()) {
+                        //reset validation error
+                        UiNodeChange change = getOrAddNodeChange(childNode, uiNodeChanges);
+                        change.validationErrors = Collections.emptySet();
+                    }
+                }
             }
         }
     }
 
-    private void addRequiredValidationErrorIfAny(UiNode uiNode, Map<UiNode, UiNodeChange> nodeChanges, ValidationResultFlag validationResultFlag) {
+    private void addCountValidationErrorIfAny(UiNode uiNode, Map<UiNode, UiNodeChange> nodeChanges,
+                                              ValidationResultFlag validationResultFlag, Integer requiredCount,
+                                              String singleCountMessageKey, String multipleCountMessageKey) {
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = messages.getMessage(this.locale, "validation.requiredField");
-            UiNodeChange nodeChange = addNodeChange(uiNode, nodeChanges);
+            String message = requiredCount == null || requiredCount == 1 ? messages.getMessage(this.locale, singleCountMessageKey):
+                    messages.getMessage(this.locale, multipleCountMessageKey, requiredCount);
+            UiNodeChange nodeChange = getOrAddNodeChange(uiNode, nodeChanges);
             if (!nodeChange.validationErrors.isEmpty())
                 return; // We've already added required validation for this node
             nodeChange.validationErrors.add(new UiValidationError(message, level(validationResultFlag), uiNode));
@@ -153,7 +188,7 @@ class NodeChangeSetParser {
         return (UiAttribute) uiRecord.lookupNode(attributeId);
     }
 
-    private UiNodeChange addNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+    private UiNodeChange getOrAddNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         UiNodeChange nodeChange = nodeChanges.get(node);
         if (nodeChange == null) {
             nodeChange = new UiNodeChange();

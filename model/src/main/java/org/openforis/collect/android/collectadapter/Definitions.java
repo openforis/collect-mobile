@@ -1,6 +1,7 @@
 package org.openforis.collect.android.collectadapter;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
@@ -16,6 +17,7 @@ import java.util.*;
  * @author Daniel Wiell
  */
 public class Definitions {
+    private static final String COLLECTION_ID_PREFIX = "collection-";
     private static final String SURVEY_DEFINITION_ID = "survey";
     private final CollectSurvey collectSurvey;
     private Map<String, Definition> definitionById = new HashMap<String, Definition>();
@@ -62,10 +64,25 @@ public class Definitions {
 
         for (EntityDefinition entityDefinition : rootEntityDefinitions)
             addNodeDefinition(entityDefinition);
+
+        for (Map.Entry<String, Definition> defEntry : definitionById.entrySet()) {
+            Definition def = defEntry.getValue();
+            if (NumberUtils.isNumber(def.id)) {
+                int nodeDefId = Integer.parseInt(def.id);
+                NodeDefinition nodeDef = collectSurvey.getSchema().getDefinitionById(nodeDefId);
+                Set<NodeDefinition> relevanceSourceNodeDefs = nodeDef.getSurvey().getRelevanceSourceNodeDefinitions(nodeDef);
+                for (NodeDefinition sourceNodeDef : relevanceSourceNodeDefs) {
+                    Definition sourceDef = toDefinition(sourceNodeDef);
+                    if (sourceDef != null) {
+                        def.relevanceSources.add(sourceDef);
+                    }
+                }
+            }
+        }
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
-        if (AttributeUtils.isHidden(collectSurvey, nodeDefinition))
+        if (AttributeUtils.isHidden(nodeDefinition))
             return;
         Definition definition = createDefinition(nodeDefinition);
         addDefinition(definition);
@@ -97,7 +114,8 @@ public class Definitions {
                         isDestinationPointSpecified(coordinateDefn),
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
-                boolean enumerator = nodeDefinition.getParentEntityDefinition().isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
+                EntityDefinition parentDef = nodeDefinition.getParentEntityDefinition();
+                boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);
@@ -132,7 +150,8 @@ public class Definitions {
                     AttributeConverter.getUiAttributeType(nodeDefinition),
                     (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
         } else {
-            boolean enumerated = ((EntityDefinition) nodeDefinition).isEnumerable();
+            EntityDefinition entityDef = (EntityDefinition) nodeDefinition;
+            boolean enumerated = entityDef.isEnumerable() && !entityDef.isRoot();
             return new UiEntityCollectionDefinition(
                     collectionNodeDefinitionId(nodeDefinition),
                     nodeDefinition.getName(),
@@ -141,7 +160,9 @@ public class Definitions {
                     nodeDescription(nodeDefinition),
                     nodePrompt(nodeDefinition),
                     isRequired(nodeDefinition),
-                    enumerated);
+                    enumerated,
+                    entityDef.getFixedMinCount(),
+                    entityDef.getFixedMaxCount());
         }
     }
 
@@ -171,6 +192,19 @@ public class Definitions {
         return definitionById(collectionNodeDefinitionId(nodeDefinition));
     }
 
+    public static int extractOriginalDefinitionId(UiAttributeCollectionDefinition def) {
+        return extractOriginalDefinitionId(def.id);
+    }
+
+    public static int extractOriginalDefinitionId(UiEntityCollectionDefinition def) {
+        return extractOriginalDefinitionId(def.id);
+    }
+
+    private static int extractOriginalDefinitionId(String id) {
+        int definitionId = Integer.parseInt(id.substring(COLLECTION_ID_PREFIX.length()));
+        return definitionId;
+    }
+
     public Definition toDefinition(Node node) {
         return toDefinition(node.getDefinition());
     }
@@ -188,7 +222,7 @@ public class Definitions {
     }
 
     private String collectionNodeDefinitionId(NodeDefinition nodeDefinition) {
-        return "collection-" + nodeDefinition.getId();
+        return COLLECTION_ID_PREFIX + nodeDefinition.getId();
     }
 
     private String label(NodeDefinition nodeDefinition) { // TODO: Take language into account

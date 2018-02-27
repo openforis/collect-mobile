@@ -94,7 +94,6 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     protected boolean updateAttributeIfChanged() {
         UiTaxon newTaxon = selectedTaxon();
         if (hasChanged(newTaxon)) {
-            loadCommonNames();
             attribute.setTaxon(selectedTaxon);
             notifyAboutAttributeChange();
             return true;
@@ -108,7 +107,7 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
 
     private UiTaxon selectedTaxon() {
         commonNamesLayout.removeAllViews();
-        loadCommonNames();
+        //loadCommonNames(); not necessary: entire component re-initialized on node change
         Editable editable = autoComplete.getText();
         if (editable == null)
             throw new IllegalStateException("autoComplete text is null");

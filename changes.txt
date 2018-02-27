@@ -1,5 +1,17 @@
 Changes
 -------
+2018-02-23
+
+    * Bug fixes
+
+2018-02-22
+
+    * Hide not relevant attributes
+    * New landing screen
+    * Prevent automatically generated list of items from editing
+    * Improved record list layout
+    * Performance improvements
+    * Bug fixes
 
 2017-11-13
 

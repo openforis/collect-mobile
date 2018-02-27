@@ -2,62 +2,47 @@ package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
-import org.openforis.collect.R;
+
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
 
 /**
  * @author Daniel Wiell
  */
-public class DoubleAttributeComponent extends EditTextAttributeComponent<UiDoubleAttribute> {
+public class DoubleAttributeComponent extends NumericAttributeComponent<UiDoubleAttribute, Double> {
+
+    private static final NumberFormat NUMBER_FORMAT;
+    static {
+        NUMBER_FORMAT = NumberFormat.getInstance();
+        NUMBER_FORMAT.setGroupingUsed(false);
+        NUMBER_FORMAT.setMaximumFractionDigits(Integer.MAX_VALUE);
+        NUMBER_FORMAT.setMaximumIntegerDigits(Integer.MAX_VALUE);
+    }
+
     public DoubleAttributeComponent(UiDoubleAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
     }
 
-    protected String attributeValue() {
-        return attribute.getValue() == null ? "" : format(attribute.getValue());
+    @Override
+    protected Double attributeNumericValue() {
+        return attribute.getValue();
     }
 
-    protected boolean hasChanged(String newValue) {
-        boolean changed = super.hasChanged(newValue);
-        try {
-            if (changed && attribute.getValue() != null && newValue != null)
-                changed = !attribute.getValue().equals(parse(newValue));
-        } catch (ParseException ignore) {
-            setNotANumberError();
-        }
-        return changed;
+    @Override
+    protected String format(Double value) {
+        return NUMBER_FORMAT.format(value);
     }
 
-    protected void updateAttributeValue(String newValue) {
-        try {
-            attribute.setValue(newValue == null ? null : parse(newValue));
-        } catch (ParseException e) {
-            setNotANumberError();
-        }
+    @Override
+    protected Double parse(String value) throws Exception {
+        return NUMBER_FORMAT.parse(value).doubleValue();
     }
 
-    private String format(double value) {
-        return numberFormat().format(value);
-    }
-
-    private double parse(String value) throws ParseException {
-        return numberFormat().parse(value).doubleValue();
-    }
-
-    private NumberFormat numberFormat() {
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setGroupingUsed(false);
-        numberFormat.setMaximumFractionDigits(Integer.MAX_VALUE);
-        numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
-        return numberFormat;
-    }
-
-    private void setNotANumberError() {
-        getEditText().setError(context.getResources().getString(R.string.message_not_a_number));
+    @Override
+    protected void setValueOnAttribute(Double value) {
+        attribute.setValue(value);
     }
 
     protected void onEditTextCreated(EditText input) {

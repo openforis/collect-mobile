@@ -156,10 +156,12 @@ class NodeChangeSetParser {
                                         "validation.maxCount", "validation.maxCount");
                             }
                         }
-                    } else if (validationResultFlag.isOk() && childNode.hasValidationErrors()) {
+                    } else if (validationResultFlag.isOk()) {
                         //reset validation error
                         UiNodeChange change = getOrAddNodeChange(childNode, uiNodeChanges);
-                        change.validationErrors = Collections.emptySet();
+                        if (change.validationErrors == null && childNode.hasValidationErrors()) {
+                            change.validationErrors = Collections.emptySet();
+                        }
                     }
                 }
             }

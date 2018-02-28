@@ -13,13 +13,13 @@ public class Tasks {
 
     public static void runSlowTask(Activity context, Runnable runnable, int progressDialogTitleResId,
                                    int progressDialogMessageResId) {
-        new SlowAsyncTask(context, runnable, progressDialogTitleResId, progressDialogMessageResId)
+        new SimpleSlowAsyncTask(context, runnable, progressDialogTitleResId, progressDialogMessageResId)
                 .execute();
     }
 
     public static void runSlowTask(Activity context, Runnable runnable, SlowAsyncTask.ExceptionHandler exceptionHandler, int progressDialogTitleResId,
                                    int progressDialogMessageResId) {
-        new SlowAsyncTask(context, runnable, exceptionHandler, progressDialogTitleResId, progressDialogMessageResId)
+        new SimpleSlowAsyncTask(context, runnable, exceptionHandler, progressDialogTitleResId, progressDialogMessageResId)
                 .execute();
     }
 

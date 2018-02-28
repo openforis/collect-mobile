@@ -10,15 +10,24 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+
+import com.google.gson.JsonObject;
+
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.Collect;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
+import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.SlowAsyncTask;
+import org.openforis.collect.android.util.HttpConnectionHelper;
+import org.openforis.commons.versioning.Version;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
@@ -33,6 +42,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public static final String REMOTE_COLLECT_ADDRESS = "remoteCollectAddress";
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
+    public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
 
     private DirectoryChooserFragment directoryChooserDialog;
     private SettingsFragment settingsFragment;
@@ -89,6 +99,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             setupRemoteCollectAddressPreference();
             setupRemoteCollectUsernamePreference();
             setupRemoteCollectPasswordPreference();
+            setupRemoteCollectConnectionTestPreference();
         }
 
         private void setupStorageLocationPreference() {
@@ -181,6 +192,72 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                     return true;
                 }
             });
+        }
+
+        private void setupRemoteCollectConnectionTestPreference() {
+            Preference preference = findPreference(REMOTE_COLLECT_TEST);
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String rootAddress = preferences.getString(SettingsActivity.REMOTE_COLLECT_ADDRESS, "");
+                    String username = preferences.getString(SettingsActivity.REMOTE_COLLECT_USERNAME, "");
+                    String password = preferences.getString(SettingsActivity.REMOTE_COLLECT_PASSWORD, "");
+                    String address = rootAddress + (rootAddress.endsWith("/") ? "" : "/") + "api/info";
+                    new RemoteConnectionTestTask(getActivity(), address, username, password).execute();
+                    return false;
+                }
+            });
+        }
+    }
+
+    private static class RemoteConnectionTestTask extends SlowAsyncTask<Void, Void, JsonObject> {
+
+        private final String address;
+        private final String username;
+        private final String password;
+
+        RemoteConnectionTestTask(Activity context, String address, String username, String password) {
+            super(context);
+            this.address = address;
+            this.username = username;
+            this.password = password;
+        }
+
+        protected JsonObject runTask() throws Exception {
+            HttpConnectionHelper connectionHelper = new HttpConnectionHelper(address, username, password);
+            return connectionHelper.getJson();
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject info) {
+            super.onPostExecute(info);
+            if (info == null) {
+                //handled in handleException
+            } else {
+                String remoteCollectVersionStr = info.get("version").getAsString();
+                Version remoteCollectVersion = new Version(remoteCollectVersionStr);
+
+                if (Collect.VERSION.compareTo(remoteCollectVersion, Version.Significance.MINOR) > 0) {
+                    String message = context.getString(R.string.settings_remote_sync_test_failed_message_newer_version,
+                            remoteCollectVersion.toString(), Collect.VERSION.toString());
+                    Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
+                } else {
+                    Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_successful_title),
+                            context.getString(R.string.settings_remote_sync_test_successful_message));
+                }
+            }
+        }
+
+        @Override
+        protected void handleException(Exception e) {
+            super.handleException(e);
+            String message;
+            if (e instanceof FileNotFoundException) {
+                message = context.getString(R.string.settings_remote_sync_test_failed_message_wrong_address);
+            } else {
+                message = e.getMessage();
+            }
+            Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
         }
     }
 }

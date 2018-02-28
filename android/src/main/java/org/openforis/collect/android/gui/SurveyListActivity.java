@@ -27,6 +27,7 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.gui.util.SimpleSlowAsyncTask;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
 
 import java.io.File;
@@ -208,11 +209,10 @@ public class SurveyListActivity extends BaseActivity {
         }
     }
 
-    private class ImportSurveyTask extends SlowAsyncTask {
+    private class ImportSurveyTask extends SlowAsyncTask<Void, Void, Boolean> {
 
         private String surveyPath;
         private boolean overwrite = false;
-        private boolean alreadyExistingSurveyFound = false;
 
         ImportSurveyTask(Activity context, String surveyPath) {
             this(context, surveyPath, false);
@@ -225,19 +225,20 @@ public class SurveyListActivity extends BaseActivity {
         }
 
         @Override
-        protected void runTask() throws Exception {
+        protected Boolean runTask() throws Exception {
             super.runTask();
             if (ServiceLocator.importSurvey(surveyPath, overwrite, context) || overwrite) {
                 onSurveyImportComplete();
+                return false; //survey imported successfully
             } else {
-                alreadyExistingSurveyFound = true;
+                return true; //survey already existing
             }
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (alreadyExistingSurveyFound) {
+        protected void onPostExecute(Boolean surveyAlreadyExisting) {
+            super.onPostExecute(surveyAlreadyExisting);
+            if (surveyAlreadyExisting) {
                 Dialogs.confirm(context, R.string.import_overwrite_data_dialog_title, R.string.import_overwrite_data_dialog_message,
                         new Runnable() {
                             public void run() {

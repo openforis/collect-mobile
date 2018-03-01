@@ -37,7 +37,6 @@
 
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
 
-    <string name="toast_data_export_completed">Data export completed</string>
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>
     <string name="all_key_records_not_specified_title">All %1$s key attributes have not been specified</string>
@@ -130,8 +129,10 @@
     <string name="export_dialog_title">Export survey data</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
     <string name="export_dialog_option_save_to_downloads">Save to Android device \"Download\" directory</string>
+    <string name="export_progress_dialog_title">Exporting data</string>
     <string name="export_share_with_application">Send exported data to</string>
-
+    <string name="export_completed_title">Data export completed</string>
+    <string name="export_to_downloads_completed_message">Export file generated into \"Download\" folder.</string>
 
     <string name="import_overwrite_data_dialog_title">Overwrite data</string>
     <string name="import_overwrite_data_dialog_message">Data you entered for current survey will be deleted if you

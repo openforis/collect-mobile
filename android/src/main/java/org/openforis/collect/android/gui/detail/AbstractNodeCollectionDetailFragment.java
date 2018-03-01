@@ -180,16 +180,17 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private void setupNodeCollection(View rootView) {
         if (adapter == null) {
             adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), this instanceof RecordCollectionDetailFragment, node());
-            ListView listView = (ListView) rootView.findViewById(R.id.entity_list);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    startEditNodeTask(position);
-                }
-            });
-            adapterUpdateTimer = new Timer();
-            adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
+        } else {
+            adapter.notifyDataSetChanged();
         }
+        ListView listView = (ListView) rootView.findViewById(R.id.entity_list);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startEditNodeTask(position);
+            }
+        });
+
         //manage dynamic header visibility
         boolean headerVisible = ! node().getChildren().isEmpty();
         Views.toggleVisibility(rootView, R.id.entity_list_header_wrapper, headerVisible);
@@ -199,6 +200,9 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 Views.hide(rootView, R.id.entity_list_header_selection_checkbox);
             }
         }
+
+        adapterUpdateTimer = new Timer();
+        adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
     }
 
     private void buildDynamicHeaderPart(View rootView) {

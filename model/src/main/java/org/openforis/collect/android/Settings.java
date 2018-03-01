@@ -1,5 +1,6 @@
 package org.openforis.collect.android;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.model.User;
 
 public class Settings {
@@ -27,7 +28,11 @@ public class Settings {
     }
 
     public static User user() {
-        return new User(crewToUsername());
+        if (isRemoteSyncEnabled() && StringUtils.isNotBlank(remoteCollectUsername)) {
+            return new User(remoteCollectUsername);
+        } else {
+            return new User(crewToUsername());
+        }
     }
 
     private static String crewToUsername() {

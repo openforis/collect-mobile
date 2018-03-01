@@ -5,6 +5,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.metamodel.ui.UIConfiguration;
+import org.openforis.collect.metamodel.ui.UIModelObject;
+import org.openforis.collect.metamodel.ui.UITable;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.*;
 import org.openforis.idm.metamodel.validation.Check;
@@ -115,7 +118,11 @@ public class Definitions {
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
                 EntityDefinition parentDef = nodeDefinition.getParentEntityDefinition();
-                boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
+                UIConfiguration uiConf = ((CollectSurvey) parentDef.getSurvey()).getUIConfiguration();
+                //TODO handle enumerated entities from Collect Survey Designer
+                UIModelObject parentUiModelObject = uiConf == null ? null : uiConf.getModelObjectByNodeDefinitionId(parentDef.getId());
+                boolean enumerator = !parentDef.isRoot() && parentUiModelObject instanceof UITable
+                        && parentDef.isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);
@@ -151,7 +158,11 @@ public class Definitions {
                     (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
         } else {
             EntityDefinition entityDef = (EntityDefinition) nodeDefinition;
-            boolean enumerated = entityDef.isEnumerable() && !entityDef.isRoot();
+            CollectSurvey survey = entityDef.getSurvey();
+            //TODO handle it in Collect Survey Designer
+            UIConfiguration uiConf = survey.getUIConfiguration();
+            UIModelObject entityUiModelObject = uiConf == null ? null : uiConf.getModelObjectByNodeDefinitionId(entityDef.getId());
+            boolean enumerated = !entityDef.isRoot() && entityDef.isEnumerable() && entityUiModelObject != null && entityUiModelObject instanceof UITable;
             return new UiEntityCollectionDefinition(
                     collectionNodeDefinitionId(nodeDefinition),
                     nodeDefinition.getName(),

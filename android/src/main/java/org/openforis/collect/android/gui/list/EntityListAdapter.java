@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.format.DateUtils;
@@ -33,7 +34,6 @@ public class EntityListAdapter extends NodeListAdapter {
     public static final int MAX_ATTRIBUTE_VALUE_LENGTH = 20;
 
     private final Set<UiNode> nodesToEdit = new HashSet<UiNode>();
-    private final Set<CheckBox> checked = new HashSet<CheckBox>();
     private final CodeListService codeListService;
     private final boolean records;
     private ActionMode actionMode;
@@ -52,9 +52,9 @@ public class EntityListAdapter extends NodeListAdapter {
         List<String> summaryAttributeValues = getSummaryAttributeValues(node);
 
         if (summaryContainer.getChildCount() == 0) {
+            //add summary text views
             summaryContainer.setWeightSum(summaryAttributeValues.size());
-
-            for (String summaryAttrVal : summaryAttributeValues) {
+            for (int i = 0; i < summaryAttributeValues.size(); i++) {
                 TextView textView = new TextView(activity);
                 //same width for every summary item
                 LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -76,6 +76,12 @@ public class EntityListAdapter extends NodeListAdapter {
             modifiedOnTextView.setText(DateUtils.getRelativeTimeSpanString(node.getModifiedOn().getTime()));
         } else {
             modifiedOnTextView.setVisibility(View.GONE);
+        }
+
+        CheckBox checkBox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
+        if (checkBox != null) {
+            boolean checked = nodesToEdit.contains(node);
+            checkBox.setChecked(checked);
         }
         return row;
     }
@@ -159,10 +165,8 @@ public class EntityListAdapter extends NodeListAdapter {
                 public void onClick(View v) {
                     if (checkbox.isChecked()) {
                         nodesToEdit.add(node);
-                        checked.add(checkbox);
                     } else {
                         nodesToEdit.remove(node);
-                        checked.remove(checkbox);
                     }
 
                     if (!nodesToEdit.isEmpty()) {
@@ -201,10 +205,6 @@ public class EntityListAdapter extends NodeListAdapter {
             switch (item.getItemId()) {
                 case R.id.delete_selected_nodes:
                     DeleteConfirmationFragment.show(nodeIdsToRemove, records, activity);
-//                    nodeDeleter.delete(nodesToEdit);
-//                    // Need to clear the back stack, to prevent deleted node from being revisited.
-//                    ((SurveyNodeActivity) activity).reloadWithoutBackStack();
-
                     return true;
                 default:
                     return false;
@@ -214,10 +214,6 @@ public class EntityListAdapter extends NodeListAdapter {
         public void onDestroyActionMode(ActionMode mode) {
             actionMode = null;
             nodesToEdit.clear();
-            for (CheckBox checkBox : checked) {
-                checkBox.setChecked(false);
-                checkBox.setSelected(false);
-            }
         }
     }
 
@@ -225,14 +221,16 @@ public class EntityListAdapter extends NodeListAdapter {
         private static final String NODE_IDS_TO_REMOVE = "node_ids_to_remove";
         private static final String REMOVE_RECORDS = "remove_records";
 
+        @NonNull
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ArrayList<Integer> nodeIdsToRemove = getArguments().getIntegerArrayList(NODE_IDS_TO_REMOVE);
             final boolean records = getArguments().getBoolean(REMOVE_RECORDS);
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            // TODO: Use string resource
-            String title = records ? "Delete records" : "Delete entities";
-            String message = "You are about to delete " + nodeIdsToRemove.size() + (records ? " records" : " entities.");
-            builder.setTitle(title)
+            int titleResId = records ? R.string.delete_records_title : R.string.delete_entities_title;
+            String message = getString(R.string.delete_node_confirm_message,
+                    nodeIdsToRemove.size(),
+                    getString(records ? R.string.part_records: R.string.part_entities));
+            builder.setTitle(titleResId)
                     .setMessage(message)
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

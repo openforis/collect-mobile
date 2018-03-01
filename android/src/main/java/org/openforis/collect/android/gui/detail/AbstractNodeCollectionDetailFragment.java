@@ -2,8 +2,11 @@ package org.openforis.collect.android.gui.detail;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -33,7 +36,6 @@ import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -176,8 +178,19 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private void setupNodeCollection(View rootView) {
-        adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), this instanceof RecordCollectionDetailFragment, node());
-
+        if (adapter == null) {
+            adapter = new EntityListAdapter((SurveyNodeActivity) getActivity(), this instanceof RecordCollectionDetailFragment, node());
+            ListView listView = (ListView) rootView.findViewById(R.id.entity_list);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    startEditNodeTask(position);
+                }
+            });
+            adapterUpdateTimer = new Timer();
+            adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
+        }
+        //manage dynamic header visibility
         boolean headerVisible = ! node().getChildren().isEmpty();
         Views.toggleVisibility(rootView, R.id.entity_list_header_wrapper, headerVisible);
         if (headerVisible) {
@@ -186,17 +199,6 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 Views.hide(rootView, R.id.entity_list_header_selection_checkbox);
             }
         }
-
-        ListView listView = (ListView) rootView.findViewById(R.id.entity_list);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startEditNodeTask(position);
-            }
-        });
-
-        adapterUpdateTimer = new Timer();
-        adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
     }
 
     private void buildDynamicHeaderPart(View rootView) {

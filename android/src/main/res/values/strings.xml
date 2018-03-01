@@ -149,7 +149,11 @@
 
     <string name="amount_selected">%d selected.</string>
     <string name="delete">Delete</string>
-
+    <string name="delete_records_title">Delete records</string>
+    <string name="delete_entities_title">Delete records</string>
+    <string name="delete_node_confirm_message">You are about to delete %d %s.</string>
+    <string name="part_records">records</string>
+    <string name="part_entities">entities</string>
     <string name="file_attribute_capture_image">Capture image</string>
     <string name="file_attribute_select_image">Select image</string>
     <string name="file_attribute_remove_image">Remove image</string>

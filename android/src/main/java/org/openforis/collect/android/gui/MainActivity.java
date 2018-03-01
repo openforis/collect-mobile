@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void handleImportNewSurvey() {
-        SurveyListActivity.showImportDialog(this);
+        SurveyListActivity.startActivityAndShowImportDialog(this);
     }
 
     private void handleGoToDataEntryButtonClick(boolean surveySelected) {

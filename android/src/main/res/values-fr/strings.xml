@@ -18,7 +18,7 @@
     <string name="backup_insert_sd_card">Veuillez insérer la carte mémoire SD pour stocker la sauvegarde sur</string>
 
     <string name="toast_exported_survey">Questionnaire exporté vers %s</string>
-    <string name="toast_exported_survey_failed">Exportation du questionnaire échouée</string>
+    <string name="toast_exported_survey_failed">Exportation du questionnaire échouée: %s</string>
     <string name="all_key_records_not_specified_title">Veuillez indiquer tous les attributs clés (%1$s)</string>
     <string name="all_key_records_not_specified_message">Pour exporter les données, veuillez indiquer les %1$s pour tout %2$s.
     </string>

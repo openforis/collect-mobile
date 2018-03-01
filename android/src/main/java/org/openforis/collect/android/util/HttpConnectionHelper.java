@@ -14,6 +14,8 @@ import java.net.URL;
 
 public class HttpConnectionHelper {
 
+    private static final int TIMEOUT_SECONDS = 10;
+
     private String address;
     private String username;
     private String password;
@@ -29,7 +31,8 @@ public class HttpConnectionHelper {
         try {
             URL url = new URL(address);
             conn = (HttpURLConnection) url.openConnection();
-
+            conn.setConnectTimeout(TIMEOUT_SECONDS * 1000);;
+            conn.setRequestMethod("GET");
             addBasicAuthorization(conn, username, password);
             InputStream in = new BufferedInputStream(conn.getInputStream());
             JsonObject jsonObject = new JsonParser().parse(new InputStreamReader(in, "UTF-8")).getAsJsonObject();

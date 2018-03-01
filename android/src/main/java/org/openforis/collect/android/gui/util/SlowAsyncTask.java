@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import org.openforis.collect.R;
+
 /**
  * @author Stefano Ricci
  *
@@ -13,7 +15,7 @@ import android.os.AsyncTask;
  *
  * Subclasses should override the method runTask and handleException
  */
-public class SlowAsyncTask extends AsyncTask<Void, Void, Void> {
+public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
     protected final Activity context;
     private final Runnable runnable;
@@ -27,6 +29,15 @@ public class SlowAsyncTask extends AsyncTask<Void, Void, Void> {
 
     enum Status {
         INITIALIZING, RUNNING, COMPLETED, ERROR
+    }
+
+    public SlowAsyncTask(Activity context) {
+        this(context, R.string.processing, R.string.please_wait);
+    }
+
+    public SlowAsyncTask(Activity context, int progressDialogTitleResId,
+                         int progressDialogMessageResId) {
+        this(context, null, null, progressDialogTitleResId, progressDialogMessageResId);
     }
 
     public SlowAsyncTask(Activity context, Runnable runnable, int progressDialogTitleResId,
@@ -51,11 +62,12 @@ public class SlowAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected Result doInBackground(Params... params) {
         status = Status.RUNNING;
         try {
-            runTask();
+            Result result = runTask();
             status = Status.COMPLETED;
+            return result;
         } catch (Exception e) {
             lastException = e;
             status = Status.ERROR;
@@ -63,16 +75,18 @@ public class SlowAsyncTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    protected void runTask() throws Exception {
+    protected Result runTask() throws Exception {
         if (runnable != null) {
             runnable.run();
         }
+        return null;
     }
 
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(Result result) {
+        super.onPostExecute(result);
         progressDialog.dismiss();
         progressDialog = null;
+
         if (status == Status.ERROR) {
             handleException(lastException);
         }

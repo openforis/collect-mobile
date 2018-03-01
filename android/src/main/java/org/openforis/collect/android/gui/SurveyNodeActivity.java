@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.FileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.*;
@@ -49,6 +51,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private FileAttributeComponent imageListener;
 
     private boolean twoPane;
+
+    public static void startClearSurveyNodeActivity(Context context) {
+        Activities.startNewClearTask(context, SurveyNodeActivity.class);
+    }
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);

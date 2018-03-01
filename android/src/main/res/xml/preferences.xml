@@ -44,15 +44,23 @@
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectAddress"
             android:key="remoteCollectAddress"
+            android:dependency="remoteSync"
             />
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectUsername"
             android:key="remoteCollectUsername"
+            android:dependency="remoteSync"
             />
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectPassword"
             android:key="remoteCollectPassword"
             android:inputType="textPassword"
+            android:dependency="remoteSync"
             />
+        <Preference
+            android:title="@string/settings_remote_sync_test"
+            android:summary="@string/settings_remote_sync_test_summary"
+            android:key="remoteCollectTest"
+            android:dependency="remoteSync" />
     </PreferenceCategory>
 </PreferenceScreen>

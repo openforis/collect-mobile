@@ -37,8 +37,9 @@
 
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
 
+    <string name="toast_data_export_completed">Data export completed</string>
     <string name="toast_exported_survey">Exported survey to %s</string>
-    <string name="toast_exported_survey_failed">Failed to export survey</string>
+    <string name="toast_exported_survey_failed">Failed to export survey: %s</string>
     <string name="all_key_records_not_specified_title">All %1$s key attributes have not been specified</string>
     <string name="all_key_records_not_specified_message">In order to export the data, %1$s must be specified for all
         %2$s.
@@ -111,6 +112,13 @@
     <string name="settings_title_remoteCollectAddress">Address</string>
     <string name="settings_title_remoteCollectUsername">Username</string>
     <string name="settings_title_remoteCollectPassword">Password</string>
+    <string name="settings_remote_sync_test">Test connection</string>
+    <string name="settings_remote_sync_test_summary">Tap to test the connection to Collect server</string>
+    <string name="settings_remote_sync_test_successful_title">Connection to Collect Server successful!</string>
+    <string name="settings_remote_sync_test_successful_message">Connection configured properly.</string>
+    <string name="settings_remote_sync_test_failed_title">Connection to Collect Server failed</string>
+    <string name="settings_remote_sync_test_failed_message_wrong_address">Wrong address or wrong username/password specified.</string>
+    <string name="settings_remote_sync_test_failed_message_newer_version">Collect Server runs version %s and it\'s not compatible with the one supported by this version of Collect Mobile (%s).\n\nPlease consider updating Collect Mobile to the latest version.</string>
 
     <string name="import_title_failed">Failed to import survey %1$s</string>
     <string name="import_text_failed">Make sure you are running the latest version of Collect Mobile and have exported

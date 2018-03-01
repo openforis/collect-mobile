@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -13,6 +14,8 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Tasks;
 
 public class ImportingDemoSurveyDialog extends DialogFragment {
+
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final TextView message = new TextView(getActivity());
         final SpannableString s =
@@ -28,11 +31,11 @@ public class ImportingDemoSurveyDialog extends DialogFragment {
                 .setTitle(R.string.import_demo_dialog_title)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Tasks.runSlowTask(getActivity(), new Runnable() {
+                        final SurveyListActivity activity = (SurveyListActivity) getActivity();
+                        Tasks.runSlowTask(activity, new Runnable() {
                             public void run() {
-                                SurveyListActivity activity = (SurveyListActivity) getActivity();
                                 ServiceLocator.importDefaultSurvey(activity);
-                                activity.startImportedSurveyNodeActivity();
+                                SurveyNodeActivity.startClearSurveyNodeActivity(activity);
                             }
                         }, R.string.import_demo_processing_title, R.string.please_wait);
                     }

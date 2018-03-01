@@ -15,7 +15,7 @@
     <string name="backup_insert_sd_card">Inserte una tarjeta SD donde guardar la copia de seguridad</string>
 
     <string name="toast_exported_survey">Exportar encuesta a %s</string>
-    <string name="toast_exported_survey_failed">Error al exportar la encuesta</string>
+    <string name="toast_exported_survey_failed">Error al exportar la encuesta: %s</string>
     <string name="toast_import_survey">Importando encuesta</string>
     <string name="toast_import_survey_failed">Error al importar la encuesta desde %s</string>
     <string name="toast_backed_up_survey">Encuesta copiada a %s</string>

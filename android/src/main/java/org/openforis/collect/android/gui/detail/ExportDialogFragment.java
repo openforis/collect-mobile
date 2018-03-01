@@ -60,6 +60,7 @@ public class ExportDialogFragment extends DialogFragment {
                 File downloadDirDestinationFile = new File(downloadDir, exportedFile.getName());
                 IOUtils.copy(new FileInputStream(exportedFile), new FileOutputStream(downloadDirDestinationFile));
                 AndroidFiles.makeDiscoverable(downloadDirDestinationFile, getActivity());
+                Toast.makeText(getContext(), R.string.toast_data_export_completed, Toast.LENGTH_LONG).show();
             } else {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -68,7 +69,7 @@ public class ExportDialogFragment extends DialogFragment {
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.export_share_with_application)));
             }
         } catch (IOException e) {
-            String message = getResources().getString(R.string.toast_exported_survey_failed);
+            String message = getResources().getString(R.string.toast_exported_survey_failed, e.getMessage());
             Log.e("export", message, e);
             Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         } catch (SurveyExporter.AllRecordKeysNotSpecified e) {

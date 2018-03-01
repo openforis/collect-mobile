@@ -1,5 +1,9 @@
 Changes
 -------
+2018-02-28
+
+    * Bug fixes
+
 2018-02-27
 
     * Bug fixes

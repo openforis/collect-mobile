@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,7 +39,7 @@ public class SurveyListActivity extends BaseActivity {
     private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
     private static final String OPEN_IMPORT_DIALOG = "openImportDialog";
 
-    public static void showImportDialog(Activity context) {
+    public static void startActivityAndShowImportDialog(Activity context) {
         Bundle extras = new Bundle();
         extras.putBoolean(OPEN_IMPORT_DIALOG, true);
         Activities.start(context, SurveyListActivity.class, extras);
@@ -57,7 +56,7 @@ public class SurveyListActivity extends BaseActivity {
         showSurveyList(adapter);
 
         if (Activities.getIntentExtra(this, OPEN_IMPORT_DIALOG, false)) {
-            showImportDialog();
+            showImportDialog(this);
         } else if (adapter.isEmpty()) {
             showDemoSurveyDialog();
         }
@@ -116,7 +115,7 @@ public class SurveyListActivity extends BaseActivity {
     }
 
     public void surveyImportRequested(MenuItem item) {
-        showImportDialog();
+        showImportDialog(this);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -158,43 +157,15 @@ public class SurveyListActivity extends BaseActivity {
         throw new IllegalStateException("Failed to import survey");
     }
 
-    protected void showImportDialog() {
+    protected static void showImportDialog(Activity context) {
         Intent target = FileUtils.createGetContentIntent();
         Intent intent = Intent.createChooser(
                 target, "Select survey to import");
-        startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
+        context.startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
     }
 
     protected void importSurvey(String surveyPath) {
         new ImportSurveyTask(this, surveyPath).execute();
-    }
-
-    public void onSurveyImportComplete() {
-        startImportedSurveyNodeActivity();
-    }
-
-    public void startImportedSurveyNodeActivity() {
-        Intent intent = new Intent(this, SurveyNodeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
-
-    private void showImportFailedDialog(final Context context, final String surveyPath, final String message) {
-      //  this.runOnUiThread(new Runnable() {
-        //    public void run() {
-                AlertDialog dialog = new AlertDialog.Builder(context)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle(getString(R.string.import_title_failed, surveyPath))
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                showImportDialog();
-                            }
-                        })
-                        .create();
-                dialog.show();
-         //   }
-        //});
     }
 
     private void selectSurvey(ListView listView, SurveyListAdapter adapter) {
@@ -208,11 +179,10 @@ public class SurveyListActivity extends BaseActivity {
         }
     }
 
-    private class ImportSurveyTask extends SlowAsyncTask {
+    private static class ImportSurveyTask extends SlowAsyncTask<Void, Void, Boolean> {
 
         private String surveyPath;
         private boolean overwrite = false;
-        private boolean alreadyExistingSurveyFound = false;
 
         ImportSurveyTask(Activity context, String surveyPath) {
             this(context, surveyPath, false);
@@ -225,19 +195,20 @@ public class SurveyListActivity extends BaseActivity {
         }
 
         @Override
-        protected void runTask() throws Exception {
+        protected Boolean runTask() throws Exception {
             super.runTask();
             if (ServiceLocator.importSurvey(surveyPath, overwrite, context) || overwrite) {
                 onSurveyImportComplete();
+                return false; //survey imported successfully
             } else {
-                alreadyExistingSurveyFound = true;
+                return true; //survey already existing
             }
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (alreadyExistingSurveyFound) {
+        protected void onPostExecute(Boolean surveyAlreadyExisting) {
+            super.onPostExecute(surveyAlreadyExisting);
+            if (surveyAlreadyExisting != null && surveyAlreadyExisting) {
                 Dialogs.confirm(context, R.string.import_overwrite_data_dialog_title, R.string.import_overwrite_data_dialog_message,
                         new Runnable() {
                             public void run() {
@@ -253,16 +224,16 @@ public class SurveyListActivity extends BaseActivity {
             String errorMessage;
             if (e instanceof UnsupportedFileType) {
                 UnsupportedFileType ex = (UnsupportedFileType) e;
-                errorMessage = getString(R.string.import_text_unsupported_file_type_selected,
+                errorMessage = context.getString(R.string.import_text_unsupported_file_type_selected,
                         ex.getExpectedExtention());
             } else if (e instanceof MalformedSurvey) {
-                errorMessage = getString(R.string.import_text_failed);
+                errorMessage = context.getString(R.string.import_text_failed);
             } else if (e instanceof WrongSurveyVersion) {
                 WrongSurveyVersion ex = (WrongSurveyVersion) e;
-                errorMessage = getString(R.string.import_text_wrong_version,
+                errorMessage = context.getString(R.string.import_text_wrong_version,
                         ex.getSurveyVersion(), ex.getCollectVersion());
             } else {
-                errorMessage = getString(R.string.import_text_failed);
+                errorMessage = context.getString(R.string.import_text_failed);
             }
             showImportFailedDialog(context,
                     surveyPath,
@@ -270,5 +241,21 @@ public class SurveyListActivity extends BaseActivity {
             );
         }
 
+        private void onSurveyImportComplete() {
+            SurveyNodeActivity.startClearSurveyNodeActivity(context);
+        }
+
+        private void showImportFailedDialog(final Activity context, final String surveyPath, final String message) {
+            new AlertDialog.Builder(context)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(context.getString(R.string.import_title_failed, surveyPath))
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showImportDialog(context);
+                    }
+                })
+                .show();
+        }
     }
 }

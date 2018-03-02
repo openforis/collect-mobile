@@ -88,14 +88,16 @@ public class ExportDialogFragment extends DialogFragment {
         @Override
         protected void onPostExecute(File exportedFile) {
             super.onPostExecute(exportedFile);
-            if (saveToDownloads) {
-                Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
-            } else {
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
-                shareIntent.setType("*/*");
-                context.startActivity(Intent.createChooser(shareIntent, context.getText(R.string.export_share_with_application)));
+            if (exportedFile != null) {
+                if (saveToDownloads) {
+                    Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
+                } else {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
+                    shareIntent.setType("*/*");
+                    context.startActivity(Intent.createChooser(shareIntent, context.getText(R.string.export_share_with_application)));
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.widget.TextView;
 import org.openforis.collect.R;
+import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
@@ -19,6 +21,19 @@ import org.openforis.collect.android.viewmodel.UiSurvey;
 import java.util.Iterator;
 
 public class AllRecordKeysNotSpecifiedDialog extends AppCompatDialogFragment {
+
+    public static String generateMessage(Activity context) {
+        UiSurvey survey = ServiceLocator.surveyService().selectedNode().getUiSurvey();
+        UiRecordCollection recordCollection = (UiRecordCollection) survey.getChildAt(0);
+        UiRecord.Placeholder placeHolder = (UiRecord.Placeholder) recordCollection.getChildren().get(0);
+        StringBuilder keyAttributes = keyAttributes(placeHolder);
+
+        return String.format(
+                context.getText(R.string.all_key_records_not_specified_message).toString(),
+                keyAttributes, recordCollection.getLabel()
+        );
+    }
+
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final TextView message = new TextView(getActivity());
         // TODO: Get record label and key attribute names
@@ -26,12 +41,8 @@ public class AllRecordKeysNotSpecifiedDialog extends AppCompatDialogFragment {
         UiRecordCollection recordCollection = (UiRecordCollection) survey.getChildAt(0);
         UiRecord.Placeholder placeHolder = (UiRecord.Placeholder) recordCollection.getChildren().get(0);
         String recordLabel = placeHolder.getLabel() == null ? placeHolder.getName() : placeHolder.getLabel();
-        StringBuilder keyAttributes = keyAttributes(placeHolder);
 
-        String messageText = String.format(
-                getActivity().getText(R.string.all_key_records_not_specified_message).toString(),
-                keyAttributes, recordCollection.getLabel()
-        );
+        final String messageText = generateMessage(getActivity());
         final SpannableString s = new SpannableString(messageText);
         Linkify.addLinks(s, Linkify.WEB_URLS);
         message.setText(s);
@@ -51,7 +62,7 @@ public class AllRecordKeysNotSpecifiedDialog extends AppCompatDialogFragment {
                 .create();
     }
 
-    private StringBuilder keyAttributes(UiRecord.Placeholder placeHolder) {
+    private static StringBuilder keyAttributes(UiRecord.Placeholder placeHolder) {
         StringBuilder keyAttributes = new StringBuilder();
         for (Iterator<UiAttribute> iterator = placeHolder.getKeyAttributes().iterator(); iterator.hasNext(); ) {
             UiAttribute attribute = iterator.next();
@@ -61,6 +72,4 @@ public class AllRecordKeysNotSpecifiedDialog extends AppCompatDialogFragment {
         }
         return keyAttributes;
     }
-
-
 }

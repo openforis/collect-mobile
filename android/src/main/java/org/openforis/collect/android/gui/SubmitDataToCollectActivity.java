@@ -1,20 +1,15 @@
 package org.openforis.collect.android.gui;
 
-import static org.openforis.collect.android.gui.CollectMobileApplication.*;
-
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import static android.view.View.*;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -22,6 +17,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openforis.collect.R;
+import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MultipartUtility;
 import org.openforis.collect.android.util.ProgressHandler;
@@ -30,6 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.openforis.collect.android.gui.CollectMobileApplication.LOG_TAG;
 
 public class SubmitDataToCollectActivity extends BaseActivity {
 
@@ -104,7 +104,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
     }
 
     private void handleError(final String error) {
-        Log.i(LOG_TAG, "Send data to Collect error: " + error);
+        Log.e(LOG_TAG, "Send data to Collect error: " + error);
 
         updateViewState(ViewState.ERROR, new Runnable() {
             public void run() {
@@ -204,22 +204,29 @@ public class SubmitDataToCollectActivity extends BaseActivity {
         jobMonitorTimer.scheduleAtFixedRate(task, 0, RESTORE_DATA_JOB_MONITOR_PERIOD);
     }
 
-    private class ExportDataTask extends AsyncTask<Void, Void, Void> {
+    private class ExportDataTask extends AsyncTask<Void, Void, File> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected File doInBackground(Void... voids) {
             try {
-                SubmitDataToCollectActivity.this.exportedFile = ServiceLocator.surveyService().exportSurvey(false);
+                return ServiceLocator.surveyService().exportSurvey(false);
             } catch (IOException e) {
                 handleError(e.getMessage());
+            } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
+                handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(SubmitDataToCollectActivity.this));
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            startExportedFileUpload();
+        protected void onPostExecute(File exportedFile) {
+            super.onPostExecute(exportedFile);
+            if (exportedFile == null) {
+                updateViewState(ViewState.ERROR);
+            } else {
+                SubmitDataToCollectActivity.this.exportedFile = exportedFile;
+                startExportedFileUpload();
+            }
         }
     }
 

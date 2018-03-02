@@ -91,6 +91,13 @@ public class UiInternalNode extends UiNode {
         return children.get(0);
     }
 
+    public UiNode getFirstRelevantChild() {
+        List<UiNode> relevantChildren = getRelevantChildren();
+        if (relevantChildren.isEmpty())
+            throw new IllegalStateException("Node " + this + " contains no relevant children");
+        return relevantChildren.get(0);
+    }
+
     public UiNode getChildAt(int childIndex) {
         if (childIndex >= children.size())
             throw new IllegalStateException("Node " + this + " doesn't contain a child at index " + childIndex);

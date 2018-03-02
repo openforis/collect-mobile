@@ -155,7 +155,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (view == null || !node.isRelevant())
             hideKeyboard();
         else {
-            if (view instanceof EditText)
+            if (view instanceof EditText && view.isEnabled())
                 showKeyboard(view);
             else {
                 hideKeyboard();

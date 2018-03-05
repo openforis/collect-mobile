@@ -23,8 +23,6 @@ public class SimpleNodePagerAdapter extends FragmentStatePagerAdapter {
 
     private final FragmentManager fm;
     private NodeDetailFragment nodeDetailFragment;
-    private boolean hasPrevious;
-    private boolean hasNext;
 
     public SimpleNodePagerAdapter(FragmentManager fm) {
         super(fm);

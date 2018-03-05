@@ -201,7 +201,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private boolean hasNextSibling() {
         ViewPager pager = nodePager();
         int attributeIndex = pager.getCurrentItem();
-        return attributeIndex < pager.getChildCount() - 1;
+        return attributeIndex < pager.getAdapter().getCount() - 1;
     }
 
     private boolean hasPrevSibling() {

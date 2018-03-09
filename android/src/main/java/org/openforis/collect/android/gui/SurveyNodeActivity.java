@@ -445,7 +445,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     /**
-     *
+     * Limits the backstack to 10 activities (prevents OutOfMemory errors)
      */
     private static class BackStackLimiter {
 
@@ -453,6 +453,12 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         private static final LinkedList<SurveyNodeActivity> queue = new LinkedList<SurveyNodeActivity>();
 
         private static void enqueue(SurveyNodeActivity activity) {
+            if (activity.selectedNode instanceof UiRecordCollection) {
+                for (SurveyNodeActivity a: queue) {
+                    a.finish();
+                }
+                queue.clear();
+            }
             queue.add(activity);
 
             if (queue.size() > MAX_QUEUE_SIZE) {

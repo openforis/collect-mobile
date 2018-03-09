@@ -202,9 +202,9 @@ public class NodeListAdapter extends BaseAdapter {
             return 0;
         switch (node.getStatus()) {
             case VALIDATION_WARNING:
-                return R.drawable.yellow_circle;
+                return R.drawable.ic_warning_yellow_24dp;
             case VALIDATION_ERROR:
-                return R.drawable.red_circle;
+                return R.drawable.ic_error_red_24dp;
             default:
                 return 0;
         }

@@ -18,12 +18,19 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
-import org.openforis.collect.android.gui.util.Views;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
+import org.openforis.collect.android.viewmodel.UiInternalNode;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.openforis.collect.android.gui.util.Views.hide;
+import static org.openforis.collect.android.gui.util.Views.px;
 
 /**
  * @author Daniel Wiell
@@ -105,8 +112,8 @@ public class NodeListAdapter extends BaseAdapter {
 
     private void toggleListItemVisibility(final NodeHolder holder, final View listItem, boolean visible, boolean animate, final Runnable animationEndCallback) {
         final int newVisibility = visible ? View.VISIBLE : View.INVISIBLE;
-        final int initialMinHeight = visible ? 1 : Views.dpsToPixels(activity, 48);
-        final int finalMinHeight = visible ? Views.dpsToPixels(activity, 48) : 1;
+        final int initialMinHeight = visible ? 1 : px(activity, 48);
+        final int finalMinHeight = visible ? px(activity, 48) : 1;
         final int finalLayoutHeight = visible ? ViewGroup.LayoutParams.WRAP_CONTENT : 1;
         final AbsListView.LayoutParams finalLayoutParams = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, finalLayoutHeight);
 
@@ -164,7 +171,7 @@ public class NodeListAdapter extends BaseAdapter {
         } else if (!visible) {
             listItem.setMinimumHeight(finalMinHeight);
             listItem.setLayoutParams(finalLayoutParams);
-            Views.hide(listItem);
+            hide(listItem);
         }
     }
 

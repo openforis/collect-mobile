@@ -19,7 +19,6 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiCode;
@@ -35,6 +34,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.openforis.collect.android.gui.util.Views.px;
 
 /**
  * @author Daniel Wiell
@@ -186,8 +187,8 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                 public void run() {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 1),
-                            Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 15));
+                    layoutParams.setMargins(px(context, 1), px(context, 1),
+                            px(context, 1), px(context, 15));
 
                     qualifierInput = createQualifierInput();
                     java.util.List<UiCode> codes = codeList.getCodes();

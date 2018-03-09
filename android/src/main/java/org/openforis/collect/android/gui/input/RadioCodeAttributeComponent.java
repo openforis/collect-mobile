@@ -1,24 +1,25 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
-import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.openforis.collect.android.gui.util.Views.px;
 
 /**
  * @author Daniel Wiell
@@ -114,8 +115,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                 public void run() {
                     RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 1),
-                            Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 15));
+                    layoutParams.setMargins(px(context, 1), px(context, 1),
+                            px(context, 1), px(context, 15));
 
                     Integer selectedViewId = null;
                     for (int i = 0; i < codes.size(); i++) {

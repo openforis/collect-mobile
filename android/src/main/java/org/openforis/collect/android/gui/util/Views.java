@@ -50,7 +50,7 @@ public abstract class Views {
         view.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    public static int dpsToPixels(Context context, int dps) {
+    public static int px(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
     }

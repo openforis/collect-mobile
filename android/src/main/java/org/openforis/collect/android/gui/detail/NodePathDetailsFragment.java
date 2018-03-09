@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.detail;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -16,10 +18,17 @@ import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.openforis.collect.android.gui.list.EntityListAdapter.MAX_ATTRIBUTE_LABEL_LENGTH;
 import static org.openforis.collect.android.gui.list.EntityListAdapter.MAX_ATTRIBUTE_VALUE_LENGTH;
+import static org.openforis.collect.android.gui.util.Views.px;
 import static org.openforis.collect.android.util.StringUtils.ellipsisMiddle;
 
 public class NodePathDetailsFragment extends Fragment {
@@ -31,15 +40,19 @@ public class NodePathDetailsFragment extends Fragment {
 
     public NodePathDetailsFragment() {
         SurveyService surveyService = ServiceLocator.surveyService();
-        uiNode = surveyService.selectedNode().getParent();
+        if (surveyService != null) {
+            UiNode selectedNode = surveyService.selectedNode();
+            if (selectedNode != null) {
+                uiNode = selectedNode.getParent();
+            }
+        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         attrs = new Attrs(getActivity());
         keyAttributesByEntity = keyAttributesByEntity(uiNode);
         for (List<UiAttribute> uiAttributes : keyAttributesByEntity.values())
-            for (UiAttribute uiAttribute : uiAttributes)
-                keyAttributes.add(uiAttribute);
+            keyAttributes.addAll(uiAttributes);
         return createView();
     }
 
@@ -56,7 +69,8 @@ public class NodePathDetailsFragment extends Fragment {
 
     private View createView() {
         view = new LinearLayout(getActivity());
-        view.setPadding(px(16), px(8), px(16), px(8));
+        Context c = getContext();
+        view.setPadding(px(c, 16), px(c, 8), px(c, 16), px(c,8));
         view.setOrientation(LinearLayout.VERTICAL);
         view.setBackgroundColor(attrs.color(R.attr.nodePathDetailsBackground));
 
@@ -73,7 +87,7 @@ public class NodePathDetailsFragment extends Fragment {
             for (Iterator<UiAttribute> iterator = keyAttributes.iterator(); iterator.hasNext(); ) {
                 UiAttribute keyAttribute = iterator.next();
                 String value = keyAttribute.valueAsString();
-                value = value == null ? getActivity().getResources().getString(R.string.label_unspecified) : value;
+                value = value == null ? getString(R.string.label_unspecified) : value;
                 s.append(ellipsisMiddle(keyAttribute.getLabel(), MAX_ATTRIBUTE_LABEL_LENGTH)).append(": ")
                         .append(ellipsisMiddle(value, MAX_ATTRIBUTE_VALUE_LENGTH));
                 if (iterator.hasNext())
@@ -108,11 +122,6 @@ public class NodePathDetailsFragment extends Fragment {
         }
         keyAttributesByEntity.putAll(keyAttributesByEntity(node.getParent()));
         return keyAttributesByEntity;
-    }
-
-    private int px(int dp) {
-        float scale = getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
     }
 
     // TODO: Listen for attribute updates

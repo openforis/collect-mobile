@@ -16,7 +16,7 @@ public class DoubleAttributeComponent extends NumericAttributeComponent<UiDouble
     private static final NumberFormat NUMBER_FORMAT;
     static {
         NUMBER_FORMAT = NumberFormat.getInstance();
-        NUMBER_FORMAT.setGroupingUsed(false);
+        NUMBER_FORMAT.setGroupingUsed(true);
         NUMBER_FORMAT.setMaximumFractionDigits(Integer.MAX_VALUE);
         NUMBER_FORMAT.setMaximumIntegerDigits(Integer.MAX_VALUE);
     }
@@ -46,6 +46,7 @@ public class DoubleAttributeComponent extends NumericAttributeComponent<UiDouble
     }
 
     protected void onEditTextCreated(EditText input) {
-        input.setKeyListener(new DecimalSeparatorAwareKeyListener());
+        super.onEditTextCreated(input);
+        //input.setKeyListener(new DecimalSeparatorAwareKeyListener());
     }
 }

@@ -5,9 +5,8 @@ import android.widget.EditText;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.DecimalNumberTextWatcher;
 import org.openforis.collect.android.viewmodel.UiAttribute;
-
-import java.text.ParseException;
 
 /**
  * @author Stefano Ricci
@@ -25,6 +24,16 @@ public abstract class NumericAttributeComponent<A extends UiAttribute, T extends
     protected String attributeValue() {
         T val = attributeNumericValue();
         return  val == null ? "" : format(val);
+    }
+
+    @Override
+    protected String editTextToAttributeValue(String text) {
+        try {
+            T val = parse(text);
+            return format(val);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     protected boolean hasChanged(String newValue) {
@@ -60,7 +69,13 @@ public abstract class NumericAttributeComponent<A extends UiAttribute, T extends
 
     protected abstract T parse(String value) throws Exception;
 
+    protected void onEditTextCreated(EditText input) {
+        input.addTextChangedListener(new DecimalNumberTextWatcher(input));
+    }
+
     private void setNotANumberError() {
         getEditText().setError(context.getResources().getString(R.string.message_not_a_number));
     }
+
+
 }

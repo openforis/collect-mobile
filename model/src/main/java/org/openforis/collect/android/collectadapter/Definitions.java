@@ -4,17 +4,39 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
+import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
+import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
+import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
+import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
 import org.openforis.collect.metamodel.ui.UIConfiguration;
 import org.openforis.collect.metamodel.ui.UIModelObject;
 import org.openforis.collect.metamodel.ui.UITable;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.idm.metamodel.*;
+import org.openforis.idm.metamodel.AttributeDefinition;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
+import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.KeyAttributeDefinition;
+import org.openforis.idm.metamodel.LanguageSpecificText;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel;
+import org.openforis.idm.metamodel.Prompt;
+import org.openforis.idm.metamodel.SpatialReferenceSystem;
+import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.validation.Check;
 import org.openforis.idm.metamodel.validation.DistanceCheck;
 import org.openforis.idm.model.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -118,11 +140,8 @@ public class Definitions {
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (nodeDefinition instanceof CodeAttributeDefinition) {
                 EntityDefinition parentDef = nodeDefinition.getParentEntityDefinition();
-                UIConfiguration uiConf = ((CollectSurvey) parentDef.getSurvey()).getUIConfiguration();
-                //TODO handle enumerated entities from Collect Survey Designer
-                UIModelObject parentUiModelObject = uiConf == null ? null : uiConf.getModelObjectByNodeDefinitionId(parentDef.getId());
-                boolean enumerator = !parentDef.isRoot() && parentUiModelObject instanceof UITable
-                        && parentDef.isEnumerable() && ((CodeAttributeDefinition) nodeDefinition).isKey();
+                boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()
+                        && ((CodeAttributeDefinition) nodeDefinition).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);

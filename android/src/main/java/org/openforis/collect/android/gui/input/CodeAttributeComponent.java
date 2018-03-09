@@ -42,7 +42,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
         this.codeListService = codeListService;
-        this.enumerator = ((UiCodeAttributeDefinition) attribute.getDefinition()).isEnumerator();
+        this.enumerator = attribute.getDefinition().isEnumerator();
     }
 
     public static CodeAttributeComponent create(UiCodeAttribute attribute, SurveyService surveyService, FragmentActivity context) {

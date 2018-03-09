@@ -26,9 +26,16 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.UiInternalNode;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
+import org.openforis.collect.android.viewmodel.UiRecordCollection;
+import org.openforis.collect.android.viewmodel.UiSurvey;
+import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +73,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         enableUpNavigationIfNeeded(selectedNode);
         surveyService.setListener(this);
         support.onCreate(savedState);
+
+        BackStackLimiter.enqueue(this);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -236,7 +245,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         Intent intent = createSelectNodeIntent(nodeId);
         startActivity(intent);
     }
-
+    /*
     private void navigateHome() {
         Keyboard.hide(this);
         startActivity(new Intent(this, SurveyNodeActivity.class));
@@ -247,7 +256,9 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+    */
 
+    @Override
     public void onResume() {
         if (surveyService != null) {
             ServiceLocator.init(this);
@@ -260,6 +271,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         super.onResume();
     }
 
+    @Override
     protected void onPause() {
         if (surveyService != null) {
             surveyService.setListener(null);
@@ -267,14 +279,19 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        BackStackLimiter.remove(this);
+    }
+
     private void navigateDown() {
         if (selectedNode instanceof UiInternalNode) {
             UiInternalNode node = (UiInternalNode) selectedNode;
             if (node.getChildCount() == 0)
                 return; // TODO: Handle case where tab contains no children
-            startActivity(
-                    createSelectNodeIntent(node.getFirstChild())
-            );
+            navigateTo(node.getFirstChild());
         }
     }
 
@@ -298,10 +315,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     private ViewPager nodePager() {
         return (ViewPager) findViewById(R.id.attributePager);
-    }
-
-    private Intent createSelectNodeIntent(UiNode node) {
-        return createSelectNodeIntent(node.getId());
     }
 
     private Intent createSelectNodeIntent(int id) {
@@ -428,6 +441,30 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
         private void setNodeSelected(UiNode selected, SimpleNodeListFragment nodeListFragment) {
             nodeListFragment.selectNode(selected);
+        }
+    }
+
+    /**
+     *
+     */
+    private static class BackStackLimiter {
+
+        private static final int MAX_QUEUE_SIZE = 10;
+        private static final LinkedList<SurveyNodeActivity> queue = new LinkedList<SurveyNodeActivity>();
+
+        private static void enqueue(SurveyNodeActivity activity) {
+            queue.add(activity);
+
+            if (queue.size() > MAX_QUEUE_SIZE) {
+                //do not terminate first 2 activities (record list and selected record activity)
+                SurveyNodeActivity toBeTerminated = queue.get(2);
+                toBeTerminated.finish();
+                queue.remove(toBeTerminated);
+            }
+        }
+
+        private static void remove(SurveyNodeActivity activity) {
+            queue.remove(activity);
         }
     }
 }

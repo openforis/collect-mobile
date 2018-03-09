@@ -8,13 +8,25 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.gui.util.Views;
+import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiCode;
+import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeList;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -172,24 +184,31 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         private void initView(final UiCodeList codeList) {
             uiHandler.post(new Runnable() {
                 public void run() {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 1),
+                            Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 15));
+
                     qualifierInput = createQualifierInput();
                     java.util.List<UiCode> codes = codeList.getCodes();
                     for (int i = 0; i < codes.size(); i++) {
                         final UiCode code = codes.get(i);
                         final boolean qualifiable = codeList.isQualifiable(code);
-                        CheckBox checkBox = new AppCompatCheckBox(context);
-                        checkBox.setId(i + 1);
-                        checkBox.setText(code.toString());
-                        layout.addView(checkBox);
-                        codeByViewId.put(checkBox.getId(), code);
+                        CheckBox cb = new AppCompatCheckBox(context);
+                        cb.setId(i + 1);
+                        cb.setText(code.toString());
+                        cb.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+                        cb.setLayoutParams(layoutParams);
+                        layout.addView(cb);
+                        codeByViewId.put(cb.getId(), code);
                         boolean checked = attributesByCode.keySet().contains(code);
                         if (checked) {
-                            checkBox.setSelected(true);
-                            checkBox.setChecked(true);
+                            cb.setSelected(true);
+                            cb.setChecked(true);
                             if (qualifiable)
                                 showQualifier();
                         }
-                        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 if (isChecked) {
                                     attributesByCode.put(code, surveyService.addCodeAttribute(code, qualifier(code)));

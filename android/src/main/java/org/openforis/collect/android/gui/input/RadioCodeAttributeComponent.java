@@ -6,10 +6,12 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
@@ -110,18 +112,25 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         private void addRadioButtons(final List<UiCode> codes) {
             uiHandler.post(new Runnable() {
                 public void run() {
+                    RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 1),
+                            Views.dpsToPixels(context, 1), Views.dpsToPixels(context, 15));
+
                     Integer selectedViewId = null;
                     for (int i = 0; i < codes.size(); i++) {
                         UiCode code = codes.get(i);
                         if (! enumerator || isAttributeCode(code)) { //if it's enumerator, show only selected code
-                            RadioButton radioButton = new AppCompatRadioButton(context);
-                            radioButton.setId(i + 1);
-                            radioButton.setText(code.toString());
-                            radioGroup.addView(radioButton);
-                            codeByViewId.put(radioButton.getId(), code);
+                            RadioButton rb = new AppCompatRadioButton(context);
+                            rb.setId(i + 1);
+                            rb.setText(code.toString());
+                            rb.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+                            rb.setLayoutParams(layoutParams);
+                            radioGroup.addView(rb);
+                            codeByViewId.put(rb.getId(), code);
                             if (isAttributeCode(code)) {
-                                selectedViewId = radioButton.getId();
-                                radioButton.setSelected(true);
+                                selectedViewId = rb.getId();
+                                rb.setSelected(true);
                             }
                         }
                     }

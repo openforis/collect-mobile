@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiAttribute;
@@ -27,6 +28,10 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected abstract String attributeValue();
 
+    protected String editTextToAttributeValue(String text) {
+        return text;
+    }
+
     protected abstract void updateAttributeValue(String newValue);
 
     protected abstract void onEditTextCreated(EditText input);
@@ -38,8 +43,9 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     protected final boolean updateAttributeIfChanged() {
         String newValue = getEditTextString();
         if (StringUtils.isEmpty(newValue)) newValue = null;
-        if (hasChanged(newValue)) {
-            updateAttributeValue(newValue);
+        String newAttributeValue = editTextToAttributeValue(newValue);
+        if (hasChanged(newAttributeValue)) {
+            updateAttributeValue(newAttributeValue);
             return true;
         }
         return false;
@@ -67,11 +73,15 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         return editText.getText() == null ? null : editText.getText().toString();
     }
 
+    protected String formattedAttributeValue() {
+        return attributeValue();
+    }
+
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
         editText.setSingleLine();
 
-        editText.setText(attributeValue());
+        editText.setText(formattedAttributeValue());
 
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {

@@ -29,10 +29,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/version_label" />
+
         <TextView
             android:id="@+id/appVersion"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" />
     </LinearLayout>
 
     <FrameLayout

@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
             mainTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/caviar_dreams_normal.ttf"));
 
             TextView versionText = (TextView) findViewById(R.id.appVersion);
-            versionText.setText(App.versionName(this));
+            versionText.setText(App.versionName(this) + " [" + App.versionCode(this) + "]");
 
             initializeSurveySpinner();
 

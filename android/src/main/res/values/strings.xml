@@ -95,11 +95,11 @@
     <string name="settings_summaryOff_compassEnabled">Device compass is disabled</string>
 
     <string name="settings_workingDir">Working directory</string>
-    <string name="settings_title_darkTheme">Collect Mobile theme</string>
-    <string name="settings_switchTextOn_darkTheme">Dark</string>
-    <string name="settings_switchTextOff_darkTheme">Light</string>
-    <string name="settings_summaryOn_darkTheme">Collect Mobile uses the dark theme.</string>
-    <string name="settings_summaryOff_darkTheme">Collect Mobile uses the light theme.</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark_summary">Dark theme</string>
+    <string name="settings_theme_light_summary">Light theme</string>
 
     <string name="settings_title_showKeyboard">Automatically show keyboard</string>
     <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when
@@ -107,7 +107,9 @@
     </string>
 
     <string name="settings_title_remoteSync">Collect Server</string>
-    <string name="settings_title_remoteSyncEnabled">Collect server connection enabled</string>
+    <string name="settings_title_remoteSyncSwitchTitle">Collect server connection</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOn">Collect server connection enabled</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOff">Collect server connection disabled</string>
     <string name="settings_title_remoteCollectAddress">Address</string>
     <string name="settings_title_remoteCollectUsername">Username</string>
     <string name="settings_title_remoteCollectPassword">Password</string>

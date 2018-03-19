@@ -53,7 +53,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         File workingDir = AppDirs.root(this);
         directoryChooserDialog = DirectoryChooserFragment.newInstance(workingDir.getName(), workingDir.getParent());
 
-
         // Display the fragment as the main content.
         settingsFragment = new SettingsFragment();
         getFragmentManager().beginTransaction()
@@ -95,6 +94,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             setupStorageLocationPreference();
             setupCrewIdPreference();
             setupCompassEnabledPreference();
+            setupThemePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
             setupRemoteCollectUsernamePreference();
@@ -137,16 +137,31 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             });
         }
 
+        private void setupThemePreference() {
+            Preference preference = findPreference(ThemeInitializer.THEME_PREFERENCE_KEY);
+            ThemeInitializer.Theme theme = ThemeInitializer.determineThemeFromPreferences(getActivity());
+            preference.setSummary(getThemeSummary(theme.name()));
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    preference.setSummary(getThemeSummary((String) newValue));
+                    return true;
+                }
+            });
+        }
+
+        private String getThemeSummary(String themeName) {
+            if (themeName.equalsIgnoreCase(ThemeInitializer.Theme.DARK.name())) {
+                return getString(R.string.settings_theme_dark_summary);
+            } else {
+                return getString(R.string.settings_theme_light_summary);
+            }
+        }
+
         private void setupRemoteSyncEnabledPreference() {
             Preference preference = findPreference(REMOTE_SYNC_ENABLED);
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean enabled = (Boolean) newValue;
-                    Settings.setRemoteSyncEnabled(enabled);
-
-                    findPreference(REMOTE_COLLECT_ADDRESS).setEnabled(enabled);
-                    findPreference(REMOTE_COLLECT_USERNAME).setEnabled(enabled);
-                    findPreference(REMOTE_COLLECT_PASSWORD).setEnabled(enabled);
+                    Settings.setRemoteSyncEnabled((Boolean) newValue);
                     return true;
                 }
             });

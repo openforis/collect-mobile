@@ -17,15 +17,13 @@
             android:summaryOff="@string/settings_summaryOff_compassEnabled"
             android:key="compassEnabled"
     />
-    <SwitchPreference
-            android:title="@string/settings_title_darkTheme"
-            android:defaultValue="true"
-            android:switchTextOn="@string/settings_switchTextOn_darkTheme"
-            android:switchTextOff="@string/settings_switchTextOff_darkTheme"
-            android:summaryOn="@string/settings_summaryOn_darkTheme"
-            android:summaryOff="@string/settings_summaryOff_darkTheme"
-            android:key="darkTheme"
-            />
+    <ListPreference
+            android:key="theme"
+            android:title="@string/settings_theme_title"
+            android:defaultValue="dark"
+            android:entries="@array/theme_labels"
+            android:entryValues="@array/theme_names"
+    />
     <CheckBoxPreference
             android:title="@string/settings_title_showKeyboard"
             android:defaultValue="true"
@@ -36,31 +34,33 @@
     <PreferenceCategory
         android:title="@string/settings_title_remoteSync"
         android:key="remoteSync">
-        <CheckBoxPreference
-            android:title="@string/settings_title_remoteSyncEnabled"
+        <SwitchPreference
+            android:title="@string/settings_title_remoteSyncSwitchTitle"
+            android:summaryOn="@string/settings_title_remoteSyncSwitchSummaryOn"
+            android:summaryOff="@string/settings_title_remoteSyncSwitchSummaryOff"
             android:defaultValue="false"
             android:key="remoteSyncEnabled"
             />
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectAddress"
             android:key="remoteCollectAddress"
-            android:dependency="remoteSync"
+            android:dependency="remoteSyncEnabled"
             />
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectUsername"
             android:key="remoteCollectUsername"
-            android:dependency="remoteSync"
+            android:dependency="remoteSyncEnabled"
             />
         <EditTextPreference
             android:title="@string/settings_title_remoteCollectPassword"
             android:key="remoteCollectPassword"
             android:inputType="textPassword"
-            android:dependency="remoteSync"
+            android:dependency="remoteSyncEnabled"
             />
         <Preference
             android:title="@string/settings_remote_sync_test"
             android:summary="@string/settings_remote_sync_test_summary"
             android:key="remoteCollectTest"
-            android:dependency="remoteSync" />
+            android:dependency="remoteSyncEnabled" />
     </PreferenceCategory>
 </PreferenceScreen>

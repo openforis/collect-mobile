@@ -1,5 +1,9 @@
 Changes
 -------
+2018-03-19
+
+    * Changed theme selector in settings
+
 2018-03-09
 
     * Support configurable enumerated entities

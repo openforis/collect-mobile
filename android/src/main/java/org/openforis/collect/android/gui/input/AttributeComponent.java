@@ -59,7 +59,7 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
                     message.append(validationError);  // TODO: Only include messages from the worst level?
                     if (iterator.hasNext())
                         message.append('\n');
-                    focus(labelView);
+                    focusOnMessageContainerView();
                     labelView.setError(message);
                 }
             }

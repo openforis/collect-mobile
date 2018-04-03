@@ -76,8 +76,15 @@ public abstract class SavableComponent {
             Keyboard.hide(context);
     }
 
-    protected final void focus(View inputView) {
-        inputView.requestFocus();
+    protected TextView errorMessageContainerView() {
+        return null;
+    }
+
+    protected void focusOnMessageContainerView() {
+        TextView view = errorMessageContainerView();
+        if (view != null) {
+            view.requestFocus();
+        }
     }
 
     protected final String resourceString(int resourceId) {

@@ -102,6 +102,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         return numberFormat;
     }
 
+    @Override
+    protected void focusOnMessageContainerView() {
+        if (! (vh.xView.hasFocus() || vh.yView.hasFocus())) {
+            super.focusOnMessageContainerView();
+        }
+    }
+
     private class ViewHolder {
         LinearLayout view;
         Spinner srsSpinner;

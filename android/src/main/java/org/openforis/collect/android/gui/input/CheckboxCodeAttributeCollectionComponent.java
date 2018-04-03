@@ -90,12 +90,13 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                 StringBuilder message = new StringBuilder();
                 for (UiValidationError validationError : validationErrors)
                     message.append(validationError);
-                focus(labelView);
+                focusOnMessageContainerView();
                 labelView.setError(message);
             }
         });
     }
 
+    @Override
     protected TextView errorMessageContainerView() {
         return (TextView) ((ViewGroup) toInputView().getParent().getParent()).findViewById(R.id.node_label); // TODO: Ugly!!!
     }

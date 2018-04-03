@@ -241,15 +241,21 @@ public class CollectModelBackedSurveyService implements SurveyService {
         Integer selectedRecordId = viewModelManager.getSelectedRecordId();
 
         File exportedFile = exportFile();
-        collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, new CollectModelManager.ExportListener() {
-            public void beforeRecordExport(int recordId) {
-                selectRecord(recordId);
+        try {
+            collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, new CollectModelManager.ExportListener() {
+                public void beforeRecordExport(int recordId) {
+                    selectRecord(recordId);
+                }
+            });
+
+            if (selectedRecordId != null)
+                selectRecord(selectedRecordId);
+        } catch(IOException e) {
+            if (exportedFile != null) {
+                exportedFile.delete();
             }
-        });
-
-        if (selectedRecordId != null)
-            selectRecord(selectedRecordId);
-
+            throw e;
+        }
         return exportedFile;
     }
 

@@ -19,6 +19,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.AllRecordKeysNotSpecifiedDialog;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
@@ -105,13 +106,14 @@ public class ExportDialogFragment extends DialogFragment {
         protected void handleException(Exception e) {
             super.handleException(e);
 
-            if (e instanceof IOException) {
-                String message = context.getString(R.string.toast_exported_survey_failed, e.getMessage());
-                Log.e("export", message, e);
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-            } else if (e instanceof SurveyExporter.AllRecordKeysNotSpecified) {
+            if (e instanceof SurveyExporter.AllRecordKeysNotSpecified) {
                 DialogFragment dialog = new AllRecordKeysNotSpecifiedDialog();
                 dialog.show(((FragmentActivity) context).getSupportFragmentManager(), "allRecordKeysNotSpecifiedDialog");
+            } else {
+                String surveyName = ServiceLocator.surveyService().getSelectedSurvey().getName();
+                String message = context.getString(R.string.survey_export_failed_message, surveyName, e.getMessage());
+                Log.e("export", message, e);
+                Dialogs.alert(context, context.getString(R.string.survey_export_failed_title), message);
             }
         }
     }

@@ -51,7 +51,7 @@ public class ViewModelManager {
 
     public UiRecord selectRecord(int recordId) {
         this.selectedRecord = loadRecord(recordId);
-        return loadRecord(recordId);
+        return this.selectedRecord;
     }
 
     private UiRecord loadRecord(int recordId) {
@@ -59,7 +59,7 @@ public class ViewModelManager {
         if (record == null)
             throw new IllegalStateException("No record found with id " + recordId);
         record.updateStatusOfNodeAndDescendants();
-        record.updateStatusOfParents(); // TODO: This should sbe done at record.init()? Ugly anyway
+        record.updateStatusOfParents(); // TODO: This should be done at record.init()? Ugly anyway
         return record;
     }
 

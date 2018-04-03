@@ -109,16 +109,21 @@ public class SurveyExporter {
         for (UiNode rc : uiSurvey.getChildren()) {
             UiRecordCollection recordCollection = (UiRecordCollection) rc;
             for (UiNode rp : recordCollection.getChildren()) {
-                UiRecord.Placeholder recordPlaceholder = (UiRecord.Placeholder) rp;
-                CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
-                record.setCreatedBy(user);
-                record.setCreationDate(now);
-                record.setModifiedBy(user);
-                record.setModifiedDate(now);
-                record.setOwner(user);
-                exportRecord(record);
-                if (!excludeBinaries)
-                    exportRecordFiles(record);
+                try {
+                    UiRecord.Placeholder recordPlaceholder = (UiRecord.Placeholder) rp;
+                    CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
+                    record.setCreatedBy(user);
+                    record.setCreationDate(now);
+                    record.setModifiedBy(user);
+                    record.setModifiedDate(now);
+                    record.setOwner(user);
+                    exportRecord(record);
+                    if (!excludeBinaries)
+                        exportRecordFiles(record);
+                } catch (IOException e) {
+                    throw new IOException(String.format("Error exporting record %s with id %d: %s",
+                            ((UiRecord.Placeholder) rp).getKeyAttributes(), rp.getId(), e.getMessage()), e);
+                }
             }
         }
     }
@@ -161,7 +166,6 @@ public class SurveyExporter {
         } finally {
             zipOutputStream.closeEntry();
         }
-
     }
 
     interface CollectRecordProvider {

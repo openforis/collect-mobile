@@ -52,7 +52,12 @@ class ModelConverter {
     }
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {
-        CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey), uiRecord.getName());
+        return toCollectRecord(uiRecord, collectSurvey, true);
+    }
+
+    public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey, boolean enableDependencyGraphs) {
+        CollectRecord collectRecord = new CollectRecord(collectSurvey, lastVersion(collectSurvey),
+                uiRecord.getName(), enableDependencyGraphs);
         Entity rootEntity = collectRecord.getRootEntity();
         collectRecord.setStep(CollectRecord.Step.CLEANSING);
         collectRecord.setId(uiRecord.getId());

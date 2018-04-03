@@ -190,7 +190,11 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     public void recordSelected(UiRecord uiRecord) {
-        CollectRecord record = modelConverter.toCollectRecord(uiRecord, selectedSurvey);
+        recordSelected(uiRecord, true);
+    }
+
+    public void recordSelected(UiRecord uiRecord, boolean enableDependencyGraphs) {
+        CollectRecord record = modelConverter.toCollectRecord(uiRecord, selectedSurvey, enableDependencyGraphs);
         recordNodes = new RecordNodes(record);
     }
 
@@ -295,7 +299,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private CollectRecord getCollectRecordForExporting(int recordId) {
         Entity rootEntity = recordNodes.getEntityById(recordId);
-        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion(), rootEntity.getName());
+        CollectRecord collectRecord = new CollectRecord(selectedSurvey, latestSurveyVersion(), rootEntity.getName(), false);
         collectRecord.setId(recordId);
         collectRecord.replaceRootEntity(rootEntity);
         return collectRecord;

@@ -352,14 +352,17 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case IMAGE_CAPTURE_REQUEST_CODE:
-                if (imageListener != null)
-                    imageListener.imageChanged();
-                break;
-            case IMAGE_SELECTED_REQUEST_CODE:
-                if (imageListener != null && data != null)
-                    imageListener.imageSelected(data.getData());
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case IMAGE_CAPTURE_REQUEST_CODE:
+                    if (imageListener != null)
+                        imageListener.imageChanged();
+                    break;
+                case IMAGE_SELECTED_REQUEST_CODE:
+                    if (imageListener != null && data != null)
+                        imageListener.imageSelected(data.getData());
+                    break;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -1,5 +1,10 @@
 Changes
 -------
+2018-04-11
+
+    * Change stored images file name format
+    * Bug fixes
+
 2018-04-03
 
     * Improve data export error feedback

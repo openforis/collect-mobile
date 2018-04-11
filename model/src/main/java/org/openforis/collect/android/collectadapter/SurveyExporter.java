@@ -120,7 +120,7 @@ public class SurveyExporter {
                     exportRecord(record);
                     if (!excludeBinaries)
                         exportRecordFiles(record);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new IOException(String.format("Error exporting record %s with id %d: %s",
                             ((UiRecord.Placeholder) rp).getKeyAttributes(), rp.getId(), e.getMessage()), e);
                 }

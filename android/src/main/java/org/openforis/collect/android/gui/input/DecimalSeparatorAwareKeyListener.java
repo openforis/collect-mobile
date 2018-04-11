@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -10,30 +11,22 @@ import java.text.DecimalFormatSymbols;
 
 class DecimalSeparatorAwareKeyListener extends NumberKeyListener {
 
+    private static final char DECIMAL_SEPARATOR = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+    private static final char MINUS_SIGN = '-';
     /**
      * The characters that are used.
      *
      * @see KeyEvent#getMatch
      * @see #getAcceptedChars
      */
-    private static final char[][] CHARACTERS = new char[][]{
-            new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ','},
-            new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.'}
+    private static final char[] ACCEPTED_CHARS = new char[]{
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', MINUS_SIGN, DECIMAL_SEPARATOR
     };
 
-    private char[] mAccepted;
-
     @Override
+    @NonNull
     protected char[] getAcceptedChars() {
-        return mAccepted;
-    }
-
-    public DecimalSeparatorAwareKeyListener() {
-        char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-        if (separator == ',')
-            mAccepted = CHARACTERS[0];
-        else
-            mAccepted = CHARACTERS[1];
+        return ACCEPTED_CHARS;
     }
 
     public int getInputType() {
@@ -62,18 +55,18 @@ class DecimalSeparatorAwareKeyListener extends NumberKeyListener {
         for (int i = 0; i < dstart; i++) {
             char c = dest.charAt(i);
 
-            if (c == '-') {
+            if (c == MINUS_SIGN) {
                 sign = i;
-            } else if (c == '.' || c == ',') {
+            } else if (c == DECIMAL_SEPARATOR) {
                 decimal = i;
             }
         }
         for (int i = dend; i < dlen; i++) {
             char c = dest.charAt(i);
 
-            if (c == '-') {
+            if (c == MINUS_SIGN) {
                 return "";    // Nothing can be inserted in front of a '-'.
-            } else if (c == '.' || c == ',') {
+            } else if (c == DECIMAL_SEPARATOR) {
                 decimal = i;
             }
         }
@@ -91,7 +84,7 @@ class DecimalSeparatorAwareKeyListener extends NumberKeyListener {
             char c = source.charAt(i);
             boolean strip = false;
 
-            if (c == '-') {
+            if (c == MINUS_SIGN) {
                 if (i != start || dstart != 0) {
                     strip = true;
                 } else if (sign >= 0) {
@@ -99,7 +92,7 @@ class DecimalSeparatorAwareKeyListener extends NumberKeyListener {
                 } else {
                     sign = i;
                 }
-            } else if (c == '.' || c == ',') {
+            } else if (c == DECIMAL_SEPARATOR) {
                 if (decimal >= 0) {
                     strip = true;
                 } else {

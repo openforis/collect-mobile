@@ -1,12 +1,16 @@
 package org.openforis.collect.android.gui.input;
 
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.widget.EditText;
 
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
 
 import java.text.NumberFormat;
+
+import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
+import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
 
 /**
  * @author Daniel Wiell
@@ -47,6 +51,7 @@ public class DoubleAttributeComponent extends NumericAttributeComponent<UiDouble
 
     protected void onEditTextCreated(EditText input) {
         super.onEditTextCreated(input);
-        //input.setKeyListener(new DecimalSeparatorAwareKeyListener());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+        input.setKeyListener(new DecimalSeparatorAwareKeyListener());
     }
 }

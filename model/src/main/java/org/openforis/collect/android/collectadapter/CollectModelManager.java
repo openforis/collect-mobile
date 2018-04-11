@@ -3,21 +3,66 @@ package org.openforis.collect.android.collectadapter;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.openforis.collect.android.CodeListService;
-import org.openforis.collect.android.*;
+import org.openforis.collect.android.CoordinateDestinationService;
+import org.openforis.collect.android.DefinitionProvider;
+import org.openforis.collect.android.IdGenerator;
+import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.util.persistence.Database;
-import org.openforis.collect.android.viewmodel.*;
-import org.openforis.collect.manager.*;
+import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
+import org.openforis.collect.android.viewmodel.UiCode;
+import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeList;
+import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
+import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiEntityCollection;
+import org.openforis.collect.android.viewmodel.UiFileAttribute;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
+import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
+import org.openforis.collect.android.viewmodel.UiSurvey;
+import org.openforis.collect.manager.CodeListManager;
+import org.openforis.collect.manager.RecordFileManager;
+import org.openforis.collect.manager.RecordManager;
+import org.openforis.collect.manager.SpeciesManager;
+import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.exception.SurveyValidationException;
-import org.openforis.collect.model.*;
-import org.openforis.collect.persistence.*;
+import org.openforis.collect.model.AttributeAddChange;
+import org.openforis.collect.model.CollectRecord;
+import org.openforis.collect.model.CollectSurvey;
+import org.openforis.collect.model.EntityAddChange;
+import org.openforis.collect.model.NodeChange;
+import org.openforis.collect.model.NodeChangeMap;
+import org.openforis.collect.model.NodeChangeSet;
+import org.openforis.collect.model.User;
+import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.persistence.SurveyImportException;
 import org.openforis.collect.persistence.jooq.CollectDSLContext;
-import org.openforis.idm.metamodel.*;
-import org.openforis.idm.metamodel.validation.*;
-import org.openforis.idm.model.*;
-import org.openforis.idm.model.expression.ExpressionFactory;
+import org.openforis.idm.metamodel.AttributeDefinition;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CodeListItem;
+import org.openforis.idm.metamodel.FileAttributeDefinition;
+import org.openforis.idm.metamodel.ModelVersion;
+import org.openforis.idm.metamodel.validation.Check;
+import org.openforis.idm.metamodel.validation.DistanceCheck;
+import org.openforis.idm.metamodel.validation.ValidationResultFlag;
+import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.metamodel.validation.Validator;
+import org.openforis.idm.model.Attribute;
+import org.openforis.idm.model.CodeAttribute;
+import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.CoordinateAttribute;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.FileAttribute;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.NodePointer;
+import org.openforis.idm.model.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +70,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
@@ -310,7 +356,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         FileAttributeDefinition def = attribute.getDefinition();
         File dir = new File(recordFileManager.getDefaultStorageDirectory().getPath() + "/" + RecordFileManager.getRepositoryRelativePath(def));
         String fileName = org.apache.commons.lang3.StringUtils.isEmpty(attribute.getFilename())
-                ? String.format("%d_%d.%s", attribute.getRecord().getId(), attribute.getId(), "jpg")
+                ? String.format("%s.%s", UUID.randomUUID(), "jpg")
                 : attribute.getFilename(); // For backwards compatibility - previously internal ids was incorrectly used in filename
         return new File(dir, fileName);
     }

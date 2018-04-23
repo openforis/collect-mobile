@@ -187,7 +187,12 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         SurveyService surveyService = ServiceLocator.surveyService();
         if (recordId > 0 && !surveyService.isRecordSelected(recordId))
             surveyService.selectRecord(recordId);
-        return (T) surveyService.lookupNode(nodeId);
+        UiNode uiNode = surveyService.lookupNode(nodeId);
+        if (uiNode == null) {
+            throw new IllegalStateException(String.format("Could not find node with id %d in record %d",
+                    nodeId, recordId));
+        }
+        return (T) uiNode;
     }
 
     private void showKeyboard(View view) {

@@ -1,8 +1,7 @@
 package org.openforis.collect.android.gui;
 
 import android.content.Context;
-import liquibase.database.core.AndroidSQLiteDatabase;
-import liquibase.exception.DatabaseException;
+
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -17,6 +16,9 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import liquibase.database.core.AndroidSQLiteDatabase;
+import liquibase.exception.DatabaseException;
 
 public class ModelDatabaseMigrator {
     private static final Logger LOG = Logger.getLogger(ModelDatabaseMigrator.class.getName());
@@ -73,6 +75,9 @@ public class ModelDatabaseMigrator {
         new ModelDatabaseSchemaUpdater().update(database, new AndroidSQLiteDatabase() {
             public boolean isLocalDatabase() throws DatabaseException {
                 return true;
+            }
+            public void rollback() throws DatabaseException {
+                super.rollback();
             }
         });
         long time = System.currentTimeMillis() - start;

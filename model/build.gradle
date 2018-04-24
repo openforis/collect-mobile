@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenLocal()
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
 }
@@ -13,12 +12,11 @@ targetCompatibility = 1.6
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:3.21.4') {
+    compile ('org.openforis.collect:collect-core:3.21.11') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.apache.poi'
     }

@@ -1,13 +1,11 @@
 package org.openforis.collect.android.databaseschema;
 
+import org.openforis.collect.android.util.persistence.Database;
+
 import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.openforis.collect.android.util.persistence.Database;
-
-import java.sql.SQLException;
 
 /**
  * @author Daniel Wiell
@@ -21,9 +19,7 @@ public class ModelDatabaseSchemaUpdater {
             Liquibase liquibase = new Liquibase(LIQUIBASE_CHANGE_LOG,
                     new ClassLoaderResourceAccessor(), liquibaseDatabase);
             liquibase.update((String) null);
-        } catch (SQLException e) {
-            throw new IllegalStateException("Failed to setup database schema", e);
-        } catch (LiquibaseException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to setup database schema", e);
         } finally {
             close(liquibaseDatabase);

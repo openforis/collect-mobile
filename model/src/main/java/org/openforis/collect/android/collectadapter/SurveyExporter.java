@@ -137,7 +137,7 @@ public class SurveyExporter {
                     LOG.log(Level.WARNING, String.format("Record file not found for record %s (%d) attribute %s (%d)",
                             StringUtils.join(record.getRootEntityKeyValues(), ','), record.getId(), fileAttribute.getPath(), fileAttribute.getInternalId()));
                 } else {
-                    String entryName = RecordFileBackupTask.calculateRecordFileEntryName(fileAttribute);
+                    String entryName = RecordFileBackupTask.determineRecordFileEntryName(fileAttribute);
                     writeFile(file, entryName);
                 }
             }

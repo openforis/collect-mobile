@@ -1,5 +1,9 @@
 Changes
 -------
+2018-04-24
+
+    * Bug fixes
+
 2018-04-11
 
     * Change stored images file name format

@@ -66,15 +66,20 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
 
-        surveyService = ServiceLocator.surveyService();
-        selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
-        support = createLayoutSupport();
-        setTitle(selectedNode.getUiSurvey().getLabel());
-        enableUpNavigationIfNeeded(selectedNode);
-        surveyService.setListener(this);
-        support.onCreate(savedState);
+        if (ServiceLocator.init(this)) {
+            surveyService = ServiceLocator.surveyService();
+            selectedNode = selectInitialNode(savedState); // TODO: Ugly that we have to wait with registering the listener, not to get this callback
+            support = createLayoutSupport();
+            setTitle(selectedNode.getUiSurvey().getLabel());
+            enableUpNavigationIfNeeded(selectedNode);
+            surveyService.setListener(this);
+            support.onCreate(savedState);
 
-        BackStackLimiter.enqueue(this);
+            BackStackLimiter.enqueue(this);
+        } else {
+            navigateToMainPage();
+            finish();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

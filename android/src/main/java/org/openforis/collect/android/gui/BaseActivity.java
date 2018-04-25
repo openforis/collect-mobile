@@ -27,6 +27,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         Keyboard.hide(this);
     }
 
+    protected void navigateToMainPage() {
+        Activities.start(this, MainActivity.class);
+    }
+
     public boolean navigateToSurveyList(MenuItem item) {
         navigateToSurveyList();
         return true;

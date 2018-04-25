@@ -149,8 +149,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
             //TODO trigger node save properly
             nodePagerFragment().prepareNodeDeselect(selectedNode);
 
-            UiNode anotherNext = new SmartNext(selectedNode).next();
-            performNavigateToSmartNextAttribute(anotherNext);
+            UiNode next = new SmartNext(selectedNode).next();
+            performNavigateToSmartNextAttribute(next);
 
             //wait for record update process to complete
             /*
@@ -160,8 +160,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                 public void run() {
                     progressDialog.dismiss();
                     //calculate a new next node to navigate to
-                    UiNode anotherNext = new SmartNext(selectedNode).next();
-                    performNavigateToSmartNextAttribute(anotherNext);
+                    UiNode next = new SmartNext(selectedNode).next();
+                    performNavigateToSmartNextAttribute(next);
                 }
             });
             nodePagerFragment().prepareNodeDeselect(selectedNode);

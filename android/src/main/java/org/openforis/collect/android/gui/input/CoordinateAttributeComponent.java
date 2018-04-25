@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinateAttribute> {
     private final LocationProvider locationProvider;
     private ViewHolder vh;
+    private boolean requestingLocation;
 
     protected CoordinateAttributeComponent(UiCoordinateAttribute attribute, SurveyService surveyService, final FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -80,11 +81,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
     private void requestLocation() {
         locationProvider.start();
+        requestingLocation = true;
     }
 
     private void stopLocationRequest() {
         locationProvider.stop();
         vh.button.setChecked(false);
+        requestingLocation = false;
     }
 
     private double[] transformToSelectedSrs(Location location) {
@@ -206,6 +209,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
         private TextView createNumberInput(Double value, String hint) {
             final TextView input = new AppCompatEditText(context);
+
+            input.setSingleLine();
+            if (value != null)
+                input.setText(formatDouble(value));
+            input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+            input.setHint(hint);
+
             input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus)
@@ -227,15 +237,12 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 }
 
                 public void afterTextChanged(Editable s) {
-                    input.setError(null);
-                    delaySaveNode();
+                    if (! requestingLocation) {
+                        input.setError(null);
+                        delaySaveNode();
+                    }
                 }
             });
-            input.setSingleLine();
-            if (value != null)
-                input.setText(formatDouble(value));
-            input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
-            input.setHint(hint);
             return input;
         }
 

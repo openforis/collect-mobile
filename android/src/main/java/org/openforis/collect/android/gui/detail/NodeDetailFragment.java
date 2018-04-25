@@ -31,12 +31,14 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        if (!getArguments().containsKey(ARG_NODE_ID))
-            throw new IllegalStateException("Missing argument: " + ARG_NODE_ID);
-        int recordId = getArguments().getInt(ARG_RECORD_ID);
-        int nodeId = getArguments().getInt(ARG_NODE_ID);
-        node = lookupNode(recordId, nodeId);
+        if (ServiceLocator.init(this.getActivity())) {
+            setHasOptionsMenu(true);
+            if (!getArguments().containsKey(ARG_NODE_ID))
+                throw new IllegalStateException("Missing argument: " + ARG_NODE_ID);
+            int recordId = getArguments().getInt(ARG_RECORD_ID);
+            int nodeId = getArguments().getInt(ARG_NODE_ID);
+            node = lookupNode(recordId, nodeId);
+        }
     }
 
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

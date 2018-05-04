@@ -43,12 +43,14 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     protected final boolean updateAttributeIfChanged() {
         String newValue = getEditTextString();
         if (StringUtils.isEmpty(newValue)) newValue = null;
+
         String newAttributeValue = editTextToAttributeValue(newValue);
         if (hasChanged(newAttributeValue)) {
             updateAttributeValue(newAttributeValue);
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     protected final EditText getEditText() {

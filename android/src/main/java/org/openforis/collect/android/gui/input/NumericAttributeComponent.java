@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.input;
 import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
 
+import org.jooq.tools.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.DecimalNumberTextWatcher;
@@ -28,9 +29,16 @@ public abstract class NumericAttributeComponent<A extends UiAttribute, T extends
 
     @Override
     protected String editTextToAttributeValue(String text) {
+        if (StringUtils.isBlank(text)) {
+            return null;
+        }
         try {
             T val = parse(text);
-            return format(val);
+            if (val == null) {
+                return null;
+            } else {
+                return format(val);
+            }
         } catch (Exception e) {
             return null;
         }

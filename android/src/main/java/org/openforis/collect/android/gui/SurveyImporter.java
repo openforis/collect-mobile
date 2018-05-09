@@ -2,7 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
+import io.requery.android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.preference.PreferenceManager;
 
@@ -81,8 +81,8 @@ public class SurveyImporter {
     }
 
     private void realityCheckDatabaseToImport(String sourceSurveyDatabasePath) {
-        SQLiteDatabase database = applicationContext.openOrCreateDatabase(sourceSurveyDatabasePath, 0, null);
-        database.close();
+        //SQLiteDatabase database = applicationContext.openOrCreateDatabase(sourceSurveyDatabasePath, 0, null);
+        //database.close();
     }
 
     public static String selectedSurvey(Context context) {

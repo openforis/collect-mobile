@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import io.requery.android.database.sqlite.SQLiteDatabase;
+import io.requery.android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
@@ -39,7 +39,9 @@ public class AndroidDatabase implements Database {
         listenToStorageEjectionBroadcasts(context);
         setupDatabase(databasePath);
         AndroidFiles.makeDiscoverable(databasePath, context);
-        schemaChangeLog.apply(openOrCreateDatabase());
+        SQLiteDatabase db = openOrCreateDatabase();
+        schemaChangeLog.apply(db);
+        db.close();
     }
 
     public void close() {
@@ -145,7 +147,7 @@ public class AndroidDatabase implements Database {
             database.close();
     }
 
-    private static class OpenHelper extends SQLiteOpenHelper {
+    public static class OpenHelper extends SQLiteOpenHelper {
         private final NodeSchemaChangeLog schemaChangeLog;
 
         private OpenHelper(NodeSchemaChangeLog schemaChangeLog, Context context, File databasePath) {

@@ -1,6 +1,6 @@
 package org.openforis.collect.android.sqlite;
 
-import android.database.sqlite.SQLiteDatabase;
+import io.requery.android.database.sqlite.SQLiteDatabase;
 import org.openforis.collect.android.util.persistence.SchemaChange;
 
 import java.util.Collections;

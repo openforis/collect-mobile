@@ -1,7 +1,7 @@
 package org.openforis.collect.android.gui;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import io.requery.android.database.sqlite.SQLiteDatabase;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;

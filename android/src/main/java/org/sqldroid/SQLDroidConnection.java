@@ -21,10 +21,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-import static android.database.sqlite.SQLiteDatabase.CREATE_IF_NECESSARY;
-import static android.database.sqlite.SQLiteDatabase.NO_LOCALIZED_COLLATORS;
-import static android.database.sqlite.SQLiteDatabase.OPEN_READWRITE;
-
 public class SQLDroidConnection implements Connection {
     /**
     * A map to a single instance of a SQLiteDatabase per DB.
@@ -108,9 +104,9 @@ public class SQLDroidConnection implements Connection {
             }
         }
         Log.v("opening database " + dbQname);
-        int flags = CREATE_IF_NECESSARY
-                | OPEN_READWRITE
-                | NO_LOCALIZED_COLLATORS;
+        int flags = android.database.sqlite.SQLiteDatabase.CREATE_IF_NECESSARY
+                | android.database.sqlite.SQLiteDatabase.OPEN_READWRITE
+                | android.database.sqlite.SQLiteDatabase.NO_LOCALIZED_COLLATORS;
         if ( info != null ) {
             if ( info.getProperty(SQLDroidDriver.DATABASE_FLAGS) != null ) {
 

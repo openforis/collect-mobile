@@ -87,7 +87,7 @@ public class SQLiteDatabase {
     while (sqliteDatabase == null) {
       try {
         sqliteDatabase = io.requery.android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(dbQname, null);
-        //sqliteDatabase = io.requery.android.database.sqlite.SQLiteDatabase.openDatabase(dbQname, null, flags );
+        //sqliteDatabase = android.database.sqlite.SQLiteDatabase.openDatabase(dbQname, null, flags );
       } catch (SQLiteException e) {
         if ( isLockedException(e) ) {
           try {

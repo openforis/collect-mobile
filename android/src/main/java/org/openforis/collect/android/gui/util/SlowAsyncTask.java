@@ -84,8 +84,11 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     protected void onPostExecute(Result result) {
         super.onPostExecute(result);
-        progressDialog.dismiss();
-        progressDialog = null;
+
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
 
         if (status == Status.ERROR) {
             handleException(lastException);

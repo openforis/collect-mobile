@@ -29,12 +29,14 @@ class NodeChangeSetParser {
     private final UiRecord uiRecord;
     private final Messages messages = new Messages();
     private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(messages);
-    private final Locale locale;
+    private final String preferredLanguage;
+    private final Locale preferredLocale;
 
-    public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord) {
+    public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord, String preferredLanguage) {
         this.nodeChangeSet = nodeChangeSet;
         this.uiRecord = uiRecord;
-        this.locale = Locale.getDefault();
+        this.preferredLanguage = preferredLanguage;
+        preferredLocale = new Locale(preferredLanguage);
     }
 
     public Map<UiNode, UiNodeChange> extractChanges() {
@@ -172,8 +174,8 @@ class NodeChangeSetParser {
                                               ValidationResultFlag validationResultFlag, Integer requiredCount,
                                               String singleCountMessageKey, String multipleCountMessageKey) {
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = requiredCount == null || requiredCount == 1 ? messages.getMessage(this.locale, singleCountMessageKey):
-                    messages.getMessage(this.locale, multipleCountMessageKey, requiredCount);
+            String message = requiredCount == null || requiredCount == 1 ? messages.getMessage(this.preferredLocale, singleCountMessageKey):
+                    messages.getMessage(this.preferredLocale, multipleCountMessageKey, requiredCount);
             UiNodeChange nodeChange = getOrAddNodeChange(uiNode, nodeChanges);
             if (!nodeChange.validationErrors.isEmpty())
                 return; // We've already added required validation for this node
@@ -200,7 +202,7 @@ class NodeChangeSetParser {
     }
 
     private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
-        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, this.locale);
+        String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, this.preferredLocale);
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }
 

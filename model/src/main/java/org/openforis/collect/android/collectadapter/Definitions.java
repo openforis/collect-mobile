@@ -34,7 +34,6 @@ import org.openforis.idm.model.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,12 +44,14 @@ public class Definitions {
     private static final String COLLECTION_ID_PREFIX = "collection-";
     private static final String SURVEY_DEFINITION_ID = "survey";
     private final CollectSurvey collectSurvey;
+    private final String preferredLanguageCode;
     private Map<String, Definition> definitionById = new HashMap<String, Definition>();
     private final List<UiSpatialReferenceSystem> spatialReferenceSystems;
 
-    public Definitions(CollectSurvey collectSurvey) {
+    public Definitions(CollectSurvey collectSurvey, String preferredLanguageCode) {
         this.collectSurvey = collectSurvey;
         spatialReferenceSystems = createSpatialReferenceSystems(collectSurvey);
+        this.preferredLanguageCode = preferredLanguageCode;
         addSurveyDefinitions();
     }
 
@@ -68,7 +69,7 @@ public class Definitions {
     }
 
     private String label(SpatialReferenceSystem spatialReferenceSystem) {
-        String label = spatialReferenceSystem.getLabel(Locale.getDefault().getLanguage());
+        String label = spatialReferenceSystem.getFailSafeLabel(preferredLanguageCode, collectSurvey.getDefaultLanguage());
         if (label == null) {
             List<LanguageSpecificText> labels = spatialReferenceSystem.getLabels();
             if (!labels.isEmpty())
@@ -80,8 +81,8 @@ public class Definitions {
     }
 
     private void addSurveyDefinitions() {
-        String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(), "Project label");
-        String surveyDescription = collectSurvey.getDescription(); // TODO: Take language into account
+        String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(preferredLanguageCode, true), "Project label");
+        String surveyDescription = collectSurvey.getFailSafeDescription(preferredLanguageCode);
         addDefinition(
                 new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null, true)
         );
@@ -255,27 +256,20 @@ public class Definitions {
         return COLLECTION_ID_PREFIX + nodeDefinition.getId();
     }
 
-    private String label(NodeDefinition nodeDefinition) { // TODO: Take language into account
-        if (nodeDefinition.getLabels().isEmpty()) return null;
-        String label = nodeDefinition.getLabel(NodeLabel.Type.INSTANCE);
-        label = label == null ? nodeDefinition.getLabel(NodeLabel.Type.HEADING) : label;
-        label = label == null ? nodeDefinition.getLabels().get(0).getText() : label;
-        return label;
+    private String label(NodeDefinition nodeDefinition) {
+        return nodeDefinition.getFailSafeLabel(preferredLanguageCode);
     }
 
-    private String collectionLabel(NodeDefinition nodeDefinition) { // TODO: Take language into account
-        String label = nodeDefinition.getLabel(NodeLabel.Type.HEADING);
-        return label == null ? label(nodeDefinition) : label;
+    private String collectionLabel(NodeDefinition nodeDefinition) {
+        return nodeDefinition.getFailSafeLabel(preferredLanguageCode, NodeLabel.Type.HEADING, NodeLabel.Type.INSTANCE);
     }
 
     private String nodeDescription(NodeDefinition nodeDefinition) {
-        return StringUtils.normalizeWhiteSpace(nodeDefinition.getDescription()); // TODO: Take language into account
+        return StringUtils.normalizeWhiteSpace(nodeDefinition.getFailSafeDescription(preferredLanguageCode));
     }
 
     private String nodePrompt(NodeDefinition nodeDefinition) {
-        List<Prompt> prompts = nodeDefinition.getPrompts(); // TODO: Take language and type into account
-        if (prompts == null || prompts.isEmpty())
-            return null;
-        return StringUtils.normalizeWhiteSpace(prompts.get(0).getText());
+        return nodeDefinition.getFailSafePrompt(Prompt.Type.HANDHELD, preferredLanguageCode);
+        //return StringUtils.normalizeWhiteSpace(prompts.get(0).getText());
     }
 }

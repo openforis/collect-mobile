@@ -37,16 +37,19 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     public UiSurvey importSurvey(InputStream inputStream) {
         UiSurvey survey = collectModelManager.importSurvey(inputStream);
-        viewModelManager.selectSurvey(survey);
+        selectSurvey(survey);
         return survey;
     }
 
     public UiSurvey loadSurvey() {
         UiSurvey survey = collectModelManager.loadSurvey();
+        selectSurvey(survey);
+        return survey;
+    }
+
+    public void selectSurvey(UiSurvey survey) {
         if (survey != null)
             viewModelManager.selectSurvey(survey);
-        return survey;
-
     }
 
     public UiRecord addRecord(String entityName) {

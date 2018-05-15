@@ -107,6 +107,12 @@
     <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when
         accessing an node.
     </string>
+    <string name="settings_language">Language</string>
+    <string name="settings_survey_preferred_language_mode">Survey preferred language</string>
+    <string name="settings_survey_preferred_language_specified">Survey preferred language specified</string>
+    <string name="settings_preferred_language_mode_system_default">System default</string>
+    <string name="settings_preferred_language_mode_survey_default">Survey default</string>
+    <string name="settings_preferred_language_mode_specified">Specified</string>
 
     <string name="settings_title_remoteSync">Collect Server</string>
     <string name="settings_title_remoteSyncSwitchTitle">Collect server connection</string>

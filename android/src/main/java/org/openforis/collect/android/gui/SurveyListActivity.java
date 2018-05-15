@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Menu;
@@ -122,7 +123,7 @@ public class SurveyListActivity extends BaseActivity {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
-                    String path = getFileNameByUri(data.getData());
+                    String path = getFilePathByUri(data.getData());
                     importSurvey(path);
                 }
                 break;
@@ -130,9 +131,9 @@ public class SurveyListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String getFileNameByUri(Uri uri) {
-        String path = FileUtils.getPath(this, uri);
-        if (path != null && new File(path).exists())
+    private String getFilePathByUri(Uri uri) {
+        String path = getExistingLocalFilePathFromUri(uri);
+        if (path != null)
             return path;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -152,9 +153,18 @@ public class SurveyListActivity extends BaseActivity {
                 cursor.close();
                 return file.getAbsolutePath();
             }
-        } else if (uri.getScheme().equals("file"))
-            return FileUtils.getPath(this, uri);
-        throw new IllegalStateException("Failed to import survey");
+        }
+        throw new IllegalStateException(String.format("Failed to import survey; could not determine file path for URI: %s", uri));
+    }
+
+    @Nullable
+    private String getExistingLocalFilePathFromUri(Uri uri) {
+        try {
+            String path = FileUtils.getPath(this, uri);
+            return path != null && new File(path).exists() ? path : null;
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     protected static void showImportDialog(Activity context) {

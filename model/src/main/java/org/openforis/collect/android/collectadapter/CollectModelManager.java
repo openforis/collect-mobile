@@ -6,6 +6,7 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.DefinitionProvider;
 import org.openforis.collect.android.IdGenerator;
+import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
@@ -69,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -77,6 +79,7 @@ import java.util.concurrent.Callable;
  * @author Daniel Wiell
  */
 public class CollectModelManager implements DefinitionProvider, CodeListService, CoordinateDestinationService {
+
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
     private final CodeListManager codeListManager;
@@ -87,6 +90,9 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     private final User user = new User();
     private final CollectDSLContext jooqDsl;
 
+    private Settings.PreferredLanguageMode languagePreference;
+    private String preferredLanguage;
+    private String selectedSurveyPreferredLanguage;
     private RecordNodes recordNodes;
     private CollectSurvey selectedSurvey;
     private ModelConverter modelConverter;
@@ -97,12 +103,16 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
                                CodeListManager codeListManager,
                                SpeciesManager speciesManager,
                                RecordFileManager recordFileManager,
-                               Database database) {
+                               Database database,
+                               Settings.PreferredLanguageMode languagePreference,
+                               String preferredLanguage) {
         this.surveyManager = surveyManager;
         this.recordManager = recordManager;
         this.codeListManager = codeListManager;
         this.speciesManager = speciesManager;
         this.recordFileManager = recordFileManager;
+        this.languagePreference = languagePreference;
+        this.preferredLanguage = preferredLanguage;
         codeListSizeEvaluator = new CodeListSizeEvaluator(new DatabaseCodeListSizeDao(database));
 
         DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
@@ -159,7 +169,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         Entity entity = extractAddedEntity(changeSet);
         UiEntity uiEntity = modelConverter.toUiEntity(selectedSurvey, entity, uiEntityCollection);
         recordNodes.add(entity);
-        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiEntity.getUiRecord()).extractChanges();
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiEntity.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
         return new NodeAddedResult<UiEntity>(uiEntity, nodeChanges);
     }
 
@@ -173,7 +183,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         attribute.setId(IdGenerator.nextId()); // TODO: Not right place to do this - use converter?
         recordNodes.add(attribute);
         UiAttribute uiAttribute = AttributeConverter.toUiAttribute(definition, attribute);
-        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiAttributeCollection.getUiRecord()).extractChanges();
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(changeSet, uiAttributeCollection.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
         return new NodeAddedResult<UiAttribute>(uiAttribute, nodeChanges);
     }
 
@@ -182,7 +192,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         Value value = AttributeConverter.toValue(uiAttribute);
         NodeChangeSet nodeChangeSet = recordManager.updateAttribute(attribute, value);
-        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
+        Map<UiNode, UiNodeChange> nodeChanges = new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
         if (uiAttribute instanceof UiCodeAttribute)
             updateChildrenCodeAttributes((UiCodeAttribute) uiAttribute, nodeChanges.keySet());
         return nodeChanges;
@@ -196,7 +206,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         NodeChangeMap changeMap = new NodeChangeMap();
         changeMap.addMinCountValidationResultChange(new NodePointer(attribute), cardinalityResult);
         changeMap.addValidationResultChange(attribute, attributeResult);
-        return new NodeChangeSetParser(changeMap, uiAttribute.getUiRecord()).extractChanges();
+        return new NodeChangeSetParser(changeMap, uiAttribute.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
     /**
@@ -225,14 +235,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         Attribute attribute = recordNodes.getAttribute(uiAttribute.getId());
         NodeChangeSet nodeChangeSet = recordManager.deleteNode(attribute);
         recordNodes.remove(uiAttribute.getId());
-        return new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord()).extractChanges();
+        return new NodeChangeSetParser(nodeChangeSet, uiAttribute.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
     public Map<UiNode, UiNodeChange> removeEntity(UiEntity uiEntity) {
         Node node = recordNodes.getEntityById(uiEntity.getId());
         NodeChangeSet nodeChangeSet = recordManager.deleteNode(node);
         recordNodes.remove(uiEntity.getId());
-        return new NodeChangeSetParser(nodeChangeSet, uiEntity.getUiRecord()).extractChanges();
+        return new NodeChangeSetParser(nodeChangeSet, uiEntity.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
     public void recordSelected(UiRecord uiRecord) {
@@ -307,8 +317,21 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private void selectSurvey(CollectSurvey survey) {
         selectedSurvey = survey;
-        definitions = new Definitions(selectedSurvey);
+        selectedSurveyPreferredLanguage = determineSelectedSurveyPreferredLanguage();
+        definitions = new Definitions(selectedSurvey, selectedSurveyPreferredLanguage);
         modelConverter = new ModelConverter(selectedSurvey, definitions);
+    }
+
+    private String determineSelectedSurveyPreferredLanguage() {
+        switch (languagePreference) {
+            case SURVEY_DEFAULT:
+                return selectedSurvey.getDefaultLanguage();
+            case SPECIFIED:
+                return preferredLanguage;
+            case SYSTEM_DEFAULT:
+            default:
+                return Locale.getDefault().getLanguage();
+        }
     }
 
     private Entity extractAddedEntity(NodeChangeSet changeSet) {

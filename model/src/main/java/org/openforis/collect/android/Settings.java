@@ -1,6 +1,7 @@
 package org.openforis.collect.android;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openforis.collect.android.collectadapter.CollectModelManager;
 import org.openforis.collect.model.User;
 
 public class Settings {
@@ -10,6 +11,14 @@ public class Settings {
     private static String remoteCollectAddress;
     private static String remoteCollectUsername;
     private static String remoteCollectPassword;
+    private static PreferredLanguageMode preferredLanguageMode;
+    private static String preferredLanguage;
+
+    public enum PreferredLanguageMode {
+        SYSTEM_DEFAULT,
+        SURVEY_DEFAULT,
+        SPECIFIED
+    }
 
     public synchronized static String getCrew() {
         return crew;
@@ -19,15 +28,15 @@ public class Settings {
         Settings.crew = crew;
     }
 
-    public static boolean isCompassEnabled() {
+    public synchronized static boolean isCompassEnabled() {
         return compassEnabled;
     }
 
-    public static void setCompassEnabled(boolean compassEnabled) {
+    public synchronized static void setCompassEnabled(boolean compassEnabled) {
         Settings.compassEnabled = compassEnabled;
     }
 
-    public static User user() {
+    public synchronized static User user() {
         if (isRemoteSyncEnabled() && StringUtils.isNotBlank(remoteCollectUsername)) {
             return new User(remoteCollectUsername);
         } else {
@@ -37,6 +46,22 @@ public class Settings {
 
     private static String crewToUsername() {
         return crew == null ? "" : crew.replaceAll("\\W", "_").toLowerCase();
+    }
+
+    public synchronized static PreferredLanguageMode getPreferredLanguageMode() {
+        return preferredLanguageMode;
+    }
+
+    public synchronized static void setPreferredLanguageMode(PreferredLanguageMode preferredLanguageMode) {
+        Settings.preferredLanguageMode = preferredLanguageMode;
+    }
+
+    public synchronized static String getPreferredLanguage() {
+        return preferredLanguage;
+    }
+
+    public synchronized static void setPreferredLanguage(String preferredLanguage) {
+        Settings.preferredLanguage = preferredLanguage;
     }
 
     public synchronized static boolean isRemoteSyncEnabled() {

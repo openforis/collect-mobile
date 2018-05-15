@@ -32,6 +32,24 @@
             />
 
     <PreferenceCategory
+        android:title="@string/settings_language"
+        android:key="language">
+
+        <ListPreference
+            android:key="survey_preferred_language_mode"
+            android:title="@string/settings_survey_preferred_language_mode"
+            android:defaultValue="SYSTEM_DEFAULT"
+            android:entries="@array/preferred_language_mode_labels"
+            android:entryValues="@array/preferred_language_mode_names"
+            />
+
+        <ListPreference
+            android:key="survey_preferred_language_specified"
+            android:title="@string/settings_survey_preferred_language_specified"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/settings_title_remoteSync"
         android:key="remoteSync">
         <SwitchPreference

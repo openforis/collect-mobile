@@ -8,14 +8,23 @@ import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DialectAwareJooqConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
+import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.collectadapter.*;
+import org.openforis.collect.android.collectadapter.CollectModelBackedSurveyService;
+import org.openforis.collect.android.collectadapter.CollectModelManager;
+import org.openforis.collect.android.collectadapter.MobileDatabaseLookupProvider;
+import org.openforis.collect.android.collectadapter.MobileExternalCodeListProvider;
+import org.openforis.collect.android.collectadapter.MobileRecordManager;
+import org.openforis.collect.android.collectadapter.RecordUniquenessChecker;
+import org.openforis.collect.android.collectadapter.TaxonRepository;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.NodeSchemaChangeLog;
 import org.openforis.collect.android.util.persistence.Database;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
@@ -75,13 +84,19 @@ public class ServiceLocator {
             jooqDsl = new CollectDSLContext(jooqConf);
 
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
-            collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
-            SurveyService surveyService = createSurveyService(collectModelManager, nodeDatabase);
-            surveyService.loadSurvey();
+
             taxonService = createTaxonService(modelDatabase);
-            ServiceLocator.surveyService = surveyService;
+
+            initModelManager(applicationContext);
         }
         return true;
+    }
+
+    private static void initModelManager(Context applicationContext) {
+        String surveyName = SurveyImporter.selectedSurvey(applicationContext);
+        collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
+        surveyService = createSurveyService(collectModelManager, nodeDatabase);
+        surveyService.loadSurvey();
     }
 
     public static void reset(Context context) {
@@ -93,6 +108,17 @@ public class ServiceLocator {
         init(context.getApplicationContext());
     }
 
+    public static void resetModelManager(Context context) {
+        UiNode previousSelectedNode = surveyService == null ? null : surveyService.selectedNode();
+        initModelManager(context);
+        if (previousSelectedNode != null) {
+            UiRecord previousSelectedRecord = previousSelectedNode.getUiRecord();
+            if (previousSelectedRecord != null) {
+                surveyService.selectRecord(previousSelectedRecord.getId());
+                surveyService.selectNode(previousSelectedNode.getId());
+            }
+        }
+    }
 
     private static File databasePath(String databaseName, String surveyName, Context context) {
         return new File(AppDirs.surveyDatabasesDir(surveyName, context), databaseName);
@@ -205,14 +231,12 @@ public class ServiceLocator {
         surveyManager.setCollectSurveyContext(collectSurveyContext);
         surveyManager.setSurveyDao(surveyDao);
 
-
         RecordManager recordManager = new MobileRecordManager(
                 codeListManager,
                 surveyManager,
                 new RecordUniquenessChecker.DataSourceRecordUniquenessChecker(nodeDatabase)
         );
         validator.setRecordManager(recordManager);
-
 
         RecordFileManager recordFileManager = new RecordFileManager() {{
             storageDirectory = AppDirs.surveyImagesDir(surveyName, context);
@@ -223,8 +247,9 @@ public class ServiceLocator {
             }
         }};
         recordFileManager.setDefaultRootStoragePath(AppDirs.surveyDatabasesDir(surveyName, context).getAbsolutePath());
-
-        return new CollectModelManager(surveyManager, recordManager, codeListManager, speciesManager, recordFileManager, modelDatabase);
+        return new CollectModelManager(surveyManager, recordManager, codeListManager, speciesManager,
+                recordFileManager, modelDatabase, Settings.getPreferredLanguageMode(),
+                Settings.getPreferredLanguage());
     }
 
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {

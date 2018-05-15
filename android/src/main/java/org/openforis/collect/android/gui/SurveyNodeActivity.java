@@ -60,7 +60,18 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private boolean twoPane;
 
     public static void startClearSurveyNodeActivity(Context context) {
+        BackStackLimiter.clear();
         Activities.startNewClearTask(context, SurveyNodeActivity.class);
+    }
+
+    public static void restartActivity(Context context) {
+        Keyboard.hide(context);
+        if (ServiceLocator.surveyService().selectedNode() == null) {
+            BackStackLimiter.clear();
+            Activities.startNewClearTask(context, MainActivity.class);
+        } else {
+            startClearSurveyNodeActivity(context);
+        }
     }
 
     public void onCreate(Bundle savedState) {
@@ -376,13 +387,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         imageListener = listener;
     }
 
-    public static void restartActivity(Activity activity) {
-        Keyboard.hide(activity);
-        Intent intent = new Intent(activity, SurveyNodeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        activity.startActivity(intent);
-    }
-
     public void showEntityTable(MenuItem menuItem) {
         Keyboard.hide(this);
         EntityTableDialogFragment.show(getSupportFragmentManager());
@@ -460,12 +464,9 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         private static final int MAX_QUEUE_SIZE = 10;
         private static final LinkedList<SurveyNodeActivity> queue = new LinkedList<SurveyNodeActivity>();
 
-        private static void enqueue(SurveyNodeActivity activity) {
+        private static synchronized void enqueue(SurveyNodeActivity activity) {
             if (activity.selectedNode instanceof UiRecordCollection) {
-                for (SurveyNodeActivity a: queue) {
-                    a.finish();
-                }
-                queue.clear();
+                clear();
             }
             queue.add(activity);
 
@@ -477,8 +478,15 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
             }
         }
 
-        private static void remove(SurveyNodeActivity activity) {
+        private static synchronized void remove(SurveyNodeActivity activity) {
             queue.remove(activity);
+        }
+
+        private static synchronized void clear() {
+            for (SurveyNodeActivity a: queue) {
+                a.finish();
+            }
+            queue.clear();
         }
     }
 }

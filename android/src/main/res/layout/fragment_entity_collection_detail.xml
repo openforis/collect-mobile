@@ -73,7 +73,7 @@
 
                     <TextView
                         android:id="@+id/entity_list_header_modified_date"
-                        android:layout_width="100dp"
+                        android:layout_width="80dp"
                         android:layout_height="wrap_content"
                         android:text="@string/entity_list_modified"
                         android:textAlignment="center" />
@@ -82,7 +82,7 @@
                 <!-- status -->
                 <Space
                     android:id="@+id/entity_list_header_status"
-                    android:layout_width="30dp"
+                    android:layout_width="32dp"
                     android:layout_height="1dp"
                     android:layout_toLeftOf="@id/entity_list_header_selection_checkbox_container" />
 

@@ -9,4 +9,16 @@
         <item>@string/settings_theme_dark</item>
         <item>@string/settings_theme_light</item>
     </string-array>
+
+    <string-array name="preferred_language_mode_names">
+        <item>SYSTEM_DEFAULT</item>
+        <item>SURVEY_DEFAULT</item>
+        <item>SPECIFIED</item>
+    </string-array>
+
+    <string-array name="preferred_language_mode_labels">
+        <item>@string/settings_preferred_language_mode_system_default</item>
+        <item>@string/settings_preferred_language_mode_survey_default</item>
+        <item>@string/settings_preferred_language_mode_specified</item>
+    </string-array>
 </resources>

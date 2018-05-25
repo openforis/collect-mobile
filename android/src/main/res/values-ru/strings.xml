@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- home screen -->
+    <string name="main_title">Open Foris Collect Mobile</string>
+    <string name="version_label">Версия:</string>
+    <string name="go_to_data_entry">Перейти к вводу данных</string>
+    <string name="survey_label">Выбрать опрос:</string>
+    <string name="empty_survey_list">Лист опросов пуст</string>
+    <string name="empty_survey_list_detailed_message">Введите пробный опрос\ни один опрос не сгенерирован с\Дизайнер nOpen Foris Collect Survey</string>
+    <string name="import_new_survey_list_item">--- Введите новый опрос ---</string>
+    <string name="import_new_survey">Введите новый опрос</string>
+    <string name="import_demo_survey">Введите пробный опрос</string>
+
+    <string name="yes">Да</string>
+
+    <string name="warning">Предупреждение</string>
+
+    <string name="app_name">Собрать</string>
+    <string name="survey_list">Опросы</string>
+    <string name="settings">Настройки</string>
+    <string name="button_select">Редактировать</string>
+
+    <string name="processing">обработка</string>
+    <string name="please_wait">Пожалуйста подождите...</string>
+
+    <string name="action_add_node">Добавить</string>
+    <string name="action_node_list">Список</string>
+    <string name="action_next_attribute">Следующий</string>
+    <string name="action_import">Внести</string>
+    <string name="action_survey_list">Опросы</string>
+    <string name="action_export">Экспорт</string>
+    <string name="action_submit_data_to_collect">Подтвердить данные для сбора</string>
+    <string name="action_backup">Резервная копия</string>
+    <string name="action_settings">настройки</string>
+    <string name="action_exit">Выход</string>
+
+    <string name="backup_insert_sd_card">Пожалуйста вставьте SD карту для хранения резервной копии</string>
+
+    <string name="toast_exported_survey">Экспортированный опрос в %s</string>
+    <string name="toast_exported_survey_failed">Не удалось экспортировать опрос: %s</string>
+    <string name="survey_export_failed_title">Ошибка в процессе экспорта</string>
+    <string name="survey_export_failed_message">Не удалось экспортировать опрос "%s":\n\<n></n>%s</string>
+    <string name="all_key_records_not_specified_title">Все %1$s ключевые атрибуты не были указаны</string>
+    <string name="all_key_records_not_specified_message">В очереди на экспорт данных, %1$s Должно быть указано для всех
+        %2$s.
+    </string>
+
+    <string name="toast_import_survey">Импортирование опроса</string>
+    <string name="toast_import_survey_failed">Не удалось импортировать опрос из %s</string>
+    <string name="toast_backed_up_survey">Резервное копирование для опроса %s</string>
+    <string name="toast_backed_up_failed">Резервное копирование не удалось</string>
+    <string name="toast_not_relevant_attribute_selected">Данный атрибут не уместен</string>
+
+    <string name="storage_not_found_message">Вторичное хранилище не найдено</string>
+    <string name="storage_not_found_retry">Повторить попытку</string>
+    <string name="storage_not_found_settings">Настроить локацию</string>
+
+    <string name="message_invalid_date">Неверные данные</string>
+    <string name="message_not_a_number">Не является числом</string>
+
+    <string name="label_unspecified">[Пусто]</string>
+    <string name="label_yes">Да</string>
+    <string name="label_no">Нет</string>
+    <string name="label_spatial_reference_system">Пространственная справочная система</string>
+    <string name="label_start_gps">Начать отслеживание по GPS</string>
+    <string name="label_stop_gps">Завершить отслеживание по GPS</string>
+    <string name="label_accuracy">Точность</string>
+    <string name="label_navigate">Переход к ожидаемой локации</string>
+    <string name="label_distance">Расстояние</string>
+    <string name="label_destination">Назначение</string>
+    <string name="label_empty">…</string>
+
+    <string name="hint_code_autocomplete">- Нажмите пробел, чтобы увидеть список значений -</string>
+    <string name="hint_code_qualifier_specify">- Указать -</string>
+    <string name="label_show_code_descriptions">Показать описания предметов</string>
+
+    <string name="hint_date_pattern">dd ММMM yyyy</string>
+    <string name="hint_time_pattern">hh:mm</string>
+
+    <string name="submit_to_collect_confirm_title">Отправить записи для сбора</string>
+    <string name="submit_to_collect_confirm_message">Отправить все собранные записи для сбора на сервер?</string>
+    <string name="submit_to_collect_remote_sync_not_configured">Сервер сбора не отрегулирован в Настройках</string>
+
+    <string name="submit_to_collect_exporting_data_title">1/3 Экспортирование данных</string>
+    <string name="submit_to_collect_uploading_file_title">2/3  Загрузка файла для сервера сбора</string>
+    <string name="submit_to_collect_restoring_data_title">3/3 Восстановление данных на сборочном сервере</string>
+    <string name="submit_to_collect_error_restoring_data">Произошла ошибка :</string>
+    <string name="submit_to_collect_submit_completed">Отправка данных завершена</string>
+    <string name="submit_to_collect_submit_cancelled">Отправка данных отменена</string>
+
+    <string name="settings_title_crewId">ID команды</string>
+    <string name="settings_title_compass">Компас устройства</string>
+    <string name="settings_switchTextOn_compassEnabled">Включить</string>
+    <string name="settings_switchTextOff_compassEnabled">Отключить</string>
+    <string name="settings_summaryOn_compassEnabled">Компас устройства включён</string>
+    <string name="settings_summaryOff_compassEnabled">Компас устроства выключен</string>
+
+    <string name="settings_workingDir">Рабочий каталог</string>
+    <string name="settings_theme_title">Палитра</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark_summary">Тёмная палитра</string>
+    <string name="settings_theme_light_summary">Светлая палитра</string>
+
+    <string name="settings_title_showKeyboard">Автоматически показывать клавиатуру</string>
+    <string name="settings_summary_showKeyboard">Определяет, следует ли автоматически отображать программную клавиатуру при доступе к узлу.
+    </string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_survey_preferred_language_mode">Предпочитаемый язык опроса</string>
+    <string name="settings_survey_preferred_language_specified">Предпочитаемый язык опроса определён</string>
+    <string name="settings_preferred_language_mode_system_default">Системные установки по умолчанию</string>
+    <string name="settings_preferred_language_mode_survey_default">Опрос по умолчанию</string>
+    <string name="settings_preferred_language_mode_specified">Определён</string>
+
+    <string name="settings_title_remoteSync">Сервер сбора</string>
+    <string name="settings_title_remoteSyncSwitchTitle">Соединение с сервером сбора</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOn">Соединение с сервером сбора включено</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOff">Соединение с сервером сбора отключено</string>
+    <string name="settings_title_remoteCollectAddress">Адресс</string>
+    <string name="settings_title_remoteCollectUsername">Имя пользователя</string>
+    <string name="settings_title_remoteCollectPassword">Пароль</string>
+    <string name="settings_remote_sync_test">Тестовое соединение</string>
+    <string name="settings_remote_sync_test_summary">Нажмите, чтобы проверить соединение с сервером сбора</string>
+    <string name="settings_remote_sync_test_successful_title">Соединение с сервером успешно!</string>
+    <string name="settings_remote_sync_test_successful_message">Соединение установлено верно.</string>
+    <string name="settings_remote_sync_test_failed_title">Соединение с сервером сбора не установлено</string>
+    <string name="settings_remote_sync_test_failed_message_wrong_address">Неверный адресс или неверное имя пользователя/пароль.</string>
+    <string name="settings_remote_sync_test_failed_message_newer_version">Сервер сбора использует версию %s и он не совместим с данной версией Collect Mobile (%s).\n\nПожалуйста обновите Collect Mobile до последней версии</string>
+
+    <string name="import_title_failed">Не удалось импортировать опрос %1$s</string>
+    <string name="import_text_failed">Убедитесь, что вы используете последнюю версию Collect Mobile и экспортировали
+        ваш опрос для Collect Mobile с использованием недавней версии Collect Server.
+    </string>
+    <string name="import_text_wrong_version">Дизайн опроса экспортируется с версией сбора %s но данная версия Collect Mobile поддерживает дизайны опросов, сгенерированные  Collect up версии %s.\nПожалуйста рассмотрите обновление Collect Mobile до последней версии.</string>
+    <string name="import_text_unsupported_file_type_selected">Пожалуйста, выберите соответствующий файл опроса Collect Mobile (.%s)</string>
+
+    <string name="export_dialog_title">Экспорт данных опроса</string>
+    <string name="export_dialog_option_exclude_binary_file">Исключить файлы изображения</string>
+    <string name="export_dialog_option_save_to_downloads">Сохраните на Android устройство в папку \"Download\"</string>
+    <string name="export_progress_dialog_title">Экспортирование данных</string>
+    <string name="export_share_with_application">Отправить экспортированные данные</string>
+    <string name="export_completed_title">Экспорт данных завершён</string>
+    <string name="export_to_downloads_completed_message">Экспортированный файл сгенерирован в папке \"Download\" .</string>
+
+    <string name="import_overwrite_data_dialog_title">Перезаписать данные</string>
+    <string name="import_overwrite_data_dialog_message">Данные, которые вы внесли для данного опроса будут удалены, если вы
+        продолжить импорт опроса.
+    </string>
+    <string name="import_overwrite_data_dialog_confirm">Удалить данные и ипортировать</string>
+
+    <string name="import_demo_dialog_title">Импорт данных опроса</string>
+    <string name="import_demo_dialog_message">Поскольку никакого другого опроса не импортировано, пробный опрос будет использован, чтобы придать большее значение        фнкциям Collect Mobile.
+        \n\nПерейти к <a href="http://openforis.org/tools/collect.html">openforis.org</a> Чтобы найти, как спроектировать ваши собственные
+        опросы.\n
+    </string>
+    <string name="import_demo_processing_title">Ипортирование пробного опроса</string>
+
+    <string name="amount_selected">%d выбран.</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_records_title">Удалить записи</string>
+    <string name="delete_entities_title">Удалить записи</string>
+    <string name="delete_node_confirm_message">Вы собираетесь удалить %d %s.</string>
+    <string name="part_records">записи</string>
+    <string name="part_entities">объекты</string>
+    <string name="file_attribute_capture_image">Захват изображения</string>
+    <string name="file_attribute_select_image">Выбрать изображение</string>
+    <string name="file_attribute_remove_image">Убрать изображение</string>
+
+    <string name="entity_list_modified">Видоизменён</string>
+    <string name="entity_list_date_pattern">dd/MM/yyyy</string>
+
+    <string name="go_to_record_list">Перейти к списку записей</string>
+    <string name="navigate_to_record_list_confirm_title">Запись завершена</string>
+    <string name="navigate_to_record_list_confirm_message">Перейти обратно к списку записей?</string>
+    <string name="navigate_to_record_list_with_errors_confirm_title">Ошибки в записи</string>
+    <string name="navigate_to_record_list_with_errors_confirm_message">Ошибки в записи.\n\nПерейти обратно к списку записей в любом случае?</string>
+
+    <string name="entity_collection_cannot_add_more_items">Не получается добавить более, чем %d пунктов</string>
+
+    <string name="report_error_dialog_title">Collect Mobile - Ошибка!</string>
+    <string name="report_error_dialog_confirm_button">Отчёт</string>
+    <string name="report_error_dialog_message">Кажется, что Open Foris Collect Mobile столкнулся с непредвиденной ошибкой.
+        \n\nВы хотите сообщить об этом команде разработчиков?
+        \n\n(Частная информация будет сокрыта)</string>
+
+    <string name="exit_confirm_message">Выйти из Colect Mobile?\n\n(данные уже сохранены автоматически)</string>
+</resources>

@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter
 
+import org.openforis.collect.android.Settings
 import org.openforis.collect.android.util.persistence.Database
 import org.openforis.collect.android.viewmodelmanager.DataSourceNodeRepository
 import org.openforis.collect.android.viewmodelmanager.NodeTestDatabase
@@ -27,7 +28,8 @@ class TestCollectModelFactory {
         def recordManager = recordManager
         def codeListManager = new CodeListManager(codeListItemDao: new CodeListItemDao(dataSource: modelDatabase.dataSource()))
         def surveyManager = surveyManager(codeListManager, collectValidator(codeListManager, recordManager))
-        def collectModelManager = new CollectModelManager(surveyManager, recordManager, codeListManager, null, modelDatabase)
+        def collectModelManager = new CollectModelManager(surveyManager, recordManager, codeListManager, null, modelDatabase,
+                Settings.PreferredLanguageMode.SURVEY_DEFAULT, null)
         new CollectModelBackedSurveyService(
                 new ViewModelManager(
                         new ViewModelRepository.DatabaseViewModelRepository(
@@ -39,7 +41,7 @@ class TestCollectModelFactory {
         )
     }
     static CollectModelManager collectModelManager(Database database) {
-        new CollectModelManager(surveyManager, recordManager, null, null, null, database)
+        new CollectModelManager(surveyManager, recordManager, null, null, null, database, Settings.PreferredLanguageMode.SURVEY_DEFAULT, null)
     }
 
     public static RecordManager getRecordManager() {

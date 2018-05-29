@@ -28,6 +28,10 @@ class IdmBuilder {
         xmlStream()
     }
 
+    void language(String langCode) {
+        xml.language(langCode)
+    }
+
     void project(String name) {
         xml.project(name)
     }

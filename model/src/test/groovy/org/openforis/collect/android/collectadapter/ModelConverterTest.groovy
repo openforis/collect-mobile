@@ -92,7 +92,7 @@ class ModelConverterTest extends Specification {
     }
 
     private ModelConverter modelConverter(CollectSurvey collectSurvey) {
-        new ModelConverter(collectSurvey, new Definitions(collectSurvey))
+        new ModelConverter(collectSurvey, new Definitions(collectSurvey, collectSurvey.getDefaultLanguage()))
     }
 
     private InputStream getIdm() {

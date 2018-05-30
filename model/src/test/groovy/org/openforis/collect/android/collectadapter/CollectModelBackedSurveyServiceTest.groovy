@@ -289,6 +289,7 @@ class CollectModelBackedSurveyServiceTest extends Specification {
 
     private InputStream getIdm() {
         idmXmlStream {
+            language("en")
             project('Project label')
             schema {
                 entity('entity_name', 'Entity label') {

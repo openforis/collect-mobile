@@ -1,5 +1,10 @@
 Changes
 -------
+2018-05-29
+
+    * Survey language selection
+    * Support Collect 3.21.x new functions
+
 2018-05-04
 
     * Bug fixes (crashes in Android 4)

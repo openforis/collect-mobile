@@ -1,5 +1,9 @@
 Changes
 -------
+2018-06-07
+
+    * Bug fixes in math functions
+
 2018-05-29
 
     * Survey language selection

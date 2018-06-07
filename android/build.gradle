@@ -83,11 +83,11 @@ if (isRelease) {
 }
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 26
     buildToolsVersion '27.0.3'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode actualVersionCode
         versionName actualVersionName
         multiDexEnabled true

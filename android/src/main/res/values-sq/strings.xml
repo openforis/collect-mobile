@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+
+    <!-- home screen -->
+    <string name="main_title">Hap Open Foris per Celular</string>
+    <string name="version_label">Versioni:</string>
+    <string name="go_to_data_entry">Shko te Futja e Te Dhenave</string>
+    <string name="survey_label">Zgjidh Studimin/Aplikacionin:</string>
+    <string name="empty_survey_list">Lista e Studimeve te Paplotesuar</string>
+    <string name="empty_survey_list_detailed_message">Importo Studimin Demostrativ\nose ose nje Studim te Zhvilluar Permes\nDizenjimit me Open Foris Collect</string>
+    <string name="import_new_survey_list_item">--- Importo Studimin/Aplikacionin e Ri ---</string>
+    <string name="import_new_survey">Importo Studimin/Aplikacionin e Ri</string>
+    <string name="import_demo_survey">Importo Studimin Demostrativ</string>
+
+    <string name="yes">Po</string>
+
+    <string name="warning">Paralajmerim</string>
+
+    <string name="app_name">Collect</string>
+    <string name="survey_list">Studimet/Aplikacionet</string>
+    <string name="settings">Settings</string>
+    <string name="button_select">Rregullo/Redakto</string>
+
+    <string name="processing">Perpunim</string>
+    <string name="please_wait">Ju Lutem Prisni...</string>
+
+    <string name="action_add_node">Shto</string>
+    <string name="action_node_list">List</string>
+    <string name="action_next_attribute">Tjeter</string>
+    <string name="action_import">Importo</string>
+    <string name="action_survey_list">Studimet/Aplikacionet</string>
+    <string name="action_export">Eksporto</string>
+    <string name="action_submit_data_to_collect">Hidh te Dhenat ne Aplikacion</string>
+    <string name="action_backup">Kopje Rezerve</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_exit">Dil</string>
+
+    <string name="backup_insert_sd_card">Ju Lutem Shtoni nje Karte SD per Ruajtjen e nje Kopje te te Dhenave</string>
+
+    <string name="toast_exported_survey">Eksportoni Studimin/Aplikacionin ne %s</string>
+    <string name="toast_exported_survey_failed"> Eksportimi i Studimit/Aplikacionit Deshtoi: %s</string>
+    <string name="survey_export_failed_title">Gabim Gjate Eksportimit</string>
+    <string name="survey_export_failed_message">Eksportimi i Studimit/Aplikacionit Deshtoi "%s":\n\n\n%s</string>
+    <string name="all_key_records_not_specified_title">Gjithe %1$s Aatributet Kryesore nuk Jane Specifikuar</string>
+    <string name="all_key_records_not_specified_message">Per t\'u Eksportuar te Dhenat, %1$s Duhet te Specifikohen per te Gjitha %2$s. </string>
+
+    <string name="toast_import_survey">Duke Importuar Studimin/Aplikacionin</string>
+    <string name="toast_import_survey_failed">Importimi i Studimit/Aplikacioni Deshtoi %s</string>
+    <string name="toast_backed_up_survey">Beni nje Kopje te Studimit/Aplikacionit ne %s</string>
+    <string name="toast_backed_up_failed">Kopja Rezerve Deshtoi</string>
+    <string name="toast_not_relevant_attribute_selected">Ky Atribut nuk eshte i Pershtatshem</string>
+
+    <string name="storage_not_found_message">Nuk u Gjet Memorie Shtese</string>
+    <string name="storage_not_found_retry">Provoje Perseri</string>
+    <string name="storage_not_found_settings">Konfiguro Pozicionin</string>
+
+    <string name="message_invalid_date">Date e Pavlefshme</string>
+    <string name="message_not_a_number">Jo Numer</string>
+
+    <string name="label_unspecified">[Bosh]</string>
+    <string name="label_yes">Po</string>
+    <string name="label_no">Jo</string>
+    <string name="label_spatial_reference_system">Sistem Referimi Hapesinor</string>
+    <string name="label_start_gps">Aktivizo GPS</string>
+    <string name="label_stop_gps">Ndalo GPS</string>
+    <string name="label_accuracy">Saktesia</string>
+    <string name="label_navigate">Shkoni te Vendodhja e Pritshme</string>
+    <string name="label_distance">Distanca</string>
+    <string name="label_destination">Destinacioni</string>
+    <string name="label_empty">�</string>
+
+    <string name="hint_code_autocomplete">- Shtypni Hapesiren per te Treguar Listen e Vlerave -</string>
+    <string name="hint_code_qualifier_specify">- Specifiko -</string>
+    <string name="label_show_code_descriptions">Trego Pershkrimet e Elemneteve</string>
+
+    <string name="hint_date_pattern">dd MMMM VVVV</string>
+    <string name="hint_time_pattern">hh:mm</string>
+
+    <string name="submit_to_collect_confirm_title">Dergo te Dhenat tek Collect</string>
+    <string name="submit_to_collect_confirm_message">Te Dergohen te Gjitha te Dhenat e Mbledhura tek Collect server?</string>
+    <string name="submit_to_collect_remote_sync_not_configured">Collect server nuk eshte konfiguruar tek Settings</string>
+    <string name="submit_to_collect_exporting_data_title">1/3 Duke Eksportuar te Dhena</string>
+    <string name="submit_to_collect_uploading_file_title">2/3 Duke ngarkuar skedarin tek Collect server</string>
+    <string name="submit_to_collect_restoring_data_title">3/3 Rivendosja e te Dhenave ne Collect server</string>
+    <string name="submit_to_collect_error_restoring_data">Ndodhi nje Gabim :</string>
+    <string name="submit_to_collect_submit_completed">Dorezimi i te Dhenave Perfundoi</string>
+    <string name="submit_to_collect_submit_cancelled">Dorezimi i te Dhenave Anulohet</string>
+
+    <string name="settings_title_crewId">ID e Skuadres</string>
+    <string name="settings_title_compass">Busulla e Pajisjes</string>
+    <string name="settings_switchTextOn_compassEnabled">Aktivizo</string>
+    <string name="settings_switchTextOff_compassEnabled">C\'Aktivizo</string>
+    <string name="settings_summaryOn_compassEnabled">Aktivizo Busullen e Pajisjes</string>
+    <string name="settings_summaryOff_compassEnabled">C\'Aktivizo Busullen e Pajisjes</string>
+    <string name="settings_workingDir">Direktoria e Punes</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_theme_dark">I erret</string>
+    <string name="settings_theme_light">\I ndricuar</string>
+    <string name="settings_theme_dark_summary">Teme e Erret</string>
+    <string name="settings_theme_light_summary">Teme e Ndricuar</string>
+
+    <string name="settings_title_showKeyboard">Trego Tastieren Automatikisht</string>
+    <string name="settings_summary_showKeyboard">Përcakton nëse Tastiera Duhet të Shfaqet Automatikisht kur Hyni në një Fushe. </string>
+
+    <string name="settings_language">Gjuha</string>
+    <string name="settings_survey_preferred_language_mode">Gjuha e Preferuar per t\'u perdorur ne Studim/Aplikacion</string>
+    <string name="settings_survey_preferred_language_specified">Gjuha e Preferuar e Studimit/Aplikacionit u Zgjodh</string>
+    <string name="settings_preferred_language_mode_system_default">Parazgjedhur nga Sistemi</string>
+    <string name="settings_preferred_language_mode_survey_default">Parazgjedhur nga Sistemi</string>
+    <string name="settings_preferred_language_mode_specified">Specifikuar</string>
+
+    <string name="settings_title_remoteSync">Collect Server</string>
+    <string name="settings_title_remoteSyncSwitchTitle">Lidhja me Collect server</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOn">Lidhja me Collect server eshte Mundesuar</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOff">Lidhja me Collect server Nuk eshte Mundesuar</string>
+    <string name="settings_title_remoteCollectAddress">Adresa</string>
+    <string name="settings_title_remoteCollectUsername">Emri i Perdoruesit</string>
+    <string name="settings_title_remoteCollectPassword">Fjalekalimi</string>
+    <string name="settings_remote_sync_test">Testi i Lidhjes</string>
+    <string name="settings_remote_sync_test_summary">Shtypni per te Provuar Lidhjen me Collect server</string>
+    <string name="settings_remote_sync_test_successful_title">Lidhja me Collect Server eshte Kryer me Sukses!</string>
+    <string name="settings_remote_sync_test_successful_message">Lidhja eshte Konfiguruar sic Duhet.</string>
+    <string name="settings_remote_sync_test_failed_title">Lidhja me Collect Server Deshtoi</string>
+    <string name="settings_remote_sync_test_failed_message_wrong_address">Adrese e Gabuar ose Emer Perdoruesi/Fjalekalim Specifikuar Gabim.</string>
+    <string name="settings_remote_sync_test_failed_message_newer_version"> Versioni i Collect Server eshte %s dhe ai\'s nuk pershtatet me versionin e Collect Mobile (%s).\n\n Ju Lutem Konsideroni Perditesimin e Collect Mobile me Versionin me te Fundit.</string>
+
+    <string name="import_title_failed">Importi i Srudimit/Aplikimit Deshtoi %1$s</string>
+    <string name="import_text_failed"> Sigurohuni qe po Perdorni Version e Fundit te Collect Mobile dhe qe Studimi/Aplikimi i Perdorur ne Collect Mobile eshte duke perdorur versionin e Fundit te Collect Server. </string>
+    <string name="import_text_wrong_version">Studimi i eksportur ne Collect Versioni %s por ky Version i Collect Mobile Suporton Studime te Gjeneruar me Collect deri ne Versionin %s.\nJu lutem Konsideroni Perditesimin e Collect Mobile ne versionin me te fundit.</string>
+    <string name="import_text_unsupported_file_type_selected"> Ju Lutem Zgjidhni nje Skedar te Vlefshem te Studimit/Aplikacionit per Collect Mobile (.%s)</string>
+
+    <string name="export_dialog_title">Eksporto te Dhenat e Studimit/Aplikacionit</string>
+    <string name="export_dialog_option_exclude_binary_file">Perjashtu Skedare Imazherie</string>
+    <string name="export_dialog_option_save_to_downloads">Ruaje ne Pajisjen me Android \"Download\" directory</string>
+    <string name="export_progress_dialog_title">Duke Eksportuar te Dhena</string>
+    <string name="export_share_with_application"> Dergoji te Dhenat e Eksportuara tek</string>
+    <string name="export_completed_title">Eksportimi i te Dhenave Perfundoi</string>
+    <string name="export_to_downloads_completed_message">Skedari i Eksportuar Gjendet ne Direktorine \"Download\".</string>
+
+    <string name="import_overwrite_data_dialog_title">Mbishkruaj te Dhenat</string>
+    <string name="import_overwrite_data_dialog_message"> Te Dhenat qe Gjenden ne Studimin/Aplikacionin Aktual do te Fshihen nese Vazhdojme me Importimin e Studimit/Aplikacionit. </string>
+    <string name="import_overwrite_data_dialog_confirm">Fshij te Dhenat dhe Importo</string>
+    <string name="import_demo_dialog_title">Importo Studimin/Aplikacionin Demostrativ</string>
+    <string name="import_demo_dialog_message"> Mqs nuk ka Studim/Aplikacion te Importuar, Studimi Demostrativ do te Perdoret, per te Theksuar Karakteristikat e Collect Mobile. \n\nShko tek
+        <a href="http://openforis.org/tools/collect.html">openforis.org</a> per te Kuptuar si te Krijoni Studimin/Aplikacionin tuaj.\n
+    </string>
+    <string name="import_demo_processing_title">Duke Importuar Studimin/Aplikacionin Demostrativ</string>
+
+    <string name="amount_selected">%d Zgjedhur.</string>
+    <string name="delete">Fshij</string>
+    <string name="delete_records_title">Fshij te Dhenat</string>
+    <string name="delete_entities_title">Fshij te Dhenat</string>
+    <string name="delete_node_confirm_message">Jeni Duke Fshire %d %s.</string>
+    <string name="part_records">te Dhenat</string>
+    <string name="part_entities">Njesite</string>
+    <string name="file_attribute_capture_image">Bej Foto</string>
+    <string name="file_attribute_select_image">Zgjidh Imazhin</string>
+    <string name="file_attribute_remove_image">Largo Imazhin</string>
+
+    <string name="entity_list_modified">I Modifikuar</string>
+    <string name="entity_list_date_pattern">dd/MM/VVVV</string>
+
+    <string name="go_to_record_list">Shko tek Lista e te Dhenave</string>
+    <string name="navigate_to_record_list_confirm_title">Regjistrimi Perfundoi</string>
+    <string name="navigate_to_record_list_confirm_message">Do Shkosh Perseri tek Lista e te Dhenave?</string>
+    <string name="navigate_to_record_list_with_errors_confirm_title">Gabime ne te Dhena</string>
+    <string name="navigate_to_record_list_with_errors_confirm_message">Ka Gabime ne te Dhena.\n\nDo Shkosh Perseri tek Lista e Te dhenave?</string>
+
+    <string name="entity_collection_cannot_add_more_items">Nuk Mund te Shtohen me Shume se %d Njesi</string>
+
+    <string name="report_error_dialog_title">Collect Mobile - Gabim!</string>
+    <string name="report_error_dialog_confirm_button">Raporto</string>
+    <string name="report_error_dialog_message">Open Foris Collect Mobile ka nje Gabim te Papritur. \n\n A Deshiron ta Raportosh tek Grupi i Zhvilluesve? \n\n(Informacion Privat \ nuk do te Shperndahet)</string>
+
+    <string name="exit_confirm_message"> Do Dilni nga Collect Mobile?\n\n(Te Dhenat jane Ruajtur ne Menyre Automatike)</string>
+</resources>
+
+
+
+
+
+
+
+
+

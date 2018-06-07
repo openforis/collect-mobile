@@ -261,7 +261,14 @@ public class Definitions {
     }
 
     private String collectionLabel(NodeDefinition nodeDefinition) {
-        return nodeDefinition.getFailSafeLabel(preferredLanguageCode, NodeLabel.Type.HEADING, NodeLabel.Type.INSTANCE);
+        String label = nodeDefinition.getLabel(NodeLabel.Type.HEADING, preferredLanguageCode);
+        if (label == null) {
+            label = nodeDefinition.getLabel(NodeLabel.Type.INSTANCE, preferredLanguageCode);
+            if (label == null && !collectSurvey.isDefaultLanguage(preferredLanguageCode)) {
+                label = nodeDefinition.getFailSafeLabel(NodeLabel.Type.HEADING, NodeLabel.Type.INSTANCE);
+            }
+        }
+        return label;
     }
 
     private String nodeDescription(NodeDefinition nodeDefinition) {

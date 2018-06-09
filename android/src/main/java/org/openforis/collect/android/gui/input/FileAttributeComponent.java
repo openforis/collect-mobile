@@ -3,7 +3,6 @@ package org.openforis.collect.android.gui.input;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,15 +11,18 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import org.apache.commons.io.FileUtils;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
@@ -93,10 +95,14 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     private void captureImage() {
+        //TODO find another way to avoid FileUriExposedException
+        //StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        //StrictMode.setVmPolicy(builder.build());
+
         ((SurveyNodeActivity) context).setImageChangedListener(this);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
         context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
     }
 
@@ -129,7 +135,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     private void showGallery() {
         ((SurveyNodeActivity) context).setImageChangedListener(this);
         Intent intent = showGalleryIntent();
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
         context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);
     }
 
@@ -146,22 +152,33 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
         return inputView;
     }
 
-    public void imageSelected(Uri imageUri) {
-        Cursor cursor = context.getContentResolver().query(imageUri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
-        if (cursor == null)
-            return;
+    public void imageCaptured(Bitmap bitmap) {
         try {
-            cursor.moveToFirst();
-            String imageFilePath = cursor.getString(0);
-            if (imageFilePath == null)
-                return;
-            FileUtils.copyFile(new File(imageFilePath), imageFile);
+            saveImage(bitmap);
             imageChanged();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to copy image");
-        } finally {
-            cursor.close();
+        } catch(IOException e) {
+            Dialogs.alert(context, context.getString(R.string.warning),
+                    context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
         }
+    }
+
+    public void imageSelected(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
+            saveImage(bitmap);
+            imageChanged();
+        } catch(IOException e) {
+            Dialogs.alert(context, context.getString(R.string.warning),
+                    context.getString(R.string.file_attribute_select_image_error, e.getMessage()));
+        }
+    }
+
+    public void saveImage(Bitmap bitmap) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        FileOutputStream fo = new FileOutputStream(imageFile);
+        fo.write(bytes.toByteArray());
+        fo.close();
     }
 
     public void removeImage() {

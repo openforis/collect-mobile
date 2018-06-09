@@ -166,7 +166,9 @@
     <string name="part_records">records</string>
     <string name="part_entities">entities</string>
     <string name="file_attribute_capture_image">Capture image</string>
+    <string name="file_attribute_capture_image_error">Error capturing image: %s</string>
     <string name="file_attribute_select_image">Select image</string>
+    <string name="file_attribute_select_image_error">Error selecting image: %s</string>
     <string name="file_attribute_remove_image">Remove image</string>
 
     <string name="entity_list_modified">Modified</string>

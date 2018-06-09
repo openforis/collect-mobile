@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -372,7 +373,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
             switch (requestCode) {
                 case IMAGE_CAPTURE_REQUEST_CODE:
                     if (imageListener != null)
-                        imageListener.imageChanged();
+                        imageListener.imageCaptured((Bitmap) data.getExtras().get("data"));
                     break;
                 case IMAGE_SELECTED_REQUEST_CODE:
                     if (imageListener != null && data != null)

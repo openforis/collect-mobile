@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -41,12 +43,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static android.Manifest.permission.INTERNET;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 /**
  * @author Daniel Wiell
  */
 public class SurveyNodeActivity extends BaseActivity implements SurveyListener, NodeNavigator {
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
     public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
+    private static final int PERMISSIONS_REQUEST_INTERNET_CODE = 4;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -401,12 +407,17 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
         if (remoteSyncEnabled) {
-            Dialogs.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
-                public void run() {
-                    Keyboard.hide(SurveyNodeActivity.this);
-                    SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
-                }
-            });
+            if (ContextCompat.checkSelfPermission(this, INTERNET) != PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{INTERNET},
+                        PERMISSIONS_REQUEST_INTERNET_CODE);
+            } else {
+                Dialogs.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
+                    public void run() {
+                        Keyboard.hide(SurveyNodeActivity.this);
+                        SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
+                    }
+                });
+            }
         } else {
             Toast.makeText(this, R.string.submit_to_collect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();
         }

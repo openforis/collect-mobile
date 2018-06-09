@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,9 +27,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
     public static final int MAX_DISPLAY_WIDTH = 375;
     public static final int MAX_DISPLAY_HEIGHT = 500;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 2;
     private final View inputView;
     private final File imageFile;
     private boolean imageChanged;
@@ -95,15 +103,14 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     private void captureImage() {
-        //TODO find another way to avoid FileUriExposedException
-        //StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        //StrictMode.setVmPolicy(builder.build());
-
-        ((SurveyNodeActivity) context).setImageChangedListener(this);
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
-        //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-        context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(context, CAMERA) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[] {CAMERA},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+        } else {
+            ((SurveyNodeActivity) context).setImageChangedListener(this);
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
+        }
     }
 
     private void setupGalleryButton() {
@@ -133,10 +140,14 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     private void showGallery() {
-        ((SurveyNodeActivity) context).setImageChangedListener(this);
-        Intent intent = showGalleryIntent();
-        //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-        context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(context, READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[]{READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        } else {
+            ((SurveyNodeActivity) context).setImageChangedListener(this);
+            Intent intent = showGalleryIntent();
+            context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);
+        }
     }
 
     protected boolean updateAttributeIfChanged() {

@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,10 +37,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 public class SurveyListActivity extends BaseActivity {
 
     private static final int IMPORT_SURVEY_REQUEST_CODE = 6384;
     private static final String OPEN_IMPORT_DIALOG = "openImportDialog";
+    private static final int MY_PERMISSIONS_REQUEST_READ_WRITE_EXTERNAL_STORAGE = 1;
 
     public static void startActivityAndShowImportDialog(Activity context) {
         Bundle extras = new Bundle();
@@ -168,10 +175,16 @@ public class SurveyListActivity extends BaseActivity {
     }
 
     protected static void showImportDialog(Activity context) {
-        Intent target = FileUtils.createGetContentIntent();
-        Intent intent = Intent.createChooser(
-                target, "Select survey to import");
-        context.startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(context, READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[]{READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_WRITE_EXTERNAL_STORAGE);
+        } else {
+            Intent target = FileUtils.createGetContentIntent();
+            Intent intent = Intent.createChooser(
+                    target, "Select survey to import");
+            context.startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
+        }
     }
 
     protected void importSurvey(String surveyPath) {

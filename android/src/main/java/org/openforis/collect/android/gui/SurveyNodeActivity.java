@@ -379,7 +379,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
             switch (requestCode) {
                 case IMAGE_CAPTURE_REQUEST_CODE:
                     if (imageListener != null)
-                        imageListener.imageCaptured((Bitmap) data.getExtras().get("data"));
+                        //imageListener.imageCaptured((Bitmap) data.getExtras().get("data"));
+                        imageListener.imageChanged();
                     break;
                 case IMAGE_SELECTED_REQUEST_CODE:
                     if (imageListener != null && data != null)

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -22,7 +23,6 @@ import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -107,8 +107,14 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
             ActivityCompat.requestPermissions(context, new String[] {CAMERA},
                     MY_PERMISSIONS_REQUEST_CAMERA);
         } else {
+            //TODO find nicer solution
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
             ((SurveyNodeActivity) context).setImageChangedListener(this);
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
             context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
         }
     }
@@ -185,10 +191,8 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     public void saveImage(Bitmap bitmap) throws IOException {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         FileOutputStream fo = new FileOutputStream(imageFile);
-        fo.write(bytes.toByteArray());
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
         fo.close();
     }
 

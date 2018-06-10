@@ -97,7 +97,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
 
     private void captureImage() {
         if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
-            //TODO find nicer solution
+            //TODO find nicer solution to prevent FileUriExposedException
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
 

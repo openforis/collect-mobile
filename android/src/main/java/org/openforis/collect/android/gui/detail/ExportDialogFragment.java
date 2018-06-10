@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -93,6 +94,10 @@ public class ExportDialogFragment extends DialogFragment {
                 if (saveToDownloads) {
                     Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
                 } else {
+                    //TODO find nicer solution to prevent FileUriExposedException
+                    StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                    StrictMode.setVmPolicy(builder.build());
+
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
                     shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));

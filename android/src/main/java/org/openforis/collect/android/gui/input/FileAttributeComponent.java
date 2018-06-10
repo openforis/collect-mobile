@@ -8,9 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,21 +19,16 @@ import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
 public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
     public static final int MAX_DISPLAY_WIDTH = 375;
     public static final int MAX_DISPLAY_HEIGHT = 500;
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 2;
     private final View inputView;
     private final File imageFile;
     private boolean imageChanged;
@@ -103,10 +96,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     private void captureImage() {
-        if (ContextCompat.checkSelfPermission(context, CAMERA) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context, new String[] {CAMERA},
-                    MY_PERMISSIONS_REQUEST_CAMERA);
-        } else {
+        if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -146,10 +136,7 @@ public class FileAttributeComponent extends AttributeComponent<UiFileAttribute> 
     }
 
     private void showGallery() {
-        if (ContextCompat.checkSelfPermission(context, READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context, new String[]{READ_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-        } else {
+        if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
             Intent intent = showGalleryIntent();
             context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);

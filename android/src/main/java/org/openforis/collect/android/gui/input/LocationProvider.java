@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
@@ -7,14 +8,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import org.openforis.collect.android.util.CollectPermissions;
 
 public final class LocationProvider {
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 3;
     private final LocationUpdateListener listener;
     private final Context context;
     private final boolean staticLocation;
@@ -28,11 +25,9 @@ public final class LocationProvider {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
+    @SuppressLint("MissingPermission")
     public void start() {
-        if (ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions((Activity) context, new String[]{ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        } else {
+        if (CollectPermissions.checkAccessLocationPermissionOrRequestIt((Activity) context)) {
             locationUpdater.bestAccuracy = Float.MAX_VALUE;
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);

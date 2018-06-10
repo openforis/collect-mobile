@@ -11,8 +11,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
 import com.google.gson.JsonObject;
 
@@ -26,6 +24,7 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
+import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
@@ -43,8 +42,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static android.Manifest.permission.INTERNET;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
 /**
@@ -65,8 +62,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
     public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
-
-    private static final int PERMISSIONS_REQUEST_INTERNET_CODE = 4;
 
     private DirectoryChooserFragment directoryChooserDialog;
     private SettingsFragment settingsFragment;
@@ -313,10 +308,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             Preference preference = findPreference(REMOTE_COLLECT_TEST);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    if (ContextCompat.checkSelfPermission(getActivity(), INTERNET) != PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{INTERNET},
-                                PERMISSIONS_REQUEST_INTERNET_CODE);
-                    } else {
+                    if (CollectPermissions.checkInternetPermissionOrRequestIt(getActivity())) {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         String rootAddress = preferences.getString(SettingsActivity.REMOTE_COLLECT_ADDRESS, "");
                         String username = preferences.getString(SettingsActivity.REMOTE_COLLECT_USERNAME, "");

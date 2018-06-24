@@ -56,6 +56,6 @@ public abstract class CollectPermissions {
 
     public static boolean checkAccessLocationPermissionOrRequestIt(Activity context) {
         return checkPermissionsOrRequestThem(context, PERMISSIONS_REQUEST_ACCESS_LOCATION_CODE,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
+                Manifest.permission.ACCESS_FINE_LOCATION);
     }
 }

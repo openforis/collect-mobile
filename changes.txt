@@ -1,5 +1,9 @@
 Changes
 -------
+2018-06-24
+
+    * Do not require coarse location access permission
+
 2018-06-18
 
     * Fixed Russian translation

@@ -66,7 +66,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     public static void restartActivity(Context context) {
         Keyboard.hide(context);
-        if (ServiceLocator.surveyService().selectedNode() == null) {
+        if (ServiceLocator.surveyService() == null || ServiceLocator.surveyService().selectedNode() == null) {
             BackStackLimiter.clear();
             Activities.startNewClearTask(context, MainActivity.class);
         } else {

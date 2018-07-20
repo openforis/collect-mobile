@@ -39,11 +39,12 @@ class ModelConverter {
         return new UiModelBuilder(collectSurvey, definitions).addUiEntity(entity, uiEntityCollection);
     }
 
-    public UiCodeList toUiCodeList(List<CodeListItem> codeList, boolean valueShown) {
+    public UiCodeList toUiCodeList(List<CodeListItem> codeList, boolean valueShown, String preferredLanguage) {
         List<UiCode> uiCodes = new ArrayList<UiCode>();
         UiCode qualifiableCode = null;
         for (CodeListItem item : codeList) {
-            UiCode code = new UiCode(item.getCode(), item.getLabel(), item.getDescription(), valueShown);
+            UiCode code = new UiCode(item.getCode(), item.getLabel(preferredLanguage),
+                    item.getDescription(preferredLanguage), valueShown);
             if (item.isQualifiable())
                 qualifiableCode = code;
             uiCodes.add(code);

@@ -265,7 +265,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         CodeAttribute attribute = recordNodes.getCodeAttribute(uiAttribute.getId());
         List<CodeListItem> items = codeListManager.loadValidItems(attribute.getParent(), attribute.getDefinition());
         boolean valueShown = selectedSurvey.getUIOptions().getShowCode(attribute.getDefinition());
-        return modelConverter.toUiCodeList(items, valueShown);
+        return modelConverter.toUiCodeList(items, valueShown, selectedSurveyPreferredLanguage);
     }
 
     public UiCodeList codeList(UiAttributeCollection uiAttributeCollection) {
@@ -273,10 +273,10 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
             throw new IllegalStateException("uiAttributeCollection " + uiAttributeCollection + " expected to have UiAttributeCollection attribute type");
         Entity parentEntity = recordNodes.getEntityById(uiAttributeCollection.getParentEntityId());
         Definition definition = uiAttributeCollection.getDefinition().attributeDefinition;
-        CodeAttributeDefinition codeAttributeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
+        CodeAttributeDefinition codeAttributeDefinition = selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(definition.id));
         List<CodeListItem> items = codeListManager.loadValidItems(parentEntity, codeAttributeDefinition);
         boolean valueShown = selectedSurvey.getUIOptions().getShowCode(codeAttributeDefinition);
-        return modelConverter.toUiCodeList(items, valueShown);
+        return modelConverter.toUiCodeList(items, valueShown, selectedSurveyPreferredLanguage);
     }
 
     public boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute) {

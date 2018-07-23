@@ -12,9 +12,6 @@ import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
-import org.openforis.collect.metamodel.ui.UIConfiguration;
-import org.openforis.collect.metamodel.ui.UIModelObject;
-import org.openforis.collect.metamodel.ui.UITable;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
@@ -178,11 +175,7 @@ public class Definitions {
                     (UiAttributeDefinition) childDefinition, isRequired(nodeDefinition));
         } else {
             EntityDefinition entityDef = (EntityDefinition) nodeDefinition;
-            CollectSurvey survey = entityDef.getSurvey();
-            //TODO handle it in Collect Survey Designer
-            UIConfiguration uiConf = survey.getUIConfiguration();
-            UIModelObject entityUiModelObject = uiConf == null ? null : uiConf.getModelObjectByNodeDefinitionId(entityDef.getId());
-            boolean enumerated = !entityDef.isRoot() && entityDef.isEnumerable() && entityUiModelObject != null && entityUiModelObject instanceof UITable;
+            boolean enumerated = !entityDef.isRoot() && entityDef.isEnumerate() && entityDef.isEnumerable();
             return new UiEntityCollectionDefinition(
                     collectionNodeDefinitionId(nodeDefinition),
                     nodeDefinition.getName(),

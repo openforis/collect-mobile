@@ -1,5 +1,9 @@
 Changes
 -------
+2018-07-23
+
+    * Bug fixes (enumerated entities)
+
 2018-07-20
 
     * Bug fixes

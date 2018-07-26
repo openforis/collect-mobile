@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +30,14 @@ public class SimpleNodeListFragment extends Fragment {
     private RecyclerView nodeListView;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        listAdapter.refreshNodes();
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_node_list, container, false);
-        nodeListView = (RecyclerView) rootView.findViewById(R.id.node_list_view);
+        nodeListView = rootView.findViewById(R.id.node_list_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         nodeListView.setLayoutManager(linearLayoutManager);
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
@@ -53,15 +53,7 @@ public class SimpleNodeListFragment extends Fragment {
             }
         });
         nodeListView.setAdapter(listAdapter);
-        /*
-        //scroll list to selected node when layout changes (e.g. keyboard appears/disappears)
-        nodeListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                selectNode(node());
-            }
-        });
-        */
+        
         selectNode(node());
         return rootView;
     }
@@ -71,7 +63,7 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     private void onNodeSelected(int nodeIndex) {
-        ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.attributePager);
+        ViewPager viewPager = getActivity().findViewById(R.id.attributePager);
         viewPager.setCurrentItem(nodeIndex);
         UiNode node = listAdapter.getItem(nodeIndex);
         ServiceLocator.surveyService().selectNode(node.getId());
@@ -113,15 +105,5 @@ public class SimpleNodeListFragment extends Fragment {
             int index = siblings.indexOf(node);
             nodeListView.scrollToPosition(index);
         }
-    }
-
-    public void scrollToPosition(int position) {
-        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getActivity()) {
-            @Override protected int getVerticalSnapPreference() {
-                return LinearSmoothScroller.SNAP_TO_START;
-            }
-        };
-        smoothScroller.setTargetPosition(position);
-        nodeListView.getLayoutManager().startSmoothScroll(smoothScroller);
     }
 }

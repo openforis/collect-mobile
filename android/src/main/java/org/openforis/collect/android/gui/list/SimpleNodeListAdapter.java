@@ -37,6 +37,11 @@ public class SimpleNodeListAdapter extends RecyclerView.Adapter<SimpleNodeListAd
         this.onItemClickListener = onItemClickListener;
     }
 
+    public void refreshNodes() {
+        this.nodes = parentNode.getRelevantChildren();
+        notifyDataSetChanged();
+    }
+
     public UiNode getItem(int position) {
         return nodes.get(position);
     }

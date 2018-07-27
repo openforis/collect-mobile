@@ -53,7 +53,7 @@ public class SimpleNodeListFragment extends Fragment {
             }
         });
         nodeListView.setAdapter(listAdapter);
-        
+
         selectNode(node());
         return rootView;
     }

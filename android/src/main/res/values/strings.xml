@@ -24,6 +24,8 @@
     <string name="processing">Processing</string>
     <string name="please_wait">Please wait...</string>
 
+    <string name="confirm_label">Confirm</string>
+
     <string name="action_add_node">Add</string>
     <string name="action_node_list">List</string>
     <string name="action_next_attribute">Next</string>

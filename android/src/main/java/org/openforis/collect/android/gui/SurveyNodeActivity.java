@@ -19,7 +19,8 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
-import org.openforis.collect.android.gui.input.FileAttributeComponent;
+import org.openforis.collect.android.gui.input.AudioFileAttributeComponent;
+import org.openforis.collect.android.gui.input.ImageFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
@@ -46,6 +47,7 @@ import java.util.Set;
 public class SurveyNodeActivity extends BaseActivity implements SurveyListener, NodeNavigator {
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
     public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
+    public static final int AUDIO_SELECTED_REQUEST_CODE = 6387;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -55,7 +57,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private SurveyService surveyService;
 
     private UiNode selectedNode;
-    private FileAttributeComponent imageListener;
+    private ImageFileAttributeComponent imageListener;
+    private AudioFileAttributeComponent audioListener;
 
     private boolean twoPane;
 
@@ -380,13 +383,22 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                     if (imageListener != null && data != null)
                         imageListener.imageSelected(data.getData());
                     break;
+                case AUDIO_SELECTED_REQUEST_CODE:
+                    if (audioListener != null) {
+                        audioListener.audioSelected(data.getData());
+                    }
+                    break;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void setImageChangedListener(FileAttributeComponent listener) {
+    public void setImageChangedListener(ImageFileAttributeComponent listener) {
         imageListener = listener;
+    }
+
+    public void setAudioChangedListener(AudioFileAttributeComponent listener) {
+        audioListener = listener;
     }
 
     public void showEntityTable(MenuItem menuItem) {

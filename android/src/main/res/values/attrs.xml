@@ -28,6 +28,7 @@
 
     <attr name="spinnerItemTextColor" format="reference|color" />
     <attr name="spinnerItemBackground" format="reference|color" />
+    <attr name="iconButtonBorderColor" format="reference|color" />
 
     <attr name="moreIcon" format="reference" />
     <attr name="backupIcon" format="reference" />

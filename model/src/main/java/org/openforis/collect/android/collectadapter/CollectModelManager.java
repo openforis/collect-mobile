@@ -34,6 +34,7 @@ import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SpeciesManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.exception.SurveyValidationException;
+import org.openforis.collect.metamodel.CollectAnnotations;
 import org.openforis.collect.model.AttributeAddChange;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
@@ -79,6 +80,9 @@ import java.util.concurrent.Callable;
  * @author Daniel Wiell
  */
 public class CollectModelManager implements DefinitionProvider, CodeListService, CoordinateDestinationService {
+
+    private static final String FILE_TYPE_IMAGE_EXTENSION = "jpg";
+    private static final String FILE_TYPE_AUDIO_EXTENSION = "3gp";
 
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
@@ -377,13 +381,28 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     public File file(UiFileAttribute uiFileAttribute) {
         FileAttribute attribute = (FileAttribute) recordNodes.getAttribute(uiFileAttribute.getId());
         FileAttributeDefinition def = attribute.getDefinition();
+        String extension = determineFileAttributeExtension(def);
         File dir = new File(recordFileManager.getDefaultStorageDirectory().getPath() + "/" + RecordFileManager.getRepositoryRelativePath(def));
         String fileName = org.apache.commons.lang3.StringUtils.isEmpty(attribute.getFilename())
-                ? String.format("%s.%s", UUID.randomUUID(), "jpg")
+                ? String.format("%s.%s", UUID.randomUUID(), extension)
                 : attribute.getFilename(); // For backwards compatibility - previously internal ids was incorrectly used in filename
         return new File(dir, fileName);
     }
 
+    private String determineFileAttributeExtension(FileAttributeDefinition def) {
+        return FILE_TYPE_AUDIO_EXTENSION;
+        /*
+        CollectAnnotations.FileType fileType = ((CollectSurvey) def.getSurvey()).getAnnotations().getFileType(def);
+        switch (fileType) {
+            case IMAGE:
+                return FILE_TYPE_IMAGE_EXTENSION;
+            case AUDIO:
+                return FILE_TYPE_AUDIO_EXTENSION;
+            default:
+                return null;
+        }
+        */
+    }
 
     public double[] destination(UiCoordinateAttribute uiAttribute, double[] coordinate) {
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());

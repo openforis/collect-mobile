@@ -13,6 +13,11 @@
     <string name="import_demo_survey">Import Demo Survey</string>
 
     <string name="yes">Yes</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="select_file">Select file</string>
 
     <string name="warning">Warning</string>
 
@@ -25,6 +30,7 @@
     <string name="please_wait">Please wait...</string>
 
     <string name="confirm_label">Confirm</string>
+    <string name="overwrite_label">Overwrite</string>
 
     <string name="action_add_node">Add</string>
     <string name="action_node_list">List</string>
@@ -172,6 +178,8 @@
     <string name="file_attribute_select_image">Select image</string>
     <string name="file_attribute_select_image_error">Error selecting image: %s</string>
     <string name="file_attribute_remove_image">Remove image</string>
+    <string name="file_attribute_audio_overwrite_confirm_message">Overwrite recorded audio?</string>
+    <string name="file_attribute_audio_delete_confirm_message">Delete captured audio?</string>
 
     <string name="entity_list_modified">Modified</string>
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>

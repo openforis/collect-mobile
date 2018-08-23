@@ -26,6 +26,7 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
 import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.util.HttpConnectionHelper;
+import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
 import org.openforis.commons.versioning.Version;
@@ -50,7 +51,7 @@ import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
-    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new ResourceBundleMessageSource(Collections.singletonList("org/openforis/collect/resourcebundles/language_codes_iso_639_1"));
+    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new ResourceBundleMessageSource(Collections.singletonList("org/openforis/collect/resourcebundles/languages"));
     private static final Map<String, String> LANGUAGES = createLanguagesData();
 
     public static final String CREW_ID = "crewId";
@@ -343,7 +344,8 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     private static String getLanguageLabel(String langCode) {
-        return String.format("%s (%s)", LANGUAGE_MESSAGE_SOURCE.getMessage(Locale.getDefault(), langCode), langCode);
+        String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode);
+        return String.format("%s (%s)", label, langCode);
     }
 
     private static class RemoteConnectionTestTask extends SlowAsyncTask<Void, Void, JsonObject> {

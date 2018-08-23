@@ -37,6 +37,7 @@
         <item name="nodeListSelectedBackgroundColor">@color/dark_node_list_selected_background_color</item>
         <item name="spinnerItemTextColor">#FFFFFF</item>
         <item name="spinnerItemBackground">#10FFFFFF</item>
+        <item name="iconButtonBorderColor">#FFFFFF</item>
     </style>
 
     <style name="AppTheme.Light" parent="@style/Theme.AppCompat.Light">
@@ -75,7 +76,7 @@
         <item name="nodeListSelectedBackgroundColor">@color/light_node_list_selected_background_color</item>
         <item name="spinnerItemTextColor">#000000</item>
         <item name="spinnerItemBackground">#10000000</item>
-
+        <item name="iconButtonBorderColor">#000000</item>
     </style>
 
     <style name="actionMenuItem">

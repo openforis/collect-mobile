@@ -50,7 +50,10 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
             attribute.setDate(newValue == null ? null : parse(newValue));
         } catch (ParseException ignore) {
             attribute.setDate(null);
-            selectedDateView.setText(context.getResources().getString(R.string.message_invalid_date));
+            String invalidDateMessage = context.getResources().getString(R.string.message_invalid_date);
+            if (! invalidDateMessage.equals(selectedDateView.getText())) {
+                selectedDateView.setText(invalidDateMessage);
+            }
         }
     }
 

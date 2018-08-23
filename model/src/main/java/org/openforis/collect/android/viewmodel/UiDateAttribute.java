@@ -9,6 +9,8 @@ import java.util.Date;
  */
 public class UiDateAttribute extends UiAttribute {
     private static final String DATE_PATTERN = "dd MMMM yyyy";
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_PATTERN);
+
     private Date date;
 
     public UiDateAttribute(int id, boolean relevant, UiAttributeDefinition definition) {
@@ -28,18 +30,18 @@ public class UiDateAttribute extends UiAttribute {
     }
 
     public String valueAsString() {
-        return date == null ? null : new SimpleDateFormat(DATE_PATTERN).format(date);
+        return date == null ? null : DATE_FORMATTER.format(date);
     }
 
     public static String format(Date date) {
-        return new SimpleDateFormat(DATE_PATTERN).format(date);
+        return DATE_FORMATTER.format(date);
     }
 
     public static Date parse(String newValue) throws ParseException {
-        return new SimpleDateFormat(DATE_PATTERN).parse(newValue);
+        return DATE_FORMATTER.parse(newValue);
     }
 
     public String toString() {
-        return date == null ? "Undefined date" : new SimpleDateFormat(DATE_PATTERN).format(date);
+        return date == null ? "Undefined date" : DATE_FORMATTER.format(date);
     }
 }

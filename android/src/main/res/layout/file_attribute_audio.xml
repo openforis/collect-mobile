@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/recording_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Chronometer
+            android:id="@+id/recording_chronometer"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="40dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/rec_stop_container"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/recording_chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/record_btn"
+                android:drawableTop="@drawable/ic_record_red_48dp"
+                android:text="@string/record"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/stop_btn"
+                android:drawableTop="@drawable/ic_stop_white_48dp"
+                android:text="@string/stop"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <org.openforis.collect.android.gui.AudioPlayer
+        android:id="@+id/audio_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+        <Button
+            android:id="@+id/select_file_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_file"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/delete" />
+    </LinearLayout>
+
+</LinearLayout>

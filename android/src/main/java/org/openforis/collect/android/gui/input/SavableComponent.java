@@ -15,6 +15,8 @@ import java.util.Map;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+import static org.openforis.collect.metamodel.CollectAnnotations.FileType.*;
+
 /**
  * @author Daniel Wiell
  */
@@ -52,7 +54,7 @@ public abstract class SavableComponent {
         validateNode();
     }
 
-    public final void onDeselect() {
+    public void onDeselect() {
         selected = false;
         resetValidationErrors();
         saveNode();
@@ -118,8 +120,18 @@ public abstract class SavableComponent {
             return new TaxonAttributeComponent((UiTaxonAttribute) attribute, surveyService, context);
         if (attribute instanceof UiBooleanAttribute)
             return new BooleanAttributeComponent((UiBooleanAttribute) attribute, surveyService, context);
-        if (attribute instanceof UiFileAttribute)
-            return new FileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+        if (attribute instanceof UiFileAttribute) {
+            return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+            /*
+            switch (((UIFileAttributeDefinition) attribute.getDefinition()).getType()) {
+                case IMAGE:
+                    return new ImageFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                case AUDIO:
+                    return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                case DOCUMENT:
+            }
+            */
+        }
         return new UnsupportedAttributeComponent(attribute, surveyService, context);
     }
 

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.util.StringUtils;
 import org.openforis.collect.android.viewmodel.Definition;
+import org.openforis.collect.android.viewmodel.UIFileAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiAttributeCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
@@ -12,11 +13,13 @@ import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
+import org.openforis.collect.metamodel.CollectAnnotations;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.FileAttributeDefinition;
 import org.openforis.idm.metamodel.KeyAttributeDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -143,6 +146,11 @@ public class Definitions {
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);
+            } else if (nodeDefinition instanceof FileAttributeDefinition) {
+                CollectAnnotations annotations = ((CollectSurvey) nodeDefinition.getSurvey()).getAnnotations();
+                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) nodeDefinition);
+                return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required, fileType);
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
                         nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);

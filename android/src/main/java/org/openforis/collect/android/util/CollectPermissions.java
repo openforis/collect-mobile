@@ -14,6 +14,7 @@ public abstract class CollectPermissions {
     public static final int PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 4;
     public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE_CODE = 5;
     public static final int PERMISSIONS_REQUEST_ACCESS_LOCATION_CODE = 6;
+    public static final int PERMISSIONS_REQUEST_RECORD_AUDIO_CODE = 7;
 
     public static boolean checkPermissionsOrRequestThem(Activity context, int requestCode, String... permissions) {
         boolean granted = true;
@@ -57,5 +58,10 @@ public abstract class CollectPermissions {
     public static boolean checkAccessLocationPermissionOrRequestIt(Activity context) {
         return checkPermissionsOrRequestThem(context, PERMISSIONS_REQUEST_ACCESS_LOCATION_CODE,
                 Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    public static boolean checkRecordAudioPermissionOrRequestIt(Activity context) {
+        return checkPermissionsOrRequestThem(context, PERMISSIONS_REQUEST_RECORD_AUDIO_CODE,
+                Manifest.permission.RECORD_AUDIO);
     }
 }

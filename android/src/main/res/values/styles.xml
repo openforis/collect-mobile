@@ -32,6 +32,7 @@
         <item name="closeIcon">@drawable/ic_close_white_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
+        <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
         <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
         <item name="entityListHeaderBorderColor">@color/dark_entity_list_header_border_color</item>
         <item name="nodeListSelectedBackgroundColor">@color/dark_node_list_selected_background_color</item>
@@ -70,6 +71,7 @@
         <item name="removeIcon">@drawable/ic_action_remove_light</item>
         <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
+        <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewLight</item>
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>
         <item name="entityListHeaderBorderColor">@color/light_entity_list_header_border_color</item>

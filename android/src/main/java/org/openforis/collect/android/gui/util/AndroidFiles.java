@@ -100,7 +100,7 @@ public class AndroidFiles {
         try {
             File file = com.ipaulpro.afilechooser.utils.FileUtils.getFile(context, uri);
             return file.exists() ? file : null;
-        } catch(Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }

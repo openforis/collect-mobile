@@ -21,6 +21,7 @@ import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.AudioFileAttributeComponent;
 import org.openforis.collect.android.gui.input.ImageFileAttributeComponent;
+import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
@@ -48,6 +49,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public static final int IMAGE_CAPTURE_REQUEST_CODE = 6385;
     public static final int IMAGE_SELECTED_REQUEST_CODE = 6386;
     public static final int AUDIO_SELECTED_REQUEST_CODE = 6387;
+    public static final int VIDEO_CAPTURE_REQUEST_CODE = 6388;
+    public static final int VIDEO_SELECTED_REQUEST_CODE = 6389;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -59,6 +62,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private UiNode selectedNode;
     private ImageFileAttributeComponent imageListener;
     private AudioFileAttributeComponent audioListener;
+    private VideoFileAttributeComponent videoListener;
 
     private boolean twoPane;
 
@@ -388,6 +392,16 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                         audioListener.audioSelected(data.getData());
                     }
                     break;
+                case VIDEO_CAPTURE_REQUEST_CODE:
+                    if (videoListener != null) {
+                        videoListener.videoCaptured(data.getData());
+                    }
+                    break;
+                case VIDEO_SELECTED_REQUEST_CODE:
+                    if (videoListener != null) {
+                        videoListener.videoSelected(data.getData());
+                    }
+                    break;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -399,6 +413,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     public void setAudioChangedListener(AudioFileAttributeComponent listener) {
         audioListener = listener;
+    }
+
+    public void setVideoChangedListener(VideoFileAttributeComponent listener) {
+        videoListener = listener;
     }
 
     public void showEntityTable(MenuItem menuItem) {

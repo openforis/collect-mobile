@@ -35,6 +35,7 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
         fileChanged = true;
         AndroidFiles.makeDiscoverable(file, context);
         saveNode();
+        updateViewState();
     }
 
     protected void removeFile() {
@@ -42,6 +43,7 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
         fileChanged = true;
         AndroidFiles.makeDiscoverable(file, context);
         saveNode();
+        updateViewState();
     }
 
     protected void startFileChooserActivity(String title, int requestCode, String type, String... extraMimeTypes) {
@@ -63,4 +65,6 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
         }
         return intent;
     }
+
+    protected abstract void updateViewState();
 }

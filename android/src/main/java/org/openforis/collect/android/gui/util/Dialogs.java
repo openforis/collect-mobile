@@ -35,6 +35,7 @@ public class Dialogs {
                     }
                 }
             })
+            .setIcon(android.R.drawable.ic_dialog_alert)
             .create();
         dialog.show();
         return dialog;

@@ -139,6 +139,8 @@ public abstract class SavableComponent {
                     return new ImageFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
                 case AUDIO:
                     return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                case VIDEO:
+                    return new VideoFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
                 case DOCUMENT:
             }
         }

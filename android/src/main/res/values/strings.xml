@@ -173,15 +173,17 @@
     <string name="delete_node_confirm_message">You are about to delete %d %s.</string>
     <string name="part_records">records</string>
     <string name="part_entities">entities</string>
-    <string name="file_attribute_capture_image">Capture image</string>
+    <string name="file_attribute_capture">Capture</string>
+    <string name="file_attribute_captured_file_overwrite_confirm_message">Capture a new file and overwrite the existing one?</string>
     <string name="file_attribute_capture_image_error">Error capturing image: %s</string>
     <string name="file_attribute_select_image">Select image</string>
     <string name="file_attribute_select_image_error">Error selecting image: %s</string>
-    <string name="file_attribute_remove_image">Remove image</string>
+    <string name="file_attribute_image_delete_confirm_message">Delete the uploaded image?</string>
     <string name="file_attribute_audio_overwrite_confirm_message">Overwrite recorded audio?</string>
     <string name="file_attribute_audio_delete_confirm_message">Delete captured audio?</string>
     <string name="file_attribute_audio_select_file">Import from file</string>
     <string name="file_attribute_audio_wrong_file_type_selected">Wrong audio file selected: only 3gp files are supported</string>
+    <string name="file_attribute_capture_video_error">Error capturing video: $s</string>
 
     <string name="entity_list_modified">Modified</string>
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>

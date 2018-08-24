@@ -1,7 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +16,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
@@ -27,19 +26,45 @@ import java.io.IOException;
 public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     public static final int MAX_DISPLAY_WIDTH = 375;
-    public static final int MAX_DISPLAY_HEIGHT = 500;
-
-    private final View inputView;
+    public static final int MAX_DISPLAY_HEIGHT = 400;
+    protected ImageView imageView;
+    private View inputView;
+    private Button removeButton;
 
     public ImageFileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
+
         inputView = context.getLayoutInflater().inflate(R.layout.file_attribute_image, null);
+
+        setupUiComponents();
+
+        updateViewState();
+    }
+
+    protected void setupUiComponents() {
+        imageView = inputView.findViewById(R.id.file_attribute_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startShowImageActivity();
+            }
+        });
 
         setupCaptureButton();
         setupGalleryButton();
         setupRemoveButton();
-        if (file.exists())
-            showImage();
+    }
+
+    protected void startShowImageActivity() {
+        //TODO find nicer solution to prevent FileUriExposedException
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri fileUri = Uri.fromFile(file);
+        intent.setDataAndType(fileUri, getMediaType());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        context.startActivity(Intent.createChooser(intent, "View using"));
     }
 
     @Override
@@ -47,43 +72,48 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return inputView;
     }
 
+    protected String getMediaType() {
+        return "image/*";
+    }
+
+    public void imageChanged() {
+        fileChanged();
+    }
+
     private void setupRemoveButton() {
-        Button button = inputView.findViewById(R.id.file_attribute_remove);
-        button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
-        button.setOnClickListener(new View.OnClickListener() {
+        removeButton = inputView.findViewById(R.id.file_attribute_remove);
+        removeButton.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
+        removeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showRemoveDialog();
             }
         });
-        if (!file.exists())
-            button.setVisibility(View.INVISIBLE);
     }
 
     private void showRemoveDialog() {
-        new AlertDialog.Builder(context)
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this image?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        removeImage();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        Dialogs.confirm(context, R.string.delete, R.string.file_attribute_image_delete_confirm_message, new Runnable() {
+            public void run() {
+                removeFile();
+            }
+        });
     }
 
     private void setupCaptureButton() {
         Button button = inputView.findViewById(R.id.file_attribute_capture);
         if (canCaptureImage()) {
-            button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    captureImage();
+                    Runnable captureImageRunnable = new Runnable() {
+                        public void run() {
+                            captureImage();
+                        }
+                    };
+                    if (file != null && file.exists()) {
+                        Dialogs.confirm(context, R.string.warning, R.string.file_attribute_captured_file_overwrite_confirm_message,
+                                captureImageRunnable, null, R.string.overwrite_label, R.string.cancel_label);
+                    } else {
+                        captureImageRunnable.run();
+                    }
                 }
             });
         } else {
@@ -96,7 +126,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return takePictureIntent.resolveActivity(context.getPackageManager()) != null;
     }
 
-    private void captureImage() {
+    protected void captureImage() {
         if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution to prevent FileUriExposedException
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -111,7 +141,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupGalleryButton() {
-        Button button = (Button) inputView.findViewById(R.id.file_attribute_select);
+        Button button = inputView.findViewById(R.id.file_attribute_select);
         if (canShowGallery()) {
             button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.openIcon), null, null, null);
             button.setOnClickListener(new View.OnClickListener() {
@@ -125,21 +155,21 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private boolean canShowGallery() {
-        return canStartFileChooserActivity("image/*");
+        return canStartFileChooserActivity(getMediaType());
     }
 
     private void showGallery() {
         if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
-            startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE,"image/*");
+            startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
         }
     }
 
     public void imageCaptured(Bitmap bitmap) {
         try {
             saveImage(bitmap);
-            imageChanged();
-        } catch(IOException e) {
+            fileChanged();
+        } catch (IOException e) {
             Dialogs.alert(context, context.getString(R.string.warning),
                     context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
         }
@@ -149,8 +179,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
             saveImage(bitmap);
-            imageChanged();
-        } catch(IOException e) {
+            fileChanged();
+        } catch (IOException e) {
             Dialogs.alert(context, context.getString(R.string.warning),
                     context.getString(R.string.file_attribute_select_image_error, e.getMessage()));
         }
@@ -162,38 +192,60 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         fo.close();
     }
 
-    public void removeImage() {
-        removeFile();
-        ImageView imageView = inputView.findViewById(R.id.file_attribute_image);
-        imageView.setVisibility(View.INVISIBLE);
-        View removeButton = inputView.findViewById(R.id.file_attribute_remove);
-        removeButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void imageChanged() {
-        fileChanged();
-        showImage();
-        View removeButton = inputView.findViewById(R.id.file_attribute_remove);
-        removeButton.setVisibility(View.VISIBLE);
-    }
-
-    private void showImage() {
-        ImageView imageView = inputView.findViewById(R.id.file_attribute_image);
-        imageView.setVisibility(View.VISIBLE);
-        Bitmap bitmap = scaleImage(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+    protected void showThumbnail() {
+        Views.show(imageView);
+        Bitmap bitmap = getImageThumbnail();
         imageView.setImageBitmap(bitmap);
     }
 
+    protected void hideThumbnail() {
+        Views.hide(imageView);
+    }
+
+    protected Bitmap getImageThumbnail() {
+        return scaleImage(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+    }
+
     private Bitmap scaleImage(String filePath, int maxWidth, int maxHeight) {
-        BitmapFactory.Options resample = new BitmapFactory.Options();
         BitmapFactory.Options bounds = new BitmapFactory.Options();
         bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, bounds);
         int width = bounds.outWidth;
         int height = bounds.outHeight;
         boolean withinBounds = width <= maxWidth && height <= maxHeight;
+        BitmapFactory.Options resample = new BitmapFactory.Options();
         if (!withinBounds)
             resample.inSampleSize = (int) Math.round(Math.min((double) width / (double) maxWidth, (double) height / (double) maxHeight));
         return BitmapFactory.decodeFile(filePath, resample);
+    }
+
+    protected Bitmap scaleImage(Bitmap bitmap) {
+        return scaleImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+    }
+
+    protected Bitmap scaleImage(Bitmap bitmap, int maxWidth, int maxHeight) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        boolean withinBounds = width <= maxWidth && height <= maxHeight;
+        if (withinBounds) {
+            return bitmap;
+        } else {
+            float ratio = Math.min(
+                    (float) maxWidth / width,
+                    (float) maxHeight / height);
+            int scaledWith = Math.round((float) ratio * width);
+            int scaledHeight = Math.round((float) ratio * height);
+            return Bitmap.createScaledBitmap(bitmap, scaledWith, scaledHeight, false);
+        }
+    }
+
+    protected void updateViewState() {
+        if (file.exists()) {
+            showThumbnail();
+        } else {
+            hideThumbnail();
+        }
+        Views.toggleVisibility(removeButton, file.exists());
+
     }
 }

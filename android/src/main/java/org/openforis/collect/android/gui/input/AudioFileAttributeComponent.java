@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -142,7 +141,6 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
                             public void run() {
                                 reset();
                                 removeFile();
-                                updateViewState();
                             }
                         }, null, R.string.delete, R.string.cancel_label);
             }
@@ -173,7 +171,6 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
             mediaRecorder = null;
 
             recordingChronometer.stop();
-            updateViewState();
 
             audioPlayer.setSource(file);
             audioPlayer.prepare();
@@ -186,7 +183,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setAudioChangedListener(this);
             startFileChooserActivity("Select audio file", SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE,
-                "*/*");
+                    "*/*");
         }
     }
 
@@ -197,18 +194,19 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
                 reset();
                 FileUtils.copyFile(selectedFile, file);
                 fileChanged();
-                updateViewState();
             } else {
                 Dialogs.alert(context, R.string.warning, R.string.file_attribute_audio_wrong_file_type_selected);
             }
-        } catch(Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     private void resetRecordingChronometer() {
         recordingChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
-    private void updateViewState() {
+    @Override
+    protected void updateViewState() {
         boolean playing = audioPlayer != null && audioPlayer.isPlaying();
         Views.toggleVisibility(recordBtn, !recording);
         Views.toggleVisibility(stopBtn, recording);

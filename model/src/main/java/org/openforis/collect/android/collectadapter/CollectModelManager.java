@@ -83,6 +83,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private static final String FILE_TYPE_IMAGE_EXTENSION = "jpg";
     private static final String FILE_TYPE_AUDIO_EXTENSION = "3gp";
+    private static final String FILE_TYPE_VIDEO_EXTENSION = "mp4";
 
     private final SurveyManager surveyManager;
     private final RecordManager recordManager;
@@ -390,18 +391,17 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     private String determineFileAttributeExtension(FileAttributeDefinition def) {
-        return FILE_TYPE_AUDIO_EXTENSION;
-        /*
         CollectAnnotations.FileType fileType = ((CollectSurvey) def.getSurvey()).getAnnotations().getFileType(def);
         switch (fileType) {
             case IMAGE:
                 return FILE_TYPE_IMAGE_EXTENSION;
             case AUDIO:
                 return FILE_TYPE_AUDIO_EXTENSION;
+            case VIDEO:
+                return FILE_TYPE_VIDEO_EXTENSION;
             default:
                 return null;
         }
-        */
     }
 
     public double[] destination(UiCoordinateAttribute uiAttribute, double[] coordinate) {

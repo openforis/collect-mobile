@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
-import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.util.CollectPermissions;
@@ -49,7 +48,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupRemoveButton() {
-        Button button = (Button) inputView.findViewById(R.id.file_attribute_remove);
+        Button button = inputView.findViewById(R.id.file_attribute_remove);
         button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -79,7 +78,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupCaptureButton() {
-        Button button = (Button) inputView.findViewById(R.id.file_attribute_capture);
+        Button button = inputView.findViewById(R.id.file_attribute_capture);
         if (canCaptureImage()) {
             button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
             button.setOnClickListener(new View.OnClickListener() {
@@ -126,22 +125,13 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private boolean canShowGallery() {
-        Intent intent = showGalleryIntent();
-        return intent.resolveActivity(context.getPackageManager()) != null;
-    }
-
-    private Intent showGalleryIntent() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        return intent;
+        return canStartFileChooserActivity("image/*");
     }
 
     private void showGallery() {
         if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
-            Intent intent = showGalleryIntent();
-            context.startActivityForResult(Intent.createChooser(intent, "Select Image"), SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE);
+            startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE,"image/*");
         }
     }
 

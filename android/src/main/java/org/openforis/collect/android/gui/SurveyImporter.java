@@ -1,3 +1,4 @@
+
 package org.openforis.collect.android.gui;
 
 import android.content.Context;

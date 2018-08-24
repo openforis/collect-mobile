@@ -1,35 +1,18 @@
 package org.openforis.collect.android.gui.input;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.StrictMode;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
-import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
-import org.openforis.collect.android.gui.util.Attrs;
-import org.openforis.collect.android.gui.util.Dialogs;
-import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public abstract class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
 
     protected final File file;
-    protected boolean fileChanged;
+    private boolean fileChanged;
 
     public FileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -61,4 +44,23 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
         saveNode();
     }
 
+    protected void startFileChooserActivity(String title, int requestCode, String type, String... extraMimeTypes) {
+        Intent intent = createFileSelectorIntent(type, extraMimeTypes);
+        context.startActivityForResult(Intent.createChooser(intent, title), requestCode);
+    }
+
+    protected boolean canStartFileChooserActivity(String type) {
+        Intent intent = createFileSelectorIntent(type);
+        return intent.resolveActivity(context.getPackageManager()) != null;
+    }
+
+    private Intent createFileSelectorIntent(String type, String... extraMimeTypes) {
+        Intent intent = new Intent();
+        intent.setType(type);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        if (extraMimeTypes != null && extraMimeTypes.length > 0) {
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+        }
+        return intent;
+    }
 }

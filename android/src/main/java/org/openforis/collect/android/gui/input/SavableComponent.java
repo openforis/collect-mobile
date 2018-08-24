@@ -5,17 +5,30 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.UIFileAttributeDefinition;
+import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiBooleanAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
+import org.openforis.collect.android.viewmodel.UiDateAttribute;
+import org.openforis.collect.android.viewmodel.UiDoubleAttribute;
+import org.openforis.collect.android.viewmodel.UiFileAttribute;
+import org.openforis.collect.android.viewmodel.UiIntegerAttribute;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
+import org.openforis.collect.android.viewmodel.UiTextAttribute;
+import org.openforis.collect.android.viewmodel.UiTimeAttribute;
 
 import java.util.Map;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-
-import static org.openforis.collect.metamodel.CollectAnnotations.FileType.*;
 
 /**
  * @author Daniel Wiell
@@ -121,8 +134,6 @@ public abstract class SavableComponent {
         if (attribute instanceof UiBooleanAttribute)
             return new BooleanAttributeComponent((UiBooleanAttribute) attribute, surveyService, context);
         if (attribute instanceof UiFileAttribute) {
-            return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
-            /*
             switch (((UIFileAttributeDefinition) attribute.getDefinition()).getType()) {
                 case IMAGE:
                     return new ImageFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
@@ -130,7 +141,6 @@ public abstract class SavableComponent {
                     return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
                 case DOCUMENT:
             }
-            */
         }
         return new UnsupportedAttributeComponent(attribute, surveyService, context);
     }

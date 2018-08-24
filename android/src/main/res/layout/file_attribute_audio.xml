@@ -60,14 +60,16 @@
             android:id="@+id/select_file_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_file"
-            android:visibility="gone"/>
+            android:drawableTop="@drawable/ic_attach_file_white_24dp"
+            android:text="@string/file_attribute_audio_select_file" />
         <Button
             android:id="@+id/delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:drawableTop="@drawable/ic_delete_forever_white_24dp"
             android:text="@string/delete" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -77,6 +77,10 @@ public class AudioPlayer extends RelativeLayout {
                 + StringUtils.leftPad(String.valueOf(s), 2, '0');
     }
 
+    public boolean isPlaying() {
+        return playing;
+    }
+
     public void destroy() {
         if (mediaPlayer != null) {
             destroyMediaPlayer();
@@ -158,6 +162,7 @@ public class AudioPlayer extends RelativeLayout {
     public void pause() {
         if (playing) {
             playbackProgressHandler.removeCallbacks(playbackProgressUpdater);
+            mediaPlayer.pause();
             playing = false;
             updateViewState();
         }

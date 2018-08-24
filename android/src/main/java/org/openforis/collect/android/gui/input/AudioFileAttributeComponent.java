@@ -1,6 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
-import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -10,15 +10,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.AudioPlayer;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
+import java.io.File;
 import java.io.IOException;
 
 public class AudioFileAttributeComponent extends FileAttributeComponent {
@@ -57,12 +61,18 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         return inputView;
     }
 
-    @Override
-    public void onDeselect() {
+    private void reset() {
         if (audioPlayer != null) {
             audioPlayer.stop();
         }
         stopRecording();
+        resetRecordingChronometer();
+        updateViewState();
+    }
+
+    @Override
+    public void onDeselect() {
+        reset();
         super.onDeselect();
     }
 
@@ -130,6 +140,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
                         R.string.file_attribute_audio_delete_confirm_message,
                         new Runnable() {
                             public void run() {
+                                reset();
                                 removeFile();
                                 updateViewState();
                             }
@@ -147,7 +158,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         setupRecorder();
         if (mediaRecorder != null) {
             mediaRecorder.start();
-            recordingChronometer.setBase(SystemClock.elapsedRealtime());
+            resetRecordingChronometer();
             recordingChronometer.start();
             recording = true;
             updateViewState();
@@ -174,28 +185,35 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     private void selectFile() {
         if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setAudioChangedListener(this);
-            Intent intent = showFileSelectorIntent();
-            context.startActivityForResult(Intent.createChooser(intent, "Select Audio file"),
-                    SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE);
+            startFileChooserActivity("Select audio file", SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE,
+                "*/*");
         }
     }
 
-    private Intent showFileSelectorIntent() {
-        Intent intent = new Intent();
-        intent.setType("file/");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        return intent;
+    public void audioSelected(Uri uri) {
+        try {
+            File selectedFile = AndroidFiles.getFileByUri(context, uri);
+            if (selectedFile != null && "3gp".equalsIgnoreCase(FilenameUtils.getExtension(selectedFile.getName()))) {
+                reset();
+                FileUtils.copyFile(selectedFile, file);
+                fileChanged();
+                updateViewState();
+            } else {
+                Dialogs.alert(context, R.string.warning, R.string.file_attribute_audio_wrong_file_type_selected);
+            }
+        } catch(Exception e) {}
     }
 
-    public void audioSelected(Uri audioUri) {
-        System.out.print("ciao");
+    private void resetRecordingChronometer() {
+        recordingChronometer.setBase(SystemClock.elapsedRealtime());
     }
 
     private void updateViewState() {
+        boolean playing = audioPlayer != null && audioPlayer.isPlaying();
         Views.toggleVisibility(recordBtn, !recording);
         Views.toggleVisibility(stopBtn, recording);
         Views.toggleVisibility(audioPlayer, file.exists() && !recording);
-        Views.toggleVisibility(deleteBtn, file.exists() && !recording);
-        Views.toggleVisibility(selectFileBtn, !recording);
+        Views.toggleVisibility(deleteBtn, file.exists() && !recording && !playing);
+        Views.toggleVisibility(selectFileBtn, !recording && !playing);
     }
 }

@@ -24,6 +24,7 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
@@ -124,49 +125,20 @@ public class SurveyListActivity extends BaseActivity {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
-                    String path = getFilePathByUri(data.getData());
-                    importSurvey(path);
+                    File file = AndroidFiles.getFileByUri(this, data.getData());
+                    if (file != null) {
+                        importSurvey(file.getAbsolutePath());
+                    } else {
+                        throw new IllegalStateException(String.format(
+                                "Failed to import survey; could not determine file path for URI: %s", data.getData()));
+                    }
                 }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String getFilePathByUri(Uri uri) {
-        String path = getExistingLocalFilePathFromUri(uri);
-        if (path != null)
-            return path;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
-                File file = new File(downloadDir, name);
-                try {
-                    InputStream inputStream = getContentResolver().openInputStream(uri);
-                    if (inputStream == null)
-                        throw new IllegalStateException("Failed to import survey");
-                    IOUtils.copy(inputStream, new FileOutputStream(file));
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                cursor.close();
-                return file.getAbsolutePath();
-            }
-        }
-        throw new IllegalStateException(String.format("Failed to import survey; could not determine file path for URI: %s", uri));
-    }
 
-    @Nullable
-    private String getExistingLocalFilePathFromUri(Uri uri) {
-        try {
-            String path = FileUtils.getPath(this, uri);
-            return path != null && new File(path).exists() ? path : null;
-        } catch(Exception e) {
-            return null;
-        }
-    }
 
     protected static void showImportDialog(Activity context) {
         if (CollectPermissions.checkStoragePermissionOrRequestIt(context)) {

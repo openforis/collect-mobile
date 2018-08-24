@@ -180,6 +180,8 @@
     <string name="file_attribute_remove_image">Remove image</string>
     <string name="file_attribute_audio_overwrite_confirm_message">Overwrite recorded audio?</string>
     <string name="file_attribute_audio_delete_confirm_message">Delete captured audio?</string>
+    <string name="file_attribute_audio_select_file">Import from file</string>
+    <string name="file_attribute_audio_wrong_file_type_selected">Wrong audio file selected: only 3gp files are supported</string>
 
     <string name="entity_list_modified">Modified</string>
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>

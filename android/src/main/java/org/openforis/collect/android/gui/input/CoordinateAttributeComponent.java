@@ -25,6 +25,7 @@ import android.widget.ToggleButton;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.detail.NavigationDialogFragment;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
@@ -92,12 +93,14 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
     private void requestLocation() {
         locationProvider.start();
         requestingLocation = true;
+        Activities.keepScreenOn(context);
     }
 
     private void stopLocationRequest() {
         locationProvider.stop();
         vh.button.setChecked(false);
         requestingLocation = false;
+        Activities.clearKeepScreenOn(context);
     }
 
     private double[] transformToSelectedSrs(Location location) {

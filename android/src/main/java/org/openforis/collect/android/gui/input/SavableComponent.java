@@ -62,7 +62,7 @@ public abstract class SavableComponent {
 
     protected abstract void resetValidationErrors();
 
-    public final void onSelect() {
+    public void onSelect() {
         selected = true;
         validateNode();
     }

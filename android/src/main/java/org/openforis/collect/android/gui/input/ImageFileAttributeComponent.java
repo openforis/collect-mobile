@@ -82,7 +82,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private void setupRemoveButton() {
         removeButton = inputView.findViewById(R.id.file_attribute_remove);
-        removeButton.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.cameraIcon), null, null, null);
+        removeButton.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.deleteIcon), null, null, null);
         removeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showRemoveDialog();
@@ -158,7 +158,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return canStartFileChooserActivity(getMediaType());
     }
 
-    private void showGallery() {
+    protected void showGallery() {
         if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
             startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());

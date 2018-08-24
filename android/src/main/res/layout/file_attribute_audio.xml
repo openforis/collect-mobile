@@ -5,71 +5,67 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/recording_container"
+        android:id="@+id/file_attribute_audio_recording_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Chronometer
-            android:id="@+id/recording_chronometer"
+            android:id="@+id/file_attribute_audio_recording_chronometer"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="40dp"
-            />
+            android:textSize="40dp" />
 
         <LinearLayout
-            android:id="@+id/rec_stop_container"
+            android:id="@+id/file_attribute_audio_rec_stop_container"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/recording_chronometer"
+            android:layout_below="@id/file_attribute_audio_recording_chronometer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/record_btn"
+                android:id="@+id/file_attribute_audio_record_btn"
                 android:drawableTop="@drawable/ic_record_red_48dp"
-                android:text="@string/record"
-                />
+                android:text="@string/record" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/stop_btn"
+                android:id="@+id/file_attribute_audio_stop_btn"
                 android:drawableTop="@drawable/ic_stop_white_48dp"
                 android:text="@string/stop"
-                android:visibility="gone"
-                />
-
+                android:visibility="gone" />
         </LinearLayout>
 
     </RelativeLayout>
 
     <org.openforis.collect.android.gui.AudioPlayer
-        android:id="@+id/audio_player"
+        android:id="@+id/file_attribute_audio_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end">
-        <Button
-            android:id="@+id/select_file_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableTop="@drawable/ic_attach_file_white_24dp"
-            android:text="@string/file_attribute_audio_select_file" />
-        <Button
-            android:id="@+id/delete_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:drawableTop="@drawable/ic_delete_forever_white_24dp"
-            android:text="@string/delete" />
+        android:layout_marginTop="30dp">
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/file_attribute_audio_select_file_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_file"
+            android:layout_alignParentLeft="true" />
+
+        <Button
+            android:id="@+id/file_attribute_audio_delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/delete" />
+    </RelativeLayout>
 
 </LinearLayout>

@@ -32,7 +32,7 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
             ((SurveyNodeActivity) context).setVideoChangedListener(this);
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+            //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
             context.startActivityForResult(intent, SurveyNodeActivity.VIDEO_CAPTURE_REQUEST_CODE);
         }
     }
@@ -47,26 +47,30 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
         return getVideoThumbnail();
     }
 
-    public void videoChanged() {
-        fileChanged();
+    @Override
+    protected void showGallery() {
+        if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
+            ((SurveyNodeActivity) context).setVideoChangedListener(this);
+            startFileChooserActivity("Select video", SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE, getMediaType());
+        }
     }
 
     public void videoCaptured(Uri uri) {
         if (AndroidFiles.copyUriContentToFile(context, uri, file)) {
-            videoChanged();
+            fileChanged();
         } else {
             Dialogs.alert(context, R.string.warning, R.string.file_attribute_capture_video_error);
         }
     }
 
     public void videoSelected(Uri uri) {
-
+        videoCaptured(uri);
     }
 
     private Bitmap getVideoThumbnail() {
         Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(file.getAbsolutePath(),
                 MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-        return scaleImage(bitmap);
+        return bitmap == null ? null : scaleImage(bitmap);
     }
 
 }

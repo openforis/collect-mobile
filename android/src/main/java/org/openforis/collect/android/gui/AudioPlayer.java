@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Views;
 
 import java.io.File;
@@ -21,6 +22,7 @@ public class AudioPlayer extends RelativeLayout {
     private static final int PLAYBACK_SEEK_BAR_UPDATE_DELAY = 50;
     private static final String DEFAULT_PROGRESS_TEXT = "00:00";
 
+    private View view;
     private File file;
     private MediaPlayer mediaPlayer;
     private Button playBtn, pauseBtn;
@@ -41,32 +43,14 @@ public class AudioPlayer extends RelativeLayout {
 
     public AudioPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
-    }
 
-    private void init(Context context, AttributeSet attrs) {
-        View view = inflate(context, R.layout.audio_player, this);
-        this.playBtn = view.findViewById(R.id.play_btn);
-        this.pauseBtn = view.findViewById(R.id.pause_playback_btn);
-        this.seekBar = view.findViewById(R.id.playback_seek_bar);
-        this.progressTextView = view.findViewById(R.id.playback_progress_text);
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    mediaPlayer.seekTo(progress);
-                }
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+        view = inflate(context, R.layout.audio_player, this);
 
         setupPlayButton();
         setupPausePlaybackButton();
+        setupSeekBar();
+
+        this.progressTextView = view.findViewById(R.id.playback_progress_text);
     }
 
     private static String toTime(int millis) {
@@ -95,6 +79,7 @@ public class AudioPlayer extends RelativeLayout {
     }
 
     private void setupPlayButton() {
+        playBtn = view.findViewById(R.id.play_btn);
         playBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 start();
@@ -103,9 +88,27 @@ public class AudioPlayer extends RelativeLayout {
     }
 
     private void setupPausePlaybackButton() {
+        pauseBtn = view.findViewById(R.id.pause_playback_btn);
         pauseBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 pause();
+            }
+        });
+    }
+
+    private void setupSeekBar() {
+        seekBar = view.findViewById(R.id.playback_seek_bar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    mediaPlayer.seekTo(progress);
+                }
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
     }
@@ -144,6 +147,9 @@ public class AudioPlayer extends RelativeLayout {
         playbackProgressHandler.postDelayed(playbackProgressUpdater, 0);
 
         playing = true;
+
+        Activities.keepScreenOn(getContext());
+
         updateViewState();
     }
 
@@ -156,6 +162,9 @@ public class AudioPlayer extends RelativeLayout {
             destroyMediaPlayer();
         }
         playing = false;
+
+        Activities.clearKeepScreenOn(getContext());
+
         updateViewState();
     }
 

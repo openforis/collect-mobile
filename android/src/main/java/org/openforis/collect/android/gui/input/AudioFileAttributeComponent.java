@@ -15,7 +15,9 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.AudioPlayer;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CollectPermissions;
@@ -45,7 +47,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         setupSelectFileButton();
         setupDeleteButton();
 
-        audioPlayer = inputView.findViewById(R.id.audio_player);
+        audioPlayer = inputView.findViewById(R.id.file_attribute_audio_player);
 
         if (file.exists()) {
             audioPlayer.setSource(file);
@@ -89,7 +91,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupRecordButton() {
-        recordBtn = inputView.findViewById(R.id.record_btn);
+        recordBtn = inputView.findViewById(R.id.file_attribute_audio_record_btn);
         recordBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (CollectPermissions.checkRecordAudioPermissionOrRequestIt(context)) {
@@ -110,7 +112,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupStopRecordingButton() {
-        stopBtn = inputView.findViewById(R.id.stop_btn);
+        stopBtn = inputView.findViewById(R.id.file_attribute_audio_stop_btn);
         stopBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 stopRecording();
@@ -119,11 +121,13 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupRecordingChronometer() {
-        recordingChronometer = inputView.findViewById(R.id.recording_chronometer);
+        recordingChronometer = inputView.findViewById(R.id.file_attribute_audio_recording_chronometer);
     }
 
     private void setupSelectFileButton() {
-        selectFileBtn = inputView.findViewById(R.id.select_file_btn);
+        selectFileBtn = inputView.findViewById(R.id.file_attribute_audio_select_file_btn);
+        selectFileBtn.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.openIcon), null, null, null);
+
         selectFileBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 selectFile();
@@ -132,7 +136,8 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupDeleteButton() {
-        deleteBtn = inputView.findViewById(R.id.delete_btn);
+        deleteBtn = inputView.findViewById(R.id.file_attribute_audio_delete_btn);
+        deleteBtn.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.deleteIcon), null, null, null);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Dialogs.confirm(context, R.string.confirm_label,
@@ -159,6 +164,9 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
             resetRecordingChronometer();
             recordingChronometer.start();
             recording = true;
+
+            Activities.keepScreenOn(context);
+
             updateViewState();
         }
     }
@@ -174,6 +182,8 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
 
             audioPlayer.setSource(file);
             audioPlayer.prepare();
+
+            Activities.clearKeepScreenOn(context);
 
             fileChanged();
         }

@@ -18,6 +18,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="select_file">Select file</string>
+    <string name="delete">Delete</string>
 
     <string name="warning">Warning</string>
 
@@ -167,7 +168,6 @@
     <string name="import_demo_processing_title">Importing demo survey</string>
 
     <string name="amount_selected">%d selected.</string>
-    <string name="delete">Delete</string>
     <string name="delete_records_title">Delete records</string>
     <string name="delete_entities_title">Delete records</string>
     <string name="delete_node_confirm_message">You are about to delete %d %s.</string>
@@ -176,7 +176,6 @@
     <string name="file_attribute_capture">Capture</string>
     <string name="file_attribute_captured_file_overwrite_confirm_message">Capture a new file and overwrite the existing one?</string>
     <string name="file_attribute_capture_image_error">Error capturing image: %s</string>
-    <string name="file_attribute_select_image">Select image</string>
     <string name="file_attribute_select_image_error">Error selecting image: %s</string>
     <string name="file_attribute_image_delete_confirm_message">Delete the uploaded image?</string>
     <string name="file_attribute_audio_overwrite_confirm_message">Overwrite recorded audio?</string>

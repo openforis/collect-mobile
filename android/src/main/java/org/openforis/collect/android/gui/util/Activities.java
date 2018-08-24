@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import static android.content.Intent.*;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 /**
  * @author Stefano Ricci
@@ -50,6 +51,18 @@ public abstract class Activities {
         } else {
             Object val = extras.get(key);
             return val == null ? defaultValue : (T) val;
+        }
+    }
+
+    public static void keepScreenOn(Context context) {
+        if (context instanceof Activity) {
+            ((Activity) context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    public static void clearKeepScreenOn(Context context) {
+        if (context instanceof Activity) {
+            ((Activity) context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 }

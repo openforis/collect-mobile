@@ -23,7 +23,13 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
     }
 
     @Override
-    protected void captureImage() {
+    protected boolean canCapture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        return takePictureIntent.resolveActivity(context.getPackageManager()) != null;
+    }
+
+    @Override
+    protected void capture() {
         if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution to prevent FileUriExposedException
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -43,8 +49,10 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
     }
 
     @Override
-    protected Bitmap getImageThumbnail() {
-        return getVideoThumbnail();
+    protected Bitmap getFileThumbnail() {
+        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(file.getAbsolutePath(),
+                MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
+        return bitmap == null ? null : resizeImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
     }
 
     @Override
@@ -66,11 +74,4 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
     public void videoSelected(Uri uri) {
         videoCaptured(uri);
     }
-
-    private Bitmap getVideoThumbnail() {
-        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(file.getAbsolutePath(),
-                MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-        return bitmap == null ? null : scaleImage(bitmap);
-    }
-
 }

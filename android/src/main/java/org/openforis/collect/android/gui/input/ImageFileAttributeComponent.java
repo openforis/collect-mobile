@@ -25,13 +25,14 @@ import java.io.IOException;
 
 public class ImageFileAttributeComponent extends FileAttributeComponent {
 
-    public static final int MAX_DISPLAY_WIDTH = 375;
-    public static final int MAX_DISPLAY_HEIGHT = 400;
-    protected ImageView imageView;
+    private static final int MAX_DISPLAY_WIDTH = 375;
+    private static final int MAX_DISPLAY_HEIGHT = 500;
+
     private View inputView;
     private Button removeButton;
+    private ImageView thumbnailImageView;
 
-    public ImageFileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
+    ImageFileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
 
         inputView = context.getLayoutInflater().inflate(R.layout.file_attribute_image, null);
@@ -41,20 +42,23 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         updateViewState();
     }
 
-    protected void setupUiComponents() {
-        imageView = inputView.findViewById(R.id.file_attribute_image);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startShowImageActivity();
-            }
-        });
-
+    private void setupUiComponents() {
+        setupImageView();
         setupCaptureButton();
         setupGalleryButton();
         setupRemoveButton();
     }
 
-    protected void startShowImageActivity() {
+    private void setupImageView() {
+        thumbnailImageView = inputView.findViewById(R.id.file_attribute_image);
+        thumbnailImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startShowImageActivity();
+            }
+        });
+    }
+
+    private void startShowImageActivity() {
         //TODO find nicer solution to prevent FileUriExposedException
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -100,12 +104,12 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private void setupCaptureButton() {
         Button button = inputView.findViewById(R.id.file_attribute_capture);
-        if (canCaptureImage()) {
+        if (canCapture()) {
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Runnable captureImageRunnable = new Runnable() {
                         public void run() {
-                            captureImage();
+                            capture();
                         }
                     };
                     if (file != null && file.exists()) {
@@ -121,12 +125,12 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         }
     }
 
-    private boolean canCaptureImage() {
+    protected boolean canCapture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         return takePictureIntent.resolveActivity(context.getPackageManager()) != null;
     }
 
-    protected void captureImage() {
+    protected void capture() {
         if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution to prevent FileUriExposedException
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -164,7 +168,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
             startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
         }
     }
-
+    /*
     public void imageCaptured(Bitmap bitmap) {
         try {
             saveImage(bitmap);
@@ -174,6 +178,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
                     context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
         }
     }
+    */
 
     public void imageSelected(Uri imageUri) {
         try {
@@ -186,27 +191,27 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         }
     }
 
-    public void saveImage(Bitmap bitmap) throws IOException {
+    private void saveImage(Bitmap bitmap) throws IOException {
         FileOutputStream fo = new FileOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
         fo.close();
     }
 
-    protected void showThumbnail() {
-        Views.show(imageView);
-        Bitmap bitmap = getImageThumbnail();
-        imageView.setImageBitmap(bitmap);
+    private void showThumbnail() {
+        Views.show(thumbnailImageView);
+        Bitmap bitmap = getFileThumbnail();
+        thumbnailImageView.setImageBitmap(bitmap);
     }
 
-    protected void hideThumbnail() {
-        Views.hide(imageView);
+    private void hideThumbnail() {
+        Views.hide(thumbnailImageView);
     }
 
-    protected Bitmap getImageThumbnail() {
-        return scaleImage(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+    protected Bitmap getFileThumbnail() {
+        return resizeImage(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
     }
 
-    private Bitmap scaleImage(String filePath, int maxWidth, int maxHeight) {
+    private Bitmap resizeImage(String filePath, int maxWidth, int maxHeight) {
         BitmapFactory.Options bounds = new BitmapFactory.Options();
         bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, bounds);
@@ -219,24 +224,15 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return BitmapFactory.decodeFile(filePath, resample);
     }
 
-    protected Bitmap scaleImage(Bitmap bitmap) {
-        return scaleImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
-    }
-
-    protected Bitmap scaleImage(Bitmap bitmap, int maxWidth, int maxHeight) {
+    Bitmap resizeImage(Bitmap bitmap, int maxWidth, int maxHeight) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        boolean withinBounds = width <= maxWidth && height <= maxHeight;
-        if (withinBounds) {
-            return bitmap;
-        } else {
-            float ratio = Math.min(
-                    (float) maxWidth / width,
-                    (float) maxHeight / height);
-            int scaledWith = Math.round((float) ratio * width);
-            int scaledHeight = Math.round((float) ratio * height);
-            return Bitmap.createScaledBitmap(bitmap, scaledWith, scaledHeight, false);
-        }
+        float ratio = Math.min(
+                (float) maxWidth / width,
+                (float) maxHeight / height);
+        int scaledWith = Math.round(ratio * width);
+        int scaledHeight = Math.round(ratio * height);
+        return Bitmap.createScaledBitmap(bitmap, scaledWith, scaledHeight, false);
     }
 
     protected void updateViewState() {

@@ -1,8 +1,7 @@
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
     <Button
             android:id="@+id/file_attribute_capture"
@@ -10,19 +9,22 @@
             android:drawableTop="@drawable/ic_action_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_centerHorizontal="true" />
 
     <ImageView
         android:id="@+id/file_attribute_image"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="true"/>
+        android:minHeight="40dp"
+        android:adjustViewBounds="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/file_attribute_capture"/>
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end">
+        android:layout_below="@id/file_attribute_image">
 
         <Button
             android:id="@+id/file_attribute_select"
@@ -42,4 +44,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

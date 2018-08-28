@@ -224,6 +224,10 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return BitmapFactory.decodeFile(filePath, resample);
     }
 
+    Bitmap scaleToFit(Bitmap bitmap) {
+        return resizeImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+    }
+
     Bitmap resizeImage(Bitmap bitmap, int maxWidth, int maxHeight) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();

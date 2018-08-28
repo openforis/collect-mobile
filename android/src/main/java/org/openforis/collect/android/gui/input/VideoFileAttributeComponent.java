@@ -52,7 +52,7 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
     protected Bitmap getFileThumbnail() {
         Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(file.getAbsolutePath(),
                 MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-        return bitmap == null ? null : resizeImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
+        return bitmap == null ? null : scaleToFit(bitmap);
     }
 
     @Override

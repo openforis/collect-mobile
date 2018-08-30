@@ -12,6 +12,7 @@
     <string name="import_new_survey">Import New Survey</string>
     <string name="import_demo_survey">Import Demo Survey</string>
 
+    <string name="ok">Ok</string>
     <string name="yes">Yes</string>
     <string name="record">Record</string>
     <string name="stop">Stop</string>
@@ -21,6 +22,10 @@
     <string name="delete">Delete</string>
 
     <string name="warning">Warning</string>
+
+    <string name="permission_camera_rationale">Access to the camera is needed to continue</string>
+    <string name="no_camera_permission">Collect cannot run because it does not have the camera permission. The application will now exit.</string>
+    <string name="low_storage_error">Low device storage</string>
 
     <string name="app_name">Collect</string>
     <string name="survey_list">Surveys</string>
@@ -200,6 +205,15 @@
     <string name="report_error_dialog_message">Seems like Open Foris Collect Mobile faced an unexpected error.
         \n\nWould you like to report it to the developer team?
         \n\n(Private information won\'t be shared)</string>
+
+    <!-- BARCODE -->
+    <string name="barcode_read_title">Read Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Barcode read successfully</string>
+    <string name="barcode_failure">No barcode captured</string>
+    <string name="barcode_error">"Error reading barcode: %1$s"</string>
+
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

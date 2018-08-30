@@ -59,6 +59,9 @@
             android:label="@string/action_submit_data_to_collect"
             android:name=".android.gui.SubmitDataToCollectActivity"/>
 
+        <activity android:label="@string/barcode_read_title"
+            android:name=".android.gui.barcode.BarcodeCaptureActivity"/>
+
         <activity
                 android:name="com.ipaulpro.afilechooser.FileChooserActivity"
                 android:enabled="@bool/use_activity"

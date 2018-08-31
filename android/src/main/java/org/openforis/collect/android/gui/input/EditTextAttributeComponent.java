@@ -19,11 +19,20 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
  */
 public abstract class EditTextAttributeComponent<T extends UiAttribute> extends AttributeComponent<T> {
 
-    private final EditText editText;
+    protected EditText editText;
 
     protected EditTextAttributeComponent(T attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
+        initializeInputView();
+    }
+
+    protected void initializeInputView() {
+        initializeEditText();
+    }
+
+    protected EditText initializeEditText() {
         editText = createEditText();
+        return editText;
     }
 
     protected abstract String attributeValue();
@@ -53,7 +62,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         }
     }
 
-    protected final EditText getEditText() {
+    protected EditText getEditText() {
         return editText;
     }
 

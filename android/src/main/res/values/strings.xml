@@ -84,6 +84,7 @@
     <string name="label_distance">Distance</string>
     <string name="label_destination">Destination</string>
     <string name="label_empty">…</string>
+    <string name="label_edit">Edit</string>
 
     <string name="hint_code_autocomplete">- Press space to show list of values -</string>
     <string name="hint_code_qualifier_specify">- Specify -</string>
@@ -207,6 +208,8 @@
         \n\n(Private information won\'t be shared)</string>
 
     <!-- BARCODE -->
+    <string name="barcode_capture_btn_label">Scan</string>
+    <string name="barcode_capture_toast">Point the camera to the barcode. Pinch/Stretch to zoom</string>
     <string name="barcode_read_title">Read Barcode</string>
     <string name="auto_focus">Auto Focus</string>
     <string name="use_flash">Use Flash</string>

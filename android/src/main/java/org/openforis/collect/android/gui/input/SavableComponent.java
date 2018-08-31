@@ -23,7 +23,9 @@ import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 import org.openforis.collect.android.viewmodel.UiTextAttribute;
+import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiTimeAttribute;
+import org.openforis.collect.metamodel.CollectAnnotations;
 
 import java.util.Map;
 
@@ -106,6 +108,10 @@ public abstract class SavableComponent {
         return context.getResources().getString(resourceId);
     }
 
+    protected FragmentActivity getContext() {
+        return context;
+    }
+
     public static <T extends UiNode> SavableComponent create(T node, SurveyService surveyService, FragmentActivity context) {
         if (node instanceof UiAttribute)
             return createAttributeComponent((UiAttribute) node, surveyService, context);
@@ -115,8 +121,13 @@ public abstract class SavableComponent {
     }
 
     private static AttributeComponent createAttributeComponent(UiAttribute attribute, SurveyService surveyService, FragmentActivity context) {
-        if (attribute instanceof UiTextAttribute)
-            return new TextAttributeComponent((UiTextAttribute) attribute, surveyService, context);
+        if (attribute instanceof UiTextAttribute) {
+            if (((UiTextAttributeDefinition) attribute.getDefinition()).getInputType() == CollectAnnotations.TextInput.BARCODE) {
+                return new BarcodeTextAttributeComponent((UiTextAttribute) attribute, surveyService, context);
+            } else {
+                return new TextAttributeComponent((UiTextAttribute) attribute, surveyService, context);
+            }
+        }
         if (attribute instanceof UiIntegerAttribute)
             return new IntegerAttributeComponent((UiIntegerAttribute) attribute, surveyService, context);
         if (attribute instanceof UiDoubleAttribute)

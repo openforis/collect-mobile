@@ -13,6 +13,7 @@ import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
+import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 import org.openforis.collect.metamodel.CollectAnnotations;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
@@ -27,6 +28,7 @@ import org.openforis.idm.metamodel.NodeLabel;
 import org.openforis.idm.metamodel.Prompt;
 import org.openforis.idm.metamodel.SpatialReferenceSystem;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
+import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.validation.Check;
 import org.openforis.idm.metamodel.validation.DistanceCheck;
 import org.openforis.idm.model.Node;
@@ -120,43 +122,48 @@ public class Definitions {
                 addNodeDefinition(childDefinition);
     }
 
-    private Definition createDefinition(NodeDefinition nodeDefinition) {
-        String id = nodeDefinitionId(nodeDefinition);
-        String name = nodeDefinition.getName();
-        String label = label(nodeDefinition);
-        Integer keyOfDefinitionId = getKeyOfDefinitionId(nodeDefinition);
-        boolean required = isRequired(nodeDefinition);
-        if (nodeDefinition instanceof AttributeDefinition) {
-            boolean calculated = ((AttributeDefinition) nodeDefinition).isCalculated();
-            if (nodeDefinition instanceof TaxonAttributeDefinition)
+    private Definition createDefinition(NodeDefinition def) {
+        String id = nodeDefinitionId(def);
+        String name = def.getName();
+        String label = label(def);
+        Integer keyOfDefinitionId = getKeyOfDefinitionId(def);
+        boolean required = isRequired(def);
+        if (def instanceof AttributeDefinition) {
+            boolean calculated = ((AttributeDefinition) def).isCalculated();
+            if (def instanceof TaxonAttributeDefinition)
                 return new UiTaxonDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        ((TaxonAttributeDefinition) nodeDefinition).getTaxonomy(),
-                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
-            else if (nodeDefinition instanceof CoordinateAttributeDefinition) {
-                CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) nodeDefinition;
+                        ((TaxonAttributeDefinition) def).getTaxonomy(),
+                        nodeDescription(def), nodePrompt(def), required);
+            else if (def instanceof CoordinateAttributeDefinition) {
+                CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) def;
                 return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        spatialReferenceSystems, nodeDescription(nodeDefinition),
-                        nodePrompt(nodeDefinition), required,
+                        spatialReferenceSystems, nodeDescription(def),
+                        nodePrompt(def), required,
                         isDestinationPointSpecified(coordinateDefn),
                         collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
-            } else if (nodeDefinition instanceof CodeAttributeDefinition) {
-                EntityDefinition parentDef = nodeDefinition.getParentEntityDefinition();
+            } else if (def instanceof CodeAttributeDefinition) {
+                EntityDefinition parentDef = def.getParentEntityDefinition();
                 boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()
-                        && ((CodeAttributeDefinition) nodeDefinition).isKey();
+                        && ((CodeAttributeDefinition) def).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required,
-                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) nodeDefinition), enumerator);
-            } else if (nodeDefinition instanceof FileAttributeDefinition) {
-                CollectAnnotations annotations = ((CollectSurvey) nodeDefinition.getSurvey()).getAnnotations();
-                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) nodeDefinition);
+                        nodeDescription(def), nodePrompt(def), required,
+                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) def), enumerator);
+            } else if (def instanceof FileAttributeDefinition) {
+                CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
+                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) def);
                 return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required, fileType);
+                        nodeDescription(def), nodePrompt(def), required, fileType);
+            } else if (def instanceof TextAttributeDefinition) {
+                CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
+                CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) def);
+                return new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                        inputType, nodeDescription(def), nodePrompt(def), required);
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        nodeDescription(nodeDefinition), nodePrompt(nodeDefinition), required);
+                        nodeDescription(def), nodePrompt(def), required);
         } else {
-            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDefinition),
-                    nodePrompt(nodeDefinition), required);
+            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(def),
+                    nodePrompt(def), required);
         }
     }
 

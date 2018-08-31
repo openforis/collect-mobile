@@ -33,7 +33,11 @@ public abstract class CollectPermissions {
     }
 
     public static boolean checkCameraPermissionOrRequestIt(Activity context) {
-        return checkPermissionsOrRequestThem(context, PERMISSIONS_REQUEST_CAMERA_CODE, Manifest.permission.CAMERA);
+        return checkCameraPermissionOrRequestIt(context, PERMISSIONS_REQUEST_CAMERA_CODE);
+    }
+
+    public static boolean checkCameraPermissionOrRequestIt(Activity context, int code) {
+        return checkPermissionsOrRequestThem(context, code, Manifest.permission.CAMERA);
     }
 
     public static boolean checkInternetPermissionOrRequestIt(Activity context) {

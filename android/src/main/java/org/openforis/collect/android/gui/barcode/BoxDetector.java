@@ -14,21 +14,19 @@ import java.io.ByteArrayOutputStream;
 
 public class BoxDetector extends Detector {
     private Detector mDelegate;
-    private int left, top, right, bottom;
+    //rect boundaries
+    private Rect croppingRect;
 
-    public BoxDetector(Detector delegate, int left, int top, int right, int bottom) {
+    public BoxDetector(Detector delegate) {
         mDelegate = delegate;
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
+    }
+
+    public void setCroppingRect(Rect rect) {
+        this.croppingRect = rect;
     }
 
     public SparseArray detect(Frame frame) {
-        int width = frame.getMetadata().getWidth();
-        int height = frame.getMetadata().getHeight();
-
-        Bitmap bitmap = toBitmap(frame, width, height);
+        Bitmap bitmap = crop(frame);
 
         Frame croppedFrame =
                 new Frame.Builder()
@@ -39,10 +37,13 @@ public class BoxDetector extends Detector {
         return mDelegate.detect(croppedFrame);
     }
 
-    private Bitmap toBitmap(Frame frame, int width, int height) {
+    private Bitmap crop(Frame frame) {
+        int width = frame.getMetadata().getWidth();
+        int height = frame.getMetadata().getHeight();
+
         YuvImage yuvImage = new YuvImage(frame.getGrayscaleImageData().array(), ImageFormat.NV21, width, height, null);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(left, top, right, bottom), 100, byteArrayOutputStream);
+        yuvImage.compressToJpeg(croppingRect, 100, byteArrayOutputStream);
         byte[] jpegArray = byteArrayOutputStream.toByteArray();
         Bitmap bitmap = BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
         return bitmap;

@@ -10,7 +10,7 @@ import android.view.View;
 
 public class BarcodeScannerAreaLimit extends View {
 
-    private Rect rect;
+    private Rect croppingRect;
 
     public BarcodeScannerAreaLimit(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -18,31 +18,30 @@ public class BarcodeScannerAreaLimit extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int topBorder = Math.round((float) (canvas.getHeight() * 0.4));
-        int bottomBorder = Math.round((float) (canvas.getHeight() * 0.4));
-        int leftBorder = Math.round((float) (canvas.getWidth() * 0.1));
-        int rightBorder = leftBorder;
+        if (croppingRect != null) {
+            //draw a rectangle for the scanning area
+            Paint rectPaint = new Paint();
+            rectPaint.setColor(Color.YELLOW);
+            rectPaint.setStyle(Paint.Style.STROKE);
+            rectPaint.setStrokeWidth(4.0f);
+            canvas.drawRect(croppingRect, rectPaint);
 
-        //draw a rectangle for the scanning area
-        Rect rect = new Rect(leftBorder, topBorder, canvas.getWidth() - rightBorder, canvas.getHeight() - bottomBorder);
-        Paint rectPaint = new Paint();
-        rectPaint.setColor(Color.YELLOW);
-        rectPaint.setStyle(Paint.Style.STROKE);
-        rectPaint.setStrokeWidth(4.0f);
-        canvas.drawRect(rect, rectPaint);
-        this.rect = rect;
-
-        //draw a red line in the middle
-        Paint linePaint = new Paint();
-        linePaint.setColor(Color.RED);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeWidth(2.0f);
-        canvas.drawLine(leftBorder, topBorder + rect.height() / 2,
-                canvas.getWidth() - rightBorder, topBorder + rect.height() / 2,
-                linePaint);
+            //draw a red line in the middle
+            Paint linePaint = new Paint();
+            linePaint.setColor(Color.RED);
+            linePaint.setStyle(Paint.Style.STROKE);
+            linePaint.setStrokeWidth(2.0f);
+            canvas.drawLine(croppingRect.left, croppingRect.top + croppingRect.height() / 2,
+                    croppingRect.right, croppingRect.top + croppingRect.height() / 2,
+                    linePaint);
+        }
     }
 
-    public Rect getRect() {
-        return rect;
+    public Rect getCroppingRect() {
+        return croppingRect;
+    }
+
+    public void setCroppingRect(Rect croppingRect) {
+        this.croppingRect = croppingRect;
     }
 }

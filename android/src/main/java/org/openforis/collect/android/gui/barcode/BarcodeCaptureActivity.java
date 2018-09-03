@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,11 +35,11 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.FocusingProcessor;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -77,6 +76,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
+    private BoxDetector boxDetector;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -87,6 +87,16 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         setContentView(R.layout.barcode_capture);
 
         mPreview = findViewById(R.id.preview);
+        mPreview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            public void onLayoutChange(View view, int left, int top, int right, int bottom,
+                                       int leftWas, int topWas, int rightWas, int bottomWas) {
+                Rect croppingRect = createCroppingRect(left, top, right, bottom);
+                if (boxDetector != null) {
+                    boxDetector.setCroppingRect(croppingRect);
+                    mScannerAreaLimit.setCroppingRect(croppingRect);
+                }
+            }
+        });
         mGraphicOverlay = findViewById(R.id.graphicOverlay);
         mScannerAreaLimit = findViewById(R.id.barcode_area_limit);
 
@@ -104,6 +114,21 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         Snackbar.make(mGraphicOverlay, R.string.barcode_capture_toast,
                 Snackbar.LENGTH_LONG)
                 .show();
+
+
+    }
+
+    private Rect createCroppingRect(int parentLeft, int parentTop, int parentRight, int parentBottom) {
+        int height = parentBottom - parentTop;
+        int width = parentLeft - parentRight;
+        int topMargin = Math.round((float) (height * 0.4));
+        int bottomMargin = Math.round((float) (height * 0.4));
+        int leftMargin = Math.round((float) (width * 0.1));
+        int rightMargin = leftMargin;
+
+        //draw a rectangle for the scanning area
+        Rect rect = new Rect(leftMargin, topMargin, width - rightMargin, height - bottomMargin);
+        return rect;
     }
 
     @Override
@@ -133,11 +158,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
 
-        /*
-        Rect limitRect = mScannerAreaLimit.getRect();
-        BoxDetector boxDetector = new BoxDetector(barcodeDetector,
-                limitRect.left, limitRect.top, limitRect.right, limitRect.bottom);
-        */
+        boxDetector = new BoxDetector(barcodeDetector);
+
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<Barcode>(barcodeFactory).build());

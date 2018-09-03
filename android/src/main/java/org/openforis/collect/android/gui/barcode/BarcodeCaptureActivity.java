@@ -24,6 +24,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.vision.FocusingProcessor;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -69,6 +72,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
+    private BarcodeScannerAreaLimit mScannerAreaLimit;
 
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -84,6 +88,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
         mPreview = findViewById(R.id.preview);
         mGraphicOverlay = findViewById(R.id.graphicOverlay);
+        mScannerAreaLimit = findViewById(R.id.barcode_area_limit);
 
         // read parameters from the intent used to launch the activity.
         boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
@@ -127,6 +132,12 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
+
+        /*
+        Rect limitRect = mScannerAreaLimit.getRect();
+        BoxDetector boxDetector = new BoxDetector(barcodeDetector,
+                limitRect.left, limitRect.top, limitRect.right, limitRect.bottom);
+        */
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<Barcode>(barcodeFactory).build());

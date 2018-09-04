@@ -41,12 +41,15 @@ public class BoxDetector extends Detector {
         int width = frame.getMetadata().getWidth();
         int height = frame.getMetadata().getHeight();
 
+        if (width > croppingRect.width()) {
+            //TODO rotate rect
+        }
+
         YuvImage yuvImage = new YuvImage(frame.getGrayscaleImageData().array(), ImageFormat.NV21, width, height, null);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         yuvImage.compressToJpeg(croppingRect, 100, byteArrayOutputStream);
         byte[] jpegArray = byteArrayOutputStream.toByteArray();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
-        return bitmap;
+        return BitmapFactory.decodeByteArray(jpegArray, 0, jpegArray.length);
     }
 
     public boolean isOperational() {

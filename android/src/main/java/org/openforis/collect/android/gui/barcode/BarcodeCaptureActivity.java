@@ -76,7 +76,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
-    private BoxDetector boxDetector;
+    private BoxDetector barcodeDetector;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -91,8 +91,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
             public void onLayoutChange(View view, int left, int top, int right, int bottom,
                                        int leftWas, int topWas, int rightWas, int bottomWas) {
                 Rect croppingRect = createCroppingRect(left, top, right, bottom);
-                if (boxDetector != null) {
-                    boxDetector.setCroppingRect(croppingRect);
+                if (barcodeDetector != null) {
+                    barcodeDetector.setCroppingRect(croppingRect);
                     mScannerAreaLimit.setCroppingRect(croppingRect);
                 }
             }
@@ -120,9 +120,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     private Rect createCroppingRect(int parentLeft, int parentTop, int parentRight, int parentBottom) {
         int height = parentBottom - parentTop;
-        int width = parentLeft - parentRight;
-        int topMargin = Math.round((float) (height * 0.4));
-        int bottomMargin = Math.round((float) (height * 0.4));
+        int width = parentRight - parentLeft;
+        int topMargin = Math.round((float) (height * 0.3));
+        int bottomMargin = Math.round((float) (height * 0.3));
         int leftMargin = Math.round((float) (width * 0.1));
         int rightMargin = leftMargin;
 
@@ -156,9 +156,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         // is set to receive the barcode detection results, track the barcodes, and maintain
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
-
-        boxDetector = new BoxDetector(barcodeDetector);
+        barcodeDetector = new BoxDetector(new BarcodeDetector.Builder(context).build());
 
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
         barcodeDetector.setProcessor(

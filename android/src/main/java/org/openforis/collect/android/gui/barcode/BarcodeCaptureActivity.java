@@ -78,6 +78,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     private GestureDetector gestureDetector;
     private BoxDetector barcodeDetector;
 
+    private boolean graphicTrackerEnabled = true;
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -119,16 +121,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     }
 
     private Rect createCroppingRect(int parentLeft, int parentTop, int parentRight, int parentBottom) {
-        int height = parentBottom - parentTop;
-        int width = parentRight - parentLeft;
-        int topMargin = Math.round((float) (height * 0.3));
-        int bottomMargin = Math.round((float) (height * 0.3));
-        int leftMargin = Math.round((float) (width * 0.1));
-        int rightMargin = leftMargin;
+        int parentHeight = parentBottom - parentTop;
+        int parentWidth = parentRight - parentLeft;
 
-        //draw a rectangle for the scanning area
-        Rect rect = new Rect(leftMargin, topMargin, width - rightMargin, height - bottomMargin);
-        return rect;
+        int topMargin = Math.round((float) (parentHeight * 0.3));
+        int bottomMargin = Math.round((float) (parentHeight * 0.3));
+        int leftMargin = Math.round((float) (parentWidth * 0.1));
+        int rightMargin = Math.round((float) (parentWidth * 0.1));
+
+        return new Rect(leftMargin, topMargin, parentWidth - rightMargin, parentHeight - bottomMargin);
     }
 
     @Override
@@ -158,9 +159,11 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         // create a separate tracker instance for each barcode.
         barcodeDetector = new BoxDetector(new BarcodeDetector.Builder(context).build());
 
-        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
-        barcodeDetector.setProcessor(
-                new MultiProcessor.Builder<Barcode>(barcodeFactory).build());
+        if (graphicTrackerEnabled) {
+            BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
+            barcodeDetector.setProcessor(
+                    new MultiProcessor.Builder<Barcode>(barcodeFactory).build());
+        }
 
         if (!barcodeDetector.isOperational()) {
             // Note: The first time that an app using the barcode or face API is installed on a
@@ -423,6 +426,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        setResultAndFinish(barcode);
+        //setResultAndFinish(barcode);
     }
 }

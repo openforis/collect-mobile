@@ -18,6 +18,7 @@ package org.openforis.collect.android.gui.barcode;
 import android.Manifest;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,6 +29,8 @@ import android.view.ViewGroup;
 import com.google.android.gms.common.images.Size;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
@@ -39,6 +42,9 @@ public class CameraSourcePreview extends ViewGroup {
     private CameraSource mCameraSource;
 
     private GraphicOverlay mOverlay;
+    private BarcodeScannerAreaLimit mScannerAreaLimit;
+    private Rect croppingRect;
+    private List<CameraPreviewStatusUpdateListener> statusEventListeners = new ArrayList<CameraPreviewStatusUpdateListener>();
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,6 +55,9 @@ public class CameraSourcePreview extends ViewGroup {
         mSurfaceView = new SurfaceView(context);
         mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         addView(mSurfaceView);
+
+        mScannerAreaLimit = new BarcodeScannerAreaLimit(context);
+        addView(mScannerAreaLimit);
     }
 
     @RequiresPermission(Manifest.permission.CAMERA)
@@ -102,6 +111,12 @@ public class CameraSourcePreview extends ViewGroup {
                 mOverlay.clear();
             }
             mStartRequested = false;
+
+            notifyPreviewStarted();
+
+            if (croppingRect != null) {
+                mScannerAreaLimit.setCroppingRect(croppingRect);
+            }
         }
     }
 
@@ -185,5 +200,24 @@ public class CameraSourcePreview extends ViewGroup {
 
         Log.d(TAG, "isPortraitMode returning false by default");
         return false;
+    }
+
+    private void notifyPreviewStarted() {
+        for (CameraPreviewStatusUpdateListener eventListener: statusEventListeners) {
+            eventListener.onPreviewStarted();
+        }
+    }
+
+    public void addStatusEventListener(CameraPreviewStatusUpdateListener eventListener) {
+        statusEventListeners.add(eventListener);
+    }
+
+    public void setCroppingRect(Rect croppingRect) {
+        this.croppingRect = croppingRect;
+    }
+
+    public interface CameraPreviewStatusUpdateListener {
+
+        void onPreviewStarted();
     }
 }

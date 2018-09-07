@@ -27,13 +27,15 @@ public class BoxDetector extends Detector<Barcode> {
     }
 
     public SparseArray detect(Frame frame) {
+        /*
         Frame croppedFrame = this.croppingRect == null ? frame
                 : new Frame.Builder()
                         .setBitmap(crop(frame))
                         .setRotation(frame.getMetadata().getRotation())
                         .build();
-
-        return mDelegate.detect(croppedFrame);
+        Bitmap originalBitmap = frame.getBitmap();
+        */
+        return mDelegate.detect(frame);
     }
 
     private Bitmap crop(Frame frame) {
@@ -61,7 +63,7 @@ public class BoxDetector extends Detector<Barcode> {
 
     @NonNull
     private Rect rotateRectClockwise(Rect rect) {
-        return new Rect(rect.bottom, rect.left, rect.top, rect.right);
+        return new Rect(rect.top, rect.left, rect.bottom, rect.right);
     }
 
     public boolean isOperational() {

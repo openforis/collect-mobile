@@ -12,6 +12,10 @@ public class BarcodeScannerAreaLimit extends View {
 
     private Rect croppingRect;
 
+    public BarcodeScannerAreaLimit(Context context) {
+        this(context, null);
+    }
+
     public BarcodeScannerAreaLimit(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -31,14 +35,13 @@ public class BarcodeScannerAreaLimit extends View {
             linePaint.setColor(Color.RED);
             linePaint.setStyle(Paint.Style.STROKE);
             linePaint.setStrokeWidth(2.0f);
-            canvas.drawLine(croppingRect.left, croppingRect.top + croppingRect.height() / 2,
-                    croppingRect.right, croppingRect.top + croppingRect.height() / 2,
+
+            float halfHeight = croppingRect.height() / 2;
+
+            canvas.drawLine(croppingRect.left, croppingRect.top + halfHeight,
+                    croppingRect.right, croppingRect.top + halfHeight,
                     linePaint);
         }
-    }
-
-    public Rect getCroppingRect() {
-        return croppingRect;
     }
 
     public void setCroppingRect(Rect croppingRect) {

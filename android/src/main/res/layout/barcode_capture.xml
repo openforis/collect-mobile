@@ -16,12 +16,6 @@
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <org.openforis.collect.android.gui.barcode.BarcodeScannerAreaLimit
-            android:id="@+id/barcode_area_limit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
     </org.openforis.collect.android.gui.barcode.CameraSourcePreview>
 
 </LinearLayout>

@@ -35,11 +35,11 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -54,7 +54,9 @@ import java.io.IOException;
  * rear facing camera. During detection overlay graphics are drawn to indicate the position,
  * size, and ID of each barcode.
  */
-public final class BarcodeCaptureActivity extends AppCompatActivity implements BarcodeGraphicTracker.BarcodeUpdateListener {
+public final class BarcodeCaptureActivity extends AppCompatActivity
+        implements BarcodeGraphicTracker.BarcodeUpdateListener, CameraSourcePreview.CameraPreviewStatusUpdateListener {
+
     private static final String TAG = "Barcode-reader";
 
     // intent request code to handle updating play services if needed.
@@ -71,7 +73,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-    private BarcodeScannerAreaLimit mScannerAreaLimit;
 
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -89,18 +90,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         setContentView(R.layout.barcode_capture);
 
         mPreview = findViewById(R.id.preview);
-        mPreview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            public void onLayoutChange(View view, int left, int top, int right, int bottom,
-                                       int leftWas, int topWas, int rightWas, int bottomWas) {
-                Rect croppingRect = createCroppingRect(left, top, right, bottom);
-                if (barcodeDetector != null) {
-                    barcodeDetector.setCroppingRect(croppingRect);
-                    mScannerAreaLimit.setCroppingRect(croppingRect);
-                }
-            }
-        });
         mGraphicOverlay = findViewById(R.id.graphicOverlay);
-        mScannerAreaLimit = findViewById(R.id.barcode_area_limit);
 
         // read parameters from the intent used to launch the activity.
         boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
@@ -120,14 +110,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     }
 
-    private Rect createCroppingRect(int parentLeft, int parentTop, int parentRight, int parentBottom) {
-        int parentHeight = parentBottom - parentTop;
-        int parentWidth = parentRight - parentLeft;
+    private Rect createCroppingRect(Size parentSize) {
+        //create the cropping rect supposing a vertical orientation of the parent
+        int parentHeight = Math.max(parentSize.getHeight(), parentSize.getWidth());
+        int parentWidth = Math.min(parentSize.getHeight(), parentSize.getWidth());
 
-        int topMargin = Math.round((float) (parentHeight * 0.3));
-        int bottomMargin = Math.round((float) (parentHeight * 0.3));
-        int leftMargin = Math.round((float) (parentWidth * 0.1));
-        int rightMargin = Math.round((float) (parentWidth * 0.1));
+        int topMargin = Math.round((float) (parentHeight * .2));
+        int bottomMargin = Math.round((float) (parentHeight * .4));
+        int leftMargin = Math.round((float) (parentWidth * .2));
+        int rightMargin = Math.round((float) (parentWidth * .2));
 
         return new Rect(leftMargin, topMargin, parentWidth - rightMargin, parentHeight - bottomMargin);
     }
@@ -308,6 +299,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         if (mCameraSource != null) {
             try {
                 mPreview.start(mCameraSource, mGraphicOverlay);
+                mPreview.addStatusEventListener(this);
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 mCameraSource.release();
@@ -427,5 +419,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     @Override
     public void onBarcodeDetected(Barcode barcode) {
         //setResultAndFinish(barcode);
+    }
+
+    @Override
+    public void onPreviewStarted() {
+        Size previewSize = mCameraSource.getPreviewSize();
+        if (previewSize != null) {
+            Rect croppingRect = createCroppingRect(previewSize);
+            mPreview.setCroppingRect(croppingRect);
+            barcodeDetector.setCroppingRect(croppingRect);
+        }
     }
 }

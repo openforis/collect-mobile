@@ -1,6 +1,11 @@
 Changes
 -------
+2018-09-12
+
+    * Barcode scanner
+
 2018-08-28
+
     * Support Audio and Video file attributes
 
 2018-07-27

@@ -42,7 +42,7 @@ public class UiInternalNode extends UiNode {
     }
 
     public List<UiNode> getRelevantChildren() {
-        List<UiNode> result = new ArrayList(children);
+        List<UiNode> result = new ArrayList<UiNode>(children);
         CollectionUtils.filter(result, new Predicate<UiNode>() {
             public boolean evaluate(UiNode node) {
                 return node.isRelevant();
@@ -55,7 +55,7 @@ public class UiInternalNode extends UiNode {
         addChild(children.size(), node);
     }
 
-    public void addChild(int position, UiNode node) {
+    private void addChild(int position, UiNode node) {
         children.add(position, node);
         childById.put(node.getId(), node);
         node.setParent(this);

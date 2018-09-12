@@ -71,7 +71,7 @@ public class Definitions {
     }
 
     private String label(SpatialReferenceSystem spatialReferenceSystem) {
-        String label = spatialReferenceSystem.getFailSafeLabel(preferredLanguageCode, collectSurvey.getDefaultLanguage());
+        String label = spatialReferenceSystem.getLabel(preferredLanguageCode, collectSurvey.getDefaultLanguage());
         if (label == null) {
             List<LanguageSpecificText> labels = spatialReferenceSystem.getLabels();
             if (!labels.isEmpty())
@@ -84,7 +84,7 @@ public class Definitions {
 
     private void addSurveyDefinitions() {
         String label = ObjectUtils.defaultIfNull(collectSurvey.getProjectName(preferredLanguageCode, true), "Project label");
-        String surveyDescription = collectSurvey.getFailSafeDescription(preferredLanguageCode);
+        String surveyDescription = collectSurvey.getDescription(preferredLanguageCode, true);
         addDefinition(
                 new Definition(SURVEY_DEFINITION_ID, collectSurvey.getName(), label, null, surveyDescription, null, true)
         );
@@ -280,7 +280,8 @@ public class Definitions {
     }
 
     private String nodeDescription(NodeDefinition nodeDefinition) {
-        return StringUtils.normalizeWhiteSpace(nodeDefinition.getFailSafeDescription(preferredLanguageCode));
+        //TODO use latest core API
+        return StringUtils.normalizeWhiteSpace(nodeDefinition.getDescription(preferredLanguageCode, nodeDefinition.getSurvey().getDefaultLanguage()));
     }
 
     private String nodePrompt(NodeDefinition nodeDefinition) {

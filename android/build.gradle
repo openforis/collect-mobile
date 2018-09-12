@@ -42,6 +42,7 @@ dependencies {
         exclude group: 'xmlpull'
         exclude group: 'cglib'
         exclude group: 'org.slf4j'
+        exclude group: 'org.apache.logging.log4j'
         exclude group: 'log4j'
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
@@ -56,6 +57,9 @@ dependencies {
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'com.googlecode.openbeans:openbeans:1.0'
     compile 'com.google.android.gms:play-services-vision:15.0.2'
+    compile 'org.apache.logging.log4j:log4j-core:2.3'
+
+    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.3'
 }
 
 

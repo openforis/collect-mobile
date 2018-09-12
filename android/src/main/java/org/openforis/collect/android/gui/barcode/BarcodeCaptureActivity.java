@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.images.Size;
+import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -77,9 +78,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
-    private BoxDetector barcodeDetector;
+    private Detector<Barcode> barcodeDetector;
 
-    private boolean graphicTrackerEnabled = true;
+    private boolean limitScannerArea = false;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -148,13 +149,16 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         // is set to receive the barcode detection results, track the barcodes, and maintain
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
-        barcodeDetector = new BoxDetector(new BarcodeDetector.Builder(context).build());
-
-        if (graphicTrackerEnabled) {
-            BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
-            barcodeDetector.setProcessor(
-                    new MultiProcessor.Builder<Barcode>(barcodeFactory).build());
+        BarcodeDetector bcDetector = new BarcodeDetector.Builder(context).build();
+        if (limitScannerArea) {
+            barcodeDetector = new BoxDetector(bcDetector);
+        } else {
+            barcodeDetector = bcDetector;
         }
+
+        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, this);
+        barcodeDetector.setProcessor(
+                new MultiProcessor.Builder<Barcode>(barcodeFactory).build());
 
         if (!barcodeDetector.isOperational()) {
             // Note: The first time that an app using the barcode or face API is installed on a
@@ -418,16 +422,20 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        //setResultAndFinish(barcode);
+        setResultAndFinish(barcode);
     }
 
     @Override
     public void onPreviewStarted() {
-        Size previewSize = mCameraSource.getPreviewSize();
-        if (previewSize != null) {
-            Rect croppingRect = createCroppingRect(previewSize);
-            mPreview.setCroppingRect(croppingRect);
-            barcodeDetector.setCroppingRect(croppingRect);
+        if (limitScannerArea) {
+            Size previewSize = mCameraSource.getPreviewSize();
+            if (previewSize != null) {
+                Rect croppingRect = createCroppingRect(previewSize);
+                mPreview.setCroppingRect(croppingRect);
+                if (barcodeDetector instanceof BoxDetector) {
+                    ((BoxDetector) barcodeDetector).setCroppingRect(croppingRect);
+                }
+            }
         }
     }
 }

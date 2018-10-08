@@ -1,5 +1,9 @@
 Changes
 -------
+2018-10-08
+
+    * Increased limit in code attribute radio group to 100 elements
+
 2018-09-12
 
     * Barcode scanner

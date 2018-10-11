@@ -100,7 +100,7 @@ public class NodePagerFragment extends Fragment {
     }
 
     private void setupPager(View view) {
-        pager = (ViewPager) view.findViewById(R.id.attributePager);
+        pager = view.findViewById(R.id.attributePager);
         pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode);
         pager.setAdapter(pagerAdapter);
 
@@ -120,7 +120,7 @@ public class NodePagerFragment extends Fragment {
                 }
             }
         };
-        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
+        final PageIndicator indicator = view.findViewById(R.id.attributePagerIndicator);
         indicator.setViewPager(pager);
         indicator.setOnPageChangeListener(pageChangeListener);
         List<UiNode> relevantSiblings = selectedNode().getRelevantSiblings();

@@ -61,6 +61,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private static final String ARG_RECORD_ID = "record_id";
     private static final int TWO_PANE_MIN_SCREEN_WIDTH = 600;
 
+    private static final String NODE_PAGER_FRAGMENT_TAG = "nodePagerFragment";
+
     private LayoutDependentSupport support;
     private SurveyService surveyService;
 
@@ -252,10 +254,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         navigateDown();
     }
 
-    public void navigateDown(MenuItem item) {
-        navigateDown();
-    }
-
     public void backup(MenuItem item) {
         new Backup(this).execute();
     }
@@ -378,7 +376,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     private NodePagerFragment nodePagerFragment() {
-        return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag("nodePagerFragment");
+        return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag(NODE_PAGER_FRAGMENT_TAG);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -469,21 +467,34 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         void onNodeChanged(UiNode node) { }
     }
 
-    private class SinglePaneSurveySupport extends LayoutDependentSupport {
+    private abstract class SurveyLayoutDependentSupport extends LayoutDependentSupport {
+
+        final int layoutId;
+
+        SurveyLayoutDependentSupport(int layoutId) {
+            this.layoutId = layoutId;
+        }
+
+        @Override
         public void onCreate(Bundle savedState) {
-            setContentView(R.layout.activity_single_pane_node);
+            setContentView(layoutId);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
+                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), NODE_PAGER_FRAGMENT_TAG)
                     .commit();
         }
     }
 
-    private class TwoPaneSurveySupport extends LayoutDependentSupport {
-        public void onCreate(Bundle savedState) {
-            setContentView(R.layout.activity_two_pane_node);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.attribute_detail_pager_container, new NodePagerFragment(), "nodePagerFragment")
-                    .commit();
+    private class SinglePaneSurveySupport extends SurveyLayoutDependentSupport {
+
+        SinglePaneSurveySupport() {
+            super(R.layout.activity_single_pane_node);
+        }
+    }
+
+    private class TwoPaneSurveySupport extends SurveyLayoutDependentSupport {
+
+        TwoPaneSurveySupport() {
+            super(R.layout.activity_two_pane_node);
         }
 
         public void onNodeSelected(UiNode previous, UiNode selected) {

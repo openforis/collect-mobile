@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'org.apache.commons:commons-lang3:3.3.1'
+    compile 'com.android.support:multidex:1.0.3'
+    compile 'org.apache.commons:commons-lang3:3.4'
     compile('com.viewpagerindicator:library:2.4.1.1') {
         exclude group: 'com.google.android'
     }
@@ -56,7 +56,7 @@ dependencies {
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'com.googlecode.openbeans:openbeans:1.0'
-    compile 'com.google.android.gms:play-services-vision:15.0.2'
+    compile 'com.google.android.gms:play-services-vision:16.2.0'
     compile 'org.apache.logging.log4j:log4j-core:2.3'
 
     annotationProcessor 'org.apache.logging.log4j:log4j-core:2.3'

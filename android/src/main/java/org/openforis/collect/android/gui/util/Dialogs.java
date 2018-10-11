@@ -5,9 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.android.internal.util.Predicate;
-
 import org.openforis.collect.R;
+import org.openforis.commons.collection.Predicate;
 
 public class Dialogs {
 
@@ -89,13 +88,13 @@ public class Dialogs {
     }
 
     public static void showProgressDialogWhile(final Context context, final Predicate<Void> predicate, final Runnable callback) {
-        if (predicate.apply(null)) {
+        if (predicate.evaluate(null)) {
             callback.run();
         } else {
             final ProgressDialog progressDialog = showProgressDialog(context);
             Runnable predicateVerifier = new Runnable() {
                 public void run() {
-                    if (predicate.apply(null)) {
+                    if (predicate.evaluate(null)) {
                         Tasks.runDelayed(this, 100);
                     } else {
                         progressDialog.dismiss();

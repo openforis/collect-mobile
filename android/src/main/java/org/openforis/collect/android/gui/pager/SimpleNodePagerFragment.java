@@ -7,12 +7,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 
-import com.android.internal.util.Predicate;
 import com.viewpagerindicator.PageIndicator;
 
 import org.openforis.collect.R;
@@ -22,6 +17,7 @@ import org.openforis.collect.android.gui.detail.NodePathDetailsFragment;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.commons.collection.Predicate;
 
 import java.util.Map;
 
@@ -85,7 +81,7 @@ public class SimpleNodePagerFragment extends Fragment {
                 if (nextNode != currentNode) {
                     if (nextNode.getDefinition().relevanceSources.contains(currentNode.getDefinition())) {
                         Dialogs.showProgressDialogWhile(getActivity(), new Predicate<Void>() {
-                            public boolean apply(Void aVoid) {
+                            public boolean evaluate(Void aVoid) {
                                 return surveyService.isUpdating();
                             }
                         }, new Runnable() {

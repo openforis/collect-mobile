@@ -39,7 +39,7 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
         CodeListService codeListService = ServiceLocator.codeListService();
         int maxCodeListSize = codeListService.getMaxCodeListSize(attributeCollection.getDefinition().attributeDefinition);
         if (maxCodeListSize <= CodeAttributeComponent.RADIO_GROUP_MAX_SIZE)
-            return new CheckboxCodeAttributeCollectionComponent(attributeCollection, codeListService, surveyService, context);
+            return new NewCodeAttributeCheckBoxComponent(attributeCollection, codeListService, surveyService, context);
         return new AutoCompleteCodeAttributeCollectionComponent(attributeCollection, codeListService, surveyService, context);
     }
 

@@ -6,11 +6,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
@@ -18,10 +22,17 @@ import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.detail.CodeListDescriptionDialogFragment;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiCodeList;
+import org.openforis.idm.model.Code;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
@@ -49,11 +60,18 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         int maxCodeListSize = codeListService.getMaxCodeListSize(attribute);
         boolean enumerator = attribute.getDefinition().isEnumerator();
         if (maxCodeListSize <= RADIO_GROUP_MAX_SIZE && ! enumerator)
-            return new RadioCodeAttributeComponent(attribute, codeListService, surveyService, context);
-        return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
+            return new NewCodeAttributeRadioComponent(attribute, codeListService, surveyService, context);
+        else
+            return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
     }
 
-    protected abstract UiCode selectedCode();
+    protected UiCode selectedCode() {
+        return null;
+    }
+
+    protected Code selectedCode2() {
+        return null;
+    }
 
     public final void onAttributeChange(UiAttribute changedAttribute) {
         if (changedAttribute != attribute && codeListService.isParentCodeAttribute(changedAttribute, attribute)) {
@@ -78,13 +96,12 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     protected final boolean updateAttributeIfChanged() {
         if (codeList == null)
             return false;
-        UiCode newCode = selectedCode();
-        String newQualifier = qualifier(newCode);
-        if (StringUtils.isNotEmpty(newQualifier) && newCode == null)
-            newCode = codeList.getQualifiableCode();
-        if (hasChanged(newCode, newQualifier)) {
-            attribute.setCode(newCode);
-            attribute.setQualifier(newQualifier);
+        Code newCode = selectedCode2();
+        UiCode newUiCode = newCode == null ? null : codeList.getCode(newCode.getCode());
+        String newQualifier = newCode == null ? null : newCode.getQualifier();
+        if (hasChanged(newUiCode, newQualifier)) {
+            attribute.setCode(newUiCode);
+            attribute.setQualifier(newCode.getQualifier());
             return true;
         }
         return false;
@@ -168,6 +185,104 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         editText.setSingleLine();
         editText.setHint(R.string.hint_code_qualifier_specify);
         return editText;
+    }
+
+    static class CodesAdapter extends BaseAdapter {
+
+        private UiCodeList codeList;
+        private boolean valueShown;
+        private LayoutInflater inflater;
+        private Map<String, Code> selectedCodesByValue = new HashMap<String, Code>();
+        private boolean singleSelection = true;
+
+        CodesAdapter(Context applicationContext, Set<Code> selectedCodes, UiCodeList codeList, boolean valueShown) {
+            this.codeList = codeList;
+            this.valueShown = valueShown;
+
+            inflater = (LayoutInflater.from(applicationContext));
+
+            for (Code code : selectedCodes) {
+                selectedCodesByValue.put(code.getCode(), code);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return codeList.getCodes().size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return codeList.getCodes().get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(final int i, View view, ViewGroup viewGroup) {
+            ViewHolder viewHolder;
+            if (view == null) {
+                view = inflater.inflate(R.layout.code_item, null);
+
+                viewHolder = new ViewHolder();
+
+                viewHolder.radioButton = view.findViewById(R.id.item_radiobutton);
+                viewHolder.radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                        UiCode code = codeList.getCodes().get(i);
+                        if (singleSelection) {
+                            selectedCodesByValue.clear();
+                        }
+                        if (checked) {
+                            selectedCodesByValue.put(code.getValue(), new Code(code.getValue()));
+                        }
+                        notifyDataSetChanged();
+                    }
+                });
+                viewHolder.label = view.findViewById(R.id.item_label);
+                viewHolder.qualifier = view.findViewById(R.id.item_specify_field);
+
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) view.getTag();
+            }
+
+            UiCode code = codeList.getCodes().get(i);
+            fillView(viewHolder, code);
+
+            return view;
+        }
+
+        public Collection<Code> getSelectedCodes() {
+            return selectedCodesByValue.values();
+        }
+
+        private void fillView(ViewHolder viewHolder, UiCode uiCode) {
+            viewHolder.label.setText(
+                    valueShown
+                            ? String.format("%s - %s", uiCode.getValue(), uiCode.getLabel())
+                            : uiCode.getLabel()
+            );
+
+            Code code = selectedCodesByValue.get(uiCode.getValue());
+            boolean selected = code != null;
+            boolean showQualifier = codeList.isQualifiable(uiCode) && selected;
+
+            viewHolder.radioButton.setSelected(selected);
+            Views.toggleVisibility(viewHolder.qualifier, showQualifier);
+            if (showQualifier) {
+                viewHolder.qualifier.setText(code.getQualifier());
+            }
+        }
+
+        private static class ViewHolder {
+            RadioButton radioButton;
+            TextView label;
+            TextView qualifier;
+        }
     }
 }
 

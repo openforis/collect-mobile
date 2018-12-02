@@ -77,7 +77,11 @@ public class NewCodeAttributeCheckBoxComponent extends CodeAttributeCollectionCo
             boolean valueShown = ((UiCodeAttributeDefinition) attributeCollection.getDefinition().getAttributeDefinition()).isValueShown();
 
             listAdapter = new CodeAttributeComponent.CodesAdapter(getContext(), null, codeList,
-                    valueShown);
+                    valueShown, new Runnable() {
+                public void run() {
+                    saveNode();
+                }
+            });
             listView.setAdapter(listAdapter);
         }
     }

@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 /**
  * @author Daniel Wiell
  */
-class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
+class CodeAttributeAutoCompleteComponent extends CodeAttributeComponent {
     private final ClearableAutoCompleteTextView autoComplete;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final LinearLayout layout;
@@ -36,7 +36,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
 
-    AutoCompleteCodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+    CodeAttributeAutoCompleteComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -89,7 +89,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         return autoComplete;
     }
 
-    protected void setSelectedCode(UiCode code) {
+    private void setSelectedCode(UiCode code) {
         this.selectedCode = code;
         if (codeList.isQualifiable(selectedCode))
             showQualifier();
@@ -97,25 +97,24 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
             hideQualifier();
     }
 
-    protected UiCode selectedCode() {
+    private void checkSelectedCode() {
         String text = autoComplete.getText().toString();
         if (selectedCode == null || !selectedCode.toString().equals(text)) {
-            if (StringUtils.isEmpty(text))
-                setSelectedCode(null);
-            else
-                setSelectedCode(uiCodeByValue.get(text.trim()));
+            setSelectedCode(
+                    StringUtils.isEmpty(text)
+                            ? null
+                            : uiCodeByValue.get(text.trim())
+            );
         }
-        if (selectedCode == null) {
-            setText("");
-            return null;
-        } else {
-            setText(selectedCode.toString());
-            return selectedCode;
-        }
+        updateAutocompleteTextFromSelectedCode();
     }
 
-    protected String qualifier(UiCode selectedCode) {
-        return codeList.isQualifiable(selectedCode) ? qualifierInput.getText().toString(): null;
+    @Override
+    protected CodeValue getSelectedCodeValue() {
+        checkSelectedCode();
+        return selectedCode == null
+                ? null
+                : new CodeValue(selectedCode.getValue(), qualifierInput.getText().toString());
     }
 
     protected View toInputView() {
@@ -124,8 +123,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
 
     protected void initOptions() {
         if (attribute.getCode() != null) {
-            setText(attribute.getCode().toString());
             selectedCode = attribute.getCode();
+            updateAutocompleteTextFromSelectedCode();
         }
         executor.execute(new LoadCodesTask());
     }
@@ -134,7 +133,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         return autoComplete;
     }
 
-    private void setText(String text) {
+    private void updateAutocompleteTextFromSelectedCode() {
+        String text = selectedCode == null ? "" : selectedCode.toString();
         if (text.equals(autoComplete.getText().toString()))
             return;
         // Hack to prevent pop-up from opening when setting text
@@ -174,10 +174,13 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
 
         public void run() {
             initCodeList();
+
             List<UiCode> codes = codeList.getCodes();
+
             for (UiCode code : codes)
                 uiCodeByValue.put(code.getValue(), code);
             setAdapter(codes, uiHandler);
+
             if (codeList.isQualifiable(attribute.getCode()))
                 showQualifier();
         }

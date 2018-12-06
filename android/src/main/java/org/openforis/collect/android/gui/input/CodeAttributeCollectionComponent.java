@@ -36,14 +36,11 @@ public abstract class CodeAttributeCollectionComponent extends AttributeCollecti
     protected abstract void resetSelection();
 
     public static CodeAttributeCollectionComponent create(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
-        return null;
-        /*
         CodeListService codeListService = ServiceLocator.codeListService();
         int maxCodeListSize = codeListService.getMaxCodeListSize(attributeCollection.getDefinition().attributeDefinition);
         if (maxCodeListSize <= CodeAttributeComponent.RADIO_GROUP_MAX_SIZE)
-            return new NewCodeAttributeCheckBoxComponent(attributeCollection, codeListService, surveyService, context);
-        return new AutoCompleteCodeAttributeCollectionComponent(attributeCollection, codeListService, surveyService, context);
-        */
+            return new CodeAttributeCollectionCheckBoxComponent(attributeCollection, codeListService, surveyService, context);
+        return new CodeAttributeCollectionAutoCompleteComponent(attributeCollection, codeListService, surveyService, context);
     }
 
     private boolean containsDescription() {

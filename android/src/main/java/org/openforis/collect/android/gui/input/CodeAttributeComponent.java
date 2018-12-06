@@ -36,6 +36,7 @@ import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiCodeList;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +48,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
  * @author Daniel Wiell
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
-    static final int RADIO_GROUP_MAX_SIZE = 100;
+    protected static final int RADIO_GROUP_MAX_SIZE = 100;
     static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
     private UiCode parentCode;
     final CodeListService codeListService;
@@ -66,18 +67,17 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         int maxCodeListSize = codeListService.getMaxCodeListSize(attribute);
         boolean enumerator = attribute.getDefinition().isEnumerator();
         if (maxCodeListSize <= RADIO_GROUP_MAX_SIZE && !enumerator)
-            return new NewCodeAttributeRadioComponent(attribute, codeListService, surveyService, context);
+            return new CodeAttributeRadioComponent(attribute, codeListService, surveyService, context);
         else
-            return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context);
+            return new CodeAttributeAutoCompleteComponent(attribute, codeListService, surveyService, context);
     }
 
-    protected UiCode selectedCode() {
-        return null;
+    protected UiCode getSelectedCode() {
+        CodeValue codeValue = getSelectedCodeValue();
+        return codeValue == null ? null : codeList.getCode(codeValue.code);
     }
 
-    protected CodeValue selectedCode2() {
-        return null;
-    }
+    protected abstract CodeValue getSelectedCodeValue();
 
     public final void onAttributeChange(UiAttribute changedAttribute) {
         if (changedAttribute != attribute && codeListService.isParentCodeAttribute(changedAttribute, attribute)) {
@@ -102,7 +102,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     protected final boolean updateAttributeIfChanged() {
         if (codeList == null)
             return false;
-        CodeValue newValue = selectedCode2();
+        CodeValue newValue = getSelectedCodeValue();
         String newCode = newValue == null ? null : newValue.code;
         String newQualifier = newValue == null ? null : newValue.qualifier;
 
@@ -168,8 +168,6 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
     protected abstract void initOptions();
 
-    protected abstract String qualifier(UiCode selectedCode);
-
     final boolean isAttributeCode(UiCode code) {
         return code.equals(attribute.getCode());
     }
@@ -202,20 +200,19 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         private Runnable changeHandler;
 
         private LayoutInflater inflater;
-        private Map<String, CodeValue> selectedValuesByCode = new HashMap<String, CodeValue>();
-        private boolean singleSelection = true;
+        private Map<String, CodeValue> selectedValuesByCode;
+        private boolean singleSelection;
 
         CodesAdapter(Context applicationContext, Set<CodeValue> selectedCodes, UiCodeList codeList,
-                     boolean valueShown, Runnable changeHandler) {
+                     boolean valueShown, boolean singleSelection, Runnable changeHandler) {
             this.codeList = codeList;
             this.valueShown = valueShown;
+            this.singleSelection = singleSelection;
             this.changeHandler = changeHandler;
 
             inflater = (LayoutInflater.from(applicationContext));
 
-            for (CodeValue value : selectedCodes) {
-                selectedValuesByCode.put(value.code, value);
-            }
+            setSelectedCodes(selectedCodes);
         }
 
         @Override
@@ -298,6 +295,17 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
         public Collection<CodeValue> getSelectedCodes() {
             return selectedValuesByCode.values();
+        }
+
+        public void setSelectedCodes(Set<CodeValue> values) {
+            this.selectedValuesByCode = new HashMap<String, CodeValue>(values.size());
+            for (CodeValue value : values) {
+                selectedValuesByCode.put(value.code, value);
+            }
+        }
+
+        public void resetSelectedCodes() {
+            this.setSelectedCodes(Collections.<CodeValue>emptySet());
         }
 
         private void fillView(final ViewHolder viewHolder, int index) {

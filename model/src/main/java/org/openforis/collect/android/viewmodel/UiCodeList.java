@@ -13,7 +13,9 @@ public class UiCodeList {
 
     public UiCodeList(List<UiCode> codes, UiCode qualifiableCode) {
         this.codes = codes;
-        this.qualifiableCodes = Collections.singleton(qualifiableCode);
+        this.qualifiableCodes = qualifiableCode == null
+                ? Collections.<UiCode>emptySet()
+                : Collections.singleton(qualifiableCode);
         for (UiCode code : codes)
             codeByValue.put(code.getValue(), code);
     }

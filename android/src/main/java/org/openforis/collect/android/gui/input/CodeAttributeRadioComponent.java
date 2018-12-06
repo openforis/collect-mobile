@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class NewCodeAttributeRadioComponent extends CodeAttributeComponent {
+public class CodeAttributeRadioComponent extends CodeAttributeComponent {
 
     private static final int LIST_DIVIDER_HEIGHT_DPS = 20;
     private static final int LIST_ITEM_HEIGHT_DPS = 50;
@@ -34,7 +34,7 @@ public class NewCodeAttributeRadioComponent extends CodeAttributeComponent {
     private CodesAdapter listAdapter;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    NewCodeAttributeRadioComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+    CodeAttributeRadioComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
 
         listView = new ListView(getContext());
@@ -47,7 +47,12 @@ public class NewCodeAttributeRadioComponent extends CodeAttributeComponent {
     }
 
     @Override
-    protected CodeValue selectedCode2() {
+    protected UiCode getSelectedCode() {
+        return null;
+    }
+
+    @Override
+    protected CodeValue getSelectedCodeValue() {
         Collection<CodeValue> selectedCodes = listAdapter.getSelectedCodes();
         return selectedCodes.isEmpty() ? null : listAdapter.getSelectedCodes().iterator().next();
     }
@@ -58,27 +63,31 @@ public class NewCodeAttributeRadioComponent extends CodeAttributeComponent {
     }
 
     @Override
-    protected String qualifier(UiCode selectedCode) {
-        return null;
-    }
-
-    @Override
     protected View toInputView() {
         return listView;
     }
 
-    private class LoadCodesTask implements Runnable {
+    private Set<CodeValue> getAttributeCodeValues() {
+        Set<CodeValue> selectedCodes = new HashSet<CodeValue>();
+        CodeValue value = attribute.isEmpty()
+                ? null
+                : new CodeValue(attribute.getCode().getValue(), attribute.getQualifier());
+        if (value != null)
+            selectedCodes.add(value);
+
+        return selectedCodes;
+    }
+
+    private boolean isValueShown() {
+        return attribute.getDefinition().isValueShown();
+    }
+
+    protected class LoadCodesTask implements Runnable {
         public void run() {
             initCodeList();
-            Set<CodeValue> selectedCodes = new HashSet<CodeValue>();
-            CodeValue value = attribute.isEmpty()
-                    ? null
-                    : new CodeValue(attribute.getCode().getValue(), attribute.getQualifier());
-            if (value != null)
-                selectedCodes.add(value);
 
-            listAdapter = new CodesAdapter(getContext(), selectedCodes, codeList,
-                    attribute.getDefinition().isValueShown(),
+            listAdapter = new CodesAdapter(getContext(), getAttributeCodeValues(), codeList,
+                    isValueShown(), true,
                     new Runnable() {
                         public void run() {
                             saveNode();

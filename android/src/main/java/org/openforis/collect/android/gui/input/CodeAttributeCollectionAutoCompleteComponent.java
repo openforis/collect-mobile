@@ -12,11 +12,11 @@ import java.util.*;
 /**
  * @author Daniel Wiell
  */
-class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollectionComponent {
+class CodeAttributeCollectionAutoCompleteComponent extends CodeAttributeCollectionComponent {
     private final Map<UiAttribute, CodeAttributeComponent> attributeComponentByAttribute = new LinkedHashMap<UiAttribute, CodeAttributeComponent>();
     private final LinearLayout view;
 
-    AutoCompleteCodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+    CodeAttributeCollectionAutoCompleteComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, codeListService, surveyService, context);
         view = new LinearLayout(context);
         view.setOrientation(LinearLayout.VERTICAL);
@@ -103,10 +103,10 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
     }
 
     protected CodeAttributeComponent createAttributeComponent(UiCodeAttribute attribute) {
-        return new AutoCompleteCodeAttributeComponent(attribute, codeListService, surveyService, context) {
+        return new CodeAttributeAutoCompleteComponent(attribute, codeListService, surveyService, context) {
             protected void initCodeList() {
                 codeList = codeListService.codeList(attribute);
-                AutoCompleteCodeAttributeCollectionComponent.this.initCodeList();
+                CodeAttributeCollectionAutoCompleteComponent.this.initCodeList();
             }
 
             public void notifyAboutAttributeChange() {

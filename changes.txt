@@ -1,6 +1,10 @@
 Changes
 -------
 
+2018-12-10
+
+    * Improved translations
+
 2018-10-11
 
     * Upgraded dependencies

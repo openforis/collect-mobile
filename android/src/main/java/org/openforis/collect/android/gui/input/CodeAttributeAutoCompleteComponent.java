@@ -17,10 +17,11 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,7 +34,6 @@ class CodeAttributeAutoCompleteComponent extends CodeAttributeComponent {
     private final LinearLayout layout;
     private EditText qualifierInput;
 
-    private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
 
     CodeAttributeAutoCompleteComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
@@ -89,6 +89,21 @@ class CodeAttributeAutoCompleteComponent extends CodeAttributeComponent {
         return autoComplete;
     }
 
+    @Override
+    protected UiCodeAttributeDefinition getCodeAttributeDefinition() {
+        return attribute.getDefinition();
+    }
+
+    @Override
+    protected Set<CodeValue> getAttributeCodeValues() {
+        return attribute == null || attribute.isEmpty()
+                ? null
+                : Collections.singleton(new CodeValue(
+                attribute.getCode().getValue(),
+                attribute.getQualifier())
+        );
+    }
+
     private void setSelectedCode(UiCode code) {
         this.selectedCode = code;
         if (codeList.isQualifiable(selectedCode))
@@ -103,7 +118,7 @@ class CodeAttributeAutoCompleteComponent extends CodeAttributeComponent {
             setSelectedCode(
                     StringUtils.isEmpty(text)
                             ? null
-                            : uiCodeByValue.get(text.trim())
+                            : codeList.getCode(text.trim())
             );
         }
         updateAutocompleteTextFromSelectedCode();
@@ -177,8 +192,6 @@ class CodeAttributeAutoCompleteComponent extends CodeAttributeComponent {
 
             List<UiCode> codes = codeList.getCodes();
 
-            for (UiCode code : codes)
-                uiCodeByValue.put(code.getValue(), code);
             setAdapter(codes, uiHandler);
 
             if (codeList.isQualifiable(attribute.getCode()))

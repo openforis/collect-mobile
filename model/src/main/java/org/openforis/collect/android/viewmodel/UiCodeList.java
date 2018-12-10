@@ -1,5 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,5 +40,12 @@ public class UiCodeList {
 
     public UiCode getQualifiableCode() {
         return isQualifiable() ? qualifiableCodes.iterator().next() : null;
+    }
+
+    public boolean containsDescription() {
+        for (UiCode code : getCodes())
+            if (StringUtils.isNotEmpty(code.getDescription()))
+                return true;
+        return false;
     }
 }

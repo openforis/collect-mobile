@@ -20,8 +20,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
@@ -33,31 +31,36 @@ import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCodeList;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * @author Daniel Wiell
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
+
     protected static final int RADIO_GROUP_MAX_SIZE = 100;
+
     static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
+
     private UiCode parentCode;
     final CodeListService codeListService;
     final boolean enumerator;
     protected UiCodeList codeList;
     private boolean codeListRefreshForced;
 
-    CodeAttributeComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
-        super(attribute, surveyService, context);
+    CodeAttributeComponent(UiCodeAttribute codeAttribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
+        super(codeAttribute, surveyService, context);
         this.codeListService = codeListService;
         this.enumerator = attribute.getDefinition().isEnumerator();
     }
@@ -72,13 +75,6 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
             return new CodeAttributeAutoCompleteComponent(attribute, codeListService, surveyService, context);
     }
 
-    protected UiCode getSelectedCode() {
-        CodeValue codeValue = getSelectedCodeValue();
-        return codeValue == null ? null : codeList.getCode(codeValue.code);
-    }
-
-    protected abstract CodeValue getSelectedCodeValue();
-
     public final void onAttributeChange(UiAttribute changedAttribute) {
         if (changedAttribute != attribute && codeListService.isParentCodeAttribute(changedAttribute, attribute)) {
             UiCode newParentCode = ((UiCodeAttribute) changedAttribute).getCode();
@@ -89,6 +85,16 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
                 initOptions();
             }
         }
+    }
+
+    protected abstract CodeValue getSelectedCodeValue();
+
+    protected abstract Set<CodeValue> getAttributeCodeValues();
+
+    protected abstract UiCodeAttributeDefinition getCodeAttributeDefinition();
+
+    protected boolean isValueShown() {
+        return getCodeAttributeDefinition().isValueShown();
     }
 
     private synchronized boolean isCodeListRefreshForced() {
@@ -114,29 +120,21 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         return false;
     }
 
-    private boolean containsDescription() {
-        for (UiCode code : codeList.getCodes())
-            if (isNotEmpty(code.getDescription()))
-                return true;
-        return false;
-    }
-
     protected void initCodeList() {
         if (codeList == null || isCodeListRefreshForced()) {
             setCodeListRefreshForced(false);
             codeList = codeListService.codeList(attribute);
             uiHandler.post(new Runnable() {
                 public void run() {
-                    if (containsDescription())
-                        includeDescriptionsButton();
+                    if (codeList.containsDescription())
+                        includeDescriptionsButtonToParent(context, toInputView());
                 }
             });
         }
     }
 
-    private void includeDescriptionsButton() {
-        View inputView = toInputView();
-        ViewGroup parent = (ViewGroup) inputView.getParent();
+    static void includeDescriptionsButtonToParent(final FragmentActivity context, View view) {
+        ViewGroup parent = (ViewGroup) view.getParent();
         if (parent == null)
             return;
         if (parent.findViewWithTag(DESCRIPTION_BUTTON_TAG) == null) {
@@ -193,161 +191,9 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         return editText;
     }
 
-    static class CodesAdapter extends BaseAdapter {
-
-        private UiCodeList codeList;
-        private boolean valueShown;
-        private Runnable changeHandler;
-
-        private LayoutInflater inflater;
-        private Map<String, CodeValue> selectedValuesByCode;
-        private boolean singleSelection;
-
-        CodesAdapter(Context applicationContext, Set<CodeValue> selectedCodes, UiCodeList codeList,
-                     boolean valueShown, boolean singleSelection, Runnable changeHandler) {
-            this.codeList = codeList;
-            this.valueShown = valueShown;
-            this.singleSelection = singleSelection;
-            this.changeHandler = changeHandler;
-
-            inflater = (LayoutInflater.from(applicationContext));
-
-            setSelectedCodes(selectedCodes);
-        }
-
-        @Override
-        public int getCount() {
-            return codeList.getCodes().size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return codeList.getCodes().get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(final int i, View view, ViewGroup viewGroup) {
-            final ViewHolder viewHolder;
-            if (view == null) {
-                view = inflater.inflate(R.layout.code_item, null);
-
-                viewHolder = new ViewHolder();
-
-                viewHolder.radioButton = view.findViewById(R.id.item_radiobutton);
-                viewHolder.radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                        handleItemSelection(viewHolder, checked);
-                    }
-                });
-                viewHolder.qualifier = view.findViewById(R.id.item_specify_field);
-                viewHolder.qualifier.addTextChangedListener(new TextWatcher() {
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    }
-
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        handleQualifierChange(viewHolder, charSequence == null ? null : charSequence.toString());
-                    }
-
-                    public void afterTextChanged(Editable editable) {
-                    }
-                });
-
-                view.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) view.getTag();
-            }
-
-            fillView(viewHolder, i);
-
-            return view;
-        }
-
-        private void handleItemSelection(ViewHolder viewHolder, boolean checked) {
-            if (!singleSelection || checked) {
-                UiCode uiCode = codeList.getCodes().get(viewHolder.index);
-                if (singleSelection) {
-                    selectedValuesByCode.clear();
-                }
-                if (checked) {
-                    selectedValuesByCode.put(uiCode.getValue(), new CodeValue(uiCode.getValue()));
-                    if (!codeList.isQualifiable(uiCode)) {
-                        Keyboard.hide(viewHolder.qualifier.getContext());
-                    }
-                } else {
-                    selectedValuesByCode.remove(uiCode.getValue());
-                }
-                notifyDataSetChanged();
-                this.changeHandler.run();
-            }
-        }
-
-        private void handleQualifierChange(ViewHolder viewHolder, String text) {
-            UiCode uiCode = codeList.getCodes().get(viewHolder.index);
-            CodeValue value = selectedValuesByCode.get(uiCode.getValue());
-            value.qualifier = text;
-            this.changeHandler.run();
-        }
-
-        public Collection<CodeValue> getSelectedCodes() {
-            return selectedValuesByCode.values();
-        }
-
-        public void setSelectedCodes(Set<CodeValue> values) {
-            this.selectedValuesByCode = new HashMap<String, CodeValue>(values.size());
-            for (CodeValue value : values) {
-                selectedValuesByCode.put(value.code, value);
-            }
-        }
-
-        public void resetSelectedCodes() {
-            this.setSelectedCodes(Collections.<CodeValue>emptySet());
-        }
-
-        private void fillView(final ViewHolder viewHolder, int index) {
-            UiCode uiCode = codeList.getCodes().get(index);
-
-            CodeValue value = selectedValuesByCode.get(uiCode.getValue());
-            boolean checked = value != null;
-            boolean qualifiable = codeList.isQualifiable(uiCode) && checked;
-
-            viewHolder.index = index;
-            viewHolder.radioButton.setText(
-                    valueShown
-                            ? String.format("%s - %s", uiCode.getValue(), uiCode.getLabel())
-                            : uiCode.getLabel()
-            );
-            viewHolder.radioButton.setChecked(checked);
-            Views.toggleVisibility(viewHolder.qualifier, qualifiable);
-            if (qualifiable) {
-                viewHolder.qualifier.setText(value.qualifier);
-                if (codeList.isQualifiable(uiCode) && StringUtils.isEmpty(value.qualifier)) {
-                    //set focus on qualifier text edit and show keyboard
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            viewHolder.qualifier.requestFocus();
-                            Keyboard.show(viewHolder.qualifier, viewHolder.qualifier.getContext());
-                        }
-                    }, 100);
-                }
-
-            }
-        }
-
-        private static class ViewHolder {
-            int index;
-            RadioButton radioButton;
-            TextView qualifier;
-        }
-    }
-
     public static class CodeValue {
-        public String code;
-        public String qualifier;
+        String code;
+        String qualifier;
 
         CodeValue(String code) {
             this(code, null);

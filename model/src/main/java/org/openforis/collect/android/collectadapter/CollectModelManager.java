@@ -221,7 +221,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         int parentDefinitionId = Integer.parseInt(uiCodeAttribute.getDefinition().id);
         for (UiNode uiNode : uiNodes) {
             if (uiNode instanceof UiCodeAttribute) {
-                CodeAttributeDefinition nodeDefinition = (CodeAttributeDefinition) selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(uiNode.getDefinition().id));
+                CodeAttributeDefinition nodeDefinition = selectedSurvey.getSchema().getDefinitionById(Integer.parseInt(uiNode.getDefinition().id));
                 CodeAttributeDefinition parentDefinition = nodeDefinition.getParentCodeAttributeDefinition();
                 if (parentDefinition != null && parentDefinition.getId() == parentDefinitionId) {
                     CodeAttribute childCodeAttribute = recordNodes.getCodeAttribute(uiNode.getId());

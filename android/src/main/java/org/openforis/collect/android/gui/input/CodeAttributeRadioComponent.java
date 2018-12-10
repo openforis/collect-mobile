@@ -13,6 +13,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
+import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 import org.openforis.commons.collection.CollectionUtils;
 import org.openforis.commons.collection.Predicate;
 
@@ -31,30 +32,29 @@ public class CodeAttributeRadioComponent extends CodeAttributeComponent {
     private static final int QUALIFIER_ITEM_HEIGHT_DPS = 40;
 
     private final ListView listView;
-    private CodesAdapter listAdapter;
+    private CodeListViewAdapter listAdapter;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     CodeAttributeRadioComponent(UiCodeAttribute attribute, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attribute, codeListService, surveyService, context);
 
         listView = new ListView(getContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        listView.setLayoutParams(layoutParams);
+        listView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
         listView.setDivider(new ColorDrawable(Color.TRANSPARENT));
         listView.setDividerHeight(Views.px(getContext(), LIST_DIVIDER_HEIGHT_DPS));
         initOptions();
     }
 
     @Override
-    protected UiCode getSelectedCode() {
-        return null;
-    }
-
-    @Override
     protected CodeValue getSelectedCodeValue() {
         Collection<CodeValue> selectedCodes = listAdapter.getSelectedCodes();
         return selectedCodes.isEmpty() ? null : listAdapter.getSelectedCodes().iterator().next();
+    }
+
+    @Override
+    protected UiCodeAttributeDefinition getCodeAttributeDefinition() {
+        return attribute.getDefinition();
     }
 
     @Override
@@ -67,7 +67,8 @@ public class CodeAttributeRadioComponent extends CodeAttributeComponent {
         return listView;
     }
 
-    private Set<CodeValue> getAttributeCodeValues() {
+    @Override
+    protected Set<CodeValue> getAttributeCodeValues() {
         Set<CodeValue> selectedCodes = new HashSet<CodeValue>();
         CodeValue value = attribute.isEmpty()
                 ? null
@@ -78,15 +79,11 @@ public class CodeAttributeRadioComponent extends CodeAttributeComponent {
         return selectedCodes;
     }
 
-    private boolean isValueShown() {
-        return attribute.getDefinition().isValueShown();
-    }
-
     protected class LoadCodesTask implements Runnable {
         public void run() {
             initCodeList();
 
-            listAdapter = new CodesAdapter(getContext(), getAttributeCodeValues(), codeList,
+            listAdapter = new CodeListViewAdapter(getContext(), getAttributeCodeValues(), codeList,
                     isValueShown(), true,
                     new Runnable() {
                         public void run() {
@@ -95,6 +92,7 @@ public class CodeAttributeRadioComponent extends CodeAttributeComponent {
                     }
             );
             listView.setAdapter(listAdapter);
+
             List<UiCode> qualifiableCodes = new ArrayList<UiCode>(codeList.getCodes());
             CollectionUtils.filter(qualifiableCodes, new Predicate<UiCode>() {
                         public boolean evaluate(UiCode code) {

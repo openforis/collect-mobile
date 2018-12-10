@@ -33,7 +33,7 @@
     <string name="button_select">Edit</string>
 
     <string name="processing">Processing</string>
-    <string name="please_wait">Please wait...</string>
+    <string name="please_wait">Please wait…</string>
 
     <string name="confirm_label">Confirm</string>
     <string name="overwrite_label">Overwrite</string>
@@ -216,7 +216,6 @@
     <string name="barcode_success">Barcode read successfully</string>
     <string name="barcode_failure">No barcode captured</string>
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
-
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

@@ -73,18 +73,20 @@
     <string name="settings_summaryOff_compassEnabled">L’outils compass est désactivé</string>
 
     <string name="settings_workingDir">Répertoire de travail</string>
-    <string name="settings_title_darkTheme">Thème de Collect Mobile</string>
-    <string name="settings_switchTextOn_darkTheme">Sombre</string>
-    <string name="settings_switchTextOff_darkTheme">Clair</string>
-    <string name="settings_summaryOn_darkTheme">Collect Mobile utilize le thème sombre.</string>
-    <string name="settings_summaryOff_darkTheme">Collect Mobile utilize le thème clair.</string>
+    <string name="settings_theme_title">Thème de Collect Mobile</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark_summary">Collect Mobile utilize le thème sombre.</string>
+    <string name="settings_theme_light_summary">Collect Mobile utilize le thème clair.</string>
 
     <string name="settings_title_showKeyboard">Montrer le clavier automatiquement</string>
     <string name="settings_summary_showKeyboard">Détermine si le clavier programmable doit être montré automatiquement en cas d’accès au nœud.
     </string>
 
     <string name="settings_title_remoteSync">Server Collect</string>
-    <string name="settings_title_remoteSyncEnabled">Connexion au server Collect habilitée</string>
+    <string name="settings_title_remoteSyncSwitchTitle">Connexion au server Collect</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOn">Connexion au server Collect habilitée</string>
+    <string name="settings_title_remoteSyncSwitchSummaryOff">Connexion au server Collect désactivée</string>
     <string name="settings_title_remoteCollectAddress">Adresse</string>
     <string name="settings_title_remoteCollectUsername">Nom utilisateur</string>
     <string name="settings_title_remoteCollectPassword">Mot de passe</string>
@@ -114,10 +116,6 @@
 
     <string name="amount_selected">%d sélectionné(s).</string>
     <string name="delete">Supprimer</string>
-
-    <string name="file_attribute_capture_image">Copier l’image</string>
-    <string name="file_attribute_select_image">Sélectionner l’image</string>
-    <string name="file_attribute_remove_image">Supprimer l’image</string>
 
     <string name="entity_list_modified">Modifié</string>
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>

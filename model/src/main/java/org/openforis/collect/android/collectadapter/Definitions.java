@@ -281,7 +281,7 @@ public class Definitions {
 
     private String nodeDescription(NodeDefinition nodeDefinition) {
         //TODO use latest core API
-        return StringUtils.normalizeWhiteSpace(nodeDefinition.getDescription(preferredLanguageCode, nodeDefinition.getSurvey().getDefaultLanguage()));
+        return StringUtils.normalizeWhiteSpace(nodeDefinition.getDescription(preferredLanguageCode, true));
     }
 
     private String nodePrompt(NodeDefinition nodeDefinition) {

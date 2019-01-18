@@ -12,7 +12,6 @@ import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.CollectModelBackedSurveyService;
 import org.openforis.collect.android.collectadapter.CollectModelManager;
-import org.openforis.collect.android.collectadapter.MobileDatabaseLookupProvider;
 import org.openforis.collect.android.collectadapter.MobileExternalCodeListProvider;
 import org.openforis.collect.android.collectadapter.MobileRecordManager;
 import org.openforis.collect.android.collectadapter.RecordUniquenessChecker;
@@ -36,7 +35,9 @@ import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.validation.CollectValidator;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
+import org.openforis.collect.persistence.DatabaseLookupProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
+import org.openforis.collect.persistence.SamplingDesignDao;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
@@ -207,15 +208,27 @@ public class ServiceLocator {
 
         CollectValidator validator = new CollectValidator();
         validator.setCodeListManager(codeListManager);
+
+        SamplingDesignDao samplingDesignDao = new SamplingDesignDao();
+        samplingDesignDao.setDsl(jooqDsl);
+
+        DynamicTableDao dynamicTableDao = new DynamicTableDao();
+        dynamicTableDao.setDsl(jooqDsl);
+
+        DatabaseLookupProvider databaseLookupProvider = new DatabaseLookupProvider();
+        databaseLookupProvider.setSamplingDesignDao(samplingDesignDao);
+        databaseLookupProvider.setDynamicTableDao(dynamicTableDao);
+
         ExpressionFactory expressionFactory = new ExpressionFactory();
-        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(modelDatabase));
+        expressionFactory.setLookupProvider(databaseLookupProvider);
+
         CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
         collectSurveyContext.setExternalCodeListProvider(externalCodeListProvider);
         CollectCodeListService codeListService = new CollectCodeListService();
         codeListService.setCodeListManager(codeListManager);
         collectSurveyContext.setCodeListService(codeListService);
 
-        SpeciesManager speciesManager = createSpeciesManager(modelDatabase);
+        SpeciesManager speciesManager = createSpeciesManager(expressionFactory);
         CollectSpeciesListService speciesListService = new CollectSpeciesListService();
         speciesListService.setSpeciesManager(speciesManager);
         collectSurveyContext.setSpeciesListService(speciesListService);
@@ -260,7 +273,7 @@ public class ServiceLocator {
         return externalCodeListProvider;
     }
 
-    private static SpeciesManager createSpeciesManager(Database database) {
+    private static SpeciesManager createSpeciesManager(ExpressionFactory expressionFactory) {
         SpeciesManager speciesManager = new SpeciesManager();
         TaxonDao taxonDao = new TaxonDao();
         taxonDao.setDsl(jooqDsl);
@@ -271,8 +284,6 @@ public class ServiceLocator {
         TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
         taxonVernacularNameDao.setDsl(jooqDsl);
         speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
-        ExpressionFactory expressionFactory = new ExpressionFactory();
-        expressionFactory.setLookupProvider(new MobileDatabaseLookupProvider(database));
         speciesManager.setExpressionFactory(expressionFactory);
         return speciesManager;
     }

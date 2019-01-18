@@ -1,6 +1,10 @@
 Changes
 -------
 
+2018-01-18
+
+    * Support latest Collect desktop version (3.24.x)
+
 2018-12-10
 
     * Improved translations

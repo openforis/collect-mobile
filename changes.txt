@@ -1,6 +1,10 @@
 Changes
 -------
 
+2019-01-24
+
+    * Improve survey import error message
+
 2019-01-18
 
     * Support latest Collect desktop version (3.24.x)

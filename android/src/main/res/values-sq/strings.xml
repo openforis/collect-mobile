@@ -126,7 +126,6 @@
     <string name="settings_remote_sync_test_failed_message_newer_version"> Versioni i Collect Server eshte %s dhe ai\'s nuk pershtatet me versionin e Collect Mobile (%s).\n\n Ju Lutem Konsideroni Perditesimin e Collect Mobile me Versionin me te Fundit.</string>
 
     <string name="import_title_failed">Importi i Srudimit/Aplikimit Deshtoi %1$s</string>
-    <string name="import_text_failed"> Sigurohuni qe po Perdorni Version e Fundit te Collect Mobile dhe qe Studimi/Aplikimi i Perdorur ne Collect Mobile eshte duke perdorur versionin e Fundit te Collect Server. </string>
     <string name="import_text_wrong_version">Studimi i eksportur ne Collect Versioni %s por ky Version i Collect Mobile Suporton Studime te Gjeneruar me Collect deri ne Versionin %s.\nJu lutem Konsideroni Perditesimin e Collect Mobile ne versionin me te fundit.</string>
     <string name="import_text_unsupported_file_type_selected"> Ju Lutem Zgjidhni nje Skedar te Vlefshem te Studimit/Aplikacionit per Collect Mobile (.%s)</string>
 

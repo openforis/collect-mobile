@@ -92,12 +92,6 @@
     <string name="settings_title_remoteCollectPassword">Mot de passe</string>
 
     <string name="import_title_failed">Importation du questionnaire %1$s échouée</string>
-    <string name="import_text_failed">Veulliez vous assurer que vous utilisez la dernière version de Collect Mobile et que vous avez exporté votre questionnaire pour Collect Mobile en utilisant une version récente de Collect Server.
-    </string>
-    <!--
-    <string name="import_text_wrong_version"> Veulliez vous assurer que vous utilisez la dernière version de Collect Mobile et que vous avez exporté votre questionnaire pour Collect Mobile en utilisant une version récente de Collect Server.
-    </string>
-    -->
     <string name="export_dialog_title">Exporter les données du questionnaire</string>
     <string name="export_dialog_option_exclude_binary_file">Exclure les fichiers binaires</string>
     <string name="export_dialog_option_save_to_downloads">Enregistrer les données dans le répertoire \"Download\"</string>

@@ -4,12 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +16,6 @@ import android.widget.ListView;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -32,9 +26,7 @@ import org.openforis.collect.android.gui.util.SlowAsyncTask;
 import org.openforis.collect.android.util.CollectPermissions;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Set;
 
 public class SurveyListActivity extends BaseActivity {
@@ -67,7 +59,7 @@ public class SurveyListActivity extends BaseActivity {
 
     private void showSurveyList(final SurveyListAdapter adapter) {
         setContentView(R.layout.survey_list);
-        ListView listView = (ListView) findViewById(R.id.survey_list);
+        ListView listView = findViewById(R.id.survey_list);
         final Activity activity = this;
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -144,7 +136,8 @@ public class SurveyListActivity extends BaseActivity {
         if (CollectPermissions.checkStoragePermissionOrRequestIt(context)) {
             Intent target = FileUtils.createGetContentIntent();
             Intent intent = Intent.createChooser(
-                    target, "Select survey to import");
+                    target, context.getString(R.string.select_survey_to_import));
+
             context.startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
         }
     }
@@ -208,15 +201,14 @@ public class SurveyListActivity extends BaseActivity {
             super.handleException(e);
             String errorMessage;
             if (e instanceof UnsupportedFileType) {
-                UnsupportedFileType ex = (UnsupportedFileType) e;
                 errorMessage = context.getString(R.string.import_text_unsupported_file_type_selected,
-                        ex.getExpectedExtention());
+                        ((UnsupportedFileType) e).getExpectedExtention());
             } else if (e instanceof MalformedSurvey) {
-                errorMessage = context.getString(R.string.import_text_failed);
+                String detailedMessage = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
+                errorMessage = context.getString(R.string.import_text_failed, detailedMessage);
             } else if (e instanceof WrongSurveyVersion) {
-                WrongSurveyVersion ex = (WrongSurveyVersion) e;
                 errorMessage = context.getString(R.string.import_text_wrong_version,
-                        ex.getSurveyVersion(), ex.getCollectVersion());
+                        ((WrongSurveyVersion) e).getSurveyVersion(), ((WrongSurveyVersion) e).getCollectVersion());
             } else {
                 errorMessage = context.getString(R.string.import_text_failed);
             }

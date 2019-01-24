@@ -126,7 +126,6 @@
     <string name="settings_remote_sync_test_failed_message_newer_version">Сервер сбора использует версию %s и он не совместим с данной версией Collect Mobile (%s).\n\nПожалуйста обновите Collect Mobile до последней версии</string>
 
     <string name="import_title_failed">Не удалось импортировать опрос %1$s</string>
-    <string name="import_text_failed">Убедитесь, что вы используете последнюю версию Collect Mobile и экспортировали ваш опрос для Collect Mobile с использованием недавней версии Collect Server.</string>
     <string name="import_text_wrong_version">Дизайн опроса экспортируется с версией сбора %s но данная версия Collect Mobile поддерживает дизайны опросов, сгенерированные  Collect up версии %s.\nПожалуйста рассмотрите обновление Collect Mobile до последней версии.</string>
     <string name="import_text_unsupported_file_type_selected">Пожалуйста, выберите соответствующий файл опроса Collect Mobile (.%s)</string>
 

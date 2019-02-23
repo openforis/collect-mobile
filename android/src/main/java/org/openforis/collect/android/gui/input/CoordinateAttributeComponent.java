@@ -1,7 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
-import android.graphics.Paint;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -9,6 +10,7 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -26,12 +29,15 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.detail.NavigationDialogFragment;
 import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CoordinateUtils;
 import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Locale;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
@@ -48,7 +54,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
     private ViewHolder vh;
     private boolean requestingLocation;
 
-    protected CoordinateAttributeComponent(UiCoordinateAttribute attribute, SurveyService surveyService, final FragmentActivity context) {
+    CoordinateAttributeComponent(UiCoordinateAttribute attribute, SurveyService surveyService, final FragmentActivity context) {
         super(attribute, surveyService, context);
         vh = new ViewHolder();
         locationProvider = new LocationProvider(new UpdateListener(context), context, true);
@@ -68,6 +74,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             attribute.setY(y);
             return true;
         }
+        vh.showMapButton.setEnabled(!attribute.isEmpty());
         return false;
     }
 
@@ -98,7 +105,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
     private void stopLocationRequest() {
         locationProvider.stop();
-        vh.button.setChecked(false);
+        vh.startStopButton.setChecked(false);
         requestingLocation = false;
         Activities.clearKeepScreenOn(context);
     }
@@ -108,6 +115,12 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         UiSpatialReferenceSystem from = UiSpatialReferenceSystem.LAT_LNG_SRS;
         UiSpatialReferenceSystem to = selectedSpatialReferenceSystem();
         return CoordinateUtils.transform(from, coord, to);
+    }
+
+    private double[] transformToLonLat(double x, double y) {
+        return CoordinateUtils.transform(selectedSpatialReferenceSystem(),
+                new double[]{x, y},
+                UiSpatialReferenceSystem.LAT_LNG_SRS);
     }
 
     private NumberFormat numberFormat() {
@@ -131,8 +144,9 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         TextView xView;
         TextView yView;
         TextView accuracyView;
-        ToggleButton button;
+        ToggleButton startStopButton;
         Button navigateButton;
+        Button showMapButton;
         ArrayAdapter<UiSpatialReferenceSystem> adapter;
 
         private ViewHolder() {
@@ -145,8 +159,9 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 this.xView = createNumberInput(attribute.getX(), "x");
                 this.yView = createNumberInput(attribute.getY(), "y");
             }
-            button = createButton();
+            startStopButton = createStartStopButton();
             accuracyView = createAccuracyView();
+            showMapButton = createShowMapButton();
 
             view = new LinearLayout(context);
             view.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
@@ -155,10 +170,26 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             view.addView(srsLayout);
             view.addView(xView);
             view.addView(yView);
-            view.addView(button);
+            view.addView(startStopButton);
+
+            RelativeLayout belowBar = new RelativeLayout(context);
+            RelativeLayout.LayoutParams belowBarLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            belowBarLayoutParams.setMargins(0, Views.px(context, 30), 0, 0);
+            belowBar.setLayoutParams(belowBarLayoutParams);
+            view.addView(belowBar);
+
+            RelativeLayout.LayoutParams showMapBtnLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            showMapBtnLayoutParams.addRule(RelativeLayout.ALIGN_LEFT, showMapButton.getId());
+            showMapBtnLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, showMapButton.getId());
+            belowBar.addView(showMapButton, showMapBtnLayoutParams);
+
             if (attribute.getDefinition().destinationPointSpecified) {
                 navigateButton = createNavigationButton();
-                view.addView(navigateButton);
+                RelativeLayout.LayoutParams navBtnLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                navBtnLayoutParams.addRule(RelativeLayout.ALIGN_RIGHT, navigateButton.getId());
+                navBtnLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, navigateButton.getId());
+                navBtnLayoutParams.addRule(RelativeLayout.RIGHT_OF, showMapButton.getId());
+                belowBar.addView(navigateButton, navBtnLayoutParams);
             }
 
             view.addView(accuracyView);
@@ -166,7 +197,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
         private LinearLayout createSrsLayout() {
             TextView srsLabel = new TextView(context);
-            srsLabel.setText(context.getResources().getString(R.string.label_spatial_reference_system) + ":");
+            srsLabel.setText(getString(R.string.label_spatial_reference_system) + ":");
 
             LinearLayout srsLine = new LinearLayout(context);
             srsLine.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
@@ -198,17 +229,15 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         private Button createNavigationButton() {
             Button button = new AppCompatButton(context);
             button.setTextAppearance(context, android.R.style.TextAppearance_Small);
-            button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            button.setText(context.getResources().getString(R.string.label_navigate));
-            button.setBackgroundDrawable(null);
-            button.setPaintFlags(button.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+            button.setText(getString(R.string.label_navigate));
+            button.setCompoundDrawablesWithIntrinsicBounds(
+                    null, new Attrs(context).drawable(R.attr.navigationIcon), null, null);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     NavigationDialogFragment.show(context.getSupportFragmentManager());
                 }
             });
-            int linkColor = new TextView(context).getLinkTextColors().getDefaultColor();
-            button.setTextColor(linkColor);
             return button;
         }
 
@@ -269,11 +298,11 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             return output;
         }
 
-        private ToggleButton createButton() {
+        private ToggleButton createStartStopButton() {
             ToggleButton button = new ToggleButton(context);
-            button.setText(context.getResources().getString(R.string.label_start_gps));
-            button.setTextOn(context.getResources().getString(R.string.label_stop_gps));
-            button.setTextOff(context.getResources().getString(R.string.label_start_gps));
+            button.setText(getString(R.string.label_start_gps));
+            button.setTextOn(getString(R.string.label_stop_gps));
+            button.setTextOff(getString(R.string.label_start_gps));
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked)
@@ -285,11 +314,30 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
                 }
             });
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+            return button;
+        }
 
+        private Button createShowMapButton() {
+            Button button = new AppCompatButton(context);
+            button.setText(getString(R.string.label_show_map));
+            button.setGravity(Gravity.RIGHT);
+            button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+            button.setCompoundDrawablesWithIntrinsicBounds(
+                    null, new Attrs(context).drawable(R.attr.mapIcon), null, null);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    if (!attribute.isEmpty()) {
+                        double[] lonLat = transformToLonLat(attribute.getX(), attribute.getY());
+                        double lon = lonLat[0];
+                        double lat = lonLat[1];
+                        String uri = String.format(Locale.ENGLISH,
+                                "geo:%f,%f?z=17&q=%f,%f(%s)", lat, lon, lat, lon, attribute.getDefinition().label);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        context.startActivity(intent);
+                    }
                 }
             });
+            button.setEnabled(!attribute.isEmpty());
             return button;
         }
 
@@ -297,7 +345,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             return new TextView(context);
         }
 
-        public void updateCoordinate(double[] transformedCoord) {
+        private void updateCoordinate(double[] transformedCoord) {
             xView.setText(formatDouble(transformedCoord[0]));
             yView.setText(formatDouble(transformedCoord[1]));
         }
@@ -305,12 +353,16 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         private String formatDouble(Double value) {
             return numberFormat().format(value);
         }
+
+        private String getString(int resId) {
+            return context.getResources().getString(resId);
+        }
     }
 
     private class UpdateListener implements LocationProvider.LocationUpdateListener {
         private final FragmentActivity context;
 
-        public UpdateListener(FragmentActivity context) {this.context = context;}
+        UpdateListener(FragmentActivity context) {this.context = context;}
 
         public void onUpdate(Location location) {
             float accuracy = location.getAccuracy();

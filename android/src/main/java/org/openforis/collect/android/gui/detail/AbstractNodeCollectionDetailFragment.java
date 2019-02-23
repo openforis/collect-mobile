@@ -82,11 +82,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         h.addButton = h.addButtonSwitcher.findViewById(R.id.action_add_node);
         h.addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                v.setEnabled(false);
                 if (isMaxItemsLimitReached()) {
                     String message = getActivity().getString(R.string.entity_collection_cannot_add_more_items, getMaxLimit());
                     Dialogs.alert(getActivity(), getString(R.string.warning), message);
+                    v.setEnabled(true);
                 } else {
-                    v.setEnabled(false);
                     startAddNodeTask(h);
                 }
             }

@@ -1,6 +1,10 @@
 Changes
 -------
 
+2019-03-04
+
+    * Coordinate: show in map
+
 2019-01-24
 
     * Improve survey import error message

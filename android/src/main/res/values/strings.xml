@@ -81,6 +81,7 @@
     <string name="label_stop_gps">Stop GPS</string>
     <string name="label_accuracy">Accuracy</string>
     <string name="label_navigate">Navigate to expected location</string>
+    <string name="label_show_map">Show on Map</string>
     <string name="label_distance">Distance</string>
     <string name="label_destination">Destination</string>
     <string name="label_empty">…</string>

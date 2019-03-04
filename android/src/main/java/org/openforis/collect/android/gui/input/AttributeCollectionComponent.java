@@ -22,7 +22,7 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
     }
 
     /**
-     * Provide an click listener to get the add button next to the label.
+     * Provide a click listener to get the add button next to the label.
      */
     protected View.OnClickListener onAddAttribute() {
         return null; // No add button by default

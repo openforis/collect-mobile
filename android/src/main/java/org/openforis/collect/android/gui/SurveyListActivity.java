@@ -203,29 +203,24 @@ public class SurveyListActivity extends BaseActivity {
             if (e instanceof UnsupportedFileType) {
                 errorMessage = context.getString(R.string.import_text_unsupported_file_type_selected,
                         ((UnsupportedFileType) e).getExpectedExtention());
-            } else if (e instanceof MalformedSurvey) {
-                String detailedMessage = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
-                errorMessage = context.getString(R.string.import_text_failed, detailedMessage);
             } else if (e instanceof WrongSurveyVersion) {
                 errorMessage = context.getString(R.string.import_text_wrong_version,
                         ((WrongSurveyVersion) e).getSurveyVersion(), ((WrongSurveyVersion) e).getCollectVersion());
             } else {
-                errorMessage = context.getString(R.string.import_text_failed);
+                String detailedMessage = e.getCause() == null ? e.getMessage() : e.getCause().getMessage();
+                errorMessage = context.getString(R.string.import_text_failed, detailedMessage);
             }
-            showImportFailedDialog(context,
-                    surveyPath,
-                    errorMessage
-            );
+            showImportFailedDialog(context, errorMessage);
         }
 
         private void onSurveyImportComplete() {
             SurveyNodeActivity.startClearSurveyNodeActivity(context);
         }
 
-        private void showImportFailedDialog(final Activity context, final String surveyPath, final String message) {
+        private void showImportFailedDialog(final Activity context, final String message) {
             new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(context.getString(R.string.import_title_failed, surveyPath))
+                .setTitle(context.getString(R.string.import_title_failed))
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

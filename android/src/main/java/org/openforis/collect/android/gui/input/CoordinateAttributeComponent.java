@@ -172,6 +172,8 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             view.addView(yView);
             view.addView(startStopButton);
 
+            view.addView(accuracyView);
+
             RelativeLayout belowBar = new RelativeLayout(context);
             RelativeLayout.LayoutParams belowBarLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             belowBarLayoutParams.setMargins(0, Views.px(context, 30), 0, 0);
@@ -191,8 +193,6 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 navBtnLayoutParams.addRule(RelativeLayout.RIGHT_OF, showMapButton.getId());
                 belowBar.addView(navigateButton, navBtnLayoutParams);
             }
-
-            view.addView(accuracyView);
         }
 
         private LinearLayout createSrsLayout() {

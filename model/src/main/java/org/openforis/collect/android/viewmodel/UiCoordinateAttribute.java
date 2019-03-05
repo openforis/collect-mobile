@@ -1,5 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
+import java.util.Locale;
+
 /**
  * @author Daniel Wiell
  */
@@ -42,7 +44,7 @@ public class UiCoordinateAttribute extends UiAttribute {
 
     @Override
     public String valueAsString() {
-        return isEmpty() ? null : (x + ", " + y);
+        return isEmpty() ? null : String.format(Locale.ENGLISH, "x: %f y: %f SRS: %s", x, y, spatialReferenceSystem.id);
     }
 
     public boolean isEmpty() {

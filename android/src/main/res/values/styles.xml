@@ -31,7 +31,7 @@
         <item name="openIcon">@drawable/ic_action_collection</item>
         <item name="closeIcon">@drawable/ic_close_white_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove</item>
-        <item name="navigationIcon">@drawable/ic_navigation_white_24dp</item>
+        <item name="navigateToLocationIcon">@drawable/ic_navigation_white_24dp</item>
         <item name="mapIcon">@drawable/ic_map_white_24dp</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
@@ -74,7 +74,7 @@
         <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
-        <item name="navigationIcon">@drawable/ic_navigation_black_24dp</item>
+        <item name="navigateToLocationIcon">@drawable/ic_navigation_black_24dp</item>
         <item name="mapIcon">@drawable/ic_map_black_24dp</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewLight</item>
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>

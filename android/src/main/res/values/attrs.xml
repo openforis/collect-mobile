@@ -26,7 +26,7 @@
     <attr name="removeIcon" format="reference"/>
     <attr name="viewAsListIcon" format="reference"/>
     <attr name="deleteIcon" format="reference"/>
-    <attr name="navigationIcon" format="reference"/>
+    <attr name="navigateToLocationIcon" format="reference"/>
     <attr name="mapIcon" format="reference"/>
 
     <attr name="spinnerItemTextColor" format="reference|color" />

@@ -32,6 +32,7 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CoordinateUtils;
+import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 
@@ -72,10 +73,19 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             attribute.setSpatialReferenceSystem(srs);
             attribute.setX(x);
             attribute.setY(y);
+
             return true;
+        } else {
+            return false;
         }
+    }
+
+    @Override
+    protected void onAttributeChange(UiAttribute attribute) {
+        super.onAttributeChange(attribute);
+
+        // update show map button availability
         vh.showMapButton.setEnabled(!attribute.isEmpty());
-        return false;
     }
 
     private UiSpatialReferenceSystem selectedSpatialReferenceSystem() {
@@ -232,7 +242,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             button.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
             button.setText(getString(R.string.label_navigate));
             button.setCompoundDrawablesWithIntrinsicBounds(
-                    null, new Attrs(context).drawable(R.attr.navigationIcon), null, null);
+                    null, new Attrs(context).drawable(R.attr.navigateToLocationIcon), null, null);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     NavigationDialogFragment.show(context.getSupportFragmentManager());

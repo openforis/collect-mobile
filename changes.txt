@@ -1,6 +1,10 @@
 Changes
 -------
 
+2019-03-29
+
+    * Use latest collect-core version
+
 2019-03-04
 
     * Coordinate: show in map

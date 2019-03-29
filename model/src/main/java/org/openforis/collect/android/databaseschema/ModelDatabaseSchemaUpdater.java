@@ -11,7 +11,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
  * @author Daniel Wiell
  */
 public class ModelDatabaseSchemaUpdater {
-    private static final String LIQUIBASE_CHANGE_LOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
+    private static final String LIQUIBASE_CHANGE_LOG = "org/openforis/collect/db/changelog/db.changelog-sqlite.xml";
 
     public void update(Database db, final liquibase.database.Database liquibaseDatabase) {
         try {

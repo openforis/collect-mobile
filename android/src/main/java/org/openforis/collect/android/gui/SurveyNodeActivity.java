@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -11,10 +12,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
 
+import org.apache.commons.io.FilenameUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
@@ -29,6 +32,7 @@ import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.util.CollectPermissions;
@@ -40,6 +44,8 @@ import org.openforis.collect.android.viewmodel.UiRecordCollection;
 import org.openforis.collect.android.viewmodel.UiSurvey;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -111,6 +117,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.node_activity_actions, menu);
+        menu.findItem(R.id.action_survey_guide).setVisible(surveyService.hasSurveyGuide());
         return true;
     }
 
@@ -436,6 +443,22 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public void showEntityTable(MenuItem menuItem) {
         Keyboard.hide(this);
         EntityTableDialogFragment.show(getSupportFragmentManager());
+    }
+
+    public void openSurveyGuide(MenuItem menuItem) {
+        try {
+            File file = surveyService.loadSurveyGuide(getCacheDir());
+            if (file == null) {
+                Toast.makeText(this, R.string.survey_guide_not_found_alert_message, Toast.LENGTH_LONG)
+                    .show();
+            } else {
+                String contentType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName()));
+                Activities.shareFile(this, file, contentType, R.string.survey_guide_share_with, true);
+            }
+        } catch(IOException e) {
+            Toast.makeText(this, this.getString(R.string.survey_guide_error_opening_file, e.getMessage()), Toast.LENGTH_LONG)
+                .show();
+        }
     }
 
     public void navigateToSendDataToCollect(MenuItem menuItem) {

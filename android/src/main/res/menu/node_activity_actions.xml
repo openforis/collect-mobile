@@ -7,6 +7,12 @@
         android:orderInCategory="1000"> <!-- always shown at the end -->
         <menu>
             <item
+                android:id="@+id/action_survey_guide"
+                android:title="@string/survey_guide"
+                android:icon="?attr/helpIcon"
+                app:showAsAction="never"
+                android:onClick="openSurveyGuide" />
+            <item
                 android:id="@+id/action_backup"
                 android:title="@string/action_backup"
                 android:icon="?attr/backupIcon"

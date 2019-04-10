@@ -4,13 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import static android.content.Intent.*;
+
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.view.WindowManager;
+
+import java.io.File;
 
 /**
  * @author Stefano Ricci
  */
 public abstract class Activities {
+
+    private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.fileprovider";
 
     public static <A extends Activity> void start(Context context, Class<A> activityClass) {
         start(context, activityClass, 0, null);
@@ -64,5 +71,24 @@ public abstract class Activities {
         if (context instanceof Activity) {
             ((Activity) context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+    }
+
+    public static void shareFile(Context context, File file, String contentType, int messageKey, boolean viewOnly) {
+        Intent intent = new Intent();
+
+        Uri uri = FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, file);
+
+        if (viewOnly) {
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, contentType);
+        } else {
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType(contentType);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
+
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        context.startActivity(Intent.createChooser(intent, context.getText(messageKey)));
     }
 }

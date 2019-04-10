@@ -33,6 +33,7 @@
         <item name="removeIcon">@drawable/ic_action_remove</item>
         <item name="navigateToLocationIcon">@drawable/ic_navigation_white_24dp</item>
         <item name="mapIcon">@drawable/ic_map_white_24dp</item>
+        <item name="helpIcon">@drawable/ic_help_white_24dp</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
         <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
@@ -76,6 +77,7 @@
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
         <item name="navigateToLocationIcon">@drawable/ic_navigation_black_24dp</item>
         <item name="mapIcon">@drawable/ic_map_black_24dp</item>
+        <item name="helpIcon">@drawable/ic_help_black_24dp</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewLight</item>
         <item name="android:dropDownItemStyle">@style/Widget.DropDownItemLight</item>
         <item name="entityListHeaderBorderColor">@color/light_entity_list_header_border_color</item>

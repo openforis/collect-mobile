@@ -39,6 +39,7 @@ import org.openforis.collect.persistence.DatabaseLookupProvider;
 import org.openforis.collect.persistence.DynamicTableDao;
 import org.openforis.collect.persistence.SamplingDesignDao;
 import org.openforis.collect.persistence.SurveyDao;
+import org.openforis.collect.persistence.SurveyFileDao;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
@@ -233,6 +234,9 @@ public class ServiceLocator {
         speciesListService.setSpeciesManager(speciesManager);
         collectSurveyContext.setSpeciesListService(speciesListService);
 
+        SurveyFileDao surveyFileDao = new SurveyFileDao();
+        surveyFileDao.setDsl(jooqDsl);
+
         final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveySerializer(surveySerializer);
@@ -243,6 +247,7 @@ public class ServiceLocator {
         surveyManager.setCodeListManager(codeListManager);
         surveyManager.setCollectSurveyContext(collectSurveyContext);
         surveyManager.setSurveyDao(surveyDao);
+        surveyManager.setSurveyFileDao(surveyFileDao);
 
         RecordManager recordManager = new MobileRecordManager(
                 codeListManager,

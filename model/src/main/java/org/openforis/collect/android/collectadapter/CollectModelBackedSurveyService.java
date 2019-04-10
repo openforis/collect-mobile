@@ -1,5 +1,6 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.apache.commons.io.FileUtils;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.SurveyListener;
@@ -240,10 +241,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
     }
 
-    public File exportSurvey(boolean excludeBinaries) throws IOException {
+    public File exportSurvey(File surveysDir, boolean excludeBinaries) throws IOException {
         Integer selectedRecordId = viewModelManager.getSelectedRecordId();
 
-        File exportedFile = exportFile();
+        File exportedFile = exportFile(surveysDir);
         try {
             collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, new CollectModelManager.ExportListener() {
                 public void beforeRecordExport(int recordId) {
@@ -262,14 +263,28 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return exportedFile;
     }
 
-    private File exportFile() {
+    public boolean hasSurveyGuide() {
+        return collectModelManager.loadSurveyGuide() != null;
+    }
+
+    public File loadSurveyGuide(File outputDir) throws IOException {
+        byte[] content = collectModelManager.loadSurveyGuide();
+        if (content == null) {
+            return null;
+        }
+        File file = new File(outputDir, getSelectedSurvey().getName() + "_guide.pdf");
+        FileUtils.writeByteArrayToFile(file, content);
+        return file;
+    }
+
+    private File exportFile(File surveysDir) {
         String fileName = viewModelManager.getSelectedSurvey().getName();
         String username = Settings.user().getUsername();
         if (!username.isEmpty())
             fileName += "_" + username;
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm").format(new Date());
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.ENGLISH).format(new Date());
         fileName += "_" + timestamp + ".collect-data";
-        return new File(workingDir, fileName);
+        return new File(getDataExportDirectory(surveysDir), fileName);
     }
 
     public void setListener(SurveyListener listener) {
@@ -310,4 +325,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
             callbacksIt.remove();
         }
     }
+
+    private File getDataExportDirectory(File surveysDir) {
+        File surveyDir = new File(surveysDir, getSelectedSurvey().getName());
+        return new File(surveyDir, "data_export");
+    }
+
 }

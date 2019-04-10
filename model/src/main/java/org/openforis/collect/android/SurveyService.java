@@ -45,7 +45,7 @@ public interface SurveyService {
 
     void deleteRecords(Collection<Integer> records);
 
-    File exportSurvey(boolean excludeBinaries) throws IOException;
+    File exportSurvey(File surveysDir, boolean excludeBinaries) throws IOException;
 
     void setListener(SurveyListener listener);
 
@@ -54,6 +54,10 @@ public interface SurveyService {
     CollectSurvey getSelectedSurvey();
 
     boolean isUpdating();
+
+    boolean hasSurveyGuide();
+
+    File loadSurveyGuide(File outputDir) throws IOException;
 
     void registerRecordUpdateCallback(Runnable runnable);
 }

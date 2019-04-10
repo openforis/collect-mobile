@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+
 import org.openforis.collect.android.gui.WorkingDirNotWritable;
 
 import java.io.File;
@@ -46,6 +47,12 @@ public class AppDirs {
 
     public static File surveyImagesDir(String surveyName, Context context) throws WorkingDirNotWritable {
         return new File(surveyDatabasesDir(surveyName, context), "collect_upload");
+    }
+
+    public static File surveyGuideDir(Context context) {
+        // it must be in internal or external Android app files dir, otherwise
+        // the file cannot be viewed using an external app
+        return context.getExternalFilesDir("survey_guide");
     }
 
     private static File defaultWorkingDir(Context context) {

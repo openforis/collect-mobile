@@ -4,24 +4,21 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.AllRecordKeysNotSpecifiedDialog;
 import org.openforis.collect.android.gui.ServiceLocator;
-import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
 
@@ -71,7 +68,7 @@ public class ExportDialogFragment extends DialogFragment {
 
         @Override
         protected File runTask() throws Exception {
-            File exportedFile = ServiceLocator.surveyService().exportSurvey(excludeBinaries);
+            File exportedFile = ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context), excludeBinaries);
             AndroidFiles.makeDiscoverable(exportedFile, context);
             if (saveToDownloads) {
                 File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -94,15 +91,7 @@ public class ExportDialogFragment extends DialogFragment {
                 if (saveToDownloads) {
                     Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
                 } else {
-                    //TODO find nicer solution to prevent FileUriExposedException
-                    StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                    StrictMode.setVmPolicy(builder.build());
-
-                    Intent shareIntent = new Intent();
-                    shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportedFile));
-                    shareIntent.setType("*/*");
-                    context.startActivity(Intent.createChooser(shareIntent, context.getText(R.string.export_share_with_application)));
+                    Activities.shareFile(context, exportedFile, "*/*", R.string.export_share_with_application, false);
                 }
             }
         }

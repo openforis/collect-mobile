@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openforis.collect.R;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
+import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MultipartUtility;
 import org.openforis.collect.android.util.ProgressHandler;
@@ -208,12 +209,13 @@ public class SubmitDataToCollectActivity extends BaseActivity {
 
         @Override
         protected File doInBackground(Void... voids) {
+            SubmitDataToCollectActivity context = SubmitDataToCollectActivity.this;
             try {
-                return ServiceLocator.surveyService().exportSurvey(false);
+                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context),false);
             } catch (IOException e) {
                 handleError(e.getMessage());
             } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
-                handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(SubmitDataToCollectActivity.this));
+                handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(context));
             }
             return null;
         }

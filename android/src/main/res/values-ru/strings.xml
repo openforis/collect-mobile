@@ -40,7 +40,7 @@
     <string name="toast_exported_survey">Экспортированный опрос в %s</string>
     <string name="toast_exported_survey_failed">Не удалось экспортировать опрос: %s</string>
     <string name="survey_export_failed_title">Ошибка в процессе экспорта</string>
-    <string name="survey_export_failed_message">Не удалось экспортировать опрос "%s":\n\<n></n>%s</string>
+    <string name="survey_export_failed_message">Не удалось экспортировать опрос "%s":\n\n\n%s</string>
     <string name="all_key_records_not_specified_title">Все %1$s ключевые атрибуты не были указаны</string>
     <string name="all_key_records_not_specified_message">В очереди на экспорт данных, %1$s Должно быть указано для всех%2$s.</string>
 

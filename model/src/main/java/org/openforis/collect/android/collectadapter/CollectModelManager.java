@@ -42,6 +42,7 @@ import org.openforis.collect.model.EntityAddChange;
 import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeMap;
 import org.openforis.collect.model.NodeChangeSet;
+import org.openforis.collect.model.SurveyFile;
 import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyImportException;
@@ -449,6 +450,18 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
             attribute.setValue(previousValue);
         }
 
+    }
+
+    public byte[] loadSurveyGuide() {
+        if (selectedSurvey != null) {
+            List<SurveyFile> surveyFiles = surveyManager.loadSurveyFileSummaries(selectedSurvey);
+            for(SurveyFile surveyFile : surveyFiles) {
+                if (surveyFile.getType() == SurveyFile.SurveyFileType.SURVEY_GUIDE) {
+                    return surveyManager.loadSurveyFileContent(surveyFile);
+                }
+            }
+        }
+        return null;
     }
 
     public CollectSurvey getSelectedSurvey() {

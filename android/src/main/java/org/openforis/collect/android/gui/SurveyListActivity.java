@@ -119,7 +119,10 @@ public class SurveyListActivity extends BaseActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     File file = AndroidFiles.getFileByUri(this, data.getData());
                     if (file != null) {
-                        importSurvey(file.getAbsolutePath());
+                        if (file.length() > 0)
+                            importSurvey(file.getAbsolutePath());
+                        else
+                            Dialogs.alert(this, R.string.import_title_failed, R.string.survey_import_failed_empty_file_message);
                     } else {
                         throw new IllegalStateException(String.format(
                                 "Failed to import survey; could not determine file path for URI: %s", data.getData()));

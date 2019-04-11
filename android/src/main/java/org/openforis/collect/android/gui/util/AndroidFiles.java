@@ -54,7 +54,7 @@ public class AndroidFiles {
             String fileName = getUriContentFileName(context, uri);
             File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(downloadDir, fileName);
-            if (copyUriContentToFile(context, uri, file)) {
+            if (file.exists() && file.length() > 0 || copyUriContentToFile(context, uri, file)) {
                 return file;
             } else {
                 return null;
@@ -82,16 +82,20 @@ public class AndroidFiles {
     }
 
     public static boolean copyUriContentToFile(Context context, Uri uri, File file) {
+        InputStream inputStream = null;
         try {
-            InputStream inputStream = context.getContentResolver().openInputStream(uri);
-            if (inputStream == null)
+            inputStream = context.getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
                 return false;
-            IOUtils.copy(inputStream, new FileOutputStream(file));
-            inputStream.close();
-            return true;
+            } else {
+                IOUtils.copy(inputStream, new FileOutputStream(file));
+                return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
     }
 

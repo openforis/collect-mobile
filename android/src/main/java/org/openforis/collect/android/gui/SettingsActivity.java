@@ -70,6 +70,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
+        //UILanguageInitializer.init(this);
         File workingDir = AppDirs.root(this);
         directoryChooserDialog = DirectoryChooserFragment.newInstance(workingDir.getName(), workingDir.getParent());
 
@@ -84,6 +85,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
+        Settings.setUiLanguage(Settings.UILanguage.fromCode(preferences.getString(UILanguageInitializer.PREFERENCE_KEY, null)));
         Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE,
                 Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name())));
         Settings.setPreferredLanguage(preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.getDefault().getLanguage()));
@@ -128,6 +130,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
+            setupUiLanguagePreference();
             setupLanguagePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
@@ -183,6 +186,26 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             });
         }
 
+        private void setupUiLanguagePreference() {
+            final ListPreference preference = (ListPreference) findPreference(UILanguageInitializer.PREFERENCE_KEY);
+
+            preference.setEntryValues(Settings.UILanguage.codes());
+            preference.setEntries(Settings.UILanguage.labels());
+
+            Settings.UILanguage selectedUiLang = UILanguageInitializer.determineUiLanguageFromPreferences(getActivity());
+            preference.setSummary(selectedUiLang.getLabel());
+
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Settings.UILanguage newUiLanguage = Settings.UILanguage.fromCode((String) newValue);
+                    Settings.setUiLanguage(newUiLanguage);
+                    preference.setSummary(newUiLanguage.getLabel());
+                    UILanguageInitializer.init(getActivity());
+                    return true;
+                }
+            });
+        }
+
         private void setupLanguagePreference() {
             final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
             final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
@@ -231,18 +254,14 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         }
 
         private String getPreferredLanguageModeSummary(Settings.PreferredLanguageMode mode) {
-            int summaryResId;
             switch (mode) {
-                case SYSTEM_DEFAULT:
-                    summaryResId = R.string.settings_preferred_language_mode_system_default;
-                    break;
-                case SURVEY_DEFAULT:
-                    summaryResId = R.string.settings_preferred_language_mode_survey_default;
-                    break;
-                default:
-                    summaryResId = R.string.settings_preferred_language_mode_specified;
+            case SYSTEM_DEFAULT:
+                return getString(R.string.settings_preferred_language_mode_system_default);
+            case SURVEY_DEFAULT:
+                return getString(R.string.settings_preferred_language_mode_survey_default);
+            default:
+                return getString(R.string.settings_preferred_language_mode_specified);
             }
-            return getString(summaryResId);
         }
 
         private String getThemeSummary(String themeName) {

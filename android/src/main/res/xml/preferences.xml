@@ -31,6 +31,12 @@
             android:key="showKeyboard"
             />
 
+<!--
+    <ListPreference
+        android:key="ui_language"
+        android:title="@string/settings_ui_language" />
+-->
+
     <PreferenceCategory
         android:title="@string/settings_language"
         android:key="language">

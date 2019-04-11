@@ -1,7 +1,6 @@
 package org.openforis.collect.android;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openforis.collect.android.collectadapter.CollectModelManager;
 import org.openforis.collect.model.User;
 
 public class Settings {
@@ -11,8 +10,69 @@ public class Settings {
     private static String remoteCollectAddress;
     private static String remoteCollectUsername;
     private static String remoteCollectPassword;
+    private static UILanguage uiLanguage;
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
+
+    public enum UILanguage {
+        SYSTEM_DEFAULT(null, "System default"),
+        ENGLISH("en", "English"),
+        SPANISH("es", "Spanish"),
+        RUSSIAN("ru", "Russian");
+
+        private String code;
+        private String label;
+
+        UILanguage(String code, String label) {
+            this.code = code;
+            this.label = label;
+        }
+
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public static String[] codes() {
+            UILanguage[] langs = values();
+            String[] codes = new String[langs.length];
+            for (int i = 0; i < langs.length; i++) {
+                codes[i] = langs[i].code;
+            }
+            return codes;
+        }
+
+
+        public static String[] labels() {
+            UILanguage[] langs = values();
+            String[] labels = new String[langs.length];
+            for (int i = 0; i < langs.length; i++) {
+                labels[i] = langs[i].label;
+            }
+            return labels;
+        }
+
+        public static UILanguage fromCode(String code) {
+            if (code == null)
+                return SYSTEM_DEFAULT;
+            for (UILanguage lang : values())
+                if (code.equalsIgnoreCase(lang.code))
+                    return lang;
+            return SYSTEM_DEFAULT;
+        }
+
+        public static boolean isSupported(String code) {
+            return fromCode(code) != SYSTEM_DEFAULT;
+        }
+
+        public static UILanguage getDefault() {
+            return ENGLISH;
+        }
+    }
 
     public enum PreferredLanguageMode {
         SYSTEM_DEFAULT,
@@ -46,6 +106,14 @@ public class Settings {
 
     private static String crewToUsername() {
         return crew == null ? "" : crew.replaceAll("\\W", "_").toLowerCase();
+    }
+
+    public synchronized static UILanguage getUiLanguage() {
+        return uiLanguage;
+    }
+
+    public static void setUiLanguage(UILanguage uiLanguage) {
+        Settings.uiLanguage = uiLanguage;
     }
 
     public synchronized static PreferredLanguageMode getPreferredLanguageMode() {
@@ -89,7 +157,7 @@ public class Settings {
     }
 
     public synchronized static String getRemoteCollectPassword() {
-        return remoteCollectAddress;
+        return remoteCollectPassword;
     }
 
     public synchronized static void setRemoteCollectPassword(String remoteCollectPassword) {

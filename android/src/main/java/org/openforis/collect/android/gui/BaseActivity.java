@@ -18,6 +18,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeInitializer.init(this);
+        UILanguageInitializer.init(this);
         super.onCreate(savedInstanceState);
     }
 

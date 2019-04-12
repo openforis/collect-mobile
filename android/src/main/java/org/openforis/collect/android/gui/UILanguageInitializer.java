@@ -31,9 +31,9 @@ public class UILanguageInitializer {
         }
     }
 
-    protected static Settings.UILanguage determineUiLanguageFromPreferences(Context context) {
+    static Settings.UILanguage determineUiLanguageFromPreferences(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String uiLangCode = preferences.getString(PREFERENCE_KEY, null);
+        String uiLangCode = preferences.getString(PREFERENCE_KEY, Settings.UILanguage.getDefault().getCode());
         return Settings.UILanguage.fromCode(uiLangCode);
     }
 

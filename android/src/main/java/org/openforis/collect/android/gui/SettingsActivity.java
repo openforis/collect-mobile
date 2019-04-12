@@ -85,7 +85,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
-        Settings.setUiLanguage(Settings.UILanguage.fromCode(preferences.getString(UILanguageInitializer.PREFERENCE_KEY, null)));
+        Settings.setUiLanguage(UILanguageInitializer.determineUiLanguageFromPreferences(context));
         Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE,
                 Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name())));
         Settings.setPreferredLanguage(preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.getDefault().getLanguage()));
@@ -193,25 +193,42 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             preference.setEntries(Settings.UILanguage.labels());
 
             Settings.UILanguage selectedUiLang = UILanguageInitializer.determineUiLanguageFromPreferences(getActivity());
-            preference.setSummary(selectedUiLang.getLabel());
+            String summary = getUiLanguageSummary(selectedUiLang);
+            preference.setSummary(summary);
 
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Settings.UILanguage newUiLanguage = Settings.UILanguage.fromCode((String) newValue);
                     Settings.setUiLanguage(newUiLanguage);
-                    preference.setSummary(newUiLanguage.getLabel());
+                    preference.setSummary(getUiLanguageSummary(newUiLanguage));
                     UILanguageInitializer.init(getActivity());
                     return true;
                 }
             });
         }
 
+        private String getUiLanguageSummary(Settings.UILanguage uiLanguage) {
+            String summary = uiLanguage.getLabel();
+            if (uiLanguage == Settings.UILanguage.SYSTEM_DEFAULT) {
+                String defaultLangCode = Locale.getDefault().getLanguage();
+                if (!Settings.UILanguage.isSupported(defaultLangCode)) {
+                    String unsupportedLangMessage = getString(
+                            R.string.settings_ui_language_system_default_not_supported,
+                            Locale.getDefault().getDisplayLanguage(),
+                            Settings.UILanguage.getDefault().getLabel()
+                    );
+                    summary += String.format(" (%s)", unsupportedLangMessage);
+                }
+            }
+            return summary;
+        }
+
         private void setupLanguagePreference() {
             final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
             final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
 
-            preferredLanguagePreference.setEntries(LANGUAGES.values().toArray(new String[LANGUAGES.values().size()]));
-            preferredLanguagePreference.setEntryValues(LANGUAGES.keySet().toArray(new String[LANGUAGES.keySet().size()]));
+            preferredLanguagePreference.setEntries(LANGUAGES.values().toArray(new String[0]));
+            preferredLanguagePreference.setEntryValues(LANGUAGES.keySet().toArray(new String[0]));
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Settings.PreferredLanguageMode selectedPreferredLanguageMode = Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE, Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name()));
@@ -255,12 +272,12 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
 
         private String getPreferredLanguageModeSummary(Settings.PreferredLanguageMode mode) {
             switch (mode) {
-            case SYSTEM_DEFAULT:
-                return getString(R.string.settings_preferred_language_mode_system_default);
-            case SURVEY_DEFAULT:
-                return getString(R.string.settings_preferred_language_mode_survey_default);
-            default:
-                return getString(R.string.settings_preferred_language_mode_specified);
+                case SYSTEM_DEFAULT:
+                    return getString(R.string.settings_preferred_language_mode_system_default);
+                case SURVEY_DEFAULT:
+                    return getString(R.string.settings_preferred_language_mode_survey_default);
+                default:
+                    return getString(R.string.settings_preferred_language_mode_specified);
             }
         }
 
@@ -313,11 +330,11 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         private void setupRemoteCollectPasswordPreference() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Preference preference = findPreference(REMOTE_COLLECT_PASSWORD);
-            preference.setSummary(StringUtils.isNotBlank(preferences.getString(REMOTE_COLLECT_PASSWORD, "")) ? "*********": "");
+            preference.setSummary(StringUtils.isNotBlank(preferences.getString(REMOTE_COLLECT_PASSWORD, "")) ? "*********" : "");
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String stringVal = newValue.toString();
-                    preference.setSummary(StringUtils.isNotBlank(stringVal) ? "*********": "");
+                    preference.setSummary(StringUtils.isNotBlank(stringVal) ? "*********" : "");
                     Settings.setRemoteCollectPassword(stringVal);
                     return true;
                 }
@@ -346,7 +363,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     private static Map<String, String> createLanguagesData() {
         List<String> langCodes = Languages.getCodes(Languages.Standard.ISO_639_1);
         Map<String, String> unsortedLanguages = new HashMap<String, String>(langCodes.size());
-        for(String langCode : langCodes) {
+        for (String langCode : langCodes) {
             unsortedLanguages.put(langCode, getLanguageLabel(langCode));
         }
         List<Map.Entry<String, String>> entries = new LinkedList<Map.Entry<String, String>>(unsortedLanguages.entrySet());
@@ -356,7 +373,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             }
         });
         Map<String, String> result = new LinkedHashMap<String, String>();
-        for(Map.Entry<String, String> entry : entries) {
+        for (Map.Entry<String, String> entry : entries) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;

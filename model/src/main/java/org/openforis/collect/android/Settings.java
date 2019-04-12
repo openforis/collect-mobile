@@ -15,10 +15,13 @@ public class Settings {
     private static String preferredLanguage;
 
     public enum UILanguage {
-        SYSTEM_DEFAULT(null, "System default"),
+        SYSTEM_DEFAULT("default", "System default"),
+        ALBANIAN("sq", "Albanian"),
         ENGLISH("en", "English"),
+        FRENCH("fr", "French"),
+        RUSSIAN("ru", "Russian"),
         SPANISH("es", "Spanish"),
-        RUSSIAN("ru", "Russian");
+        SWEDISH("sv", "Swedish");
 
         private String code;
         private String label;

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -70,7 +71,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
-        //UILanguageInitializer.init(this);
         File workingDir = AppDirs.root(this);
         directoryChooserDialog = DirectoryChooserFragment.newInstance(workingDir.getName(), workingDir.getParent());
 
@@ -85,7 +85,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
-        Settings.setUiLanguage(UILanguageInitializer.determineUiLanguageFromPreferences(context));
         Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE,
                 Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name())));
         Settings.setPreferredLanguage(preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.getDefault().getLanguage()));
@@ -113,6 +112,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     private static void handleLanguageChanged(Context context) {
+        UILanguageInitializer.init(context);
         ServiceLocator.resetModelManager(context);
     }
 
@@ -130,7 +130,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
-            setupUiLanguagePreference();
             setupLanguagePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
@@ -186,43 +185,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             });
         }
 
-        private void setupUiLanguagePreference() {
-            final ListPreference preference = (ListPreference) findPreference(UILanguageInitializer.PREFERENCE_KEY);
-
-            preference.setEntryValues(Settings.UILanguage.codes());
-            preference.setEntries(Settings.UILanguage.labels());
-
-            Settings.UILanguage selectedUiLang = UILanguageInitializer.determineUiLanguageFromPreferences(getActivity());
-            String summary = getUiLanguageSummary(selectedUiLang);
-            preference.setSummary(summary);
-
-            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Settings.UILanguage newUiLanguage = Settings.UILanguage.fromCode((String) newValue);
-                    Settings.setUiLanguage(newUiLanguage);
-                    preference.setSummary(getUiLanguageSummary(newUiLanguage));
-                    UILanguageInitializer.init(getActivity());
-                    return true;
-                }
-            });
-        }
-
-        private String getUiLanguageSummary(Settings.UILanguage uiLanguage) {
-            String summary = uiLanguage.getLabel();
-            if (uiLanguage == Settings.UILanguage.SYSTEM_DEFAULT) {
-                String defaultLangCode = Locale.getDefault().getLanguage();
-                if (!Settings.UILanguage.isSupported(defaultLangCode)) {
-                    String unsupportedLangMessage = getString(
-                            R.string.settings_ui_language_system_default_not_supported,
-                            Locale.getDefault().getDisplayLanguage(),
-                            Settings.UILanguage.getDefault().getLabel()
-                    );
-                    summary += String.format(" (%s)", unsupportedLangMessage);
-                }
-            }
-            return summary;
-        }
-
         private void setupLanguagePreference() {
             final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
             final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
@@ -271,22 +233,43 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         }
 
         private String getPreferredLanguageModeSummary(Settings.PreferredLanguageMode mode) {
+            String summary;
+            String langCode = null;
             switch (mode) {
                 case SYSTEM_DEFAULT:
-                    return getString(R.string.settings_preferred_language_mode_system_default);
+                    summary = getString(R.string.settings_preferred_language_mode_system_default);
+                    Locale systemLocale = Resources.getSystem().getConfiguration().locale;
+                    langCode = systemLocale.getLanguage();
+                    break;
                 case SURVEY_DEFAULT:
-                    return getString(R.string.settings_preferred_language_mode_survey_default);
+                    summary = getString(R.string.settings_preferred_language_mode_survey_default);
+                    if (ServiceLocator.surveyService() != null &&
+                            ServiceLocator.surveyService().getSelectedSurvey() != null) {
+                        langCode = ServiceLocator.surveyService().getSelectedSurvey().getDefaultLanguage();
+                    }
+                    break;
                 default:
-                    return getString(R.string.settings_preferred_language_mode_specified);
+                    summary = getString(R.string.settings_preferred_language_mode_specified);
             }
+
+            if (langCode != null) {
+                summary += " (" + getLanguageLabel(langCode) + ")";
+                if (!Settings.UILanguage.isSupported(langCode)) {
+                    String unsupportedLangMessage = getString(
+                            R.string.settings_ui_language_system_default_not_supported,
+                            Settings.UILanguage.getDefault().getLabel()
+                    );
+                    summary += String.format(" [%s]", unsupportedLangMessage);
+                }
+            }
+            return summary;
         }
 
         private String getThemeSummary(String themeName) {
-            if (themeName.equalsIgnoreCase(ThemeInitializer.Theme.DARK.name())) {
-                return getString(R.string.settings_theme_dark_summary);
-            } else {
-                return getString(R.string.settings_theme_light_summary);
-            }
+            return getString(themeName.equalsIgnoreCase(ThemeInitializer.Theme.DARK.name())
+                ? R.string.settings_theme_dark_summary
+                : R.string.settings_theme_light_summary
+            );
         }
 
         private void setupRemoteSyncEnabledPreference() {
@@ -380,7 +363,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     private static String getLanguageLabel(String langCode) {
-        String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode);
+        String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode, Locale.ENGLISH, null);
         return String.format("%s (%s)", label, langCode);
     }
 

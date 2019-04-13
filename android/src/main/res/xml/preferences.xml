@@ -36,10 +36,6 @@
         android:key="language">
 
         <ListPreference
-            android:key="ui_language"
-            android:title="@string/settings_ui_language" />
-
-        <ListPreference
             android:key="survey_preferred_language_mode"
             android:title="@string/settings_survey_preferred_language_mode"
             android:defaultValue="SYSTEM_DEFAULT"

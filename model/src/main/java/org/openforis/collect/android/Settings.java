@@ -10,12 +10,10 @@ public class Settings {
     private static String remoteCollectAddress;
     private static String remoteCollectUsername;
     private static String remoteCollectPassword;
-    private static UILanguage uiLanguage;
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
 
     public enum UILanguage {
-        SYSTEM_DEFAULT("default", "System default"),
         ALBANIAN("sq", "Albanian"),
         ENGLISH("en", "English"),
         FRENCH("fr", "French"),
@@ -40,36 +38,17 @@ public class Settings {
             return label;
         }
 
-        public static String[] codes() {
-            UILanguage[] langs = values();
-            String[] codes = new String[langs.length];
-            for (int i = 0; i < langs.length; i++) {
-                codes[i] = langs[i].code;
-            }
-            return codes;
-        }
-
-
-        public static String[] labels() {
-            UILanguage[] langs = values();
-            String[] labels = new String[langs.length];
-            for (int i = 0; i < langs.length; i++) {
-                labels[i] = langs[i].label;
-            }
-            return labels;
-        }
-
         public static UILanguage fromCode(String code) {
             if (code == null)
-                return SYSTEM_DEFAULT;
+                return null;
             for (UILanguage lang : values())
                 if (code.equalsIgnoreCase(lang.code))
                     return lang;
-            return SYSTEM_DEFAULT;
+            return null;
         }
 
         public static boolean isSupported(String code) {
-            return fromCode(code) != SYSTEM_DEFAULT;
+            return fromCode(code) != null;
         }
 
         public static UILanguage getDefault() {
@@ -109,14 +88,6 @@ public class Settings {
 
     private static String crewToUsername() {
         return crew == null ? "" : crew.replaceAll("\\W", "_").toLowerCase();
-    }
-
-    public synchronized static UILanguage getUiLanguage() {
-        return uiLanguage;
-    }
-
-    public static void setUiLanguage(UILanguage uiLanguage) {
-        Settings.uiLanguage = uiLanguage;
     }
 
     public synchronized static PreferredLanguageMode getPreferredLanguageMode() {

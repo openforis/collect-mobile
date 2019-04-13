@@ -124,8 +124,7 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark_summary">Dark theme</string>
     <string name="settings_theme_light_summary">Light theme</string>
-    <string name="settings_ui_language">User Interface Language</string>
-    <string name="settings_ui_language_system_default_not_supported">%s is not supported, %s will be used</string>
+    <string name="settings_ui_language_system_default_not_supported">not supported, %s will be used instead</string>
     <string name="settings_title_showKeyboard">Automatically show keyboard</string>
     <string name="settings_summary_showKeyboard">Determines if soft keyboard should automatically be shown when
         accessing an node.

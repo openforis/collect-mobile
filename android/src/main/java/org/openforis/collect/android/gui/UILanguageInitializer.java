@@ -15,8 +15,6 @@ import java.util.Locale;
  */
 public class UILanguageInitializer {
 
-    static final String PREFERENCE_KEY = "ui_language";
-
     public static void init(Context context) {
         Settings.UILanguage lang = determineUiLanguageFromPreferences(context);
 
@@ -32,16 +30,18 @@ public class UILanguageInitializer {
     }
 
     static Settings.UILanguage determineUiLanguageFromPreferences(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String uiLangCode = preferences.getString(PREFERENCE_KEY, Settings.UILanguage.getDefault().getCode());
-        return Settings.UILanguage.fromCode(uiLangCode);
+        Settings.PreferredLanguageMode preferredLanguageMode = Settings.getPreferredLanguageMode();
+        String langCode = preferredLanguageMode == Settings.PreferredLanguageMode.SPECIFIED
+                ? Settings.getPreferredLanguage()
+                : null;
+        return Settings.UILanguage.fromCode(langCode);
     }
 
     private static String determineLanguageCode(Settings.UILanguage lang) {
-        if (lang == Settings.UILanguage.SYSTEM_DEFAULT) {
-            String defaultLangCode = Locale.getDefault().getLanguage();
-            if (Settings.UILanguage.isSupported(defaultLangCode))
-                return defaultLangCode;
+        if (lang == null) {
+            String systemDefaultLangCode = Resources.getSystem().getConfiguration().locale.getLanguage();
+            if (Settings.UILanguage.isSupported(systemDefaultLangCode))
+                return systemDefaultLangCode;
             else
                 return Settings.UILanguage.getDefault().getCode();
         } else {

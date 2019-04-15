@@ -17,6 +17,10 @@ public abstract class UiAttribute extends UiNode {
         return getDefinition().calculated;
     }
 
+    public boolean isCalculatedOnlyOneTime() {
+        return getDefinition().calculatedOnlyOneTime;
+    }
+
     public abstract boolean isEmpty();
 
     public abstract String valueAsString();

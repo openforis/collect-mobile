@@ -48,7 +48,7 @@ class FileConverter extends AttributeConverter<FileAttribute, UiFileAttribute> {
 
     protected FileAttribute attribute(UiFileAttribute uiAttribute, NodeDefinition definition) {
         FileAttribute a = new FileAttribute((FileAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((org.openforis.idm.model.File) value(uiAttribute));
         return a;
     }

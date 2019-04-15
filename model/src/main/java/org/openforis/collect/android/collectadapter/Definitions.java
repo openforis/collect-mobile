@@ -129,38 +129,43 @@ public class Definitions {
         Integer keyOfDefinitionId = getKeyOfDefinitionId(def);
         boolean required = isRequired(def);
         if (def instanceof AttributeDefinition) {
+            CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
             boolean calculated = ((AttributeDefinition) def).isCalculated();
+            boolean calculatedOnlyOneTime = annotations.isCalculatedOnlyOneTime(def);
             if (def instanceof TaxonAttributeDefinition)
-                return new UiTaxonDefinition(id, name, label, keyOfDefinitionId, calculated,
+                return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime,
                         ((TaxonAttributeDefinition) def).getTaxonomy(),
                         nodeDescription(def), nodePrompt(def), required);
             else if (def instanceof CoordinateAttributeDefinition) {
                 CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) def;
-                return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId, calculated,
+                return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime,
                         spatialReferenceSystems, nodeDescription(def),
                         nodePrompt(def), required,
                         isDestinationPointSpecified(coordinateDefn),
-                        collectSurvey.getAnnotations().isAllowOnlyDeviceCoordinate(coordinateDefn));
+                        annotations.isAllowOnlyDeviceCoordinate(coordinateDefn));
             } else if (def instanceof CodeAttributeDefinition) {
                 EntityDefinition parentDef = def.getParentEntityDefinition();
                 boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()
                         && ((CodeAttributeDefinition) def).isKey();
-                return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime,
                         nodeDescription(def), nodePrompt(def), required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) def), enumerator);
             } else if (def instanceof FileAttributeDefinition) {
-                CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
                 CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) def);
-                return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime,
                         nodeDescription(def), nodePrompt(def), required, fileType);
             } else if (def instanceof TextAttributeDefinition) {
-                CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
                 CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) def);
-                return new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
+                return new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime,
                         inputType, nodeDescription(def), nodePrompt(def), required);
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        nodeDescription(def), nodePrompt(def), required);
+                        calculatedOnlyOneTime, nodeDescription(def), nodePrompt(def), required);
         } else {
             return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(def),
                     nodePrompt(def), required);

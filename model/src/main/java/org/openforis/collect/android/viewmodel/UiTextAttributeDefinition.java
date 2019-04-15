@@ -9,9 +9,10 @@ import org.openforis.idm.metamodel.TextAttributeDefinition;
 public class UiTextAttributeDefinition extends UiAttributeDefinition {
     public final TextInput inputType;
 
-    public UiTextAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId, boolean calculated,
+    public UiTextAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
+                                     boolean calculated, boolean calculatedOnlyOneTime,
                                      TextInput inputType, String description, String prompt, boolean required) {
-        super(id, name, label, keyOfDefinitionId, calculated, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
         this.inputType = inputType;
     }
 

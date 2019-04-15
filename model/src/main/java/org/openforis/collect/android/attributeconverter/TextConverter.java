@@ -41,7 +41,8 @@ class TextConverter extends AttributeConverter<TextAttribute, UiTextAttribute> {
 
     protected TextAttribute attribute(UiTextAttribute uiAttribute, NodeDefinition definition) {
         TextAttribute a = new TextAttribute((TextAttributeDefinition) definition);
-        a.setValue((TextValue) value(uiAttribute));
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
+            a.setValue((TextValue) value(uiAttribute));
         return a;
     }
 }

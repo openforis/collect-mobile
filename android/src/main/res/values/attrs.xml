@@ -29,6 +29,7 @@
     <attr name="navigateToLocationIcon" format="reference"/>
     <attr name="mapIcon" format="reference"/>
     <attr name="helpIcon" format="reference"/>
+    <attr name="aboutIcon" format="reference"/>
 
     <attr name="spinnerItemTextColor" format="reference|color" />
     <attr name="spinnerItemBackground" format="reference|color" />

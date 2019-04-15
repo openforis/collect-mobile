@@ -43,6 +43,12 @@
                 app:showAsAction="never"
                 android:onClick="navigateToSettings" />
             <item
+                android:id="@+id/action_about_page"
+                android:title="@string/action_about"
+                android:icon="?attr/aboutIcon"
+                app:showAsAction="never"
+                android:onClick="navigateToAboutPage"/>
+            <item
                 android:id="@+id/action_exit"
                 android:title="@string/action_exit"
                 android:icon="?attr/exitIcon"

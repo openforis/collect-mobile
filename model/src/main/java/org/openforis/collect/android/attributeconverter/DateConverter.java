@@ -56,7 +56,7 @@ class DateConverter extends AttributeConverter<DateAttribute, UiDateAttribute> {
 
     protected DateAttribute attribute(UiDateAttribute uiAttribute, NodeDefinition definition) {
         DateAttribute a = new DateAttribute((DateAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((Date) value(uiAttribute));
         return a;
     }

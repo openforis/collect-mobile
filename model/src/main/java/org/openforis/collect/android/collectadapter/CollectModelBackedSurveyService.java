@@ -264,7 +264,11 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public boolean hasSurveyGuide() {
-        return collectModelManager.loadSurveyGuide() != null;
+        try {
+            return collectModelManager.loadSurveyGuide() != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public File loadSurveyGuide(File outputDir) throws IOException {

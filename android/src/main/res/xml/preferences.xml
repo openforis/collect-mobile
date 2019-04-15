@@ -1,84 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference
-            android:title="@string/settings_workingDir"
-            android:key="workingDir"
-            />
+        android:key="workingDir"
+        android:title="@string/settings_workingDir" />
     <EditTextPreference
-            android:title="@string/settings_title_crewId"
-            android:key="crewId"
-            />
+        android:key="crewId"
+        android:title="@string/settings_title_crewId" />
     <SwitchPreference
-            android:title="@string/settings_title_compass"
-            android:defaultValue="true"
-            android:switchTextOn="@string/settings_switchTextOn_compassEnabled"
-            android:switchTextOff="@string/settings_switchTextOff_compassEnabled"
-            android:summaryOn="@string/settings_summaryOn_compassEnabled"
-            android:summaryOff="@string/settings_summaryOff_compassEnabled"
-            android:key="compassEnabled"
-    />
+        android:defaultValue="true"
+        android:key="compassEnabled"
+        android:summaryOff="@string/settings_summaryOff_compassEnabled"
+        android:summaryOn="@string/settings_summaryOn_compassEnabled"
+        android:switchTextOff="@string/settings_switchTextOff_compassEnabled"
+        android:switchTextOn="@string/settings_switchTextOn_compassEnabled"
+        android:title="@string/settings_title_compass" />
     <ListPreference
-            android:key="theme"
-            android:title="@string/settings_theme_title"
-            android:defaultValue="dark"
-            android:entries="@array/theme_labels"
-            android:entryValues="@array/theme_names"
-    />
+        android:defaultValue="dark"
+        android:entries="@array/theme_labels"
+        android:entryValues="@array/theme_names"
+        android:key="theme"
+        android:title="@string/settings_theme_title" />
     <CheckBoxPreference
-            android:title="@string/settings_title_showKeyboard"
-            android:defaultValue="true"
-            android:summary="@string/settings_summary_showKeyboard"
-            android:key="showKeyboard"
-            />
+        android:defaultValue="true"
+        android:key="showKeyboard"
+        android:summary="@string/settings_summary_showKeyboard"
+        android:title="@string/settings_title_showKeyboard" />
 
     <PreferenceCategory
-        android:title="@string/settings_language"
-        android:key="language">
-
+        android:key="language"
+        android:title="@string/settings_language">
         <ListPreference
-            android:key="survey_preferred_language_mode"
-            android:title="@string/settings_survey_preferred_language_mode"
             android:defaultValue="SYSTEM_DEFAULT"
             android:entries="@array/preferred_language_mode_labels"
             android:entryValues="@array/preferred_language_mode_names"
-            />
-
+            android:key="survey_preferred_language_mode"
+            android:title="@string/settings_survey_preferred_language_mode" />
         <ListPreference
             android:key="survey_preferred_language_specified"
-            android:title="@string/settings_survey_preferred_language_specified"
-            />
+            android:title="@string/settings_survey_preferred_language_specified" />
+        <Preference
+            android:key="language_ui"
+            android:persistent="false"
+            android:selectable="false"
+            android:title="@string/settings_language_ui" />
+        <Preference
+            android:key="language_survey"
+            android:persistent="false"
+            android:selectable="false"
+            android:title="@string/settings_language_survey" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/settings_title_remoteSync"
-        android:key="remoteSync">
+        android:key="remoteSync"
+        android:title="@string/settings_title_remoteSync">
         <SwitchPreference
-            android:title="@string/settings_title_remoteSyncSwitchTitle"
-            android:summaryOn="@string/settings_title_remoteSyncSwitchSummaryOn"
-            android:summaryOff="@string/settings_title_remoteSyncSwitchSummaryOff"
             android:defaultValue="false"
             android:key="remoteSyncEnabled"
-            />
+            android:summaryOff="@string/settings_title_remoteSyncSwitchSummaryOff"
+            android:summaryOn="@string/settings_title_remoteSyncSwitchSummaryOn"
+            android:title="@string/settings_title_remoteSyncSwitchTitle" />
         <EditTextPreference
-            android:title="@string/settings_title_remoteCollectAddress"
+            android:dependency="remoteSyncEnabled"
             android:key="remoteCollectAddress"
-            android:dependency="remoteSyncEnabled"
-            />
+            android:title="@string/settings_title_remoteCollectAddress" />
         <EditTextPreference
-            android:title="@string/settings_title_remoteCollectUsername"
+            android:dependency="remoteSyncEnabled"
             android:key="remoteCollectUsername"
-            android:dependency="remoteSyncEnabled"
-            />
+            android:title="@string/settings_title_remoteCollectUsername" />
         <EditTextPreference
-            android:title="@string/settings_title_remoteCollectPassword"
-            android:key="remoteCollectPassword"
-            android:inputType="textPassword"
             android:dependency="remoteSyncEnabled"
-            />
+            android:inputType="textPassword"
+            android:key="remoteCollectPassword"
+            android:title="@string/settings_title_remoteCollectPassword" />
         <Preference
-            android:title="@string/settings_remote_sync_test"
-            android:summary="@string/settings_remote_sync_test_summary"
+            android:dependency="remoteSyncEnabled"
             android:key="remoteCollectTest"
-            android:dependency="remoteSyncEnabled" />
+            android:persistent="false"
+            android:summary="@string/settings_remote_sync_test_summary"
+            android:title="@string/settings_remote_sync_test" />
     </PreferenceCategory>
 </PreferenceScreen>

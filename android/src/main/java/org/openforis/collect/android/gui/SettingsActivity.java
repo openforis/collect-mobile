@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
 
 import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
@@ -54,7 +55,8 @@ import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
-    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new ResourceBundleMessageSource(Collections.singletonList("org/openforis/collect/resourcebundles/languages"));
+    public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
+    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
     private static final Map<String, String> LANGUAGES = createLanguagesData();
 
     public static final String CREW_ID = "crewId";
@@ -400,7 +402,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     private static String getLanguageLabel(String langCode) {
-        String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode, Locale.ENGLISH, null);
+        String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode);
         return String.format("%s (%s)", label, langCode);
     }
 
@@ -450,6 +452,17 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                 message = e.getMessage();
             }
             Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
+        }
+    }
+
+    private static class LanguagesResourceBundleMessageSource extends ResourceBundleMessageSource {
+
+        LanguagesResourceBundleMessageSource() {
+            super(Collections.singletonList(LANGUAGES_RESOURCE_BUNDLE_NAME));
+        }
+
+        protected PropertyResourceBundle findBundle(Locale locale, String baseName) {
+            return (PropertyResourceBundle) PropertyResourceBundle.getBundle(baseName, locale);
         }
     }
 }

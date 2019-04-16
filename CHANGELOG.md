@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.7.3] - build 158 2019-04-16
+### Fixed
+- Language labels in Settings not showing in some devices
+
 ## [1.7.3] - build 157 2019-04-16
 ### Added
 - About page

@@ -104,7 +104,6 @@ public class SurveyExporter {
     }
 
     private void exportRecords() throws IOException {
-        Date now = new Date();
         User user = Settings.user();
         for (UiNode rc : uiSurvey.getChildren()) {
             UiRecordCollection recordCollection = (UiRecordCollection) rc;
@@ -113,9 +112,9 @@ public class SurveyExporter {
                     UiRecord.Placeholder recordPlaceholder = (UiRecord.Placeholder) rp;
                     CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
                     record.setCreatedBy(user);
-                    record.setCreationDate(now);
+                    record.setCreationDate(rp.getCreatedOn());
                     record.setModifiedBy(user);
-                    record.setModifiedDate(now);
+                    record.setModifiedDate(rp.getModifiedOn());
                     record.setOwner(user);
                     exportRecord(record);
                     if (!excludeBinaries)

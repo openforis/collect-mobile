@@ -68,13 +68,15 @@ public class UiRecord extends UiEntity {
 
         private Placeholder(UiRecord record) {
             this(record.getId(), record.getStatus(), record.getParent().getDefinition().name,
-                    record.getDefinition(), record.getKeyAttributes(), record.getModifiedOn());
+                    record.getDefinition(), record.getKeyAttributes(),
+                    record.getCreatedOn(), record.getModifiedOn());
         }
 
         public Placeholder(int id, Status status, String recordCollectionName, Definition definition,
-                           List<UiAttribute> keyAttributes, Date modifiedOn) {
+                           List<UiAttribute> keyAttributes, Date createdOn, Date modifiedOn) {
             super(id, true, definition);
             this.setStatus(status);
+            this.setCreatedOn(createdOn);
             this.setModifiedOn(modifiedOn);
             this.recordCollectionName = recordCollectionName;
             this.keyAttributes = new ArrayList<UiAttribute>(keyAttributes);

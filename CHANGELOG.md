@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
-## [1.7.3] - build 159 2019-04-18
+## [1.7.3] - build 160 2019-04-18
 ### Fixed
 - Record creation and modified dates in data export
 

@@ -66,6 +66,7 @@ public interface ViewModelRepository {
                                 recordNode.recordCollectionName,
                                 definitionProvider.getById(recordNode.definitionId),
                                 getRecordKeyAttributes(nodeCollection, recordNode),
+                                recordNode.createdOn,
                                 recordNode.modifiedOn
                         )
                 );

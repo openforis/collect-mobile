@@ -193,45 +193,28 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             preferredLanguagePreference.setEntries(LANGUAGES.values().toArray(new String[0]));
             preferredLanguagePreference.setEntryValues(LANGUAGES.keySet().toArray(new String[0]));
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            Settings.PreferredLanguageMode selectedPreferredLanguageMode = Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE, Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name()));
-
-            preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(selectedPreferredLanguageMode));
-            preferredLanguagePreference.setEnabled(Settings.PreferredLanguageMode.SPECIFIED == selectedPreferredLanguageMode);
-
-            final Preference languageUiPreference = findPreference(LANGUAGE_UI_KEY);
-            languageUiPreference.setSummary(getLanguageUiSummary());
-            final Preference languageSurveyPreference = findPreference(LANGUAGE_SURVEY_KEY);
-            languageSurveyPreference.setSummary(getLanguageSurveySummary());
+            updateLanguagePreferenceUI();
 
             preferredLanguageModePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Settings.PreferredLanguageMode newPreferredLanguageMode = Settings.PreferredLanguageMode.valueOf((String) newValue);
-                    preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(newPreferredLanguageMode));
-                    if (Settings.PreferredLanguageMode.SPECIFIED == newPreferredLanguageMode) {
-                        preferredLanguagePreference.setEnabled(true);
-                        String langCode = Locale.getDefault().getLanguage();
-                        preferredLanguagePreference.setValue(langCode);
-                        preferredLanguagePreference.setSummary(getLanguageLabel(langCode));
-                    } else {
-                        preferredLanguagePreference.setEnabled(false);
-                        preferredLanguagePreference.setValue(null);
-                        preferredLanguagePreference.setSummary(null);
-                    }
                     Settings.setPreferredLanguageMode(newPreferredLanguageMode);
+
+                    String preferredLanguageCode = newPreferredLanguageMode == Settings.PreferredLanguageMode.SPECIFIED
+                            ? Locale.getDefault().getLanguage()
+                            : null;
+
+                    Settings.setPreferredLanguage(preferredLanguageCode);
+                    preferredLanguagePreference.setValue(preferredLanguageCode);
+
                     handleLanguageChanged(getActivity());
                     return true;
                 }
             });
 
-            String selectedPreferredLangCode = preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.ENGLISH.getLanguage());
-            preferredLanguagePreference.setSummary(getLanguageLabel(selectedPreferredLangCode));
-
             preferredLanguagePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    String langCode = (String) newValue;
-                    preferredLanguagePreference.setSummary(getLanguageLabel(langCode));
-                    Settings.setPreferredLanguage(langCode);
+                    Settings.setPreferredLanguage((String) newValue);
                     handleLanguageChanged(getActivity());
                     return true;
                 }
@@ -246,27 +229,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                     return getString(R.string.settings_preferred_language_mode_survey_default);
                 default:
                     return getString(R.string.settings_preferred_language_mode_specified);
-            }
-        }
-
-        private String getLanguageUiSummary() {
-            String langCode = determinePreferredLanguageCode();
-            return langCode == null ? null : Settings.UILanguage.isSupported(langCode)
-                    ? getLanguageLabel(langCode)
-                    : Settings.UILanguage.getDefault().getLabel();
-        }
-
-        private String getLanguageSurveySummary() {
-            CollectSurvey selectedSurvey = getSelectedSurvey();
-            if (selectedSurvey == null) {
-                return null;
-            } else {
-                String langCode = determinePreferredLanguageCode();
-                return langCode == null
-                        ? null
-                        : selectedSurvey.getLanguages().contains(langCode)
-                        ? getLanguageLabel(langCode)
-                        : getLanguageLabel(selectedSurvey.getDefaultLanguage());
             }
         }
 
@@ -368,10 +330,52 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             UILanguageInitializer.init(context);
             ServiceLocator.resetModelManager(context);
 
+            updateLanguagePreferenceUI();
+        }
+
+        private void updateLanguagePreferenceUI() {
+            // preferred language mode
+            final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
+
+            Settings.PreferredLanguageMode preferredLanguageMode = Settings.getPreferredLanguageMode();
+            preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(preferredLanguageMode));
+
+            // preferred language specified
+            final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
+
+            preferredLanguagePreference.setEnabled(Settings.PreferredLanguageMode.SPECIFIED == preferredLanguageMode);
+            preferredLanguagePreference.setSummary(getLanguageLabel(Settings.getPreferredLanguage()));
+
+            String preferredLangCode = determinePreferredLanguageCode();
+
+            // language UI
             final Preference languageUiPreference = findPreference(LANGUAGE_UI_KEY);
-            languageUiPreference.setSummary(getLanguageUiSummary());
+
+            languageUiPreference.setSummary(preferredLangCode == null ? null : Settings.UILanguage.isSupported(preferredLangCode)
+                    ? getLanguageLabel(preferredLangCode)
+                    : getLanguageLabel(Settings.UILanguage.getDefault().getCode())
+            );
+
+            // language Survey
             final Preference languageSurveyPreference = findPreference(LANGUAGE_SURVEY_KEY);
-            languageSurveyPreference.setSummary(getLanguageSurveySummary());
+            CollectSurvey selectedSurvey = getSelectedSurvey();
+            if (selectedSurvey == null) {
+                languageSurveyPreference.setEnabled(false);
+                languageSurveyPreference.setSummary(null);
+            } else {
+                languageSurveyPreference.setEnabled(true);
+                String summary;
+                if (preferredLangCode == null) {
+                    summary = null;
+                } else {
+                    List<String> availableLanguages = selectedSurvey.getLanguages();
+                    String surveyLanguageUsed = availableLanguages.contains(preferredLangCode)
+                            ? preferredLangCode
+                            : selectedSurvey.getDefaultLanguage();
+                    summary = getLanguageLabel(surveyLanguageUsed);
+                }
+                languageSurveyPreference.setSummary(summary);
+            }
         }
 
         @Nullable
@@ -402,6 +406,8 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     }
 
     private static String getLanguageLabel(String langCode) {
+        if (langCode == null)
+            return null;
         String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode);
         return String.format("%s (%s)", label, langCode);
     }

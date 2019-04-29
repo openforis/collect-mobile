@@ -45,7 +45,7 @@ class TimeConverter extends AttributeConverter<TimeAttribute, UiTimeAttribute> {
 
     protected TimeAttribute attribute(UiTimeAttribute uiAttribute, NodeDefinition definition) {
         TimeAttribute a = new TimeAttribute((TimeAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((Time) value(uiAttribute));
         return a;
     }

@@ -12,12 +12,21 @@
                 android:icon="?attr/surveyListIcon"
                 app:showAsAction="never"
                 android:onClick="navigateToSurveyList"/>
+
             <item
                 android:id="@+id/action_settings"
                 android:title="@string/action_settings"
                 android:icon="?attr/settingsIcon"
                 app:showAsAction="never"
                 android:onClick="navigateToSettings"/>
+
+            <item
+                android:id="@+id/action_about_page"
+                android:title="@string/action_about"
+                android:icon="?attr/aboutIcon"
+                app:showAsAction="never"
+                android:onClick="navigateToAboutPage"/>
+
             <item
                 android:id="@+id/action_exit"
                 android:title="@string/action_exit"

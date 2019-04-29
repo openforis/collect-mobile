@@ -45,7 +45,7 @@ public class DoubleRangeConverter extends AttributeConverter<RealRangeAttribute,
 
     protected RealRangeAttribute attribute(UiDoubleRangeAttribute uiAttribute, NodeDefinition definition) {
         RealRangeAttribute a = new RealRangeAttribute((RangeAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((RealRange) value(uiAttribute));
         return a;
     }

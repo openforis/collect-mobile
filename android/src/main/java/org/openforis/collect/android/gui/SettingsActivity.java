@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -11,6 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 
@@ -29,6 +31,7 @@ import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
+import org.openforis.collect.model.CollectSurvey;
 import org.openforis.commons.versioning.Version;
 import org.openforis.idm.metamodel.Languages;
 
@@ -42,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.PropertyResourceBundle;
 
 import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
@@ -51,13 +55,16 @@ import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
 
-    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new ResourceBundleMessageSource(Collections.singletonList("org/openforis/collect/resourcebundles/languages"));
+    public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
+    private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
     private static final Map<String, String> LANGUAGES = createLanguagesData();
 
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
     private final static String SURVEY_PREFERRED_LANGUAGE_SPECIFIED = "survey_preferred_language_specified";
+    private final static String LANGUAGE_UI_KEY = "language_ui";
+    private final static String LANGUAGE_SURVEY_KEY = "language_survey";
     public static final String REMOTE_SYNC_ENABLED = "remoteSyncEnabled";
     public static final String REMOTE_COLLECT_ADDRESS = "remoteCollectAddress";
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
@@ -108,10 +115,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
 
     public void onCancelChooser() {
         directoryChooserDialog.dismiss();
-    }
-
-    private static void handleLanguageChanged(Context context) {
-        ServiceLocator.resetModelManager(context);
     }
 
     @Override
@@ -187,43 +190,31 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
             final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
 
-            preferredLanguagePreference.setEntries(LANGUAGES.values().toArray(new String[LANGUAGES.values().size()]));
-            preferredLanguagePreference.setEntryValues(LANGUAGES.keySet().toArray(new String[LANGUAGES.keySet().size()]));
+            preferredLanguagePreference.setEntries(LANGUAGES.values().toArray(new String[0]));
+            preferredLanguagePreference.setEntryValues(LANGUAGES.keySet().toArray(new String[0]));
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            Settings.PreferredLanguageMode selectedPreferredLanguageMode = Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE, Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name()));
-
-            preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(selectedPreferredLanguageMode));
-            preferredLanguagePreference.setEnabled(Settings.PreferredLanguageMode.SPECIFIED == selectedPreferredLanguageMode);
+            updateLanguagePreferenceUI();
 
             preferredLanguageModePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Settings.PreferredLanguageMode newPreferredLanguageMode = Settings.PreferredLanguageMode.valueOf((String) newValue);
-                    preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(newPreferredLanguageMode));
-                    if (Settings.PreferredLanguageMode.SPECIFIED == newPreferredLanguageMode) {
-                        preferredLanguagePreference.setEnabled(true);
-                        String langCode = Locale.getDefault().getLanguage();
-                        preferredLanguagePreference.setValue(langCode);
-                        preferredLanguagePreference.setSummary(getLanguageLabel(langCode));
-                    } else {
-                        preferredLanguagePreference.setEnabled(false);
-                        preferredLanguagePreference.setValue(null);
-                        preferredLanguagePreference.setSummary(null);
-                    }
-                    Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf((String) newValue));
+                    Settings.setPreferredLanguageMode(newPreferredLanguageMode);
+
+                    String preferredLanguageCode = newPreferredLanguageMode == Settings.PreferredLanguageMode.SPECIFIED
+                            ? Locale.getDefault().getLanguage()
+                            : null;
+
+                    Settings.setPreferredLanguage(preferredLanguageCode);
+                    preferredLanguagePreference.setValue(preferredLanguageCode);
+
                     handleLanguageChanged(getActivity());
                     return true;
                 }
             });
 
-            String selectedPreferredLangCode = preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.ENGLISH.getLanguage());
-            preferredLanguagePreference.setSummary(getLanguageLabel(selectedPreferredLangCode));
-
             preferredLanguagePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    String langCode = (String) newValue;
-                    preferredLanguagePreference.setSummary(getLanguageLabel(langCode));
-                    Settings.setPreferredLanguage(langCode);
+                    Settings.setPreferredLanguage((String) newValue);
                     handleLanguageChanged(getActivity());
                     return true;
                 }
@@ -231,26 +222,38 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         }
 
         private String getPreferredLanguageModeSummary(Settings.PreferredLanguageMode mode) {
-            int summaryResId;
             switch (mode) {
                 case SYSTEM_DEFAULT:
-                    summaryResId = R.string.settings_preferred_language_mode_system_default;
-                    break;
+                    return getString(R.string.settings_preferred_language_mode_system_default);
                 case SURVEY_DEFAULT:
-                    summaryResId = R.string.settings_preferred_language_mode_survey_default;
-                    break;
+                    return getString(R.string.settings_preferred_language_mode_survey_default);
                 default:
-                    summaryResId = R.string.settings_preferred_language_mode_specified;
+                    return getString(R.string.settings_preferred_language_mode_specified);
             }
-            return getString(summaryResId);
+        }
+
+        private String determinePreferredLanguageCode() {
+            CollectSurvey selectedSurvey = getSelectedSurvey();
+            switch (Settings.getPreferredLanguageMode()) {
+                case SYSTEM_DEFAULT:
+                    Locale systemLocale = Resources.getSystem().getConfiguration().locale;
+                    return systemLocale.getLanguage();
+                case SURVEY_DEFAULT:
+                    return selectedSurvey == null
+                            ? null
+                            : selectedSurvey.getDefaultLanguage();
+                case SPECIFIED:
+                    return Settings.getPreferredLanguage();
+                default:
+                    return null;
+            }
         }
 
         private String getThemeSummary(String themeName) {
-            if (themeName.equalsIgnoreCase(ThemeInitializer.Theme.DARK.name())) {
-                return getString(R.string.settings_theme_dark_summary);
-            } else {
-                return getString(R.string.settings_theme_light_summary);
-            }
+            return getString(themeName.equalsIgnoreCase(ThemeInitializer.Theme.DARK.name())
+                    ? R.string.settings_theme_dark_summary
+                    : R.string.settings_theme_light_summary
+            );
         }
 
         private void setupRemoteSyncEnabledPreference() {
@@ -294,11 +297,11 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         private void setupRemoteCollectPasswordPreference() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Preference preference = findPreference(REMOTE_COLLECT_PASSWORD);
-            preference.setSummary(StringUtils.isNotBlank(preferences.getString(REMOTE_COLLECT_PASSWORD, "")) ? "*********": "");
+            preference.setSummary(StringUtils.isNotBlank(preferences.getString(REMOTE_COLLECT_PASSWORD, "")) ? "*********" : "");
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     String stringVal = newValue.toString();
-                    preference.setSummary(StringUtils.isNotBlank(stringVal) ? "*********": "");
+                    preference.setSummary(StringUtils.isNotBlank(stringVal) ? "*********" : "");
                     Settings.setRemoteCollectPassword(stringVal);
                     return true;
                 }
@@ -322,12 +325,71 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                 }
             });
         }
+
+        private void handleLanguageChanged(Context context) {
+            UILanguageInitializer.init(context);
+            ServiceLocator.resetModelManager(context);
+
+            updateLanguagePreferenceUI();
+        }
+
+        private void updateLanguagePreferenceUI() {
+            // preferred language mode
+            final Preference preferredLanguageModePreference = findPreference(SURVEY_PREFERRED_LANGUAGE_MODE);
+
+            Settings.PreferredLanguageMode preferredLanguageMode = Settings.getPreferredLanguageMode();
+            preferredLanguageModePreference.setSummary(getPreferredLanguageModeSummary(preferredLanguageMode));
+
+            // preferred language specified
+            final ListPreference preferredLanguagePreference = (ListPreference) findPreference(SURVEY_PREFERRED_LANGUAGE_SPECIFIED);
+
+            preferredLanguagePreference.setEnabled(Settings.PreferredLanguageMode.SPECIFIED == preferredLanguageMode);
+            preferredLanguagePreference.setSummary(getLanguageLabel(Settings.getPreferredLanguage()));
+
+            String preferredLangCode = determinePreferredLanguageCode();
+
+            // language UI
+            final Preference languageUiPreference = findPreference(LANGUAGE_UI_KEY);
+
+            languageUiPreference.setSummary(preferredLangCode == null ? null : Settings.UILanguage.isSupported(preferredLangCode)
+                    ? getLanguageLabel(preferredLangCode)
+                    : getLanguageLabel(Settings.UILanguage.getDefault().getCode())
+            );
+
+            // language Survey
+            final Preference languageSurveyPreference = findPreference(LANGUAGE_SURVEY_KEY);
+            CollectSurvey selectedSurvey = getSelectedSurvey();
+            if (selectedSurvey == null) {
+                languageSurveyPreference.setEnabled(false);
+                languageSurveyPreference.setSummary(null);
+            } else {
+                languageSurveyPreference.setEnabled(true);
+                String summary;
+                if (preferredLangCode == null) {
+                    summary = null;
+                } else {
+                    List<String> availableLanguages = selectedSurvey.getLanguages();
+                    String surveyLanguageUsed = availableLanguages.contains(preferredLangCode)
+                            ? preferredLangCode
+                            : selectedSurvey.getDefaultLanguage();
+                    summary = getLanguageLabel(surveyLanguageUsed);
+                }
+                languageSurveyPreference.setSummary(summary);
+            }
+        }
+
+        @Nullable
+        private CollectSurvey getSelectedSurvey() {
+            return ServiceLocator.surveyService() == null
+                    ? null
+                    : ServiceLocator.surveyService().getSelectedSurvey();
+        }
     }
 
     private static Map<String, String> createLanguagesData() {
         List<String> langCodes = Languages.getCodes(Languages.Standard.ISO_639_1);
         Map<String, String> unsortedLanguages = new HashMap<String, String>(langCodes.size());
-        for(String langCode : langCodes) {
+        for (String langCode : langCodes) {
             unsortedLanguages.put(langCode, getLanguageLabel(langCode));
         }
         List<Map.Entry<String, String>> entries = new LinkedList<Map.Entry<String, String>>(unsortedLanguages.entrySet());
@@ -337,13 +399,15 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             }
         });
         Map<String, String> result = new LinkedHashMap<String, String>();
-        for(Map.Entry<String, String> entry : entries) {
+        for (Map.Entry<String, String> entry : entries) {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
     }
 
     private static String getLanguageLabel(String langCode) {
+        if (langCode == null)
+            return null;
         String label = MessageSources.getMessage(LANGUAGE_MESSAGE_SOURCE, langCode);
         return String.format("%s (%s)", label, langCode);
     }
@@ -394,6 +458,17 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
                 message = e.getMessage();
             }
             Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
+        }
+    }
+
+    private static class LanguagesResourceBundleMessageSource extends ResourceBundleMessageSource {
+
+        LanguagesResourceBundleMessageSource() {
+            super(Collections.singletonList(LANGUAGES_RESOURCE_BUNDLE_NAME));
+        }
+
+        protected PropertyResourceBundle findBundle(Locale locale, String baseName) {
+            return (PropertyResourceBundle) PropertyResourceBundle.getBundle(baseName, locale);
         }
     }
 }

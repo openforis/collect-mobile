@@ -62,6 +62,8 @@ class ModelConverter {
         Entity rootEntity = collectRecord.getRootEntity();
         collectRecord.setStep(CollectRecord.Step.CLEANSING);
         collectRecord.setId(uiRecord.getId());
+        collectRecord.setCreationDate(uiRecord.getCreatedOn());
+        collectRecord.setModifiedDate(uiRecord.getModifiedOn());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);
         new RecordUpdater().initializeRecord(collectRecord);

@@ -1,7 +1,6 @@
 package org.openforis.collect.android;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openforis.collect.android.collectadapter.CollectModelManager;
 import org.openforis.collect.model.User;
 
 public class Settings {
@@ -13,6 +12,49 @@ public class Settings {
     private static String remoteCollectPassword;
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
+
+    public enum UILanguage {
+        ALBANIAN("sq", "Albanian"),
+        ENGLISH("en", "English"),
+        FRENCH("fr", "French"),
+        RUSSIAN("ru", "Russian"),
+        SPANISH("es", "Spanish"),
+        SWEDISH("sv", "Swedish");
+
+        private String code;
+        private String label;
+
+        UILanguage(String code, String label) {
+            this.code = code;
+            this.label = label;
+        }
+
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public static UILanguage fromCode(String code) {
+            if (code == null)
+                return null;
+            for (UILanguage lang : values())
+                if (code.equalsIgnoreCase(lang.code))
+                    return lang;
+            return null;
+        }
+
+        public static boolean isSupported(String code) {
+            return fromCode(code) != null;
+        }
+
+        public static UILanguage getDefault() {
+            return ENGLISH;
+        }
+    }
 
     public enum PreferredLanguageMode {
         SYSTEM_DEFAULT,
@@ -89,7 +131,7 @@ public class Settings {
     }
 
     public synchronized static String getRemoteCollectPassword() {
-        return remoteCollectAddress;
+        return remoteCollectPassword;
     }
 
     public synchronized static void setRemoteCollectPassword(String remoteCollectPassword) {

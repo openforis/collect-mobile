@@ -41,7 +41,7 @@ public class IntegerConverter extends AttributeConverter<IntegerAttribute, UiInt
 
     protected IntegerAttribute attribute(UiIntegerAttribute uiAttribute, NodeDefinition definition) {
         IntegerAttribute a = new IntegerAttribute((NumberAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated())
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((IntegerValue) value(uiAttribute));
         return a;
     }

@@ -41,11 +41,11 @@ public class MainActivity extends BaseActivity {
 
             setContentView(R.layout.activity_main);
 
-            TextView mainTitle = (TextView) findViewById(R.id.mainTitle);
+            TextView mainTitle = findViewById(R.id.mainTitle);
             mainTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/caviar_dreams_normal.ttf"));
 
-            TextView versionText = (TextView) findViewById(R.id.appVersion);
-            versionText.setText(App.versionName(this) + " [" + App.versionCode(this) + "]");
+            TextView versionText = findViewById(R.id.appVersion);
+            versionText.setText(App.versionFull(this));
 
             initializeSurveySpinner();
 
@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initializeSurveySpinner() {
-        surveySpinner = (Spinner) findViewById(R.id.surveySpinner);
+        surveySpinner = findViewById(R.id.surveySpinner);
         surveySpinner.setAdapter(surveyAdapter);
 
         String currentSurveyName = SurveyImporter.selectedSurvey(this);

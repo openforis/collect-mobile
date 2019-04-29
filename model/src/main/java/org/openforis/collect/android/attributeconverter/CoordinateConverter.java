@@ -62,7 +62,7 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
 
     protected CoordinateAttribute attribute(UiCoordinateAttribute uiAttribute, NodeDefinition definition) {
         CoordinateAttribute a = new CoordinateAttribute((CoordinateAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated()) {
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime()) {
             Coordinate coordinate = (Coordinate) value(uiAttribute);
             a.setValue(coordinate);
         }

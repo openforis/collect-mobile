@@ -61,10 +61,8 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
 
     protected CodeAttribute attribute(UiCodeAttribute uiAttribute, NodeDefinition definition) {
         CodeAttribute a = new CodeAttribute((CodeAttributeDefinition) definition);
-        if (!uiAttribute.isCalculated()) {
+        if (!uiAttribute.isCalculated() || uiAttribute.isCalculatedOnlyOneTime())
             a.setValue((Code) value(uiAttribute));
-        }
-
         return a;
     }
 }

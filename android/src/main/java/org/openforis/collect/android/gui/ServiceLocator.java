@@ -74,6 +74,7 @@ public class ServiceLocator {
     public static boolean init(Context applicationContext) throws WorkingDirNotWritable {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
+            UILanguageInitializer.init(applicationContext);
             workingDir = AppDirs.root(applicationContext);
             String surveyName = SurveyImporter.selectedSurvey(applicationContext);
             if (surveyName == null || !isSurveyImported(surveyName, applicationContext))
@@ -96,9 +97,11 @@ public class ServiceLocator {
 
     private static void initModelManager(Context applicationContext) {
         String surveyName = SurveyImporter.selectedSurvey(applicationContext);
-        collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
-        surveyService = createSurveyService(collectModelManager, nodeDatabase);
-        surveyService.loadSurvey();
+        if (surveyName != null) {
+            collectModelManager = createCollectModelManager(modelDatabase, nodeDatabase, surveyName, applicationContext);
+            surveyService = createSurveyService(collectModelManager, nodeDatabase);
+            surveyService.loadSurvey();
+        }
     }
 
     public static void reset(Context context) {

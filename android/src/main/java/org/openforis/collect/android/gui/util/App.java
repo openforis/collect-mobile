@@ -20,6 +20,10 @@ public abstract class App {
         return info == null ? 0 : info.versionCode;
     }
 
+    public static String versionFull(Context context) {
+        return versionName(context) + " [" + versionCode(context) + "]";
+    }
+
     @Nullable
     private static PackageInfo getPackageInfo(Context context) {
         PackageManager manager = context.getPackageManager();

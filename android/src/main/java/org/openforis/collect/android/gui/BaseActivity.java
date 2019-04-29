@@ -18,6 +18,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeInitializer.init(this);
+        UILanguageInitializer.init(this);
         super.onCreate(savedInstanceState);
     }
 
@@ -40,18 +41,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         Activities.start(this, SurveyListActivity.class);
     }
 
-    public boolean navigateToSettings(MenuItem item) {
-        navigateToSettings();
-        return true;
-    }
-
-    protected void navigateToSettings() {
+    public void navigateToSettings(MenuItem item) {
         Activities.start(this, SettingsActivity.class);
     }
 
-    public boolean exit(MenuItem item) {
+    public void navigateToAboutPage(MenuItem item) {
+        Activities.start(this, AboutActivity.class);
+    }
+
+    public void exit(MenuItem item) {
         exit();
-        return true;
     }
 
     protected void exit() {

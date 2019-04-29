@@ -6,9 +6,10 @@ package org.openforis.collect.android.viewmodel;
 public class UiTaxonDefinition extends UiAttributeDefinition {
     public final String taxonomy;
 
-    public UiTaxonDefinition(String id, String name, String label, Integer keyOfDefinitionId, boolean calculated,
+    public UiTaxonDefinition(String id, String name, String label, Integer keyOfDefinitionId,
+                             boolean calculated, boolean calculatedOnlyOneTime,
                              String taxonomy, String description, String prompt, boolean required) {
-        super(id, name, label, keyOfDefinitionId, calculated, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
         this.taxonomy = taxonomy;
     }
 }

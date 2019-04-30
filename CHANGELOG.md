@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.7.3] - build 161 2019-04-30
+### Fixed
+- Allow remote Collect server connection in Android 8+
+
 ## [1.7.3] - build 160 2019-04-18
 ### Fixed
 - Record creation and modified dates in data export

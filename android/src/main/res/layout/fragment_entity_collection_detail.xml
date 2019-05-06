@@ -6,16 +6,17 @@
     <include layout="@layout/label_and_add_node"/>
 
     <TextView
-            android:id="@+id/node_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="?attr/standardPadding" />
+        android:id="@+id/node_prompt"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="?attr/standardPadding"/>
 
     <TextView
-            android:id="@+id/node_prompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="?attr/standardPadding"/>
+        android:id="@+id/node_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="?attr/standardPadding" />
 
     <LinearLayout
         android:id="@+id/validation_error_container"
@@ -24,17 +25,20 @@
         android:orientation="horizontal"
         android:padding="?attr/standardPadding"
         android:visibility="gone">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:src="@drawable/red_circle"/>
+
         <TextView
             android:id="@+id/validation_error_messages"
             android:textColor="#FF0000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp" />
+
     </LinearLayout>
 
     <LinearLayout

@@ -1,7 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
 import org.openforis.collect.metamodel.CollectAnnotations.TextInput;
-import org.openforis.idm.metamodel.TextAttributeDefinition;
 
 /**
  * @author Daniel Wiell
@@ -11,8 +10,10 @@ public class UiTextAttributeDefinition extends UiAttributeDefinition {
 
     public UiTextAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                      boolean calculated, boolean calculatedOnlyOneTime,
-                                     TextInput inputType, String description, String prompt, boolean required) {
-        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
+                                     TextInput inputType,
+                                     String description, String prompt, String interviewLabel,
+                                     boolean required) {
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, interviewLabel, required);
         this.inputType = inputType;
     }
 

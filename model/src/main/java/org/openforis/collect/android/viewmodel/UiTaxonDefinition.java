@@ -8,8 +8,8 @@ public class UiTaxonDefinition extends UiAttributeDefinition {
 
     public UiTaxonDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                              boolean calculated, boolean calculatedOnlyOneTime,
-                             String taxonomy, String description, String prompt, boolean required) {
-        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
+                             String taxonomy, String description, String prompt, String interviewLabel, boolean required) {
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, interviewLabel, required);
         this.taxonomy = taxonomy;
     }
 }

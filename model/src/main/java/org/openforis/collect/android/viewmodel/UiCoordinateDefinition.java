@@ -19,9 +19,10 @@ public class UiCoordinateDefinition extends UiAttributeDefinition {
     public UiCoordinateDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                   boolean calculated, boolean calculatedOnlyOneTime,
                                   List<UiSpatialReferenceSystem> spatialReferenceSystems,
-                                  String description, String prompt, boolean required,
+                                  String description, String prompt, String interviewLabel,
+                                  boolean required,
                                   boolean destinationPointSpecified, boolean onlyChangedByDevice) {
-        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, interviewLabel, required);
         this.destinationPointSpecified = destinationPointSpecified;
         this.onlyChangedByDevice = onlyChangedByDevice;
         this.spatialReferenceSystems = Collections.unmodifiableList(spatialReferenceSystems);

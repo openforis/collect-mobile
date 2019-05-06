@@ -14,13 +14,14 @@
             android:paddingBottom="?attr/standardPadding"/>
 
     <TextView
-            android:id="@+id/node_description"
+            android:id="@+id/node_prompt"
+            style="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="?attr/standardPadding"/>
 
     <TextView
-            android:id="@+id/node_prompt"
+            android:id="@+id/node_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="?attr/standardPadding"/>

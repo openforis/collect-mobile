@@ -12,7 +12,7 @@ public class UiEntityCollectionDefinition extends Definition {
     public UiEntityCollectionDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                         String description, String prompt, boolean required, boolean enumerated,
                                         Integer fixedMinCount, Integer fixedMaxCount) {
-        super(id, name, label, keyOfDefinitionId, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, description, prompt, null, required);
         this.enumerated = enumerated;
         this.fixedMinCount = fixedMinCount;
         this.fixedMaxCount = fixedMaxCount;

@@ -11,7 +11,7 @@ public class UiAttributeCollectionDefinition extends Definition {
                                            Class<? extends UiAttribute> attributeType,
                                            UiAttributeDefinition attributeDefinition,
                                            boolean required) {
-        super(id, name, label, null, attributeDefinition.description, null, required);
+        super(id, name, label, null, attributeDefinition.description, null, null, required);
         this.attributeType = attributeType;
         this.attributeDefinition = attributeDefinition;
     }

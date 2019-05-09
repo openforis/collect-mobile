@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.3] - build 161 2019-05-09
+## [1.7.3] - build 163 2019-05-09
 ### Fixed
 - Allow usage of large Survey Guide files (more than 2MB)
 

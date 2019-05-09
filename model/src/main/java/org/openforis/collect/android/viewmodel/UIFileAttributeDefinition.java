@@ -8,9 +8,9 @@ public class UIFileAttributeDefinition extends UiAttributeDefinition {
 
     public UIFileAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                      boolean calculated, boolean calculatedOnlyOneTime,
-                                     String description, String prompt,
+                                     String description, String prompt, String interviewLabel,
                                      boolean required, FileType type) {
-        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, interviewLabel, required);
         this.type = type;
     }
 

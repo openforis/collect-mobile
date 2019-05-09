@@ -44,7 +44,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = createView(inflater, container, savedInstanceState);
 
-        setOrRemoveText(rootView, R.id.node_label, node.getLabel() + " ");
+        String label = getActivity() instanceof SurveyNodeActivity && ((SurveyNodeActivity) getActivity()).isTwoPane()
+                ? node.getDefinition().getInterviewLabelOrLabel()
+                : node.getLabel();
+        setOrRemoveText(rootView, R.id.node_label, label + " ");
         setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
         setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
 

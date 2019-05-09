@@ -6,9 +6,9 @@ public class UiCodeAttributeDefinition extends UiAttributeDefinition {
 
     public UiCodeAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                      boolean calculated, boolean calculatedOnlyOneTime,
-                                     String description, String prompt, boolean required,
-                                     boolean valueShown, boolean enumerator) {
-        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, required);
+                                     String description, String prompt, String interviewLabel,
+                                     boolean required, boolean valueShown, boolean enumerator) {
+        super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, description, prompt, interviewLabel, required);
         this.valueShown = valueShown;
         this.enumerator = enumerator;
     }

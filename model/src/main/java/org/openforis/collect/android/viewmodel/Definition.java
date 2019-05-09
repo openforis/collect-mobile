@@ -16,26 +16,33 @@ public class Definition {
     public final Integer keyOfDefinitionId;
     public final String description;
     public final String prompt;
+    public final String interviewLabel;
     public final boolean required;
     public Set<Definition> relevanceSources = new HashSet<Definition>();
 
     public Definition(String id, String name, String label, boolean required) {
-        this(id, name, label, null, null, null, required);
+        this(id, name, label, null, null, null, null, required);
     }
 
-    public Definition(String id, String name, String label, Integer keyOfDefinitionId, String description,
-                      String prompt, boolean required) {
+    public Definition(String id, String name, String label,
+                      Integer keyOfDefinitionId, String description,
+                      String prompt, String interviewLabel, boolean required) {
         this.id = id;
         this.name = name;
         this.label = label == null ? name : label; // Use the name as label if not specified
         this.keyOfDefinitionId = keyOfDefinitionId;
         this.description = description;
         this.prompt = prompt;
+        this.interviewLabel = interviewLabel;
         this.required = required;
     }
 
     public boolean isKeyOf(UiNode uiNode) {
         return keyOfDefinitionId != null && Integer.valueOf(uiNode.getDefinition().id).equals(keyOfDefinitionId);
+    }
+
+    public String getInterviewLabelOrLabel() {
+        return interviewLabel != null ? interviewLabel : label;
     }
 
     public String toString() {

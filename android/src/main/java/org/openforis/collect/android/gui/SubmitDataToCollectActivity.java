@@ -193,11 +193,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
                     } else if ("ABORTED".equals(status)) {
                         updateViewState(ViewState.ABORTED);
                     } else if ("FAILED".equals(status)) {
-                        updateViewState(ViewState.ERROR, new Runnable() {
-                            public void run() {
-                                errorMessageText.setText(response.getJobErrorMessage());
-                            }
-                        });
+                        handleError(response.getJobErrorMessage());
                     }
                 }
             }
@@ -212,10 +208,10 @@ public class SubmitDataToCollectActivity extends BaseActivity {
             SubmitDataToCollectActivity context = SubmitDataToCollectActivity.this;
             try {
                 return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context),false);
-            } catch (IOException e) {
-                handleError(e.getMessage());
             } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
                 handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(context));
+            } catch (Exception e) {
+                handleError(e.getMessage());
             }
             return null;
         }

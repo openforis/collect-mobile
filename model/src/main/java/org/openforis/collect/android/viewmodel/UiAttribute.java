@@ -21,6 +21,10 @@ public abstract class UiAttribute extends UiNode {
         return getDefinition().calculatedOnlyOneTime;
     }
 
+    public boolean isHidden() {
+        return getDefinition().hidden;
+    }
+
     public abstract boolean isEmpty();
 
     public abstract String valueAsString();

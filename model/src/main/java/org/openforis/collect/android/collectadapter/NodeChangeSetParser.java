@@ -49,7 +49,7 @@ class NodeChangeSetParser {
 
     private void updateCalculatedAttributeValues(Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
-            if (nodeChange instanceof AttributeChange && isShown(nodeChange.getNode())) {
+            if (nodeChange instanceof AttributeChange) {
                 Attribute attribute = ((AttributeChange) nodeChange).getNode();
                 UiAttribute uiAttribute = getUiAttribute(nodeChange);
                 if (uiAttribute == null)

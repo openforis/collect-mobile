@@ -108,8 +108,6 @@ public class Definitions {
     }
 
     private void addNodeDefinition(NodeDefinition nodeDefinition) {
-        if (AttributeUtils.isHidden(nodeDefinition))
-            return;
         Definition definition = createDefinition(nodeDefinition);
         addDefinition(definition);
         if (nodeDefinition.isMultiple())
@@ -128,18 +126,20 @@ public class Definitions {
         Integer keyOfDefinitionId = getKeyOfDefinitionId(def);
         boolean required = isRequired(def);
         if (def instanceof AttributeDefinition) {
-            CollectAnnotations annotations = ((CollectSurvey) def.getSurvey()).getAnnotations();
+            CollectSurvey survey = def.getSurvey();
+            CollectAnnotations annotations = survey.getAnnotations();
             boolean calculated = ((AttributeDefinition) def).isCalculated();
             boolean calculatedOnlyOneTime = annotations.isCalculatedOnlyOneTime(def);
+            boolean hidden = survey.getUIOptions().isHidden(def);
             if (def instanceof TaxonAttributeDefinition)
                 return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
-                        calculated, calculatedOnlyOneTime,
+                        calculated, calculatedOnlyOneTime, hidden,
                         ((TaxonAttributeDefinition) def).getTaxonomy(),
                         nodeDescription(def), nodePrompt(def), interviewLabel, required);
             else if (def instanceof CoordinateAttributeDefinition) {
                 CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) def;
                 return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
-                        calculated, calculatedOnlyOneTime,
+                        calculated, calculatedOnlyOneTime, hidden,
                         spatialReferenceSystems, nodeDescription(def),
                         nodePrompt(def), interviewLabel, required,
                         isDestinationPointSpecified(coordinateDefn),
@@ -149,22 +149,23 @@ public class Definitions {
                 boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()
                         && ((CodeAttributeDefinition) def).isKey();
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId,
-                        calculated, calculatedOnlyOneTime,
+                        calculated, calculatedOnlyOneTime, hidden,
                         nodeDescription(def), nodePrompt(def), interviewLabel, required,
                         collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) def), enumerator);
             } else if (def instanceof FileAttributeDefinition) {
                 CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) def);
                 return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
-                        calculated, calculatedOnlyOneTime,
+                        calculated, calculatedOnlyOneTime, hidden,
                         nodeDescription(def), nodePrompt(def), interviewLabel, required, fileType);
             } else if (def instanceof TextAttributeDefinition) {
                 CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) def);
                 return new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId,
-                        calculated, calculatedOnlyOneTime,
+                        calculated, calculatedOnlyOneTime, hidden,
                         inputType, nodeDescription(def), nodePrompt(def), interviewLabel, required);
             } else
-                return new UiAttributeDefinition(id, name, label, keyOfDefinitionId, calculated,
-                        calculatedOnlyOneTime, nodeDescription(def), nodePrompt(def), interviewLabel, required);
+                return new UiAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        calculated, calculatedOnlyOneTime, hidden,
+                        nodeDescription(def), nodePrompt(def), interviewLabel, required);
         } else {
             return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(def),
                     nodePrompt(def), interviewLabel, required);

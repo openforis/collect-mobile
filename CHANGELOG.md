@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.4] - build 165 2019-09-10
+### Fixed
+- Calculated one-time hidden attributes issues
+
 ## [1.7.3] - build 163 2019-05-09
 ### Fixed
 - Allow usage of large Survey Guide files (more than 2MB)

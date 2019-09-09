@@ -18,7 +18,9 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
@@ -75,8 +77,8 @@ public class NodeListAdapter extends BaseAdapter {
 
             holder = new NodeHolder();
             holder.row = row;
-            holder.text = (TextView) row.findViewById(R.id.nodeLabel);
-            holder.status = (ImageView) row.findViewById(R.id.nodeStatus);
+            holder.text = row.findViewById(R.id.nodeLabel);
+            holder.status = row.findViewById(R.id.nodeStatus);
 
             row.setTag(holder);
         } else {
@@ -95,12 +97,15 @@ public class NodeListAdapter extends BaseAdapter {
     }
 
     protected void setRowStyle(final NodeHolder holder, UiNode node, boolean newRow) {
-        if (node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity)
-            holder.text.setTypeface(Typeface.DEFAULT_BOLD);
-        else
-            holder.text.setTypeface(Typeface.DEFAULT);
+        Typeface typeface =
+                node instanceof UiRecordCollection || node instanceof UiEntityCollection || node instanceof UiEntity
+                    ? Typeface.DEFAULT_BOLD
+                    : Typeface.DEFAULT;
+        holder.text.setTypeface(typeface);
 
-        boolean visible = node.isRelevant();
+        Definition def = node.getDefinition();
+        boolean visible = node.isRelevant() &&
+                !(def instanceof UiAttributeDefinition && ((UiAttributeDefinition) def).hidden);
         final View view = holder.row;
 
         toggleListItemVisibility(holder, view, visible, !newRow, new Runnable() {

@@ -22,7 +22,7 @@ public abstract class UiNode {
         this.id = id;
         this.relevant = relevant;
         this.definition = definition;
-        status = Status.OK;
+        this.status = Status.OK;
     }
 
     public final void init() {
@@ -67,7 +67,9 @@ public abstract class UiNode {
     }
 
     public boolean isRelevant() {
-        return relevant;
+        return !(definition instanceof UiAttributeDefinition
+                && ((UiAttributeDefinition) definition).hidden
+        ) && relevant;
     }
 
     public void setRelevant(boolean relevant) {
@@ -105,8 +107,8 @@ public abstract class UiNode {
 
         UiNode.Status defaultStatus = UiNode.Status.values()[0];
         UiNode.Status newParentStatus = parentNode.getValidationErrors() == null || parentNode.getValidationErrors().isEmpty() ?
-                defaultStatus: Status.VALIDATION_ERROR;
-        if (! parentNode.getChildren().isEmpty()) {
+                defaultStatus : Status.VALIDATION_ERROR;
+        if (!parentNode.getChildren().isEmpty()) {
             UiNode.Status descendantStatus = defaultStatus;
             for (UiNode child : parentNode.getChildren()) {
                 if (child.isRelevant() && child.getStatus().ordinal() > descendantStatus.ordinal())
@@ -196,7 +198,7 @@ public abstract class UiNode {
     }
 
     public boolean hasValidationErrors() {
-        return ! (validationErrors == null || validationErrors.isEmpty());
+        return !(validationErrors == null || validationErrors.isEmpty());
     }
 
     public Set<UiValidationError> getValidationErrors() {

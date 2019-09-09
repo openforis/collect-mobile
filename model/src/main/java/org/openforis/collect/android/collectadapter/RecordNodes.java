@@ -9,8 +9,6 @@ import org.openforis.idm.model.Node;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.openforis.collect.android.collectadapter.AttributeUtils.isHidden;
-
 /**
  * @author Daniel Wiell
  */
@@ -33,8 +31,6 @@ class RecordNodes {
     }
 
     public void add(Node node) {
-        if (isHidden(node))
-            return;
         if (node instanceof Entity)
             add((Entity) node);
         else

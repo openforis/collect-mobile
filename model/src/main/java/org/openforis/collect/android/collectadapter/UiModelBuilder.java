@@ -15,8 +15,6 @@ import org.openforis.idm.model.Node;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openforis.collect.android.collectadapter.AttributeUtils.isShown;
-
 /**
  * @author Daniel Wiell
  */
@@ -110,8 +108,7 @@ class UiModelBuilder {
         private List<UiNode> createUiEntityChildrenNodes(Entity entity) {
             List<UiNode> nodes = new ArrayList<UiNode>();
             for (NodeDefinition childDefinition : childDefinitions(entity))
-                if (isShown(childDefinition))
-                    nodes.add(createUiNode(childDefinition, entity));
+                nodes.add(createUiNode(childDefinition, entity));
             return nodes;
         }
 

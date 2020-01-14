@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.5] - build 166 2020-01-...
+### Added
+- Improved permissions request
+- Support Collect core version 3.25.0
+
 ## [1.7.4] - build 165 2019-09-10
 ### Fixed
 - Calculated one-time hidden attributes issues

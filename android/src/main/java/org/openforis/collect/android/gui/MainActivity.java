@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.Views;
+import org.openforis.collect.android.util.CollectPermissions;
 
 /**
  * @author Stefano Ricci
@@ -25,15 +27,7 @@ public class MainActivity extends BaseActivity {
     private SurveySpinnerAdapter surveyAdapter;
     private Spinner surveySpinner;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedState) {
-        super.onCreate(savedState);
-
-        if (getIntent().getBooleanExtra(EXIT_FLAG, false)) {
-            finish();
-            return;
-        }
-
+    private void initialize() {
         try {
             ServiceLocator.init(this);
 
@@ -73,6 +67,30 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedState) {
+        super.onCreate(savedState);
+
+        if (getIntent().getBooleanExtra(EXIT_FLAG, false)) {
+            finish();
+            return;
+        }
+
+        if (CollectPermissions.checkStoragePermissionOrRequestIt(this)) {
+            initialize();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (!CollectPermissions.isPermissionGranted(grantResults))
+            return;
+
+        if (requestCode == CollectPermissions.PermissionRequest.STORAGE.getCode()) {
+            initialize();
+        }
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
@@ -82,14 +100,16 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        surveyAdapter.reloadSurveys();
+        if (surveyAdapter != null) {
+            surveyAdapter.reloadSurveys();
 
-        if (surveyAdapter.isSurveyListEmpty()) {
-            Views.hide(findViewById(R.id.notEmptySurveyListFrame));
-            Views.show(findViewById(R.id.emptySurveyListFrame));
-        } else {
-            Views.hide(findViewById(R.id.emptySurveyListFrame));
-            Views.show(findViewById(R.id.notEmptySurveyListFrame));
+            if (surveyAdapter.isSurveyListEmpty()) {
+                Views.hide(findViewById(R.id.notEmptySurveyListFrame));
+                Views.show(findViewById(R.id.emptySurveyListFrame));
+            } else {
+                Views.hide(findViewById(R.id.emptySurveyListFrame));
+                Views.show(findViewById(R.id.notEmptySurveyListFrame));
+            }
         }
     }
 

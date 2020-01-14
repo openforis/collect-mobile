@@ -63,9 +63,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
 
-    // permission request codes need to be < 256
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
-
     // constants used to pass extra data in the intent
     public static final String AutoFocus = "AutoFocus";
     public static final String UseFlash = "UseFlash";
@@ -97,7 +94,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
         boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
 
-        if (CollectPermissions.checkCameraPermissionOrRequestIt(this, RC_HANDLE_CAMERA_PERM)) {
+        if (CollectPermissions.checkCameraBarcodeScannerPermissionOrRequestIt(this)) {
             createCameraSource(autoFocus, useFlash);
         }
 
@@ -254,13 +251,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
+        if (requestCode != CollectPermissions.PermissionRequest.CAMERA_BARCODE_SCANNER.getCode()) {
             Log.d(TAG, "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
 
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (CollectPermissions.isPermissionGranted(grantResults)) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
             boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);
@@ -280,7 +277,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Multitracker sample")
-                .setMessage(R.string.no_camera_permission)
+                .setMessage(R.string.permission_camera_denied)
                 .setPositiveButton(R.string.ok, listener)
                 .show();
     }

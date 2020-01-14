@@ -27,7 +27,7 @@ public final class LocationProvider {
 
     @SuppressLint("MissingPermission")
     public void start() {
-        if (CollectPermissions.checkAccessLocationPermissionOrRequestIt((Activity) context)) {
+        if (CollectPermissions.checkLocationAccessPermissionOrRequestIt((Activity) context)) {
             locationUpdater.bestAccuracy = Float.MAX_VALUE;
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);

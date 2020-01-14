@@ -23,8 +23,6 @@
 
     <string name="warning">Warning</string>
 
-    <string name="permission_camera_rationale">Access to the camera is needed to continue</string>
-    <string name="no_camera_permission">Collect cannot run because it does not have the camera permission. The application will now exit.</string>
     <string name="low_storage_error">Low device storage</string>
 
     <string name="app_name">Collect</string>
@@ -226,6 +224,16 @@
     <string name="barcode_success">Barcode read successfully</string>
     <string name="barcode_failure">No barcode captured</string>
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
+
+    <!-- PERMISSIONS -->
+    <string name="permission_required">Permission required</string>
+    <string name="permission_storage_rationale">Access to local and external storage to store and backup the data collected.
+        The working directory used by Collect Mobile can be changed from the Settings.
+        Please allow this permission.
+    </string>
+    <string name="permission_camera_rationale">Access to the camera is needed to continue. Pictures cannot be taken otherwise.</string>
+    <string name="permission_camera_denied">Collect Mobile could not take the picture because it does not have the camera permission.</string>
+    <string name="permission_location_access_rationale">Access to the location is required to get the current position of the device and record it. Please give access to it.</string>
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

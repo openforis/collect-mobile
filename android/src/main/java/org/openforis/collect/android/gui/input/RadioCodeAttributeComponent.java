@@ -45,16 +45,6 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         initOptions();
         if (enumerator) {
             radioGroup.setEnabled(false);
-        } else {
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    if (codeList.isQualifiable(selectedCode()))
-                        showQualifier();
-                    else
-                        hideQualifier();
-                    saveNode();
-                }
-            });
         }
     }
 
@@ -121,18 +111,11 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     Integer selectedViewId = null;
                     for (int i = 0; i < codes.size(); i++) {
                         UiCode code = codes.get(i);
-                        if (! enumerator || isAttributeCode(code)) { //if it's enumerator, show only selected code
-                            RadioButton rb = new AppCompatRadioButton(context);
-                            rb.setId(i + 1);
-                            rb.setText(code.toString());
-                            rb.setTextAppearance(context, android.R.style.TextAppearance_Medium);
-                            rb.setLayoutParams(layoutParams);
-                            radioGroup.addView(rb);
-                            codeByViewId.put(rb.getId(), code);
-                            if (isAttributeCode(code)) {
-                                selectedViewId = rb.getId();
-                                rb.setSelected(true);
-                            }
+                        boolean selected = isAttributeCode(code);
+                        RadioButton rb = addRadioButton(layoutParams, i, code, selected);
+
+                        if (selected) {
+                            selectedViewId = rb.getId();
                         }
                     }
                     if (selectedViewId != null) {
@@ -140,6 +123,43 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     }
                 }
             });
+        }
+    }
+
+    private RadioButton addRadioButton(RadioGroup.LayoutParams layoutParams, int index, UiCode code, boolean selected) {
+        if (! enumerator || selected) { //if it's enumerator, show only selected code
+            RadioButton rb = new AppCompatRadioButton(context);
+            rb.setId(index + 1);
+            rb.setText(code.toString());
+            rb.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+            rb.setLayoutParams(layoutParams);
+            if (!enumerator) {
+                rb.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        RadioButton rb = (RadioButton) view;
+                        UiCode code = codeByViewId.get(rb.getId());
+                        boolean wasSelected = isAttributeCode(code);
+                        if (wasSelected) {
+                            radioGroup.clearCheck();
+                            rb.setSelected(true);
+                        } else {
+                            radioGroup.check(view.getId());
+                        }
+
+                        if (codeList.isQualifiable(selectedCode()))
+                            showQualifier();
+                        else
+                            hideQualifier();
+                        saveNode();
+                    }
+                });
+            }
+            rb.setChecked(selected);
+            radioGroup.addView(rb);
+            codeByViewId.put(rb.getId(), code);
+            return rb;
+        } else {
+            return null;
         }
     }
 

@@ -41,8 +41,11 @@ public class NodeMatrix {
 
     private List<Definition> headerRows(UiInternalNode node) {
         ArrayList<Definition> childDefinitions = new ArrayList<Definition>();
-        for (UiNode childNode : node.getChildren())
-            childDefinitions.add(childNode.getDefinition());
+        for (UiNode childNode : node.getChildren()) {
+            Definition childDef = childNode.getDefinition();
+            if (!(childDef instanceof UiAttributeDefinition && ((UiAttributeDefinition) childDef).hidden))
+                childDefinitions.add(childDef);
+        }
         return childDefinitions;
     }
 

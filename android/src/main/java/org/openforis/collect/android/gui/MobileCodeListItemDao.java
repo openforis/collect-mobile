@@ -35,10 +35,12 @@ public class MobileCodeListItemDao extends CodeListItemDao {
         return childCodeListItemsRepository.load(codeList, parentItemId);
     }
 
-    public PersistedCodeListItem loadItem(final CodeList codeList, final Integer parentItemId, final String code, final ModelVersion version) {
+    @Override
+    public PersistedCodeListItem loadItem(final CodeList codeList, final Long parentItemId, final String code, final ModelVersion version) {
         return codeListItemRepository.load(codeList, parentItemId, code);
     }
 
+    @Override
     public PersistedCodeListItem loadItem(final CodeList codeList, final String code, final ModelVersion version) {
         return codeListItemRepository.load(codeList, null, code);
     }
@@ -46,6 +48,7 @@ public class MobileCodeListItemDao extends CodeListItemDao {
     /**
      * Inserts the items in batch.
      */
+    @Override
     public void insert(final List<PersistedCodeListItem> items) {
         time("insert", new Runnable() {
             public void run() {

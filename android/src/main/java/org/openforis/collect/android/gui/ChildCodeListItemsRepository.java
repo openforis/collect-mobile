@@ -40,11 +40,11 @@ public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository
                 .build(loader);
     }
 
-    public List<PersistedCodeListItem> load(final CodeList codeList, final Integer parentItemId) {
+    public List<PersistedCodeListItem> load(final CodeList codeList, final Long parentItemId) {
         return cache.getUnchecked(new Key(codeList, parentItemId));
     }
 
-    private List<PersistedCodeListItem> loadFromDatabase(final CodeList codeList, final Integer parentItemId) {
+    private List<PersistedCodeListItem> loadFromDatabase(final CodeList codeList, final Long parentItemId) {
         return database.execute(new AndroidDatabaseCallback<List<PersistedCodeListItem>>() {
             public List<PersistedCodeListItem> execute(SQLiteDatabase database) {
                 Cursor cursor = database.rawQuery("" +
@@ -72,9 +72,9 @@ public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository
 
     private static class Key {
         public final CodeList codeList;
-        public final Integer parentItemId;
+        public final Long parentItemId;
 
-        public Key(CodeList codeList, Integer parentItemId) {
+        public Key(CodeList codeList, Long parentItemId) {
             this.codeList = codeList;
             this.parentItemId = parentItemId;
         }

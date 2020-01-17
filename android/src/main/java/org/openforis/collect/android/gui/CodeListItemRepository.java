@@ -36,7 +36,7 @@ public class CodeListItemRepository extends AbstractCodeListItemRepository {
                 .build(loader);
     }
 
-    public PersistedCodeListItem load(CodeList codeList, Integer parentItemId, String code) {
+    public PersistedCodeListItem load(CodeList codeList, Long parentItemId, String code) {
         try {
             return cache.getUnchecked(new Key(codeList, parentItemId, code));
         } catch (UncheckedExecutionException e) {
@@ -47,7 +47,7 @@ public class CodeListItemRepository extends AbstractCodeListItemRepository {
     }
 
 
-    private PersistedCodeListItem loadFromDatabase(final CodeList codeList, final Integer parentItemId, final String code) {
+    private PersistedCodeListItem loadFromDatabase(final CodeList codeList, final Long parentItemId, final String code) {
         return database.execute(new AndroidDatabaseCallback<PersistedCodeListItem>() {
             public PersistedCodeListItem execute(SQLiteDatabase database) {
                 String[] params = code == null ? null : new String[]{code};
@@ -70,10 +70,10 @@ public class CodeListItemRepository extends AbstractCodeListItemRepository {
 
     private static class Key {
         private final CodeList codeList;
-        private final Integer parentItemId;
+        private final Long parentItemId;
         private final String code;
 
-        public Key(CodeList codeList, Integer parentItemId, String code) {
+        public Key(CodeList codeList, Long parentItemId, String code) {
             this.codeList = codeList;
             this.parentItemId = parentItemId;
             this.code = code;

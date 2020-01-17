@@ -3,11 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.5] - build 166 2020-01-...
+## [1.7.5] - build 166 2020-01-17
 ### Added
-- Improved permissions request
+- Improved permissions request (added rationale messages)
 - Allow single code attribute deselection
-- Support Collect core version 3.25.0
+- Support surveys generated with Collect 3.25.x
+### Fixed
+- Hide calculated attributes not marked with "Show in entry form" from Table View
 
 ## [1.7.4] - build 165 2019-09-10
 ### Fixed

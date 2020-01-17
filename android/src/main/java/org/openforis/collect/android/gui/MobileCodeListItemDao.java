@@ -31,14 +31,16 @@ public class MobileCodeListItemDao extends CodeListItemDao {
     }
 
     @Override
-    protected List<PersistedCodeListItem> loadChildItems(CodeList codeList, Integer parentItemId, ModelVersion version) {
+    protected List<PersistedCodeListItem> loadChildItems(CodeList codeList, Long parentItemId, ModelVersion version) {
         return childCodeListItemsRepository.load(codeList, parentItemId);
     }
 
-    public PersistedCodeListItem loadItem(final CodeList codeList, final Integer parentItemId, final String code, final ModelVersion version) {
+    @Override
+    public PersistedCodeListItem loadItem(final CodeList codeList, final Long parentItemId, final String code, final ModelVersion version) {
         return codeListItemRepository.load(codeList, parentItemId, code);
     }
 
+    @Override
     public PersistedCodeListItem loadItem(final CodeList codeList, final String code, final ModelVersion version) {
         return codeListItemRepository.load(codeList, null, code);
     }
@@ -46,6 +48,7 @@ public class MobileCodeListItemDao extends CodeListItemDao {
     /**
      * Inserts the items in batch.
      */
+    @Override
     public void insert(final List<PersistedCodeListItem> items) {
         time("insert", new Runnable() {
             public void run() {
@@ -53,7 +56,7 @@ public class MobileCodeListItemDao extends CodeListItemDao {
                     public Void execute(Connection connection) throws SQLException {
                         PersistedCodeListItem firstItem = items.get(0);
                         int surveyId = firstItem.getSurvey().getId();
-                        int nextSystemId = maxSystemId(connection) + 1;
+                        long nextSystemId = maxSystemId(connection) + 1;
                         PreparedStatement ps = connection.prepareStatement("INSERT INTO ofc_code_list(\n" +
                                 "id, survey_id, code_list_id, item_id, parent_id, sort_order, code, qualifiable, since_version_id, " +
                                 "deprecated_version_id, label1, label2, label3, description1, description2, description3)" +
@@ -63,11 +66,11 @@ public class MobileCodeListItemDao extends CodeListItemDao {
                                 item.setSystemId(nextSystemId);
                             nextSystemId = Math.max(item.getSystemId(), nextSystemId) + 1;
                             PreparedStatementHelper psh = new PreparedStatementHelper(ps);
-                            psh.setInt(item.getSystemId());
+                            psh.setLong(item.getSystemId());
                             psh.setInt(surveyId);
                             psh.setInt(item.getCodeList().getId());
                             psh.setInt(item.getId());
-                            psh.setIntOrNull(item.getParentId());
+                            psh.setLongOrNull(item.getParentId());
                             psh.setIntOrNull(item.getSortOrder());
                             psh.setString(item.getCode());
                             psh.setBoolean(item.isQualifiable());
@@ -124,10 +127,10 @@ public class MobileCodeListItemDao extends CodeListItemDao {
         return result;
     }
 
-    private int maxSystemId(Connection connection) throws SQLException {
+    private long maxSystemId(Connection connection) throws SQLException {
         ResultSet rs = connection.createStatement().executeQuery("SELECT MAX(id) id FROM ofc_code_list");
         rs.next();
-        int maxId = rs.getInt("id");
+        long maxId = rs.getLong("id");
         rs.close();
         return maxId;
     }

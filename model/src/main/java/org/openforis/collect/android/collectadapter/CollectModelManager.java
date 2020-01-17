@@ -47,6 +47,8 @@ import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyImportException;
 import org.openforis.collect.persistence.jooq.CollectDSLContext;
+import org.openforis.commons.collection.CollectionUtils;
+import org.openforis.commons.collection.Predicate;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -452,16 +454,28 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     }
 
-    public byte[] loadSurveyGuide() {
-        if (selectedSurvey != null) {
-            List<SurveyFile> surveyFiles = surveyManager.loadSurveyFileSummaries(selectedSurvey);
-            for(SurveyFile surveyFile : surveyFiles) {
-                if (surveyFile.getType() == SurveyFile.SurveyFileType.SURVEY_GUIDE) {
-                    return surveyManager.loadSurveyFileContent(surveyFile);
-                }
+    private SurveyFile getSurveyFileGuide() {
+        if (selectedSurvey == null)
+            return null;
+        List<SurveyFile> surveyFiles = surveyManager.loadSurveyFileSummaries(selectedSurvey);
+        return CollectionUtils.find(surveyFiles, new Predicate<SurveyFile>() {
+            public boolean evaluate(SurveyFile item) {
+                return item.getType() == SurveyFile.SurveyFileType.SURVEY_GUIDE;
             }
+        });
+    }
+
+    public boolean hasSurveyGuide() {
+        return getSurveyFileGuide() != null;
+    }
+
+    public byte[] loadSurveyGuide() {
+        SurveyFile surveyFileGuide = getSurveyFileGuide();
+        if (surveyFileGuide == null) {
+            return null;
+        } else {
+            return surveyManager.loadSurveyFileContent(surveyFileGuide);
         }
-        return null;
     }
 
     public CollectSurvey getSelectedSurvey() {

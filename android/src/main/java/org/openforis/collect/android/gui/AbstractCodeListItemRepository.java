@@ -13,10 +13,10 @@ public abstract class AbstractCodeListItemRepository {
         PersistedCodeListItem item;
         int itemId = cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.ITEM_ID.getName()));
         item = new PersistedCodeListItem(codeList, itemId);
-        item.setSystemId(cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.ID.getName())));
+        item.setSystemId(cursor.getLong(cursor.getColumnIndex(OFC_CODE_LIST.ID.getName())));
         item.setSortOrder(cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.SORT_ORDER.getName())));
         item.setCode(cursor.getString(cursor.getColumnIndex(OFC_CODE_LIST.CODE.getName())));
-        item.setParentId(cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.PARENT_ID.getName())));
+        item.setParentId(cursor.getLong(cursor.getColumnIndex(OFC_CODE_LIST.PARENT_ID.getName())));
         String qualifiable = cursor.getString(cursor.getColumnIndex(OFC_CODE_LIST.QUALIFIABLE.getName()));
         item.setQualifiable(!"0".equals(qualifiable));
         item.setSinceVersion(extractModelVersion(item, cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.SINCE_VERSION_ID.getName()))));

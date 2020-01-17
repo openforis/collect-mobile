@@ -76,9 +76,9 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        if (CollectPermissions.checkStoragePermissionOrRequestIt(this)) {
+        //if (CollectPermissions.checkStoragePermissionOrRequestIt(this)) {
             initialize();
-        }
+        //}
     }
 
     @Override

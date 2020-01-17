@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [1.7.5] - build 166 2020-01-...
 ### Added
 - Improved permissions request
+- Allow single code attribute deselection
 - Support Collect core version 3.25.0
 
 ## [1.7.4] - build 165 2019-09-10

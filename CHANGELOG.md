@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.5] - build 167 2020-01-22
+### Fixed
+- Table view: fixed hidden nodes showing in table
+
 ## [1.7.5] - build 166 2020-01-17
 ### Added
 - Improved permissions request (added rationale messages)

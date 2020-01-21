@@ -1,5 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.commons.collection.CollectionUtils;
+import org.openforis.commons.collection.Predicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +35,8 @@ public class NodeMatrix {
 
     public UiNode nodeAt(int row, int column) {
         UiInternalNode rowNode = rows().get(row);
-        return rowNode.getChildAt(column);
+        List<UiNode> childrenFiltered = getRowChildrenVisible(rowNode);
+        return column >= 0 && column < childrenFiltered.size() ? childrenFiltered.get(column) : null;
     }
 
     public Definition headerAt(int column) {
@@ -41,10 +45,9 @@ public class NodeMatrix {
 
     private List<Definition> headerRows(UiInternalNode node) {
         ArrayList<Definition> childDefinitions = new ArrayList<Definition>();
-        for (UiNode childNode : node.getChildren()) {
+        for (UiNode childNode : getRowChildrenVisible(node)) {
             Definition childDef = childNode.getDefinition();
-            if (!(childDef instanceof UiAttributeDefinition && ((UiAttributeDefinition) childDef).hidden))
-                childDefinitions.add(childDef);
+            childDefinitions.add(childDef);
         }
         return childDefinitions;
     }
@@ -84,7 +87,20 @@ public class NodeMatrix {
 
     public int columnIndex(UiNode node) {
         UiInternalNode row = node.getParent();
-        List<UiNode> relevantChildren = row.getRelevantChildren();
-        return relevantChildren.indexOf(node);
+        List<UiNode> childrenVisible = getRowChildrenVisible(row);
+        return childrenVisible.indexOf(node);
+    }
+
+    private List<UiNode> getRowChildrenVisible(UiInternalNode rowNode) {
+        List<UiNode> children = rowNode.getChildren();
+        List<UiNode> childrenFiltered = new ArrayList<UiNode>(children);
+        CollectionUtils.filter(childrenFiltered, new Predicate<UiNode>() {
+            public boolean evaluate(UiNode node) {
+                Definition def = node.getDefinition();
+                // Exclude hidden attribute ("calculated" attributes not "Show in entry form")
+                return !(def instanceof UiAttributeDefinition && ((UiAttributeDefinition) def).hidden);
+            }
+        });
+        return childrenFiltered;
     }
 }

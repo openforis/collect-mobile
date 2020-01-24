@@ -13,7 +13,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Dialogs;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
@@ -30,7 +30,7 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
 
     @Override
     protected void capture() {
-        if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
+        if (Permissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution to prevent FileUriExposedException
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -57,7 +57,7 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
 
     @Override
     protected void showGallery() {
-        if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
+        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setVideoChangedListener(this);
             startFileChooserActivity("Select video", SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE, getMediaType());
         }

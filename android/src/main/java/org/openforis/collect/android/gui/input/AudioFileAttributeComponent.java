@@ -20,7 +20,7 @@ import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
@@ -94,7 +94,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         recordBtn = inputView.findViewById(R.id.file_attribute_audio_record_btn);
         recordBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (CollectPermissions.checkRecordAudioPermissionOrRequestIt(context)) {
+                if (Permissions.checkRecordAudioPermissionOrRequestIt(context)) {
                     if (file != null && file.exists()) {
                         Dialogs.confirm(context, R.string.confirm_label,
                                 R.string.file_attribute_audio_overwrite_confirm_message,
@@ -190,7 +190,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void selectFile() {
-        if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
+        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setAudioChangedListener(this);
             startFileChooserActivity("Select audio file", SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE,
                     "*/*");

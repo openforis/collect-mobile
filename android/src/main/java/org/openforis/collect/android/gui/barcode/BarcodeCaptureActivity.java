@@ -46,7 +46,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.openforis.collect.R;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 
 import java.io.IOException;
 
@@ -94,7 +94,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
         boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
 
-        if (CollectPermissions.checkCameraBarcodeScannerPermissionOrRequestIt(this)) {
+        if (Permissions.checkCameraBarcodeScannerPermissionOrRequestIt(this)) {
             createCameraSource(autoFocus, useFlash);
         }
 
@@ -251,13 +251,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != CollectPermissions.PermissionRequest.CAMERA_BARCODE_SCANNER.getCode()) {
+        if (requestCode != Permissions.Request.CAMERA_BARCODE_SCANNER.getCode()) {
             Log.d(TAG, "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
 
-        if (CollectPermissions.isPermissionGranted(grantResults)) {
+        if (Permissions.isPermissionGranted(grantResults)) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
             boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);

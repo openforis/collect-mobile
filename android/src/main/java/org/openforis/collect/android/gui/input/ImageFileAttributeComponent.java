@@ -21,7 +21,7 @@ import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
@@ -137,7 +137,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     protected void capture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null &&
-                CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
+                Permissions.checkCameraPermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
             File imageFile = createTempImageFile();
             if (imageFile == null) {
@@ -168,7 +168,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void showGallery() {
-        if (CollectPermissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
+        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
             startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
         }

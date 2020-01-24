@@ -227,13 +227,31 @@
 
     <!-- PERMISSIONS -->
     <string name="permission_required">Permission required</string>
-    <string name="permission_storage_rationale">Access to local and external storage to store and backup the data collected.
+    <string name="permission_generic_rationale_suffix">is needed to continue. Please give access to it.</string>
+    <string name="permission_generic_denied_suffix">is needed to continue. Please enable it accessing your device Settings / Apps / Permissions.</string>
+
+    <string name="permission_camera_rationale">Access to the camera is needed to continue. Please give access to it./string>
+    <string name="permission_camera_denied">Access to the camera is needed to continue. Please enable it from your device Settings.</string>
+    <string name="permission_internet_rationale">Access to internet is needed to send the data to the Collect server configured in the application Settings.
+        The connection will be secure if the address of the server starts with HTTPS. Please give access to it.</string>
+    <string name="permission_internet_denied">Access to internet is required to continue. Please enable it from your device Settings.</string>
+    <string name="permission_location_access_rationale">Access to the location is needed to get the current position of the device and record it. Please give access to it.</string>
+    <string name="permission_location_access_denied">Access to the location is needed to get the current position of the device and record it. Please give access to it.</string>
+    <string name="permission_storage_rationale">Access to local and external storage to store and backup the data collected is needed.
         The working directory used by Collect Mobile can be changed from the Settings.
         Please allow this permission.
     </string>
-    <string name="permission_camera_rationale">Access to the camera is needed to continue. Pictures cannot be taken otherwise.</string>
-    <string name="permission_camera_denied">Collect Mobile could not take the picture because it does not have the camera permission.</string>
-    <string name="permission_location_access_rationale">Access to the location is required to get the current position of the device and record it. Please give access to it.</string>
+    <string name="permission_storage_denied">Access to local and external storage to store and backup the data collected is needed.
+        Please enable it from your device Settings.
+    </string>
+    <string name="permission_read_external_storage_rationale">Access to the external storage is needed. Please give access to it.</string>
+    <string name="permission_read_external_storage_denied">Access to the external storage is needed. Please enable it from your device Settings</string>
+    <string name="permission_write_external_storage_rationale">Access to the external storage is needed. Please give access to it.</string>
+    <string name="permission_write_external_storage_denied">Access to the external storage is needed. Please enable it from your device Settings</string>
+    <string name="permission_record_audio_rationale">Access to audio record is needed. Please give access to it.</string>
+    <string name="permission_record_audio_denied">Access to audio record is needed. Please enable it from your device Settings</string>
+    <string name="permission_camera_barcode_scanner_rationale">Access to the camera is needed to acquire the barcode. Please enable it from your device Settings</string>
+    <string name="permission_camera_barcode_scanner_denied">Access to audio record is needed. Please enable it from your device Settings</string>
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

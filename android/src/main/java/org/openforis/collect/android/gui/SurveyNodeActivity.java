@@ -33,7 +33,7 @@ import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
@@ -264,7 +264,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     public void exportDialog(MenuItem item) {
-        if (CollectPermissions.checkStoragePermissionOrRequestIt(this)) {
+        if (Permissions.checkStoragePermissionOrRequestIt(this)) {
             new ExportDialogFragment().show(getSupportFragmentManager(), "export-dialog");
         }
     }
@@ -466,7 +466,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
         if (remoteSyncEnabled) {
-            if (CollectPermissions.checkInternetPermissionOrRequestIt(this)) {
+            if (Permissions.checkInternetPermissionOrRequestIt(this)) {
                 Dialogs.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
                     public void run() {
                         Keyboard.hide(SurveyNodeActivity.this);

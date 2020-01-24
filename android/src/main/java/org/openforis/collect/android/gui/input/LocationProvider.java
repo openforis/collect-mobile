@@ -9,7 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 
 public final class LocationProvider {
     private final LocationUpdateListener listener;
@@ -27,7 +27,7 @@ public final class LocationProvider {
 
     @SuppressLint("MissingPermission")
     public void start() {
-        if (CollectPermissions.checkLocationAccessPermissionOrRequestIt((Activity) context)) {
+        if (Permissions.checkLocationAccessPermissionOrRequestIt((Activity) context)) {
             locationUpdater.bestAccuracy = Float.MAX_VALUE;
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE);

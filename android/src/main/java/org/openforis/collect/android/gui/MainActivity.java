@@ -15,7 +15,7 @@ import android.widget.TextView;
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.Views;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 
 /**
  * @author Stefano Ricci
@@ -76,17 +76,17 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        //if (CollectPermissions.checkStoragePermissionOrRequestIt(this)) {
+        //if (Permissions.checkStoragePermissionOrRequestIt(this)) {
             initialize();
         //}
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (!CollectPermissions.isPermissionGranted(grantResults))
+        if (!Permissions.isPermissionGranted(grantResults))
             return;
 
-        if (requestCode == CollectPermissions.PermissionRequest.STORAGE.getCode()) {
+        if (requestCode == Permissions.Request.STORAGE.getCode()) {
             initialize();
         }
     }

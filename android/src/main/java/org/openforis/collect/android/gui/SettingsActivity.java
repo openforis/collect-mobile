@@ -26,7 +26,7 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
-import org.openforis.collect.android.util.CollectPermissions;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.manager.MessageSource;
@@ -312,7 +312,7 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
             Preference preference = findPreference(REMOTE_COLLECT_TEST);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    if (CollectPermissions.checkInternetPermissionOrRequestIt(getActivity())) {
+                    if (Permissions.checkInternetPermissionOrRequestIt(getActivity())) {
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         String rootAddress = preferences.getString(SettingsActivity.REMOTE_COLLECT_ADDRESS, "");
                         String username = preferences.getString(SettingsActivity.REMOTE_COLLECT_USERNAME, "");

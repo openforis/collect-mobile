@@ -3,7 +3,6 @@ package org.openforis.collect.android.gui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -32,7 +31,6 @@ import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.util.Activities;
-import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.util.CollectPermissions;
@@ -391,8 +389,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
             switch (requestCode) {
                 case IMAGE_CAPTURE_REQUEST_CODE:
                     if (imageListener != null)
-                        //imageListener.imageCaptured((Bitmap) data.getExtras().get("data"));
-                        imageListener.imageChanged();
+                        imageListener.imageCaptured();
                     break;
                 case IMAGE_SELECTED_REQUEST_CODE:
                     if (imageListener != null && data != null)

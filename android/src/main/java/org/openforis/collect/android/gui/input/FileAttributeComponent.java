@@ -40,10 +40,7 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
 
     protected void removeFile() {
         file.delete();
-        fileChanged = true;
-        AndroidFiles.makeDiscoverable(file, context);
-        saveNode();
-        updateViewState();
+        fileChanged();
     }
 
     protected void startFileChooserActivity(String title, int requestCode, String type, String... extraMimeTypes) {

@@ -4,13 +4,17 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
@@ -20,8 +24,11 @@ import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CollectPermissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ImageFileAttributeComponent extends FileAttributeComponent {
 
@@ -31,6 +38,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private View inputView;
     private Button removeButton;
     private ImageView thumbnailImageView;
+    private String tempImagePath;
 
     ImageFileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -80,10 +88,6 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return "image/*";
     }
 
-    public void imageChanged() {
-        fileChanged();
-    }
-
     private void setupRemoveButton() {
         removeButton = inputView.findViewById(R.id.file_attribute_remove);
         removeButton.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.deleteIcon), null, null, null);
@@ -131,15 +135,16 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void capture() {
-        if (CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
-            //TODO find nicer solution to prevent FileUriExposedException
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null &&
+                CollectPermissions.checkCameraPermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+            File imageFile = createTempImageFile();
+            if (imageFile == null) {
+                return;
+            }
+            Uri imageUri = FileProvider.getUriForFile(context, "org.openforis.collect.fileprovider", imageFile);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
         }
     }
@@ -168,33 +173,41 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
             startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
         }
     }
-    /*
-    public void imageCaptured(Bitmap bitmap) {
+
+    public void imageCaptured() {
+        File tempFile = null;
         try {
-            saveImage(bitmap);
-            fileChanged();
+            tempFile = new File(tempImagePath);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.fromFile(tempFile));
+            saveImageIntoFile(bitmap);
         } catch (IOException e) {
             Dialogs.alert(context, context.getString(R.string.warning),
                     context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
+        } finally {
+            tempImagePath = null;
+            FileUtils.deleteQuietly(tempFile);
         }
     }
-    */
 
     public void imageSelected(Uri imageUri) {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
-            saveImage(bitmap);
-            fileChanged();
+            saveImageIntoFile(bitmap);
         } catch (IOException e) {
             Dialogs.alert(context, context.getString(R.string.warning),
                     context.getString(R.string.file_attribute_select_image_error, e.getMessage()));
         }
     }
 
-    private void saveImage(Bitmap bitmap) throws IOException {
-        FileOutputStream fo = new FileOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
-        fo.close();
+    private void saveImageIntoFile(Bitmap bitmap) throws IOException {
+        FileOutputStream fo = null;
+        try {
+            fo = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
+            fileChanged();
+        } finally {
+            IOUtils.closeQuietly(fo);
+        }
     }
 
     private void showThumbnail() {
@@ -248,4 +261,22 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         Views.toggleVisibility(removeButton, file.exists());
 
     }
+
+    private File createTempImageFile() {
+        try {
+            // Create an image file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "temp_" + timeStamp + "_";
+            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File image = File.createTempFile(imageFileName, ".jpg", storageDir );
+            // Save a file: path for use with ACTION_VIEW intents
+            tempImagePath = image.getAbsolutePath();
+            return image;
+        } catch (IOException e) {
+            Dialogs.alert(context, context.getString(R.string.warning),
+                    context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
+            return null;
+        }
+    }
+
 }

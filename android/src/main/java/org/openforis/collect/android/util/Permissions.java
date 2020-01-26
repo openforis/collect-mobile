@@ -15,27 +15,31 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 public abstract class Permissions {
 
     public enum Request {
-        CAMERA(1, R.string.permission_camera_rationale, R.string.permission_camera_denied),
-        INTERNET(2, R.string.permission_internet_rationale, R.string.permission_internet_denied),
-        STORAGE(3, R.string.permission_storage_rationale, R.string.permission_storage_denied),
-        READ_EXTERNAL_STORAGE(4, R.string.permission_read_external_storage_rationale, R.string.permission_read_external_storage_denied),
-        WRITE_EXTERNAL_STORAGE(5, R.string.permission_write_external_storage_rationale, R.string.permission_write_external_storage_denied),
-        LOCATION_ACCESS(6, R.string.permission_location_access_rationale, R.string.permission_location_access_denied),
-        RECORD_AUDIO(7, R.string.permission_record_audio_rationale, R.string.permission_record_audio_denied),
-        CAMERA_BARCODE_SCANNER(8, R.string.permission_camera_barcode_scanner_rationale, R.string.permission_camera_barcode_scanner_denied);
+        CAMERA(1, R.string.permission_camera),
+        INTERNET(2, R.string.permission_internet, R.string.permission_internet_rationale),
+        STORAGE(3, R.string.permission_storage, R.string.permission_storage_rationale),
+        READ_EXTERNAL_STORAGE(4, R.string.permission_external_storage),
+        WRITE_EXTERNAL_STORAGE(5, R.string.permission_external_storage),
+        LOCATION_ACCESS(6, R.string.permission_location),
+        RECORD_AUDIO(7, R.string.permission_record_audio),
+        CAMERA_BARCODE_SCANNER(8, R.string.permission_camera_barcode_scanner);
 
         int code;
+        int permissionMessageKey;
         Integer rationaleMessageKey;
-        Integer deniedMessageKey;
 
         Request(int code) {
             this.code = code;
-        };
+        }
 
-        Request(int code, Integer rationaleMessageKey, Integer deniedMessageKey) {
+        Request(int code, int permissionMessageKey) {
+            this(code, permissionMessageKey, null);
+        }
+
+        Request(int code, int permissionMessageKey, Integer rationaleMessageKey) {
             this(code);
+            this.permissionMessageKey = permissionMessageKey;
             this.rationaleMessageKey = rationaleMessageKey;
-            this.deniedMessageKey = deniedMessageKey;
         }
 
         public int getCode() {
@@ -75,7 +79,8 @@ public abstract class Permissions {
                 status = Status.NOT_GRANTED;
             } else {
                 // Show rational message to ask for permissions
-                Dialogs.alert(context, R.string.permission_required, request.rationaleMessageKey, new Runnable() {
+                String rationaleMessage = getRationaleMessage(context, request);
+                Dialogs.alert(context, context.getString(R.string.permission_required), rationaleMessage, new Runnable() {
                     public void run() {
                         requestPermissions(context, permissionsToAsk, request.code);
                     }
@@ -87,7 +92,8 @@ public abstract class Permissions {
             case GRANTED:
                 return true;
             case NOT_GRANTED:
-                Dialogs.alert(context, R.string.permission_required, request.deniedMessageKey);
+                String message = getDeniedMessage(context, request);
+                Dialogs.alert(context, context.getString(R.string.permission_required), message);
                 return false;
             default:
                 return false;
@@ -133,5 +139,18 @@ public abstract class Permissions {
 
     public static boolean isPermissionGranted(int[] grantResults) {
         return grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED;
+    }
+
+    public static String getDeniedMessage(Activity context, Request request) {
+        return context.getString(R.string.permission_request_prefix) + " " +
+                context.getString(request.permissionMessageKey) + " " +
+                context.getString(R.string.permission_denied_suffix);
+    }
+
+    private static String getRationaleMessage(Activity context, Request request) {
+        return context.getString(R.string.permission_request_prefix) + " " +
+                context.getString(request.permissionMessageKey) + " " +
+                (request.rationaleMessageKey == null ? "" : context.getString(request.rationaleMessageKey) +  " ") +
+                context.getString(R.string.permission_request_rationale_suffix);
     }
 }

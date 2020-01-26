@@ -277,7 +277,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Multitracker sample")
-                .setMessage(R.string.permission_camera_denied)
+                .setMessage(Permissions.getDeniedMessage(this, Permissions.Request.CAMERA_BARCODE_SCANNER))
                 .setPositiveButton(R.string.ok, listener)
                 .show();
     }

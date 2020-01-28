@@ -3,6 +3,7 @@ package org.openforis.collect.android.util;
 import android.Manifest;
 import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Dialogs;
@@ -58,7 +59,6 @@ public abstract class Permissions {
     }
 
     private static boolean checkPermissionsOrRequestThem(final Activity context, final Request request, String... permissions) {
-        Status status;
         List<String> permissionsNotGranted = new ArrayList<String>();
         for (String permission : permissions) {
             if (ActivityCompat.checkSelfPermission(context, permission) != PERMISSION_GRANTED) {
@@ -66,38 +66,28 @@ public abstract class Permissions {
             }
         }
         if (permissionsNotGranted.isEmpty()) {
-            status = Status.GRANTED;
+           return true;
+        }
+        // Permissions not granted: check if a rationale message could be shown
+        final List<String> permissionsToAsk = new ArrayList<String>();
+        for (String permission: permissionsNotGranted) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(context, permission)) {
+                permissionsToAsk.add(permission);
+            }
+        }
+        if (permissionsToAsk.isEmpty()) {
+            requestPermissions(context, permissionsNotGranted, request.code);
+            Toast.makeText(context, getDeniedMessage(context, request), Toast.LENGTH_LONG).show();
         } else {
-            // Permissions not granted: check if a rationale message could be shown
-            final List<String> permissionsToAsk = new ArrayList<String>();
-            for (String permission: permissionsNotGranted) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(context, permission)) {
-                    permissionsToAsk.add(permission);
+            // Show rational message to ask for permissions
+            String rationaleMessage = getRationaleMessage(context, request);
+            Dialogs.alert(context, context.getString(R.string.permission_required), rationaleMessage, new Runnable() {
+                public void run() {
+                    requestPermissions(context, permissionsToAsk, request.code);
                 }
-            }
-            if (permissionsToAsk.isEmpty()) {
-                status = Status.NOT_GRANTED;
-            } else {
-                // Show rational message to ask for permissions
-                String rationaleMessage = getRationaleMessage(context, request);
-                Dialogs.alert(context, context.getString(R.string.permission_required), rationaleMessage, new Runnable() {
-                    public void run() {
-                        requestPermissions(context, permissionsToAsk, request.code);
-                    }
-                });
-                status = Status.SHOULD_SHOW_RATIONALE;
-            }
+            });
         }
-        switch (status) {
-            case GRANTED:
-                return true;
-            case NOT_GRANTED:
-                String message = getDeniedMessage(context, request);
-                Dialogs.alert(context, context.getString(R.string.permission_required), message);
-                return false;
-            default:
-                return false;
-        }
+        return false;
     }
 
     public static boolean checkCameraPermissionOrRequestIt(Activity context) {

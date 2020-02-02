@@ -20,6 +20,7 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.MimeType;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
 
 import java.io.File;
@@ -91,7 +92,7 @@ public class ExportDialogFragment extends DialogFragment {
                 if (saveToDownloads) {
                     Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
                 } else {
-                    Activities.shareFile(context, exportedFile, "*/*", R.string.export_share_with_application, false);
+                    Activities.shareFile(context, exportedFile, MimeType.BINARY, R.string.export_share_with_application, false);
                 }
             }
         }

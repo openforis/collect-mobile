@@ -22,6 +22,8 @@ import static org.openforis.collect.android.NodeEvent.UPDATED;
  * @author Daniel Wiell
  */
 public class CollectModelBackedSurveyService implements SurveyService {
+    private static final String DATA_EXPORT_DIR = "data_export";
+
     private final ViewModelManager viewModelManager;
     private final CollectModelManager collectModelManager;
     private final File workingDir;
@@ -332,7 +334,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
 
     private File getDataExportDirectory(File surveysDir) {
         File surveyDir = new File(surveysDir, getSelectedSurvey().getName());
-        return new File(surveyDir, "data_export");
+        return new File(surveyDir, DATA_EXPORT_DIR);
     }
 
 }

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-public class AndroidFiles {
+public abstract class AndroidFiles {
+
+    private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.fileprovider";
+
     /**
      * Workaround for https://code.google.com/p/android/issues/detail?id=38282.
      */
@@ -62,6 +66,10 @@ public class AndroidFiles {
         } else {
             return null;
         }
+    }
+
+    public static Uri getUriForFile(Context context, File file) {
+        return FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, file);
     }
 
     public static String getUriContentFileName(Context context, Uri uri) {

@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.5] - build 170 2020-02-02
+### Fixed
+- Data export not showing "Share with" screen
+
 ## [1.7.5] - build 169 2020-01-29
 ### Fixed
 - Permissions not being asked in Android 6+

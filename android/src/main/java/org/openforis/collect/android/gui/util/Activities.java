@@ -7,7 +7,6 @@ import static android.content.Intent.*;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
 import android.view.WindowManager;
 
 import java.io.File;
@@ -16,8 +15,6 @@ import java.io.File;
  * @author Stefano Ricci
  */
 public abstract class Activities {
-
-    private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.fileprovider";
 
     public static <A extends Activity> void start(Context context, Class<A> activityClass) {
         start(context, activityClass, 0, null);
@@ -73,10 +70,14 @@ public abstract class Activities {
         }
     }
 
+    public static void shareFile(Context context, File file, MimeType contentType, int messageKey, boolean viewOnly) {
+        shareFile(context, file, contentType.getCode(), messageKey, viewOnly);
+    }
+
     public static void shareFile(Context context, File file, String contentType, int messageKey, boolean viewOnly) {
         Intent intent = new Intent();
 
-        Uri uri = FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, file);
+        Uri uri = AndroidFiles.getUriForFile(context, file);
 
         if (viewOnly) {
             intent.setAction(Intent.ACTION_VIEW);

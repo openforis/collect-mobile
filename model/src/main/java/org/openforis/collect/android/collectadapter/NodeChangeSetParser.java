@@ -29,14 +29,12 @@ class NodeChangeSetParser {
     private final UiRecord uiRecord;
     private final Messages messages = new Messages();
     private final ValidationMessageBuilder validationMessageBuilder = ValidationMessageBuilder.createInstance(messages);
-    private final String preferredLanguage;
     private final Locale preferredLocale;
 
     public NodeChangeSetParser(NodeChangeSet nodeChangeSet, UiRecord uiRecord, String preferredLanguage) {
         this.nodeChangeSet = nodeChangeSet;
         this.uiRecord = uiRecord;
-        this.preferredLanguage = preferredLanguage;
-        preferredLocale = new Locale(preferredLanguage);
+        this.preferredLocale = new Locale(preferredLanguage);
     }
 
     public Map<UiNode, UiNodeChange> extractChanges() {
@@ -73,7 +71,7 @@ class NodeChangeSetParser {
     private void parseNodeChanges(Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
             if (nodeChange instanceof AttributeChange)
-                parseValidationErrors((AttributeChange) nodeChange, nodeChanges);
+                parseAttributeChange((AttributeChange) nodeChange, nodeChanges);
             else if (nodeChange instanceof EntityChange) {
                 parseMinCountValidation((EntityChange) nodeChange, nodeChanges);
                 parseMaxCountValidation((EntityChange) nodeChange, nodeChanges);
@@ -95,28 +93,33 @@ class NodeChangeSetParser {
                 boolean previouslyRelevant = uiNode.isRelevant();
                 if (relevant != previouslyRelevant)
                     getOrAddNodeChange(uiNode, nodeChanges).relevanceChange = true;
-
             }
         }
     }
 
-    private void parseValidationErrors(AttributeChange attributeChange, Map<UiNode, UiNodeChange> nodeChanges) {
-        Attribute<?, ?> node = attributeChange.getNode();
-        if (isCalculated(node) || isHidden(node) || isIrrelevant(node))
+    private void parseAttributeChange(AttributeChange attributeChange, Map<UiNode, UiNodeChange> nodeChanges) {
+        Attribute<?, ?> attribute = attributeChange.getNode();
+        if (isCalculated(attribute) || isHidden(attribute) || isIrrelevant(attribute))
             return;
         UiAttribute uiAttribute = getUiAttribute(attributeChange);
         if (uiAttribute == null)
             return;
+
         UiNodeChange nodeChange = getOrAddNodeChange(uiAttribute, nodeChanges);
-        ValidationResultFlag requiredErrorResult = node.getParent().getMinCountValidationResult(node.getName());
-        addCountValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult, node.getParent().getMinCount(node.getDefinition()),
+        if (attributeChange.getUpdatedFieldValues() != null) {
+            AttributeConverter.updateUiValue(attribute, uiAttribute);
+            nodeChange.valueChange = true;
+        }
+
+        ValidationResultFlag requiredErrorResult = attribute.getParent().getMinCountValidationResult(attribute.getName());
+        addCountValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult, attribute.getParent().getMinCount(attribute.getDefinition()),
                 "validation.requiredField", "validation.minCount");
 
         ValidationResults validationResults = attributeChange.getValidationResults();
         List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
         for (ValidationResult validationResult : validationResults.getFailed()) {
             if (!ignored(validationResult))
-                validationErrors.add(toValidationError(node, uiAttribute, validationResult));
+                validationErrors.add(toValidationError(attribute, uiAttribute, validationResult));
         }
         if (!validationErrors.isEmpty())
             nodeChange.validationErrors.addAll(validationErrors);

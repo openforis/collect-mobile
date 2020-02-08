@@ -11,6 +11,7 @@ import java.util.Set;
 public class UiNodeChange {
     public boolean statusChange;
     public boolean relevanceChange;
+    public boolean valueChange;
     public Set<UiValidationError> validationErrors = new HashSet<UiValidationError>();
 
     public static UiNodeChange statusChanged() {
@@ -22,6 +23,7 @@ public class UiNodeChange {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("statusChange", statusChange)
+                .add("valueChange", valueChange)
                 .add("relevanceChange", relevanceChange)
                 .add("validationErrors", validationErrors)
                 .toString();

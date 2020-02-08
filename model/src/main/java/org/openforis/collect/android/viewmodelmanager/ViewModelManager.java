@@ -3,10 +3,12 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.openforis.collect.android.gui.util.meter.Timer;
 import org.openforis.collect.android.viewmodel.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Daniel Wiell
@@ -128,9 +130,19 @@ public class ViewModelManager {
     }
 
     public void updateAttribute(UiAttribute attribute, Map<UiNode, UiNodeChange> nodeChanges) {
-        attribute.setModifiedOn(new Date());
+        List<UiAttribute> attributesChanged = new ArrayList<UiAttribute>();
+        attributesChanged.add(attribute);
+        Set<Map.Entry<UiNode, UiNodeChange>> entries = nodeChanges.entrySet();
+        for (Map.Entry<UiNode, UiNodeChange> entry : entries) {
+            if (entry.getValue().valueChange) {
+                attributesChanged.add((UiAttribute) entry.getKey());
+            }
+        }
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);
-        repo.updateAttribute(attribute, statusChanges);
+        for (UiAttribute attributeChanged : attributesChanged) {
+            attributeChanged.setModifiedOn(new Date());
+            repo.updateAttribute(attributeChanged, statusChanges);
+        }
 
         UiRecord record = updateRecordModifiedDate(attribute.getUiRecord());
 

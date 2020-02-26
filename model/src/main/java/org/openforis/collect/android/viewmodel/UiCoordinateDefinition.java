@@ -15,19 +15,24 @@ public class UiCoordinateDefinition extends UiAttributeDefinition {
     public final List<UiSpatialReferenceSystem> spatialReferenceSystems;
     public final boolean destinationPointSpecified;
     public final boolean onlyChangedByDevice;
+    public final boolean includeAltitude;
+    public final boolean includeAccuracy;
 
     public UiCoordinateDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                   boolean calculated, boolean calculatedOnlyOneTime, boolean hidden,
                                   List<UiSpatialReferenceSystem> spatialReferenceSystems,
                                   String description, String prompt, String interviewLabel,
                                   boolean required,
-                                  boolean destinationPointSpecified, boolean onlyChangedByDevice) {
+                                  boolean destinationPointSpecified, boolean onlyChangedByDevice,
+                                  boolean includeAltitude, boolean includeAccuracy) {
         super(id, name, label, keyOfDefinitionId, calculated, calculatedOnlyOneTime, hidden, description, prompt, interviewLabel, required);
         this.destinationPointSpecified = destinationPointSpecified;
         this.onlyChangedByDevice = onlyChangedByDevice;
         this.spatialReferenceSystems = Collections.unmodifiableList(spatialReferenceSystems);
         for (UiSpatialReferenceSystem spatialReferenceSystem : spatialReferenceSystems)
             srsById.put(spatialReferenceSystem.id, spatialReferenceSystem);
+        this.includeAltitude = includeAltitude;
+        this.includeAccuracy = includeAccuracy;
     }
 
     public UiSpatialReferenceSystem getById(String id) {

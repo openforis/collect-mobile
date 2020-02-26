@@ -143,7 +143,9 @@ public class Definitions {
                         spatialReferenceSystems, nodeDescription(def),
                         nodePrompt(def), interviewLabel, required,
                         isDestinationPointSpecified(coordinateDefn),
-                        annotations.isAllowOnlyDeviceCoordinate(coordinateDefn));
+                        annotations.isAllowOnlyDeviceCoordinate(coordinateDefn),
+                        annotations.isIncludeCoordinateAltitude(coordinateDefn),
+                        annotations.isIncludeCoordinateAccuracy(coordinateDefn));
             } else if (def instanceof CodeAttributeDefinition) {
                 EntityDefinition parentDef = def.getParentEntityDefinition();
                 boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()

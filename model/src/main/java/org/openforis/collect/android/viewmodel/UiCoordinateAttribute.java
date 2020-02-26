@@ -9,6 +9,8 @@ public class UiCoordinateAttribute extends UiAttribute {
     private Double x;
     private Double y;
     private UiSpatialReferenceSystem spatialReferenceSystem;
+    private Double altitude;
+    private Double accuracy;
 
     public UiCoordinateAttribute(int id, boolean relevant, UiCoordinateDefinition definition) {
         super(id, relevant, definition);
@@ -36,6 +38,22 @@ public class UiCoordinateAttribute extends UiAttribute {
 
     public synchronized void setSpatialReferenceSystem(UiSpatialReferenceSystem spatialReferenceSystem) {
         this.spatialReferenceSystem = spatialReferenceSystem;
+    }
+
+    public synchronized Double getAltitude() {
+        return altitude;
+    }
+
+    public synchronized void setAltitude(Double altitude) {
+        this.altitude = altitude;
+    }
+
+    public synchronized Double getAccuracy() {
+        return accuracy;
+    }
+
+    public synchronized void setAccuracy(Double accuracy) {
+        this.accuracy = accuracy;
     }
 
     public UiCoordinateDefinition getDefinition() {

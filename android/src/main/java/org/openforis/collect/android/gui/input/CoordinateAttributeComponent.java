@@ -66,13 +66,19 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         UiSpatialReferenceSystem srs = selectedSpatialReferenceSystem();
         Double x = toDouble(vh.xView);
         Double y = toDouble(vh.yView);
+        Double altitude = attribute.getDefinition().includeAltitude ? toDouble(vh.altitudeView) : null;
+        Double accuracy = attribute.getDefinition().includeAccuracy ? toDouble(vh.accuracyView) : null;
 
         if (notEqual(srs, attribute.getSpatialReferenceSystem()) ||
                 notEqual(x, attribute.getX()) ||
-                notEqual(y, attribute.getY())) {
+                notEqual(y, attribute.getY()) ||
+                notEqual(altitude, attribute.getAltitude()) ||
+                notEqual(accuracy, attribute.getAccuracy())) {
             attribute.setSpatialReferenceSystem(srs);
             attribute.setX(x);
             attribute.setY(y);
+            attribute.setAltitude(altitude);
+            attribute.setAccuracy(accuracy);
 
             return true;
         } else {
@@ -153,7 +159,9 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         Spinner srsSpinner;
         TextView xView;
         TextView yView;
+        TextView altitudeView;
         TextView accuracyView;
+        TextView accuracyViewReadonly;
         ToggleButton startStopButton;
         Button navigateButton;
         Button showMapButton;
@@ -166,11 +174,10 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 this.xView = createNumberOutput(attribute.getX());
                 this.yView = createNumberOutput(attribute.getY());
             } else {
-                this.xView = createNumberInput(attribute.getX(), "x");
-                this.yView = createNumberInput(attribute.getY(), "y");
+                this.xView = createNumberInput(attribute.getX());
+                this.yView = createNumberInput(attribute.getY());
             }
             startStopButton = createStartStopButton();
-            accuracyView = createAccuracyView();
             showMapButton = createShowMapButton();
 
             view = new LinearLayout(context);
@@ -178,11 +185,23 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             view.setOrientation(LinearLayout.VERTICAL);
 
             view.addView(srsLayout);
-            view.addView(xView);
-            view.addView(yView);
+            view.addView(createFormField("X", xView));
+            view.addView(createFormField("Y", yView));
+            if (attribute.getDefinition().includeAltitude) {
+                altitudeView = createNumberInput(attribute.getAltitude());
+                view.addView(createFormField(getString(R.string.label_altitude), altitudeView));
+            }
+            if (attribute.getDefinition().includeAccuracy) {
+                accuracyView = createNumberInput(attribute.getAccuracy());
+                view.addView(createFormField(getString(R.string.label_accuracy), accuracyView));
+            } else {
+                accuracyViewReadonly = new AppCompatTextView(context);
+            }
             view.addView(startStopButton);
 
-            view.addView(accuracyView);
+            if (!attribute.getDefinition().includeAccuracy) {
+                view.addView(accuracyViewReadonly);
+            }
 
             RelativeLayout belowBar = new RelativeLayout(context);
             RelativeLayout.LayoutParams belowBarLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -205,8 +224,19 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             }
         }
 
+        private LinearLayout createFormField(String label, View inputView) {
+            LinearLayout formField = new LinearLayout(context);
+            formField.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+            TextView labelView = new AppCompatTextView(context);
+            labelView.setWidth(Views.px(context, 50));
+            labelView.setText(label);
+            formField.addView(labelView);
+            formField.addView(inputView);
+            return formField;
+        }
+
         private LinearLayout createSrsLayout() {
-            TextView srsLabel = new TextView(context);
+            TextView srsLabel = new AppCompatTextView(context);
             srsLabel.setText(getString(R.string.label_spatial_reference_system) + ":");
 
             LinearLayout srsLine = new LinearLayout(context);
@@ -259,14 +289,13 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             }
         }
 
-        private TextView createNumberInput(Double value, String hint) {
+        private TextView createNumberInput(Double value) {
             final TextView input = new AppCompatEditText(context);
 
             input.setSingleLine();
             if (value != null)
                 input.setText(formatDouble(value));
             input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
-            input.setHint(hint);
 
             input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -351,10 +380,6 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             return button;
         }
 
-        private TextView createAccuracyView() {
-            return new TextView(context);
-        }
-
         private void updateCoordinate(double[] transformedCoord) {
             xView.setText(formatDouble(transformedCoord[0]));
             yView.setText(formatDouble(transformedCoord[1]));
@@ -375,8 +400,12 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         UpdateListener(FragmentActivity context) {this.context = context;}
 
         public void onUpdate(Location location) {
-            float accuracy = location.getAccuracy();
-            vh.accuracyView.setText(context.getResources().getString(R.string.label_accuracy) + ": " + Math.round(accuracy) + "m");
+            double accuracy = Math.round(location.getAccuracy() * 100.0) / 100.0;
+            if (attribute.getDefinition().includeAccuracy) {
+                vh.accuracyView.setText(Double.toString(accuracy));
+            } else {
+                vh.accuracyViewReadonly.setText(context.getResources().getString(R.string.label_accuracy) + ": " + accuracy + "m");
+            }
             double[] transformedCoord = transformToSelectedSrs(location);
             vh.updateCoordinate(transformedCoord);
         }

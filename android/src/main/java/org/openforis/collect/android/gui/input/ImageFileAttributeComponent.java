@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
@@ -263,7 +262,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private File createTempImageFile() {
         try {
             // Create an image file name
-            File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File storageDir = context.getCacheDir();
             File image = File.createTempFile("temp_image_", ".jpg", storageDir );
             // Save a file: path for use with ACTION_VIEW intents
             tempImagePath = image.getAbsolutePath();

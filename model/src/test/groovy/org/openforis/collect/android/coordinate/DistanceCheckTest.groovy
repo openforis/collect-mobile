@@ -1,13 +1,14 @@
 package org.openforis.collect.android.coordinate
 
+import org.openforis.collect.model.CollectRecord
+import org.openforis.collect.model.CollectSurveyContext
 import org.openforis.collect.persistence.DatabaseLookupProvider
-import org.openforis.idm.metamodel.DefaultSurveyContext
+import org.openforis.collect.persistence.xml.CollectSurveyIdmlBinder
 import org.openforis.idm.metamodel.Survey
 import org.openforis.idm.metamodel.validation.DistanceCheck
 import org.openforis.idm.metamodel.validation.ValidationResult
 import org.openforis.idm.metamodel.validation.ValidationResults
 import org.openforis.idm.metamodel.validation.Validator
-import org.openforis.idm.metamodel.xml.SurveyIdmlBinder
 import org.openforis.idm.model.*
 import spock.lang.Specification
 
@@ -50,7 +51,7 @@ class DistanceCheckTest extends Specification {
     }
 
     private ValidationResults validate(Attribute attribute) {
-        Validator validator = attribute.record.surveyContext.validator;
+        Validator validator = attribute.record.surveyContext.validator
         validator.validate(attribute)
     }
 
@@ -63,15 +64,15 @@ class DistanceCheckTest extends Specification {
     private Entity createCluster() {
         def is = getClass().getResourceAsStream("/test.idm.xml")
         def surveyContext = new TestSurveyContext()
-        def parser = new SurveyIdmlBinder(surveyContext)
+        def parser = new CollectSurveyIdmlBinder(surveyContext)
         def survey = parser.unmarshal(is)
-        def record = new Record(survey, "2.0", "cluster")
+        def record = new CollectRecord(survey, "2.0", "cluster")
         def cluster = record.getRootEntity()
         EntityBuilder.addValue(cluster, "id", new Code("001"))
         return cluster
     }
 
-    private static class TestSurveyContext extends DefaultSurveyContext {
+    private static class TestSurveyContext extends CollectSurveyContext {
         TestSurveyContext() {
             expressionFactory.lookupProvider = new TestLookupProvider()
         }

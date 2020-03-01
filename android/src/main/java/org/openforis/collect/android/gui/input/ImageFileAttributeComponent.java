@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -17,6 +18,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
@@ -136,11 +138,22 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null &&
                 Permissions.checkCameraPermissionOrRequestIt(context)) {
             ((SurveyNodeActivity) context).setImageChangedListener(this);
-            File imageFile = createTempImageFile();
-            if (imageFile == null) {
-                return;
+            Uri imageUri;
+            if (AndroidVersion.greaterThan20()) {
+                // Create temp file and store image there
+                File imageFile = createTempImageFile();
+                if (imageFile == null) {
+                    Toast.makeText(context, R.string.file_attribute_capture_image_error_creating_temp_file, Toast.LENGTH_SHORT);
+                    return;
+                }
+                imageUri = AndroidFiles.getUriForFile(context, imageFile);
+            } else {
+                // Store image directly to "file"
+                //TODO find nicer solution to prevent FileUriExposedException
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                imageUri = Uri.fromFile(file);
             }
-            Uri imageUri = AndroidFiles.getUriForFile(context, imageFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
         }
@@ -172,17 +185,23 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     public void imageCaptured() {
-        File tempFile = null;
-        try {
-            tempFile = new File(tempImagePath);
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.fromFile(tempFile));
-            saveImageIntoFile(bitmap);
-        } catch (IOException e) {
-            Dialogs.alert(context, context.getString(R.string.warning),
-                    context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
-        } finally {
-            tempImagePath = null;
-            FileUtils.deleteQuietly(tempFile);
+        if (AndroidVersion.greaterThan20()) {
+            // Copy image from temp file
+            File tempFile = null;
+            try {
+                tempFile = new File(tempImagePath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.fromFile(tempFile));
+                saveImageIntoFile(bitmap);
+            } catch (IOException e) {
+                Dialogs.alert(context, context.getString(R.string.warning),
+                        context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
+            } finally {
+                tempImagePath = null;
+                FileUtils.deleteQuietly(tempFile);
+            }
+        } else {
+            // Attribute file already passed to camera intent
+            fileChanged();
         }
     }
 

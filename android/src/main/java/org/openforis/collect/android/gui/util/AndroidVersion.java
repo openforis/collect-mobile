@@ -1,16 +1,22 @@
 package org.openforis.collect.android.gui.util;
 
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 
 /**
  * @author Daniel Wiell
  */
 public class AndroidVersion {
-    public static boolean greaterThan10() {
-        return android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
+
+    private static boolean greaterThan(int version) {
+        return VERSION.SDK_INT > version;
     }
 
-    public static boolean greaterThan17() {
-        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    public static boolean greaterThan10() {
+        return greaterThan(VERSION_CODES.GINGERBREAD_MR1);
+    }
+
+    public static boolean greaterThan20() {
+        return greaterThan(VERSION_CODES.KITKAT_WATCH);
     }
 }

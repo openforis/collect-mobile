@@ -190,6 +190,7 @@
     <string name="file_attribute_capture">Capture</string>
     <string name="file_attribute_captured_file_overwrite_confirm_message">Capture a new file and overwrite the existing one?</string>
     <string name="file_attribute_capture_image_error">Error capturing image: %s</string>
+    <string name="file_attribute_capture_image_error_creating_temp_file">Error creating temp file</string>
     <string name="file_attribute_select_image_error">Error selecting image: %s</string>
     <string name="file_attribute_image_delete_confirm_message">Delete the uploaded image?</string>
     <string name="file_attribute_audio_overwrite_confirm_message">Overwrite recorded audio?</string>

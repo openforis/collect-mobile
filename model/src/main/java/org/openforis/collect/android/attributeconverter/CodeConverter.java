@@ -24,12 +24,13 @@ class CodeConverter extends AttributeConverter<CodeAttribute, UiCodeAttribute> {
 
     protected void updateUiAttributeValue(CodeAttribute attribute, UiCodeAttribute uiAttribute) {
         Code attributeValue = attribute.getValue();
-        String value = attributeValue.getCode();
-        if (value != null) {
-            String label = null; // TODO: Need to get the label somehow
-            uiAttribute.setCode(new UiCode(value, label, null, uiAttribute.getDefinition().isValueShown()));
-        } else {
+        String code = attributeValue.getCode();
+        if (code == null) {
             uiAttribute.setCode(null);
+        } else if (uiAttribute.getCode() == null || !code.equals(uiAttribute.getCode().getValue())) {
+            // Overwrite uiAttribute code only if value (code) changed
+            String label = null; // TODO: Need to get the label somehow
+            uiAttribute.setCode(new UiCode(code, label, null, uiAttribute.getDefinition().isValueShown()));
         }
     }
 

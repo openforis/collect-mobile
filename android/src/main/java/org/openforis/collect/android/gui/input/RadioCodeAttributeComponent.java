@@ -136,12 +136,11 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             if (!enumerator) {
                 rb.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        RadioButton rb = (RadioButton) view;
-                        UiCode code = codeByViewId.get(rb.getId());
+                        UiCode code = codeByViewId.get(view.getId());
                         boolean wasSelected = isAttributeCode(code);
                         if (wasSelected) {
                             radioGroup.clearCheck();
-                            rb.setSelected(true);
+                            view.setSelected(true);
                         } else {
                             radioGroup.check(view.getId());
                         }

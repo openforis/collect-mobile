@@ -51,7 +51,10 @@ public class NodeDatabaseSchemaChangeLog {
                 new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN created_on TIMESTAMP",
                         "UPDATE ofc_view_model SET created_on = CURRENT_TIMESTAMP",
                         "ALTER TABLE ofc_view_model ADD COLUMN modified_on TIMESTAMP ",
-                        "UPDATE ofc_view_model SET modified_on = CURRENT_TIMESTAMP")
+                        "UPDATE ofc_view_model SET modified_on = CURRENT_TIMESTAMP"),
+
+                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN val_altitude REAL",
+                        "ALTER TABLE ofc_view_model ADD COLUMN val_accuracy REAL ")
         );
     }
 }

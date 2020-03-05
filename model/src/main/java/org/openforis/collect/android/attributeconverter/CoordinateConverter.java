@@ -29,6 +29,8 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
         uiAttribute.setY(attributeValue.getY());
         String srsId = attribute.getSrsIdField().getValue();
         uiAttribute.setSpatialReferenceSystem(lookupSrs(uiAttribute.getDefinition(), srsId));
+        uiAttribute.setAltitude(attributeValue.getAltitude());
+        uiAttribute.setAccuracy(attributeValue.getAccuracy());
     }
 
     private UiSpatialReferenceSystem lookupSrs(UiCoordinateDefinition definition, String srsId) {
@@ -41,6 +43,8 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
         uiAttribute.setX(nodeDto.x);
         uiAttribute.setY(nodeDto.y);
         uiAttribute.setSpatialReferenceSystem(lookupSrs(coordinateDefinition, nodeDto.srs));
+        uiAttribute.setAltitude(nodeDto.altitude);
+        uiAttribute.setAccuracy(nodeDto.accuracy);
         return uiAttribute;
     }
 
@@ -50,14 +54,17 @@ class CoordinateConverter extends AttributeConverter<CoordinateAttribute, UiCoor
         dto.y = uiAttribute.getY();
         UiSpatialReferenceSystem srs = uiAttribute.getSpatialReferenceSystem();
         dto.srs = srs == null ? null : srs.id;
+        dto.altitude = uiAttribute.getAltitude();
+        dto.accuracy = uiAttribute.getAccuracy();
         return dto;
     }
 
     public Value value(UiCoordinateAttribute uiAttribute) {
         UiSpatialReferenceSystem srs = uiAttribute.getSpatialReferenceSystem();
         String srsId = srs == null ? null : srs.id;
-        Coordinate coordinate = new Coordinate(uiAttribute.getX(), uiAttribute.getY(), srsId);
-        return coordinate.isComplete() ? coordinate : new Coordinate(null, null, null);
+        Coordinate coordinate = new Coordinate(uiAttribute.getX(), uiAttribute.getY(), srsId,
+                uiAttribute.getAltitude(), uiAttribute.getAccuracy());
+        return coordinate.isComplete() ? coordinate : new Coordinate();
     }
 
     protected CoordinateAttribute attribute(UiCoordinateAttribute uiAttribute, NodeDefinition definition) {

@@ -84,6 +84,7 @@
     <string name="label_spatial_reference_system">Spatial Reference System</string>
     <string name="label_start_gps">Start GPS</string>
     <string name="label_stop_gps">Stop GPS</string>
+    <string name="label_altitude">Altitude</string>
     <string name="label_accuracy">Accuracy</string>
     <string name="label_navigate">Navigate to\nexpected location</string>
     <string name="label_show_map">Show on Map</string>

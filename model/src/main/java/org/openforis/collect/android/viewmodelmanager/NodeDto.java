@@ -44,6 +44,8 @@ public class NodeDto {
     public Double x;
     public Double y;
     public String srs;
+    public Double altitude;
+    public Double accuracy;
     public String taxonCode;
     public String taxonScientificName;
     public File file;

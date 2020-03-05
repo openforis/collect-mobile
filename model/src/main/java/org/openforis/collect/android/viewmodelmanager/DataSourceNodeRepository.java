@@ -1,6 +1,10 @@
 package org.openforis.collect.android.viewmodelmanager;
 
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
@@ -8,14 +12,76 @@ import org.openforis.collect.android.util.persistence.PreparedStatementHelper;
 import org.openforis.collect.android.util.persistence.ResultSetHelper;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
 import java.sql.Date;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
  */
 public class DataSourceNodeRepository implements NodeRepository {
+
+    private static final String[] FIELDS = new String[]{
+        "relevant", "status", "parent_id", "parent_entity_id", "definition_id",
+        "survey_id", "record_id", "record_collection_name", "record_key_attribute", "node_type",
+        "val_text",
+        "val_date",
+        "val_hour", "val_minute",
+        "val_code_value", "val_code_qualifier", "val_code_label",
+        "val_boolean",
+        "val_int", "val_int_from", "val_int_to",
+        "val_double", "val_double_from", "val_double_to",
+        "val_x", "val_y", "val_srs", "val_altitude", "val_accuracy",
+        "val_taxon_code", "val_taxon_scientific_name", "val_file",
+        "created_on", "modified_on",
+        "id"
+    };
+
+    private static final String FIELDS_SELECT = StringUtils.join(FIELDS, ", ");
+    private static final String SELECT_BY_RECORD_ID_QUERY;
+    private static final String SELECT_BY_SURVEY_ID_QUERY;
+    private static final String INSERT_QUERY;
+    private static final String UPDATE_QUERY;
+    static {
+        // SELECT
+        SELECT_BY_RECORD_ID_QUERY = "SELECT " + FIELDS_SELECT + "\n" +
+                " FROM ofc_view_model\n" +
+                " WHERE record_id = ?";
+        SELECT_BY_SURVEY_ID_QUERY =  "SELECT " + FIELDS_SELECT + "\n" +
+                "FROM ofc_view_model\n" +
+                "WHERE survey_id = ? AND (parent_id IS NULL OR record_key_attribute = ?)\n" +
+                "ORDER BY id";
+
+        // INSERT
+        String[] questionMarksArr = new String[FIELDS.length];
+        Arrays.fill(questionMarksArr, "?");
+        String questionMarks = StringUtils.join(questionMarksArr, ", ");
+        INSERT_QUERY = "INSERT INTO ofc_view_model(" + FIELDS_SELECT + ")\n" +
+                " VALUES(" + questionMarks + ")";
+
+        // UPDATE
+        List<String> fieldsToUpdate = new ArrayList<String>(Arrays.asList(FIELDS));
+        fieldsToUpdate.remove("id");
+        Collection<String> fieldsUpdateArr = Collections2.transform(
+                fieldsToUpdate, new Function<String, String>() {
+                    @Override
+                    public String apply(String field) {
+                        return field + " = ?";
+                    }
+                });
+        String fieldsUpdate = StringUtils.join(fieldsUpdateArr, ", ");
+        UPDATE_QUERY = "UPDATE ofc_view_model\n" +
+                "SET " + fieldsUpdate + "\n" +
+                "WHERE id = ?";
+    }
+
     private final Database database;
 
     public DataSourceNodeRepository(Database database) {
@@ -36,15 +102,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     public void insert(final List<NodeDto> nodes, final Map<Integer, StatusChange> statusChanges) {
         database.execute(new ConnectionCallback<Void>() {
             public Void execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("" +
-                        "INSERT INTO ofc_view_model(\n" +
-                        "   relevant, status, parent_id, parent_entity_id, definition_id, survey_id, record_id, record_collection_name,\n" +
-                        "   record_key_attribute, node_type,\n" +
-                        "   val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
-                        "   val_boolean, val_int, val_int_from, val_int_to,\n" +
-                        "   val_double, val_double_from, val_double_to, val_x, val_y, val_srs, val_taxon_code,\n" +
-                        "   val_taxon_scientific_name, val_file, created_on, modified_on, id)\n" +
-                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
                 for (NodeDto node : nodes) {
                     bind(ps, node);
                     ps.addBatch();
@@ -92,15 +150,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     public NodeDto.Collection recordNodes(final int recordId) {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id,\n" +
-                        "       record_collection_name, record_key_attribute, node_type,\n" +
-                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
-                        "       val_boolean, val_int, val_int_from,\n" +
-                        "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
-                        "       val_taxon_code, val_taxon_scientific_name, val_file, created_on, modified_on\n" +
-                        " FROM ofc_view_model\n" +
-                        " WHERE record_id = ?");
+                PreparedStatement ps = connection.prepareStatement(SELECT_BY_RECORD_ID_QUERY);
                 ps.setInt(1, recordId);
                 ResultSet rs = ps.executeQuery();
                 NodeDto.Collection collection = new NodeDto.Collection();
@@ -150,14 +200,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     }
 
     private void updateAttribute(Connection connection, NodeDto node) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("" +
-                "UPDATE ofc_view_model\n" +
-                "SET relevant = ?, status = ?, parent_id = ?, parent_entity_id = ?, definition_id = ?, survey_id = ?, record_id = ?,\n" +
-                "    record_collection_name = ?, record_key_attribute = ?, node_type = ?, val_text = ?, val_date = ?, val_hour = ?,\n" +
-                "    val_minute = ?, val_code_value = ?, val_code_qualifier = ?, val_code_label = ?, val_boolean = ?, val_int = ?, val_int_from = ?,\n" +
-                "    val_int_to = ?, val_double = ?, val_double_from = ?, val_double_to = ?, val_x = ?, val_y = ?, val_srs = ?,\n" +
-                "    val_taxon_code = ?, val_taxon_scientific_name = ?, val_file = ?, created_on = ?, modified_on = ?\n" +
-                "WHERE id = ?");
+        PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
         bind(ps, node);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
@@ -182,16 +225,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     public NodeDto.Collection surveyRecords(final int surveyId) {
         return database.execute(new ConnectionCallback<NodeDto.Collection>() {
             public NodeDto.Collection execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT id, relevant, status, parent_id, parent_entity_id, survey_id, record_id, definition_id, record_collection_name,\n" +
-                        "       record_key_attribute, node_type,\n" +
-                        "       val_text, val_date, val_hour, val_minute, val_code_value, val_code_qualifier, val_code_label,\n" +
-                        "       val_boolean, val_int, val_int_from,\n" +
-                        "       val_int_to, val_double, val_double_from, val_double_to, val_x, val_y, val_srs,\n" +
-                        "       val_taxon_code, val_taxon_scientific_name, val_file, created_on, modified_on\n" +
-                        "FROM ofc_view_model\n" +
-                        "WHERE survey_id = ? AND (parent_id IS NULL OR record_key_attribute = ?)\n" +
-                        "ORDER BY id");
+                PreparedStatement ps = connection.prepareStatement(SELECT_BY_SURVEY_ID_QUERY);
                 ps.setInt(1, surveyId);
                 ps.setInt(2, 1);
                 ResultSet rs = ps.executeQuery();
@@ -241,6 +275,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.x = helper.getDouble("val_x");
         n.y = helper.getDouble("val_y");
         n.srs = rs.getString("val_srs");
+        n.altitude = helper.getDouble("val_altitude");
+        n.accuracy = helper.getDouble("val_accuracy");
         n.taxonCode = rs.getString("val_taxon_code");
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
         String filePath = rs.getString("val_file");
@@ -279,6 +315,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         psh.setDoubleOrNull(node.x);
         psh.setDoubleOrNull(node.y);
         psh.setStringOrNull(node.srs);
+        psh.setDoubleOrNull(node.altitude);
+        psh.setDoubleOrNull(node.accuracy);
         psh.setString(node.taxonCode);
         psh.setString(node.taxonScientificName);
         psh.setStringOrNull(node.file == null ? null : node.file.getAbsolutePath());

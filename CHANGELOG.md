@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.6] - build 175 2020-03-05
+### Added
+- Altitude and accuracy in coordinate attributes
+
 ## [1.7.5] - build 174 2020-03-02
 ### Fixed
 - Code label not shown in records list

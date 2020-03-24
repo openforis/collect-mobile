@@ -170,13 +170,8 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         private ViewHolder() {
             srsSpinner = createSrsSpinner();
             LinearLayout srsLayout = createSrsLayout();
-            if (attribute.getDefinition().onlyChangedByDevice) {
-                this.xView = createNumberOutput(attribute.getX());
-                this.yView = createNumberOutput(attribute.getY());
-            } else {
-                this.xView = createNumberInput(attribute.getX());
-                this.yView = createNumberInput(attribute.getY());
-            }
+            xView = createNumberField(attribute.getX());
+            yView = createNumberField(attribute.getY());
             startStopButton = createStartStopButton();
             showMapButton = createShowMapButton();
 
@@ -188,11 +183,11 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             view.addView(createFormField("X", xView));
             view.addView(createFormField("Y", yView));
             if (attribute.getDefinition().includeAltitude) {
-                altitudeView = createNumberInput(attribute.getAltitude());
+                altitudeView = createNumberField(attribute.getAltitude());
                 view.addView(createFormField(getString(R.string.label_altitude), altitudeView));
             }
             if (attribute.getDefinition().includeAccuracy) {
-                accuracyView = createNumberInput(attribute.getAccuracy());
+                accuracyView = createNumberField(attribute.getAccuracy());
                 view.addView(createFormField(getString(R.string.label_accuracy), accuracyView));
             } else {
                 accuracyViewReadonly = new AppCompatTextView(context);
@@ -337,6 +332,12 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             return output;
         }
 
+        private TextView createNumberField(Double value) {
+            return attribute.getDefinition().onlyChangedByDevice
+                ? createNumberOutput(value)
+                : createNumberInput(value);
+        }
+
         private ToggleButton createStartStopButton() {
             ToggleButton button = new ToggleButton(context);
             button.setText(getString(R.string.label_start_gps));
@@ -400,14 +401,21 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         UpdateListener(FragmentActivity context) {this.context = context;}
 
         public void onUpdate(Location location) {
-            double accuracy = Math.round(location.getAccuracy() * 100.0) / 100.0;
+            double accuracy = roundTo2Decimals(location.getAccuracy());
             if (attribute.getDefinition().includeAccuracy) {
                 vh.accuracyView.setText(Double.toString(accuracy));
             } else {
                 vh.accuracyViewReadonly.setText(context.getResources().getString(R.string.label_accuracy) + ": " + accuracy + "m");
             }
+            if (attribute.getDefinition().includeAltitude) {
+                vh.altitudeView.setText(Double.toString(roundTo2Decimals(location.getAltitude())));
+            }
             double[] transformedCoord = transformToSelectedSrs(location);
             vh.updateCoordinate(transformedCoord);
+        }
+
+        private double roundTo2Decimals(double value) {
+            return Math.round(value * 100.0) / 100.0;
         }
     }
 }

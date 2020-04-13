@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.6] - build 177 2020-04-14
+### Fixed
+- Record export on survey with multiple keys
+
 ## [1.7.6] - build 176 2020-03-24
 ### Fixed
 - Altitude not recorded properly

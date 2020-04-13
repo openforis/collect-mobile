@@ -78,7 +78,7 @@ public class SurveyExporter {
         for (UiNode rc : uiSurvey.getChildren())
             for (UiNode rp : ((UiRecordCollection) rc).getChildren())
                 for (UiAttribute keyAttribute : ((UiRecord.Placeholder) rp).getKeyAttributes())
-                    if (keyAttribute.isEmpty())
+                    if (keyAttribute.isRelevant() && keyAttribute.isEmpty())
                         throw new AllRecordKeysNotSpecified();
     }
 

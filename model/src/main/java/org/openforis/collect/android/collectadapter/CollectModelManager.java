@@ -412,14 +412,15 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
         Coordinate previousValue = attribute.getValue();
         try {
-            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], uiAttribute.getSpatialReferenceSystem().id));
+            UiSpatialReferenceSystem srs = getUiSpatialReferenceSystem(uiAttribute);
+            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], srs.id));
             for (Check<?> check : attribute.getDefinition().getChecks()) {
                 if (check instanceof DistanceCheck) {
                     Coordinate destinationPoint = ((DistanceCheck) check).evaluateDestinationPoint(attribute);
                     if (destinationPoint == null)
                         return null;
                     return CoordinateUtils.transform(
-                            uiAttribute.getSpatialReferenceSystem(),
+                            srs,
                             new double[]{destinationPoint.getX(), destinationPoint.getY()},
                             UiSpatialReferenceSystem.LAT_LNG_SRS
                     );
@@ -432,11 +433,17 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         }
     }
 
+    private UiSpatialReferenceSystem getUiSpatialReferenceSystem(UiCoordinateAttribute uiAttribute) {
+        UiSpatialReferenceSystem srs = uiAttribute.getSpatialReferenceSystem();
+        // default to first srs defined
+        return srs == null ? uiAttribute.getDefinition().spatialReferenceSystems.get(0) : srs;
+    }
+
     public ValidationResultFlag validateDistance(UiCoordinateAttribute uiAttribute, double[] coordinate) {
         CoordinateAttribute attribute = (CoordinateAttribute) recordNodes.getAttribute(uiAttribute.getId());
         Coordinate previousValue = attribute.getValue();
         try {
-            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], uiAttribute.getSpatialReferenceSystem().id));
+            attribute.setValue(new Coordinate(coordinate[0], coordinate[1], getUiSpatialReferenceSystem(uiAttribute).id));
             ValidationResultFlag worstFlag = ValidationResultFlag.OK;
             for (Check<?> check : attribute.getDefinition().getChecks()) {
                 if (check instanceof DistanceCheck) {

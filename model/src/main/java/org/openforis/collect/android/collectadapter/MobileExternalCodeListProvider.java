@@ -1,16 +1,27 @@
 package org.openforis.collect.android.collectadapter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.util.NaturalOrderComparator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
+import org.openforis.idm.metamodel.CodeListLevel;
 import org.openforis.idm.metamodel.ExternalCodeListItem;
 import org.openforis.idm.model.CodeAttribute;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Daniel Wiell
@@ -63,7 +74,15 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
             public List<ExternalCodeListItem> execute(Connection connection) throws SQLException {
                 String query = childItemsQuery(parentItem);
                 PreparedStatement ps = connection.prepareStatement(query);
-                ps.setString(1, parentItem.getCode());
+
+                // ancestor levels condition
+                List<CodeListLevel> ancestorLevels = getAncestorLevels(parentItem);
+                for (int level = 1; level <= ancestorLevels.size(); level ++) {
+                    String ancestorCode = level == parentItem.getLevel()
+                            ? parentItem.getCode()
+                            : parentItem.getParentKeyByLevel().get(ancestorLevels.get(level - 1).getName());
+                    ps.setString(level, ancestorCode);
+                }
                 ResultSet rs = ps.executeQuery();
                 List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
                 while (rs.next())
@@ -133,17 +152,28 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
 
     private String childItemsQuery(ExternalCodeListItem parentItem) {
         CodeList codeList = parentItem.getCodeList();
-        String parentName = levelName(codeList, parentItem.getLevel());
+        List<CodeListLevel> hierarchy = codeList.getHierarchy();
+
+        List<String> constraints = new ArrayList<String>();
+
+        // ancestor levels
+        for (CodeListLevel ancestorLevel: getAncestorLevels(parentItem)) {
+            constraints.add(ancestorLevel.getName() + " = ?");
+        }
+
+        // current level
         String childName = levelName(codeList, parentItem.getLevel() + 1);
-        int grandChildLevel = parentItem.getLevel() + 2;
-        String grandChildName = levelName(codeList, grandChildLevel);
-        String constraint = parentName + " = ?\n" +
-                "AND " + childName + " IS NOT NULL\n";
-        if (hasLevel(codeList, grandChildLevel))
-            constraint += "AND " + grandChildName + " IS NULL";
-        return "SELECT *\n" +
-                "FROM " + codeList.getLookupTable() + "\n" +
-                "WHERE " + constraint;
+        constraints.add(childName + " IS NOT NULL");
+
+        // descendant levels
+        List<CodeListLevel> descendantLevels = hierarchy.subList(parentItem.getLevel() + 1, hierarchy.size());
+        for (CodeListLevel descendantLevel : descendantLevels) {
+            constraints.add(descendantLevel.getName() + " IS NULL");
+        }
+
+        return String.format("SELECT *\n" +
+                "FROM %s \n" +
+                "WHERE %s", codeList.getLookupTable(), StringUtils.join(constraints, " AND "));
     }
 
     private String levelName(CodeList codeList, int level) {
@@ -154,6 +184,10 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
 
     private boolean hasLevel(CodeList codeList, int level) {
         return codeList.getHierarchy().size() >= level;
+    }
+
+    private List<CodeListLevel> getAncestorLevels(ExternalCodeListItem item) {
+        return item.getCodeList().getHierarchy().subList(0, item.getLevel());
     }
 
     public String getCode(CodeList codeList, String s, Object... objects) {

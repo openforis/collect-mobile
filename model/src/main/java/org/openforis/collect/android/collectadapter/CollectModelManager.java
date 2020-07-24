@@ -103,6 +103,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     private String selectedSurveyPreferredLanguage;
     private RecordNodes recordNodes;
     private CollectSurvey selectedSurvey;
+    private boolean selectedSurveyHasGuide;
     private ModelConverter modelConverter;
     private Definitions definitions;
 
@@ -121,14 +122,15 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         this.recordFileManager = recordFileManager;
         this.languagePreference = languagePreference;
         this.preferredLanguage = preferredLanguage;
+
         codeListSizeEvaluator = new CodeListSizeEvaluator(new DatabaseCodeListSizeDao(database));
 
-        DefaultConfiguration defaultConfiguration = new DefaultConfiguration();
-        defaultConfiguration.setSettings(defaultConfiguration.settings().withRenderSchema(false));
-        defaultConfiguration
+        DefaultConfiguration jooqConfig = new DefaultConfiguration();
+        jooqConfig.setSettings(jooqConfig.settings().withRenderSchema(false));
+        jooqConfig
                 .set(database.dataSource())
                 .set(SQLDialect.SQLITE);
-        jooqDsl = new CollectDSLContext(defaultConfiguration);
+        jooqDsl = new CollectDSLContext(jooqConfig);
     }
 
     public UiSurvey importSurvey(InputStream inputStream) {
@@ -326,6 +328,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
 
     private void selectSurvey(CollectSurvey survey) {
         selectedSurvey = survey;
+        selectedSurveyHasGuide = getSurveyFileGuide() != null;
         selectedSurveyPreferredLanguage = determineSelectedSurveyPreferredLanguage();
         definitions = new Definitions(selectedSurvey, selectedSurveyPreferredLanguage);
         modelConverter = new ModelConverter(selectedSurvey, definitions);
@@ -473,7 +476,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     public boolean hasSurveyGuide() {
-        return getSurveyFileGuide() != null;
+        return selectedSurveyHasGuide;
     }
 
     public byte[] loadSurveyGuide() {

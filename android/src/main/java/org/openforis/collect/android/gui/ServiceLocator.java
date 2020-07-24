@@ -2,10 +2,8 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 
-import org.jooq.Configuration;
-import org.jooq.ConnectionProvider;
-import org.jooq.impl.DataSourceConnectionProvider;
-import org.jooq.impl.DialectAwareJooqConfiguration;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DefaultConfiguration;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.Settings;
@@ -65,7 +63,7 @@ public class ServiceLocator {
     private static File workingDir;
     private static AndroidDatabase modelDatabase;
     private static AndroidDatabase nodeDatabase;
-    private static CollectDSLContext jooqDsl;
+    private static CollectDSLContext modelDbJooqDsl;
 
     /**
      * Initializes the ServiceLocator.
@@ -82,9 +80,12 @@ public class ServiceLocator {
             modelDatabase = createModelDatabase(surveyName, applicationContext);
             nodeDatabase = createNodeDatabase(surveyName, applicationContext);
 
-            ConnectionProvider connectionProvider = new DataSourceConnectionProvider(modelDatabase.dataSource());
-            Configuration jooqConf = new DialectAwareJooqConfiguration(connectionProvider);
-            jooqDsl = new CollectDSLContext(jooqConf);
+            DefaultConfiguration jooqConfig = new DefaultConfiguration();
+            jooqConfig.setSettings(jooqConfig.settings().withRenderSchema(false));
+            jooqConfig
+                    .set(modelDatabase.dataSource())
+                    .set(SQLDialect.SQLITE);
+            modelDbJooqDsl = new CollectDSLContext(jooqConfig);
 
             new ModelDatabaseMigrator(modelDatabase, surveyName, applicationContext).migrateIfNeeded();
 
@@ -206,7 +207,7 @@ public class ServiceLocator {
 
         CodeListManager codeListManager = new CodeListManager();
         MobileCodeListItemDao codeListItemDao = new MobileCodeListItemDao(modelDatabase);
-        codeListItemDao.setDsl(jooqDsl);
+        codeListItemDao.setDsl(modelDbJooqDsl);
         codeListManager.setCodeListItemDao(codeListItemDao);
         codeListManager.setExternalCodeListProvider(externalCodeListProvider);
 
@@ -214,10 +215,10 @@ public class ServiceLocator {
         validator.setCodeListManager(codeListManager);
 
         SamplingDesignDao samplingDesignDao = new SamplingDesignDao();
-        samplingDesignDao.setDsl(jooqDsl);
+        samplingDesignDao.setDsl(modelDbJooqDsl);
 
         DynamicTableDao dynamicTableDao = new DynamicTableDao();
-        dynamicTableDao.setDsl(jooqDsl);
+        dynamicTableDao.setDsl(modelDbJooqDsl);
 
         DatabaseLookupProvider databaseLookupProvider = new DatabaseLookupProvider();
         databaseLookupProvider.setSamplingDesignDao(samplingDesignDao);
@@ -238,12 +239,12 @@ public class ServiceLocator {
         collectSurveyContext.setSpeciesListService(speciesListService);
 
         SurveyFileDao surveyFileDao = new SurveyFileDao();
-        surveyFileDao.setDsl(jooqDsl);
+        surveyFileDao.setDsl(modelDbJooqDsl);
 
         final CollectSurveyIdmlBinder surveySerializer = new CollectSurveyIdmlBinder(collectSurveyContext);
         SurveyDao surveyDao = new SurveyDao();
         surveyDao.setSurveySerializer(surveySerializer);
-        surveyDao.setDsl(jooqDsl);
+        surveyDao.setDsl(modelDbJooqDsl);
         SurveyManager surveyManager = new SurveyManager();
         surveyManager.setSurveySerializer(surveySerializer);
         surveyManager.setSurveyDao(surveyDao);
@@ -276,7 +277,7 @@ public class ServiceLocator {
     private static DatabaseExternalCodeListProvider createExternalCodeListProvider(AndroidDatabase modelDatabase) {
         DatabaseExternalCodeListProvider externalCodeListProvider = new MobileExternalCodeListProvider(modelDatabase);
         DynamicTableDao dynamicTableDao = new DynamicTableDao();
-        dynamicTableDao.setDsl(jooqDsl);
+        dynamicTableDao.setDsl(modelDbJooqDsl);
         externalCodeListProvider.setDynamicTableDao(dynamicTableDao);
         return externalCodeListProvider;
     }
@@ -284,13 +285,13 @@ public class ServiceLocator {
     private static SpeciesManager createSpeciesManager(ExpressionFactory expressionFactory) {
         SpeciesManager speciesManager = new SpeciesManager();
         TaxonDao taxonDao = new TaxonDao();
-        taxonDao.setDsl(jooqDsl);
+        taxonDao.setDsl(modelDbJooqDsl);
         speciesManager.setTaxonDao(taxonDao);
         TaxonomyDao taxonomyDao = new TaxonomyDao();
-        taxonomyDao.setDsl(jooqDsl);
+        taxonomyDao.setDsl(modelDbJooqDsl);
         speciesManager.setTaxonomyDao(taxonomyDao);
         TaxonVernacularNameDao taxonVernacularNameDao = new TaxonVernacularNameDao();
-        taxonVernacularNameDao.setDsl(jooqDsl);
+        taxonVernacularNameDao.setDsl(modelDbJooqDsl);
         speciesManager.setTaxonVernacularNameDao(taxonVernacularNameDao);
         speciesManager.setExpressionFactory(expressionFactory);
         return speciesManager;

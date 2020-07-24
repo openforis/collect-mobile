@@ -60,6 +60,7 @@ class TestCollectModelFactory {
         }
         def manager = new SurveyManager()
         manager.surveyDao = new SurveyDaoStub()
+        manager.surveyFileDao = new SurveyFileDaoStub()
         CollectSurveyContext context = new CollectSurveyContext(new ExpressionFactory(), validator);
         manager.collectSurveyContext = context;
         manager.surveyDao.surveySerializer = new CollectSurveyIdmlBinder(context)

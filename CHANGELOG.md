@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.6] - build 179 2020-07-24
+### Fixed
+- Duplicate items in hierarchical code attributes
+
 ## [1.7.6] - build 178 2020-04-23
 ### Fixed
 - Coordinate attribute / navigate to expected location crashes on start when coordinate is blank

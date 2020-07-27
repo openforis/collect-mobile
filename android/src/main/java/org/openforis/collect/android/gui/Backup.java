@@ -54,8 +54,9 @@ public class Backup {
 
         public void onNewSdCardInsertConfirm() {
             try {
-                copyBackupFromTempToSurveysDir();
-                showBackupCompleteMessage();
+                if (copyBackupFromTempToSurveysDir()) {
+                    showBackupCompleteMessage();
+                }
             } catch (Exception e) {
                 showBackupErrorMessage(e);
             }
@@ -104,7 +105,7 @@ public class Backup {
             }
         }
 
-        private void copyBackupFromTempToSurveysDir() throws IOException {
+        private boolean copyBackupFromTempToSurveysDir() throws IOException {
             if (AndroidFiles.enoughSpaceToCopy(tempDir, surveysDir)) {
                 if (surveysDir.exists()) {
                     File snapshotSurveysDir = getNewSnapshotSurveysDir();
@@ -113,8 +114,10 @@ public class Backup {
                 }
                 FileUtils.moveDirectory(tempDir, surveysDir);
                 AndroidFiles.makeDiscoverable(surveysDir, activity);
+                return true;
             } else {
                 Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_working_directory);
+                return false;
             }
         }
 

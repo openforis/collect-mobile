@@ -21,7 +21,12 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Backup {
 
@@ -72,6 +77,7 @@ public class Backup {
         public void backupInternally() {
             File snapshotSurveysDir = getNewSnapshotSurveysDir();
             if (AndroidFiles.enoughSpaceToCopy(surveysDir, snapshotSurveysDir)) {
+                // perform the backup process (create new snapshot)
                 try {
                     FileUtils.copyDirectory(surveysDir, snapshotSurveysDir);
                     AndroidFiles.makeDiscoverable(snapshotSurveysDir, activity);
@@ -79,9 +85,55 @@ public class Backup {
                 } catch (IOException e) {
                     showBackupErrorMessage(e);
                 }
+            } else if (snapshotsExist()) {
+                // Try to delete the oldest snapshot before the backup process
+                String message = activity.getString(R.string.backup_not_enough_space_working_directory) +
+                        activity.getString(R.string.backup_delete_oldest_snapshot);
+                Dialogs.confirm(activity, R.string.confirm_label, message, new Runnable() {
+                    public void run() {
+                        if (deleteOldestSnapshot()) {
+                            // try again the backup process
+                            backupInternally();
+                        } else {
+                            Dialogs.alert(activity, R.string.warning, R.string.backup_delete_oldest_snapshot_failed);
+                        }
+                    }
+                });
             } else {
-                Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_working_directory);
+                Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_internal);
             }
+        }
+
+        private boolean snapshotsExist() {
+            File[] snapshotDirs = getSnapshotDirs();
+            return snapshotDirs.length > 0;
+        }
+
+        private boolean deleteOldestSnapshot() {
+            File[] snapshotDirs = getSnapshotDirs();
+            if (snapshotDirs.length > 0) {
+                String[] snapshotDirNames = new String[snapshotDirs.length];
+                for (int i = 0; i < snapshotDirs.length; i++) {
+                    snapshotDirNames[i] = snapshotDirs[i].getName();
+                }
+                Arrays.sort(snapshotDirNames);
+
+                String oldestSnapshotDirName = snapshotDirNames[0];
+                try {
+                    FileUtils.deleteDirectory(new File(surveysDir.getParentFile(), oldestSnapshotDirName));
+                    return true;
+                } catch (IOException ignore) {}
+            }
+            return false;
+        }
+
+        private File[] getSnapshotDirs() {
+            return surveysDir.getParentFile().listFiles(new FileFilter() {
+                        public boolean accept(File file) {
+                            return file.isDirectory() && !file.getName().equals(surveysDir.getName()) &&
+                                    file.getName().matches(surveysDir.getName() + "\\-\\d+");
+                        }
+                    });
         }
 
         private void showInsertSdCardDialog() {

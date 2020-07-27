@@ -61,43 +61,54 @@ public class Dialogs {
     }
 
     public static AlertDialog confirm(Context context, int titleKey, int messageKey,
-                               final Runnable runOnPositiveButtonClick) {
+                                      final Runnable runOnPositiveButtonClick) {
         return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, null);
     }
 
+    public static AlertDialog confirm(Context context, int titleKey, String message,
+                                      final Runnable runOnPositiveButtonClick) {
+        return confirm(context, titleKey, message, runOnPositiveButtonClick, null, R.string.confirm_label, R.string.cancel_label);
+    }
+
     public static AlertDialog confirm(Context context, int titleKey, int messageKey,
-                               final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick) {
+                                      final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick) {
         return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
                 R.string.confirm_label);
     }
 
     public static AlertDialog confirm(Context context, int titleKey, int messageKey,
-                               final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick,
-                               int positiveButtonLabelKey) {
+                                      final Runnable runOnPositiveButtonClick, Runnable runOnNegativeButtonClick,
+                                      int positiveButtonLabelKey) {
         return confirm(context, titleKey, messageKey, runOnPositiveButtonClick, runOnNegativeButtonClick,
                 positiveButtonLabelKey, android.R.string.cancel);
     }
 
     public static AlertDialog confirm(Context context, int titleKey, int messageKey,
-                               final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
-                               int positiveButtonLabelKey, int negativeButtonLabelKey) {
+                                      final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
+                                      int positiveButtonLabelKey, int negativeButtonLabelKey) {
+        return confirm(context, titleKey, context.getResources().getString(messageKey), runOnPositiveButtonClick, runOnNegativeButtonClick, positiveButtonLabelKey, negativeButtonLabelKey);
+    }
+
+    public static AlertDialog confirm(Context context, int titleKey, String message,
+                                      final Runnable runOnPositiveButtonClick, final Runnable runOnNegativeButtonClick,
+                                      int positiveButtonLabelKey, int negativeButtonLabelKey) {
         AlertDialog dialog = new AlertDialog.Builder(context)
-            .setCancelable(true)
-            .setTitle(context.getResources().getString(titleKey))
-            .setMessage(context.getResources().getString(messageKey))
-            .setPositiveButton(positiveButtonLabelKey, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    runOnPositiveButtonClick.run();
-                }
-            })
-            .setNegativeButton(negativeButtonLabelKey, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    if (runOnNegativeButtonClick != null) {
-                        runOnNegativeButtonClick.run();
+                .setCancelable(true)
+                .setTitle(context.getResources().getString(titleKey))
+                .setMessage(message)
+                .setPositiveButton(positiveButtonLabelKey, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        runOnPositiveButtonClick.run();
                     }
-                }
-            })
-            .create();
+                })
+                .setNegativeButton(negativeButtonLabelKey, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (runOnNegativeButtonClick != null) {
+                            runOnNegativeButtonClick.run();
+                        }
+                    }
+                })
+                .create();
         dialog.show();
         return dialog;
     }

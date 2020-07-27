@@ -57,6 +57,8 @@
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
     <string name="backup_complete">Backed up survey to %s</string>
     <string name="backup_failed">Backup failed: %s</string>
+    <string name="backup_delete_oldest_snapshot">Delete oldest snapshot and try again?</string>
+    <string name="backup_delete_oldest_snapshot_failed">Failed to delete the oldest snapshot</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>

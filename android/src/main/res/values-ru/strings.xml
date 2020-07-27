@@ -46,8 +46,8 @@
 
     <string name="toast_import_survey">Импорт опроса</string>
     <string name="toast_import_survey_failed">Не удалось импортировать опрос из %s</string>
-    <string name="toast_backed_up_survey">Резервное копирование для опроса %s</string>
-    <string name="toast_backed_up_failed">Резервное копирование не выполнено</string>
+    <string name="backup_complete">Резервное копирование для опроса %s</string>
+    <string name="backup_failed">Резервное копирование не выполнено: %s</string>
     <string name="toast_not_relevant_attribute_selected">Данный атрибут не доступен</string>
 
     <string name="storage_not_found_message">Вторичное хранилище не найдено</string>

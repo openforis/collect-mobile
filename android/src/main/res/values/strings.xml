@@ -21,6 +21,7 @@
     <string name="select_file">Select file</string>
     <string name="delete">Delete</string>
 
+    <string name="info">Info</string>
     <string name="warning">Warning</string>
 
     <string name="low_storage_error">Low device storage</string>
@@ -48,7 +49,14 @@
     <string name="action_about">About</string>
     <string name="action_exit">Exit</string>
 
+    <string name="backup_mode_choose">Choose backup mode</string>
+    <string name="backup_mode_new_sdcard">Into NEW SD card</string>
+    <string name="backup_mode_internal">Internal</string>
+    <string name="backup_not_enough_space_internal">Not enough space in internal memory to complete the backup process</string>
+    <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the backup process</string>
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
+    <string name="backup_complete">Backed up survey to %s</string>
+    <string name="backup_failed">Backup failed: %s</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>
@@ -61,8 +69,6 @@
 
     <string name="toast_import_survey">Importing survey</string>
     <string name="toast_import_survey_failed">Failed to import survey from %s</string>
-    <string name="toast_backed_up_survey">Backed up survey to %s</string>
-    <string name="toast_backed_up_failed">Backed up failed</string>
     <string name="toast_not_relevant_attribute_selected">This attribute is not relevant</string>
 
     <!-- SURVEY GUIDE -->

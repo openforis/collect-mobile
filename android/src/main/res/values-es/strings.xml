@@ -18,8 +18,8 @@
     <string name="toast_exported_survey_failed">Error al exportar la encuesta: %s</string>
     <string name="toast_import_survey">Importando encuesta</string>
     <string name="toast_import_survey_failed">Error al importar la encuesta desde %s</string>
-    <string name="toast_backed_up_survey">Encuesta copiada a %s</string>
-    <string name="toast_backed_up_failed">Error al crear copia de seguridad</string>
+    <string name="backup_complete">Encuesta copiada a %s</string>
+    <string name="backup_failed">Error al crear copia de seguridad: %s</string>
 
     <string name="storage_not_found_message">Almacenamiento secundario no encontrado</string>
     <string name="storage_not_found_retry">Probar de nuevo</string>

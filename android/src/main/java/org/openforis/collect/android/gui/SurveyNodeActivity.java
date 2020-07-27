@@ -260,7 +260,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     public void backup(MenuItem item) {
-        new Backup(this).execute();
+        Backup.showBackupModeChooseDialog(this);
     }
 
     public void exportDialog(MenuItem item) {

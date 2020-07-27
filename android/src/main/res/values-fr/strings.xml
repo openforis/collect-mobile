@@ -25,8 +25,8 @@
 
     <string name="toast_import_survey">Importation du questionnaire en cours</string>
     <string name="toast_import_survey_failed">Importation du questionnaire à partir de %s échouée</string>
-    <string name="toast_backed_up_survey">Questionnaire sauvegardé sur %s</string>
-    <string name="toast_backed_up_failed">Sauvegarde échouée</string>
+    <string name="backup_complete">Questionnaire sauvegardé sur %s</string>
+    <string name="backup_failed">Sauvegarde échouée: %s</string>
 
     <string name="storage_not_found_message">Stockage secondaire non trouvée</string>
     <string name="storage_not_found_retry">Veuillez réessayer</string>

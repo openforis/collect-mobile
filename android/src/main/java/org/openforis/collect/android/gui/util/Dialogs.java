@@ -18,24 +18,44 @@ public class Dialogs {
         return alert(context, context.getResources().getString(titleKey), context.getResources().getString(messageKey), runOnPositiveButtonClick);
     }
 
+    public static AlertDialog alert(Context context, int titleKey, String message) {
+        return alert(context, context.getResources().getString(titleKey), message, null);
+    }
+
     public static AlertDialog alert(Context context, String title, String message) {
         return alert(context, title, message, null);
     }
 
     public static AlertDialog alert(Context context, String title, String message, final Runnable runOnPositiveButtonClick) {
+        return showDialog(context, title, message, android.R.drawable.ic_dialog_alert, runOnPositiveButtonClick);
+    }
+
+    public static AlertDialog info(Context context, int titleKey, int messageKey) {
+        return info(context, titleKey, context.getResources().getString(messageKey), null);
+    }
+
+    public static AlertDialog info(Context context, int titleKey, String message) {
+        return info(context, titleKey, message, null);
+    }
+
+    public static AlertDialog info(Context context, int titleKey, String message, final Runnable runOnPositiveButtonClick) {
+        return showDialog(context, context.getResources().getString(titleKey), message, android.R.drawable.ic_dialog_info, runOnPositiveButtonClick);
+    }
+
+    private static AlertDialog showDialog(Context context, String title, String message, int icon, final Runnable runOnPositiveButtonClick) {
         AlertDialog dialog = new AlertDialog.Builder(context)
-            .setCancelable(false)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    if (runOnPositiveButtonClick != null) {
-                        runOnPositiveButtonClick.run();
+                .setCancelable(false)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (runOnPositiveButtonClick != null) {
+                            runOnPositiveButtonClick.run();
+                        }
                     }
-                }
-            })
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .create();
+                })
+                .setIcon(icon)
+                .create();
         dialog.show();
         return dialog;
     }

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class AppDirs {
+public abstract class AppDirs {
     public static final String PREFERENCE_KEY = "workingDir";
     private static final String ENV_SECONDARY_STORAGE = "SECONDARY_STORAGE";
 

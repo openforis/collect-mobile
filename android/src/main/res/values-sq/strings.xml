@@ -47,8 +47,8 @@
 
     <string name="toast_import_survey">Duke Importuar Studimin/Aplikacionin</string>
     <string name="toast_import_survey_failed">Importimi i Studimit/Aplikacioni Deshtoi %s</string>
-    <string name="toast_backed_up_survey">Beni nje Kopje te Studimit/Aplikacionit ne %s</string>
-    <string name="toast_backed_up_failed">Kopja Rezerve Deshtoi</string>
+    <string name="backup_complete">Beni nje Kopje te Studimit/Aplikacionit ne %s</string>
+    <string name="backup_failed">Kopja Rezerve Deshtoi: %s</string>
     <string name="toast_not_relevant_attribute_selected">Ky Atribut nuk eshte i Pershtatshem</string>
 
     <string name="storage_not_found_message">Nuk u Gjet Memorie Shtese</string>

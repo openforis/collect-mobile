@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
@@ -115,5 +116,29 @@ public abstract class AndroidFiles {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static long availableSize(File path) {
+        try {
+            File existingPath = firstExistingAncestorOrSelf(path);
+            StatFs stat = new StatFs(existingPath.getPath());
+            long blockSize = AndroidVersion.greaterThan18() ? stat.getBlockSizeLong() : stat.getBlockSize();
+            long availableBlocks = AndroidVersion.greaterThan18() ? stat.getAvailableBlocksLong() : stat.getAvailableBlocks();
+            return availableBlocks * blockSize;
+        } catch (Exception ignore) {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    public static boolean enoughSpaceToCopy(File fromPath, File toPath) {
+        return FileUtils.sizeOfDirectory(fromPath) < availableSize(toPath);
+    }
+
+    private static File firstExistingAncestorOrSelf(File file) {
+        File current = file;
+        while (!current.exists()) {
+            current = current.getParentFile();
+        }
+        return current;
     }
 }

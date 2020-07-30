@@ -1,4 +1,4 @@
-package org.openforis.collect.android.gui;
+package org.openforis.collect.android.gui.backup;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,12 +21,7 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 public class Backup {
 
@@ -36,15 +31,17 @@ public class Backup {
     }
 
     private static class BackupExecutor {
-        private FragmentActivity activity;
+        private FragmentActivity context;
         private File tempDir;
         private File surveysDir;
+        private SnapshotsManager snapshotsManager;
 
-        public BackupExecutor(FragmentActivity activity) {
-            this.activity = activity;
+        public BackupExecutor(FragmentActivity context) {
+            this.context = context;
 
-            surveysDir = AppDirs.surveysDir(activity);
-            tempDir = new File(activity.getExternalCacheDir(), surveysDir.getName());
+            surveysDir = AppDirs.surveysDir(context);
+            tempDir = new File(context.getExternalCacheDir(), surveysDir.getName());
+            snapshotsManager = new SnapshotsManager(surveysDir);
         }
 
         public void backupToNewSdCard() {
@@ -75,73 +72,45 @@ public class Backup {
         }
 
         public void backupInternally() {
-            File snapshotSurveysDir = getNewSnapshotSurveysDir();
+            File snapshotSurveysDir = snapshotsManager.newSnapshotDir();
             if (AndroidFiles.enoughSpaceToCopy(surveysDir, snapshotSurveysDir)) {
                 // perform the backup process (create new snapshot)
                 try {
                     FileUtils.copyDirectory(surveysDir, snapshotSurveysDir);
-                    AndroidFiles.makeDiscoverable(snapshotSurveysDir, activity);
+                    AndroidFiles.makeDiscoverable(snapshotSurveysDir, context);
                     showBackupCompleteMessage();
                 } catch (IOException e) {
                     showBackupErrorMessage(e);
                 }
-            } else if (snapshotsExist()) {
+            } else if (snapshotsManager.existsSnapshot()) {
                 // Try to delete the oldest snapshot before the backup process
-                String message = activity.getString(R.string.backup_not_enough_space_working_directory) +
-                        activity.getString(R.string.backup_delete_oldest_snapshot);
-                Dialogs.confirm(activity, R.string.confirm_label, message, new Runnable() {
+                String oldestSnapshotDateFormatted = snapshotsManager.getOldestSnapshotDateFormatted();
+                String message = context.getString(R.string.backup_not_enough_space_working_directory) +
+                        context.getString(R.string.backup_delete_oldest_snapshot, oldestSnapshotDateFormatted);
+                Dialogs.confirm(context, R.string.confirm_label, message, new Runnable() {
                     public void run() {
-                        if (deleteOldestSnapshot()) {
+                        try {
+                            snapshotsManager.deleteOldestSnapshot();
                             // try again the backup process
                             backupInternally();
-                        } else {
-                            Dialogs.alert(activity, R.string.warning, R.string.backup_delete_oldest_snapshot_failed);
+                        } catch (IOException e) {
+                            String message = context.getString(R.string.backup_delete_oldest_snapshot_failed, e.getMessage());
+                            Dialogs.alert(context, R.string.warning, message);
                         }
                     }
                 });
             } else {
-                Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_internal);
+                Dialogs.alert(context, R.string.warning, R.string.backup_not_enough_space_internal);
             }
         }
 
-        private boolean snapshotsExist() {
-            File[] snapshotDirs = getSnapshotDirs();
-            return snapshotDirs.length > 0;
-        }
-
-        private boolean deleteOldestSnapshot() {
-            File[] snapshotDirs = getSnapshotDirs();
-            if (snapshotDirs.length > 0) {
-                String[] snapshotDirNames = new String[snapshotDirs.length];
-                for (int i = 0; i < snapshotDirs.length; i++) {
-                    snapshotDirNames[i] = snapshotDirs[i].getName();
-                }
-                Arrays.sort(snapshotDirNames);
-
-                String oldestSnapshotDirName = snapshotDirNames[0];
-                try {
-                    FileUtils.deleteDirectory(new File(surveysDir.getParentFile(), oldestSnapshotDirName));
-                    return true;
-                } catch (IOException ignore) {}
-            }
-            return false;
-        }
-
-        private File[] getSnapshotDirs() {
-            return surveysDir.getParentFile().listFiles(new FileFilter() {
-                        public boolean accept(File file) {
-                            return file.isDirectory() && !file.getName().equals(surveysDir.getName()) &&
-                                    file.getName().matches(surveysDir.getName() + "\\-\\d+");
-                        }
-                    });
-        }
 
         private void showInsertSdCardDialog() {
             Intent intent = new Intent();
             intent.setAction(AndroidDatabase.ACTION_PREPARE_EJECT);
-            activity.sendBroadcast(intent);
+            context.sendBroadcast(intent);
             DialogFragment dialogFragment = new BackupDialogFragment();
-            dialogFragment.show(activity.getSupportFragmentManager(), "backupInsertSdCard");
+            dialogFragment.show(context.getSupportFragmentManager(), "backupInsertSdCard");
         }
 
         private boolean backupToTemp() throws IOException {
@@ -152,7 +121,7 @@ public class Backup {
                 FileUtils.copyDirectory(surveysDir, tempDir);
                 return true;
             } else {
-                Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_internal);
+                Dialogs.alert(context, R.string.warning, R.string.backup_not_enough_space_internal);
                 return false;
             }
         }
@@ -160,32 +129,28 @@ public class Backup {
         private boolean copyBackupFromTempToSurveysDir() throws IOException {
             if (AndroidFiles.enoughSpaceToCopy(tempDir, surveysDir)) {
                 if (surveysDir.exists()) {
-                    File snapshotSurveysDir = getNewSnapshotSurveysDir();
+                    File snapshotSurveysDir = snapshotsManager.newSnapshotDir();
                     FileUtils.moveDirectory(surveysDir, snapshotSurveysDir);
-                    AndroidFiles.makeDiscoverable(snapshotSurveysDir, activity);
+                    AndroidFiles.makeDiscoverable(snapshotSurveysDir, context);
                 }
                 FileUtils.moveDirectory(tempDir, surveysDir);
-                AndroidFiles.makeDiscoverable(surveysDir, activity);
+                AndroidFiles.makeDiscoverable(surveysDir, context);
                 return true;
             } else {
-                Dialogs.alert(activity, R.string.warning, R.string.backup_not_enough_space_working_directory);
+                Dialogs.alert(context, R.string.warning, R.string.backup_not_enough_space_working_directory);
                 return false;
             }
         }
 
-        private File getNewSnapshotSurveysDir() {
-            return new File(surveysDir.getParentFile(), surveysDir.getName() + "-" + System.currentTimeMillis());
-        }
-
         private void showBackupCompleteMessage() {
-            String message = activity.getString(R.string.backup_complete, AppDirs.root(activity));
-            Dialogs.info(activity, R.string.info, message);
+            String message = context.getString(R.string.backup_complete, AppDirs.root(context));
+            Dialogs.info(context, R.string.info, message);
         }
 
         private void showBackupErrorMessage(Exception e) {
-            String message = activity.getResources().getString(R.string.backup_failed, e.getMessage());
+            String message = context.getResources().getString(R.string.backup_failed, e.getMessage());
             Log.e("Backup", message, e);
-            Dialogs.alert(activity, R.string.warning, message);
+            Dialogs.alert(context, R.string.warning, message);
         }
     }
 

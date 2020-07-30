@@ -21,6 +21,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.backup.Backup;
 import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;

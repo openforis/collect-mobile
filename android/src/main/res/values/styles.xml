@@ -4,7 +4,6 @@
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="android:itemTextAppearance">@style/actionMenuItem</item>
         <item name="android:listPreferredItemHeightSmall">72dp</item>
-        <item name="dropdownListPreferredItemHeight">64dip</item>
         <item name="moreIcon">@drawable/ic_more_vert_white_24dp</item>
         <item name="backupIcon">@drawable/ic_settings_backup_restore_white_24dp</item>
         <item name="exportIcon">@drawable/ic_file_download_white_24dp</item>
@@ -49,7 +48,6 @@
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light">
         <item name="android:itemTextAppearance">@style/actionMenuItem</item>
         <item name="android:listPreferredItemHeightSmall">72dp</item>
-        <item name="dropdownListPreferredItemHeight">64dip</item>
         <item name="moreIcon">@drawable/ic_more_vert_black_24dp</item>
         <item name="backupIcon">@drawable/ic_settings_backup_restore_black_24dp</item>
         <item name="exportIcon">@drawable/ic_file_download_black_24dp</item>
@@ -104,7 +102,7 @@
     </style>
 
     <style name="BreadCrumbs">
-        <item name="android:background">@drawable/abc_ic_ab_back_holo_dark</item>
+        <item name="background">@drawable/abc_ic_ab_back_holo_dark</item>
     </style>
 
     <style name="BreadcrumbSelectedNode">

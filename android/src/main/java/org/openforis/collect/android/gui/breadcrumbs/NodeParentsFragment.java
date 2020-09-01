@@ -40,19 +40,18 @@ public class NodeParentsFragment extends Fragment {
         attrs = new Attrs(getActivity());
         UiInternalNode node = ServiceLocator.surveyService().selectedNode().getParent();
         View view = inflater.inflate(R.layout.fragment_node_parents, container, false);
-        final HorizontalScrollView scrollView = (HorizontalScrollView) view.findViewById(R.id.node_parents_scroll_view);
+        final HorizontalScrollView scrollView = view.findViewById(R.id.node_parents_scroll_view);
         scrollView.setHorizontalScrollBarEnabled(false);
         scrollView.setVerticalScrollBarEnabled(false);
         scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-        ViewGroup parentsContainer = (ViewGroup) view.findViewById(R.id.node_parents_container);
+        ViewGroup parentsContainer = view.findViewById(R.id.node_parents_container);
         List<View> buttons = getParentButtons(node);
         Collections.reverse(buttons);
         for (View button : buttons) {
             parentsContainer.addView(button);
             parentsContainer.addView(createSeparator());
         }
-        View currentNodeView;
-        currentNodeView = node.getParent() == null
+        View currentNodeView = node.getParent() == null
                 ? createSurveySelectedView()
                 : createCurrentNodeView(node);
         parentsContainer.addView(currentNodeView);

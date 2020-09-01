@@ -1,7 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +7,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;

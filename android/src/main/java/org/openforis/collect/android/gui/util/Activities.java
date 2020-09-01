@@ -3,13 +3,15 @@ package org.openforis.collect.android.gui.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import static android.content.Intent.*;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.WindowManager;
 
 import java.io.File;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * @author Stefano Ricci

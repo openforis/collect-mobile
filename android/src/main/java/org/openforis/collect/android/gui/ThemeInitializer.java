@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import org.openforis.collect.R;
 
 /**

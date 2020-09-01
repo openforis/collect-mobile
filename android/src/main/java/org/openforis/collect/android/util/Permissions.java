@@ -2,7 +2,7 @@ package org.openforis.collect.android.util;
 
 import android.Manifest;
 import android.app.Activity;
-import android.support.v4.app.ActivityCompat;
+import androidx.core.app.ActivityCompat;
 import android.widget.Toast;
 
 import org.openforis.collect.R;

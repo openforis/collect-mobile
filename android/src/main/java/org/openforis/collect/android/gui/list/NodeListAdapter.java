@@ -3,7 +3,6 @@ package org.openforis.collect.android.gui.list;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.graphics.Typeface;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,8 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.AndroidVersion;

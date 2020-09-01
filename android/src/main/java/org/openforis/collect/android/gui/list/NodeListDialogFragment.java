@@ -1,14 +1,15 @@
 package org.openforis.collect.android.gui.list;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -41,7 +42,7 @@ public class NodeListDialogFragment extends DialogFragment {
     }
 
     private void onNodeSelected(int nodeIndex) {
-        ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.attributePager);
+        ViewPager viewPager = getActivity().findViewById(R.id.attributePager);
         viewPager.setCurrentItem(nodeIndex);
         dismiss();
     }

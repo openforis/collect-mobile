@@ -11,11 +11,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,9 +28,9 @@ import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
-import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MessageSources;
+import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
 import org.openforis.collect.model.CollectSurvey;
@@ -78,7 +80,12 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
         File workingDir = AppDirs.root(this);
-        directoryChooserDialog = DirectoryChooserFragment.newInstance(workingDir.getName(), workingDir.getParent());
+        final DirectoryChooserConfig directoryChooserConfig = DirectoryChooserConfig.builder()
+                .initialDirectory(workingDir.getAbsolutePath())
+                .newDirectoryName(workingDir.getName())
+                .allowNewDirectoryNameModification(true)
+                .build();
+        directoryChooserDialog = DirectoryChooserFragment.newInstance(directoryChooserConfig);
 
         // Display the fragment as the main content.
         settingsFragment = new SettingsFragment();

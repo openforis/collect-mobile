@@ -1,7 +1,12 @@
 package org.openforis.collect.android.gui;
 
 import android.database.Cursor;
-import org.openforis.idm.metamodel.*;
+
+import org.openforis.idm.metamodel.CodeList;
+import org.openforis.idm.metamodel.ModelVersion;
+import org.openforis.idm.metamodel.PersistedCodeListItem;
+import org.openforis.idm.metamodel.Survey;
+import org.openforis.idm.metamodel.SurveyObject;
 
 import java.util.List;
 

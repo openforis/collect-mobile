@@ -2,10 +2,17 @@ package org.openforis.collect.android.gui.entitytable;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+
 import com.inqbarna.tablefixheaders.TableFixHeaders;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.util.Keyboard;

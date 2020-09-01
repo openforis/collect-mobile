@@ -1,12 +1,13 @@
 package org.openforis.collect.android.gui.pager;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.viewpagerindicator.PageIndicator;
 
@@ -66,7 +67,7 @@ public class SimpleNodePagerFragment extends Fragment {
     }
 
     private void setupPager(View view) {
-        final ViewPager pager = (ViewPager) view.findViewById(R.id.attributePager);
+        final ViewPager pager = view.findViewById(R.id.attributePager);
 
         pagerAdapter = new SimpleNodePagerAdapter(getChildFragmentManager());
         pager.setAdapter(pagerAdapter);

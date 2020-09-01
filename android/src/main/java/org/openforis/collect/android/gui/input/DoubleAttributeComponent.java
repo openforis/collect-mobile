@@ -1,8 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
 import android.widget.EditText;
+
+import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiDoubleAttribute;

@@ -2,18 +2,19 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
+
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+
 import org.openforis.collect.R;
 
 /**
  * sub class of {@link android.widget.AutoCompleteTextView} that includes a clear (dismiss / close) button with
  * a OnClearListener to handle the event of clicking the button
- * based on code from {@link http://www.gubed.net/clearableautocompletetextview}
+ * based on code from http://www.gubed.net/clearableautocompletetextview
  *
  * @author Michael Derazon
  */

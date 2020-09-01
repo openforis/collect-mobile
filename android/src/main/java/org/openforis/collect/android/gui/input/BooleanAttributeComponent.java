@@ -1,11 +1,14 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.common.base.Objects;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiBooleanAttribute;

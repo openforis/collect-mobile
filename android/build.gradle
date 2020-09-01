@@ -6,7 +6,7 @@ buildscript {
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
 
@@ -21,18 +21,20 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:multidex:1.0.3'
+    def appcompat_version = "1.2.0"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    // For loading and tinting drawables on older versions of the platform
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.material:material:1.2.0'
+
     compile 'org.apache.commons:commons-lang3:3.4'
     compile('com.viewpagerindicator:library:2.4.1.1') {
         exclude group: 'com.google.android'
     }
     compile 'com.ipaulpro.afilechooser:afilechooser:0.0.1@aar'
-    compile 'net.rdrei.android.dirchooser:library:2.1.1@aar'
+    compile('net.rdrei.android.dirchooser:library:3.2@aar')
     compile 'com.inqbarna:tablefixheaders:1.0.0@aar'
-    compile 'com.android.support:support-v4:28.0.0'
-    compile 'com.android.support:appcompat-v7:28.0.0'
-    compile 'com.android.support:recyclerview-v7:28.0.0'
-    compile 'com.android.support:design:28.0.0'
     compile(project(':model')) {
         exclude group: 'org.springframework'
         exclude group: 'commons-collections'
@@ -56,7 +58,7 @@ dependencies {
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'com.googlecode.openbeans:openbeans:1.0'
-    compile 'com.google.android.gms:play-services-vision:16.2.0'
+    compile 'com.google.android.gms:play-services-vision:20.1.1'
     compile 'org.apache.logging.log4j:log4j-core:2.3'
     compile 'com.github.medyo:android-about-page:1.2.5'
 
@@ -91,7 +93,7 @@ if (isRelease) {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId 'org.openforis.collect'
         minSdkVersion 15

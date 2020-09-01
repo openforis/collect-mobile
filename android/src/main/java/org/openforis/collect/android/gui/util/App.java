@@ -3,7 +3,8 @@ package org.openforis.collect.android.gui.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * @author Stefano Ricci

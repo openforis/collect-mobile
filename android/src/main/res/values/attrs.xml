@@ -4,6 +4,7 @@
 
     <attr name="standardPadding" format="reference|dimension"/>
     <attr name="standardLargePadding" format="reference|dimension"/>
+    <attr name="dropdownListPreferredItemHeight" format="reference|dimension"/>
     <attr name="relevantTextColor" format="reference|color"/>
     <attr name="irrelevantTextColor" format="reference|color"/>
     <attr name="titleIndicatorColor" format="reference|color"/>
@@ -23,6 +24,7 @@
     <attr name="tableIcon" format="reference"/>
     <attr name="cameraIcon" format="reference"/>
     <attr name="openIcon" format="reference"/>
+    <attr name="closeIcon" format="reference"/>
     <attr name="removeIcon" format="reference"/>
     <attr name="viewAsListIcon" format="reference"/>
     <attr name="deleteIcon" format="reference"/>

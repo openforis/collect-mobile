@@ -1,7 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.v4.app.FragmentActivity;
 import android.widget.EditText;
+
+import androidx.fragment.app.FragmentActivity;
 
 import org.jooq.tools.StringUtils;
 import org.openforis.collect.R;

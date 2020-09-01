@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.View;
@@ -12,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.vision.barcode.Barcode;
 

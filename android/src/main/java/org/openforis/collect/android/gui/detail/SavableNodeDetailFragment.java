@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.input.SavableComponent;
 import org.openforis.collect.android.viewmodel.UiNode;

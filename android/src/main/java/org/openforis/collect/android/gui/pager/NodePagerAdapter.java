@@ -1,7 +1,7 @@
 package org.openforis.collect.android.gui.pager;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.viewmodel.UiNode;

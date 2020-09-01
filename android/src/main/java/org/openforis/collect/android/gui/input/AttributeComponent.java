@@ -1,9 +1,11 @@
 package org.openforis.collect.android.gui.input;
 
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.FragmentActivity;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.Tasks;

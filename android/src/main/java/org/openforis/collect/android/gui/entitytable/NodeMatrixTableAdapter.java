@@ -14,10 +14,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inqbarna.tablefixheaders.adapters.BaseTableAdapter;
+
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.Attrs;
-import org.openforis.collect.android.viewmodel.*;
+import org.openforis.collect.android.viewmodel.NodeMatrix;
+import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiEntity;
+import org.openforis.collect.android.viewmodel.UiInternalNode;
+import org.openforis.collect.android.viewmodel.UiNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;

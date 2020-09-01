@@ -1,8 +1,8 @@
 package org.openforis.collect.android.gui.list;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.view.ViewPager;
+import androidx.core.app.ListFragment;
+import androidx.core.view.ViewPager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;

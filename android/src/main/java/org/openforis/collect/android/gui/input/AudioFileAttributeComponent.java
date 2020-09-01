@@ -3,11 +3,12 @@ package org.openforis.collect.android.gui.input;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+
+import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;

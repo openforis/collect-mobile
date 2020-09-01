@@ -1,11 +1,12 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.NumberKeyListener;
 import android.view.KeyEvent;
+
+import androidx.annotation.NonNull;
 
 import java.text.DecimalFormatSymbols;
 

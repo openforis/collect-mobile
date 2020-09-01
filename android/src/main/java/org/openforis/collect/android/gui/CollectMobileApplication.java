@@ -1,7 +1,8 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
-import android.support.multidex.MultiDexApplication;
+
+import androidx.multidex.MultiDexApplication;
 
 /**
  * @author Stefano Ricci

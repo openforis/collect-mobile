@@ -1,7 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+
+import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.AndroidFiles;

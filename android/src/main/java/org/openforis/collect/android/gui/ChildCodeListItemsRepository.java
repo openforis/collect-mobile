@@ -2,12 +2,14 @@ package org.openforis.collect.android.gui;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.Weigher;
+
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.AndroidDatabaseCallback;
 import org.openforis.idm.metamodel.CodeList;

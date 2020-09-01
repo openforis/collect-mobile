@@ -38,7 +38,7 @@
         android:largeHeap="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup, android:theme">
 
         <activity
             android:name=".android.gui.MainActivity"
@@ -108,7 +108,7 @@
         </provider>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="org.openforis.collect.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">

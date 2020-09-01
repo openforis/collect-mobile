@@ -1,8 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,6 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;

@@ -1,11 +1,19 @@
 package org.openforis.collect.android.gui;
 
 import android.app.Activity;
-import android.view.*;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
+
 import org.openforis.collect.R;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class SurveyListAdapter extends SurveyBaseAdapter {
 

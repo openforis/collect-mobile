@@ -1,9 +1,10 @@
 package org.openforis.collect.android.gui.util;
 
-import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
 
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;

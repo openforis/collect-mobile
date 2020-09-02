@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -118,16 +119,7 @@ public class SurveyListActivity extends BaseActivity {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
-                    File file = AndroidFiles.getFileByUri(this, data.getData());
-                    if (file != null) {
-                        if (file.length() > 0)
-                            importSurvey(file.getAbsolutePath());
-                        else
-                            Dialogs.alert(this, R.string.import_title_failed, R.string.survey_import_failed_empty_file_message);
-                    } else {
-                        throw new IllegalStateException(String.format(
-                                "Failed to import survey; could not determine file path for URI: %s", data.getData()));
-                    }
+                    importSurvey(data.getData());
                 }
                 break;
         }
@@ -146,8 +138,8 @@ public class SurveyListActivity extends BaseActivity {
         }
     }
 
-    protected void importSurvey(String surveyPath) {
-        new ImportSurveyTask(this, surveyPath).execute();
+    protected void importSurvey(Uri surveyUri) {
+        new ImportSurveyTask(this, surveyUri).execute();
     }
 
     private void selectSurvey(ListView listView, SurveyListAdapter adapter) {
@@ -163,23 +155,31 @@ public class SurveyListActivity extends BaseActivity {
 
     private static class ImportSurveyTask extends SlowAsyncTask<Void, Void, Boolean> {
 
-        private String surveyPath;
+        private Uri uri;
         private boolean overwrite = false;
 
-        ImportSurveyTask(Activity context, String surveyPath) {
-            this(context, surveyPath, false);
+        ImportSurveyTask(Activity context, Uri uri) {
+            this(context, uri, false);
         }
 
-        ImportSurveyTask(Activity context, String surveyPath, boolean overwrite) {
+        ImportSurveyTask(Activity context, Uri uri, boolean overwrite) {
             super(context, null, R.string.toast_import_survey, R.string.please_wait);
-            this.surveyPath = surveyPath;
+            this.uri = uri;
             this.overwrite = overwrite;
         }
 
         @Override
         protected Boolean runTask() throws Exception {
             super.runTask();
-            if (ServiceLocator.importSurvey(surveyPath, overwrite, context) || overwrite) {
+            File file = AndroidFiles.copyUriContentToCache(context, uri);
+            if (file == null) {
+                throw new IllegalStateException(String.format(
+                        "Failed to import survey; could not determine file path for URI: %s", uri));
+            }
+            if (file.length() == 0) {
+                throw new IllegalStateException(context.getString(R.string.survey_import_failed_empty_file_message));
+            }
+            if (ServiceLocator.importSurvey(file.getAbsolutePath(), overwrite, context) || overwrite) {
                 onSurveyImportComplete();
                 return false; //survey imported successfully
             } else {
@@ -194,7 +194,7 @@ public class SurveyListActivity extends BaseActivity {
                 Dialogs.confirm(context, R.string.import_overwrite_data_dialog_title, R.string.import_overwrite_data_dialog_message,
                         new Runnable() {
                             public void run() {
-                                new ImportSurveyTask(context, surveyPath, true).execute();
+                                new ImportSurveyTask(context, uri, true).execute();
                             }
                         }, null);
             }

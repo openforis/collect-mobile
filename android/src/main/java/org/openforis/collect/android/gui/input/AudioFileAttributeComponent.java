@@ -200,7 +200,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
 
     public void audioSelected(Uri uri) {
         try {
-            File selectedFile = AndroidFiles.getFileByUri(context, uri);
+            File selectedFile = AndroidFiles.copyUriContentToCache(context, uri);
             if (selectedFile != null && "3gp".equalsIgnoreCase(FilenameUtils.getExtension(selectedFile.getName()))) {
                 reset();
                 FileUtils.copyFile(selectedFile, file);

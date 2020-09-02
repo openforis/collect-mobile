@@ -31,22 +31,22 @@ public class SurveyImporter {
     public static final String SELECTED_SURVEY = "org.openforis.collect.android.SelectedSurvey";
     private static final String SURVEY_FILE_EXTENSION = "collect-mobile";
     private final String sourceSurveyPath;
-    private final Context applicationContext;
+    private final Context context;
 
     public SurveyImporter(String sourceSurveyPath, Context context) {
         this.sourceSurveyPath = sourceSurveyPath;
-        this.applicationContext = context;
+        this.context = context;
     }
 
     public boolean importSurvey(boolean overwrite) throws MalformedSurvey, WrongSurveyVersion, UnsupportedFileType {
         checkSupportedFileType();
         try {
-            File tempDir = unzipSurveyDefinition(sourceSurveyPath);
+            File tempDir = unzipSurveyDefinition();
             String sourceSurveyDatabasePath = new File(tempDir, DATABASE_NAME).getAbsolutePath();
             SurveyBackupInfo info = info(tempDir);
             String surveyName = info.getSurveyName();
 
-            File databases = AppDirs.surveyDatabasesDir(surveyName, applicationContext);
+            File databases = AppDirs.surveyDatabasesDir(surveyName, context);
             File targetSurveyDatabase = new File(databases, ServiceLocator.MODEL_DB);
 
             if (!overwrite && targetSurveyDatabase.exists())
@@ -54,18 +54,18 @@ public class SurveyImporter {
 
             realityCheckDatabaseToImport(sourceSurveyDatabasePath);
             Version version = getAndVerifyVersion(info);
-            ServiceLocator.deleteNodeDatabase(applicationContext, surveyName);
-            ServiceLocator.deleteModelDatabase(applicationContext, surveyName);
+            ServiceLocator.deleteNodeDatabase(context, surveyName);
+            ServiceLocator.deleteModelDatabase(context, surveyName);
 
-            File imagesDir = AppDirs.surveyImagesDir(surveyName, applicationContext);
+            File imagesDir = AppDirs.surveyImagesDir(surveyName, context);
             if (imagesDir.exists())
                 FileUtils.deleteDirectory(imagesDir);
 
             FileUtils.copyFile(new File(sourceSurveyDatabasePath), targetSurveyDatabase);
             FileUtils.deleteDirectory(tempDir);
             migrateIfNeeded(version, targetSurveyDatabase, surveyName);
-            selectSurvey(surveyName, applicationContext);
-            AndroidFiles.makeDiscoverable(targetSurveyDatabase, applicationContext);
+            selectSurvey(surveyName, context);
+            AndroidFiles.makeDiscoverable(targetSurveyDatabase, context);
             return true;
         } catch (IOException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
@@ -82,7 +82,7 @@ public class SurveyImporter {
     }
 
     private void realityCheckDatabaseToImport(String sourceSurveyDatabasePath) {
-        SQLiteDatabase database = applicationContext.openOrCreateDatabase(sourceSurveyDatabasePath, 0, null);
+        SQLiteDatabase database = context.openOrCreateDatabase(sourceSurveyDatabasePath, 0, null);
         database.close();
     }
 
@@ -100,10 +100,10 @@ public class SurveyImporter {
     }
 
     private void migrateIfNeeded(Version version, File targetSurveyDatabase, String surveyName) {
-        AndroidDatabase database = new AndroidDatabase(applicationContext, targetSurveyDatabase);
+        AndroidDatabase database = new AndroidDatabase(context, targetSurveyDatabase);
         Version currentVersion = Collect.VERSION;
         if (version.getMajor() < currentVersion.getMajor() || version.getMinor() < currentVersion.getMinor())
-            new ModelDatabaseMigrator(database, surveyName, applicationContext).migrate();
+            new ModelDatabaseMigrator(database, surveyName, context).migrate();
     }
 
 
@@ -146,11 +146,11 @@ public class SurveyImporter {
         return info;
     }
 
-    private File unzipSurveyDefinition(String surveyDatabasePath) throws IOException {
+    private File unzipSurveyDefinition() throws IOException {
         File folder = createTempDir();
-        File zipFile = new File(surveyDatabasePath);
+        File zipFile = new File(sourceSurveyPath);
         if (!zipFile.exists())
-            throw new FileNotFoundException("File not found: " + surveyDatabasePath);
+            throw new FileNotFoundException("File not found: " + sourceSurveyPath);
         try {
             new Unzipper(zipFile, folder).unzip(DATABASE_NAME, INFO_PROPERTIES_NAME);
         } catch (IOException e) {

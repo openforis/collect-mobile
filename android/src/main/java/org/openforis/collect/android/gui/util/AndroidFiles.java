@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.provider.MediaStore;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import org.apache.commons.io.FileUtils;
@@ -17,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,24 +49,6 @@ public abstract class AndroidFiles {
             File file = it.next();
             if (!file.isDirectory())
                 makeFileDiscoverable(file, context);
-        }
-    }
-
-    public static File getFileByUri(Context context, Uri uri) {
-        File existingFile = getExistingLocalFileFromUri(context, uri);
-        if (existingFile != null)
-            return existingFile;
-        if (uri.getScheme().equals("content")) {
-            String fileName = getUriContentFileName(context, uri);
-            File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(downloadDir, fileName);
-            if (file.exists() && file.length() > 0 || copyUriContentToFile(context, uri, file)) {
-                return file;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
         }
     }
 
@@ -109,11 +91,14 @@ public abstract class AndroidFiles {
         }
     }
 
-    @Nullable
-    public static File getExistingLocalFileFromUri(Context context, Uri uri) {
+    public static File copyUriContentToCache(Context context, Uri uri) {
         try {
-            File file = com.ipaulpro.afilechooser.utils.FileUtils.getFile(context, uri);
-            return file.exists() ? file : null;
+            ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+            String fileName = getUriContentFileName(context, uri);
+            InputStream is = new FileInputStream(fileDescriptor.getFileDescriptor());
+            File fileCache = new File(context.getCacheDir(), fileName);
+            IOUtils.copy(is, new FileOutputStream(fileCache));
+            return fileCache;
         } catch (Exception e) {
             return null;
         }

@@ -16,8 +16,6 @@ import android.widget.ListView;
 
 import androidx.fragment.app.DialogFragment;
 
-import com.ipaulpro.afilechooser.utils.FileUtils;
-
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -126,15 +124,9 @@ public class SurveyListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-
     protected static void showImportDialog(Activity context) {
         if (Permissions.checkStoragePermissionOrRequestIt(context)) {
-            Intent target = FileUtils.createGetContentIntent();
-            Intent intent = Intent.createChooser(
-                    target, context.getString(R.string.select_survey_to_import));
-
-            context.startActivityForResult(intent, IMPORT_SURVEY_REQUEST_CODE);
+            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE);
         }
     }
 

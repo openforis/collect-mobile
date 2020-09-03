@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import androidx.core.content.FileProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.openforis.collect.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +44,6 @@ public abstract class AndroidFiles {
                 Uri.fromFile(file)));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void makeDirectoryDiscoverable(File dir, Context context) {
         Iterator<File> it = FileUtils.iterateFiles(dir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
         while (it.hasNext()) {
@@ -57,20 +58,25 @@ public abstract class AndroidFiles {
     }
 
     public static String getUriContentFileName(Context context, Uri uri) {
-        Cursor cursor = null;
-        try {
-            cursor = context.getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
-                return name;
-            } else {
-                return null;
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = null;
+            try {
+                cursor = context.getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
             }
         }
+        if (result == null) {
+            String[] pathParts = uri.getPath().split("/");
+            result = pathParts[pathParts.length - 1];
+        }
+        return result;
     }
 
     public static boolean copyUriContentToFile(Context context, Uri uri, File file) {
@@ -102,6 +108,16 @@ public abstract class AndroidFiles {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static void showFileChooseActivity(Activity context, int requestCode) {
+        Intent target = new Intent(Intent.ACTION_GET_CONTENT);
+        target.setType("*/*");
+        target.addCategory(Intent.CATEGORY_OPENABLE);
+        Intent intent = Intent.createChooser(
+                target, context.getString(R.string.select_survey_to_import));
+
+        context.startActivityForResult(intent, requestCode);
     }
 
     public static long availableSize(File path) {

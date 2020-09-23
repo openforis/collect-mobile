@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,7 +46,7 @@ public interface SurveyService {
 
     void deleteRecords(Collection<Integer> records);
 
-    File exportSurvey(File surveysDir, boolean excludeBinaries) throws IOException;
+    File exportSurvey(File surveysDir, boolean excludeBinaries, List<Integer> filterRecordIds) throws IOException;
 
     void setListener(SurveyListener listener);
 

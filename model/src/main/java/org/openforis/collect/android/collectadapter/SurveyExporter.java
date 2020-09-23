@@ -14,12 +14,13 @@ import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.xml.DataMarshaller;
+import org.openforis.commons.collection.CollectionUtils;
 import org.openforis.idm.model.FileAttribute;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.*;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -30,22 +31,27 @@ import java.util.zip.ZipOutputStream;
  */
 public class SurveyExporter {
     private static final Logger LOG = Logger.getLogger(SurveyExporter.class.getName());
-    private final UiSurvey uiSurvey;
-    private final CollectSurvey collectSurvey;
+
     private final SurveyManager surveyManager;
-    private final boolean excludeBinaries;
     private final CollectRecordProvider collectRecordProvider;
     private final RecordFileManager recordFileManager;
+    private final UiSurvey uiSurvey;
+    private final CollectSurvey collectSurvey;
+    private final boolean excludeBinaries;
+    private final List<Integer> filterRecordIds;
+
     private final DataMarshaller dataMarshaller;
     private ZipOutputStream zipOutputStream;
 
-    public SurveyExporter(UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyManager surveyManager, boolean excludeBinaries, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager) throws IOException {
-        this.uiSurvey = uiSurvey;
-        this.collectSurvey = collectSurvey;
+    public SurveyExporter(SurveyManager surveyManager, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager,
+                          UiSurvey uiSurvey, CollectSurvey collectSurvey, boolean excludeBinaries, List<Integer> filterRecordIds) {
         this.surveyManager = surveyManager;
-        this.excludeBinaries = excludeBinaries;
         this.collectRecordProvider = collectRecordProvider;
         this.recordFileManager = recordFileManager;
+        this.uiSurvey = uiSurvey;
+        this.collectSurvey = collectSurvey;
+        this.excludeBinaries = excludeBinaries;
+        this.filterRecordIds = filterRecordIds;
         dataMarshaller = new DataMarshaller();
     }
 
@@ -67,7 +73,7 @@ public class SurveyExporter {
 
     private void removeOldExportFiles(File outputFile) {
         for (File file : outputFile.getParentFile().listFiles()) {
-            String suffix = "_\\d{4}\\-\\d{2}-\\d{2}_\\d{2}\\.\\d{2}.collect-data";
+            String suffix = "_\\d{4}-\\d{2}-\\d{2}_\\d{2}\\.\\d{2}.\\d{2}.collect-data";
             String prefix = outputFile.getName().replaceFirst(suffix, "");
             if (file.getName().replaceFirst(suffix, "").equals(prefix))
                 file.delete();
@@ -75,11 +81,15 @@ public class SurveyExporter {
     }
 
     private void assertAllRecordKeysSpecified() {
-        for (UiNode rc : uiSurvey.getChildren())
-            for (UiNode rp : ((UiRecordCollection) rc).getChildren())
-                for (UiAttribute keyAttribute : ((UiRecord.Placeholder) rp).getKeyAttributes())
-                    if (keyAttribute.isRelevant() && keyAttribute.isEmpty())
-                        throw new AllRecordKeysNotSpecified();
+        for (UiNode rc : uiSurvey.getChildren()) {
+            for (UiNode rp : ((UiRecordCollection) rc).getChildren()) {
+                if (isIncluded((UiRecord.Placeholder) rp)) {
+                    for (UiAttribute keyAttribute : ((UiRecord.Placeholder) rp).getKeyAttributes())
+                        if (keyAttribute.isRelevant() && keyAttribute.isEmpty())
+                            throw new AllRecordKeysNotSpecified();
+                }
+            }
+        }
     }
 
     private void addInfoFile() throws IOException {
@@ -104,26 +114,30 @@ public class SurveyExporter {
     }
 
     private void exportRecords() throws IOException {
-        User user = Settings.user();
         for (UiNode rc : uiSurvey.getChildren()) {
-            UiRecordCollection recordCollection = (UiRecordCollection) rc;
-            for (UiNode rp : recordCollection.getChildren()) {
-                try {
-                    UiRecord.Placeholder recordPlaceholder = (UiRecord.Placeholder) rp;
-                    CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
-                    record.setCreatedBy(user);
-                    record.setCreationDate(rp.getCreatedOn());
-                    record.setModifiedBy(user);
-                    record.setModifiedDate(rp.getModifiedOn());
-                    record.setOwner(user);
-                    exportRecord(record);
-                    if (!excludeBinaries)
-                        exportRecordFiles(record);
-                } catch (Exception e) {
-                    throw new IOException(String.format("Error exporting record %s with id %d: %s",
-                            ((UiRecord.Placeholder) rp).getKeyAttributes(), rp.getId(), e.getMessage()), e);
+            for (UiNode rp : ((UiRecordCollection) rc).getChildren()) {
+                if (isIncluded((UiRecord.Placeholder) rp)) {
+                    exportRecord((UiRecord.Placeholder) rp);
                 }
             }
+        }
+    }
+
+    private void exportRecord(UiRecord.Placeholder recordPlaceholder) throws IOException {
+        User user = Settings.user();
+        try {
+            CollectRecord record = collectRecordProvider.record(recordPlaceholder.getId());
+            record.setCreatedBy(user);
+            record.setCreationDate(recordPlaceholder.getCreatedOn());
+            record.setModifiedBy(user);
+            record.setModifiedDate(recordPlaceholder.getModifiedOn());
+            record.setOwner(user);
+            exportRecord(record);
+            if (!excludeBinaries)
+                exportRecordFiles(record);
+        } catch (Exception e) {
+            throw new IOException(String.format("Error exporting record %s with id %d: %s",
+                    recordPlaceholder.getKeyAttributes(), recordPlaceholder.getId(), e.getMessage()), e);
         }
     }
 
@@ -133,7 +147,7 @@ public class SurveyExporter {
             if (!fileAttribute.isEmpty() && fileAttribute.getFilename() != null) {
                 File file = recordFileManager.getRepositoryFile(fileAttribute);
                 if (file == null || !file.exists()) {
-                    LOG.log(Level.WARNING, String.format("Record file not found for record %s (%d) attribute %s (%d)",
+                    LOG.log(Level.WARNING, String.format(Locale.ENGLISH,"Record file not found for record %s (%d) attribute %s (%d)",
                             StringUtils.join(record.getRootEntityKeyValues(), ','), record.getId(), fileAttribute.getPath(), fileAttribute.getInternalId()));
                 } else {
                     String entryName = RecordFileBackupTask.determineRecordFileEntryName(fileAttribute);
@@ -165,6 +179,10 @@ public class SurveyExporter {
         } finally {
             zipOutputStream.closeEntry();
         }
+    }
+
+    private boolean isIncluded(UiRecord.Placeholder recordPlaceholder) {
+        return !CollectionUtils.isNotEmpty(filterRecordIds) || filterRecordIds.contains(recordPlaceholder.getId());
     }
 
     interface CollectRecordProvider {

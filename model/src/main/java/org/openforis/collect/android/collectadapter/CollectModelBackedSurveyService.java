@@ -12,6 +12,7 @@ import org.openforis.collect.model.CollectSurvey;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -23,6 +24,7 @@ import static org.openforis.collect.android.NodeEvent.UPDATED;
  */
 public class CollectModelBackedSurveyService implements SurveyService {
     private static final String DATA_EXPORT_DIR = "data_export";
+    private static final DateFormat DATA_EXPORT_TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss", Locale.ENGLISH);
 
     private final ViewModelManager viewModelManager;
     private final CollectModelManager collectModelManager;
@@ -243,19 +245,19 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
     }
 
-    public File exportSurvey(File surveysDir, boolean excludeBinaries) throws IOException {
-        Integer selectedRecordId = viewModelManager.getSelectedRecordId();
-
+    public File exportSurvey(File surveysDir, boolean excludeBinaries, List<Integer> filterRecordIds) throws IOException {
+        // preserve previously selected record (if any)
+        Integer oldSelectedRecordId = viewModelManager.getSelectedRecordId();
         File exportedFile = exportFile(surveysDir);
         try {
-            collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, new CollectModelManager.ExportListener() {
-                public void beforeRecordExport(int recordId) {
-                    selectRecord(recordId);
-                }
-            });
-
-            if (selectedRecordId != null)
-                selectRecord(selectedRecordId);
+            collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, filterRecordIds,
+                    new CollectModelManager.ExportListener() {
+                        public void beforeRecordExport(int recordId) {
+                            selectRecord(recordId);
+                        }
+                    });
+            if (oldSelectedRecordId != null)
+                selectRecord(oldSelectedRecordId);
         } catch(IOException e) {
             if (exportedFile != null) {
                 exportedFile.delete();
@@ -288,7 +290,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
         String username = Settings.user().getUsername();
         if (!username.isEmpty())
             fileName += "_" + username;
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm", Locale.ENGLISH).format(new Date());
+        String timestamp = DATA_EXPORT_TIMESTAMP_FORMAT.format(new Date());
         fileName += "_" + timestamp + ".collect-data";
         return new File(getDataExportDirectory(surveysDir), fileName);
     }

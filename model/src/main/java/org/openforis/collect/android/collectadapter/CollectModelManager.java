@@ -369,13 +369,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return versions.get(versions.size() - 1).getName();
     }
 
-    public void exportSurvey(UiSurvey uiSurvey, File exportFile, boolean excludeBinaries, final ExportListener exportListener) throws IOException {
-        new SurveyExporter(uiSurvey, selectedSurvey, surveyManager, excludeBinaries, new SurveyExporter.CollectRecordProvider() {
+    public void exportSurvey(UiSurvey uiSurvey, File exportFile, boolean excludeBinaries, final List<Integer> filterRecordIds,
+                             final ExportListener exportListener) throws IOException {
+        new SurveyExporter(surveyManager, new SurveyExporter.CollectRecordProvider() {
             public CollectRecord record(int recordId) {
                 exportListener.beforeRecordExport(recordId);
                 return getCollectRecordForExporting(recordId);
             }
-        }, recordFileManager).export(exportFile);
+        }, recordFileManager, uiSurvey, selectedSurvey, excludeBinaries, filterRecordIds).export(exportFile);
     }
 
     private CollectRecord getCollectRecordForExporting(int recordId) {

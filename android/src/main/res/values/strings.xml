@@ -169,6 +169,8 @@
     <string name="import_text_unsupported_file_type_selected">Please select a valid Collect Mobile survey file (.%s)</string>
 
     <string name="export_dialog_title">Export survey data</string>
+    <string name="export_dialog_option_only_current_record">Only current record</string>
+    <string name="export_dialog_option_only_selected_records">Only selected records</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
     <string name="export_dialog_option_save_to_downloads">Save to Android device \"Download\" directory</string>
     <string name="export_progress_dialog_title">Exporting data</string>

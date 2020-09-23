@@ -207,7 +207,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
         protected File doInBackground(Void... voids) {
             SubmitDataToCollectActivity context = SubmitDataToCollectActivity.this;
             try {
-                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context),false);
+                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context),false, null);
             } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
                 handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(context));
             } catch (Exception e) {

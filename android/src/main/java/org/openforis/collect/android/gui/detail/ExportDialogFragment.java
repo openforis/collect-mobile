@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.AllRecordKeysNotSpecifiedDialog;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -23,33 +24,45 @@ import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.MimeType;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
+import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ExportDialogFragment extends DialogFragment {
     private static final int EXCLUDE_BINARIES = 0;
     private static final int SAVE_TO_DOWNLOADS = 1;
+    private static final int ONLY_SELECTED_RECORDS = 2;
 
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final CharSequence[] options = {
-                getContext().getString(R.string.export_dialog_option_exclude_binary_file),
-                getContext().getString(R.string.export_dialog_option_save_to_downloads),
-        };
-        final boolean[] selection = new boolean[options.length];
+        SurveyService surveyService = ServiceLocator.surveyService();
+        UiNode selectedNode = surveyService.selectedNode();
+        List<String> options = new ArrayList<String>(Arrays.asList(
+                getString(R.string.export_dialog_option_exclude_binary_file),
+                getString(R.string.export_dialog_option_save_to_downloads)
+        ));
+        if (!(selectedNode instanceof UiRecordCollection)) {
+            options.add(getString(R.string.export_dialog_option_only_current_record));
+        }
+        final boolean[] selection = new boolean[options.size()];
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.export_dialog_title)
-                .setMultiChoiceItems(options, selection, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(options.toArray(new String[options.size()]), selection, new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         selection[which] = isChecked;
                     }
                 })
                 .setPositiveButton(R.string.action_export, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        new ExportTask(getActivity(), selection[SAVE_TO_DOWNLOADS], selection[EXCLUDE_BINARIES])
+                        boolean onlySelectedRecords = selection.length > ONLY_SELECTED_RECORDS && selection[ONLY_SELECTED_RECORDS];
+                        new ExportTask(getActivity(), selection[SAVE_TO_DOWNLOADS], selection[EXCLUDE_BINARIES], onlySelectedRecords)
                                 .execute();
                     }
                 })
@@ -61,29 +74,37 @@ public class ExportDialogFragment extends DialogFragment {
 
         final boolean saveToDownloads;
         final boolean excludeBinaries;
+        final boolean onlySelectedRecords;
 
-        ExportTask(Activity context, boolean saveToDownloads, boolean excludeBinaries) {
+        ExportTask(Activity context, boolean saveToDownloads, boolean excludeBinaries, boolean onlySelectedRecords) {
             super(context, R.string.export_progress_dialog_title, R.string.please_wait);
             this.saveToDownloads = saveToDownloads;
             this.excludeBinaries = excludeBinaries;
+            this.onlySelectedRecords = onlySelectedRecords;
         }
 
         @Override
         protected File runTask() throws Exception {
-            File exportedFile = ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context), excludeBinaries);
+            SurveyService surveyService = ServiceLocator.surveyService();
+            List<Integer> filterRecordIds = onlySelectedRecords ? getSelectedRecordIds() : null;
+            File exportedFile = surveyService.exportSurvey(AppDirs.surveysDir(context), excludeBinaries, filterRecordIds);
             AndroidFiles.makeDiscoverable(exportedFile, context);
             if (saveToDownloads) {
                 File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadDir.exists()) {
-                    if (!downloadDir.mkdirs()) {
-                        throw new IOException("Cannot create Download folder: " + downloadDir.getAbsolutePath());
-                    }
+                if (!downloadDir.exists() && !downloadDir.mkdirs()) {
+                    throw new IOException("Cannot create Download folder: " + downloadDir.getAbsolutePath());
                 }
                 File downloadDirDestinationFile = new File(downloadDir, exportedFile.getName());
                 IOUtils.copy(new FileInputStream(exportedFile), new FileOutputStream(downloadDirDestinationFile));
                 AndroidFiles.makeDiscoverable(downloadDirDestinationFile, context);
             }
             return exportedFile;
+        }
+
+        public List<Integer> getSelectedRecordIds() {
+            SurveyService surveyService = ServiceLocator.surveyService();
+            UiNode selectedNode = surveyService.selectedNode();
+            return selectedNode instanceof UiRecordCollection ? null : Arrays.asList(selectedNode.getUiRecord().getId());
         }
 
         @Override

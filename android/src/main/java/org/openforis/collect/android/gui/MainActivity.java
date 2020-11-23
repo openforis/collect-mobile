@@ -8,12 +8,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.exception.StorageAccessException;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.Permissions;
@@ -65,6 +68,8 @@ public class MainActivity extends BaseActivity {
         } catch (WorkingDirNotWritable ignore) {
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
+        } catch (StorageAccessException e) {
+            handleStorageAccessException(e);
         }
     }
 
@@ -77,15 +82,16 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        //if (Permissions.checkStoragePermissionOrRequestIt(this)) {
+        if (Permissions.checkStoragePermissionOrRequestIt(this)) {
             initialize();
-        //}
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (!Permissions.isPermissionGranted(grantResults))
+        if (!Permissions.isPermissionGranted(grantResults)) {
             return;
+        }
 
         if (requestCode == Permissions.Request.STORAGE.getCode()) {
             initialize();
@@ -102,7 +108,12 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         if (surveyAdapter != null) {
-            surveyAdapter.reloadSurveys();
+            try {
+                surveyAdapter.reloadSurveys();
+            } catch (StorageAccessException e) {
+                // it should never happen here
+                handleStorageAccessException(e);
+            }
 
             if (surveyAdapter.isSurveyListEmpty()) {
                 Views.hide(findViewById(R.id.notEmptySurveyListFrame));
@@ -159,4 +170,12 @@ public class MainActivity extends BaseActivity {
             SurveyListActivity.startActivity(this);
         }
     }
+
+    private void handleStorageAccessException(StorageAccessException e) {
+        Toast.makeText(this, R.string.settings_error_working_directory, Toast.LENGTH_LONG).show();
+        //Dialogs.info(this, R.string.settings_invalid_dialog_title, R.string.settings_invalid_dialog_wrong_storage_folder);
+        Activities.start(this, SettingsActivity.class);
+    }
+
+
 }

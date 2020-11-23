@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.exception.StorageAccessException;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class SurveyListAdapter extends SurveyBaseAdapter {
     private ActionMode actionMode;
     private SurveysDeletedListener surveysDeletedListener;
 
-    public SurveyListAdapter(Activity activity) {
+    public SurveyListAdapter(Activity activity) throws StorageAccessException {
         super(activity);
     }
 

@@ -160,6 +160,8 @@
     <string name="settings_remote_sync_test_failed_title">Connection to Collect Server failed</string>
     <string name="settings_remote_sync_test_failed_message_wrong_address">Wrong address or wrong username/password specified.</string>
     <string name="settings_remote_sync_test_failed_message_newer_version">Collect Server runs version %s and it\'s not compatible with the one supported by this version of Collect Mobile (%s).\n\nPlease consider updating Collect Mobile to the latest version.</string>
+    <string name="settings_invalid_dialog_title">Invalid settings</string>
+    <string name="settings_error_working_directory">Working directory invalid or not accessible: please change it.</string>
 
     <string name="select_survey_to_import">"Select survey to import"</string>
     <string name="import_title_failed">Failed to import survey</string>

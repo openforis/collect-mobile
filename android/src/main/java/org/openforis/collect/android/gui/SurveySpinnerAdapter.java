@@ -9,13 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.exception.StorageAccessException;
 
 /**
  * @author Stefano Ricci
  */
 public class SurveySpinnerAdapter extends SurveyBaseAdapter {
 
-    public SurveySpinnerAdapter(Activity activity) {
+    public SurveySpinnerAdapter(Activity activity) throws StorageAccessException {
         super(activity);
     }
 

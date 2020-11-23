@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.exception.StorageAccessException;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Attrs;
@@ -26,22 +27,23 @@ public abstract class SurveyBaseAdapter extends BaseAdapter {
     protected List<SurveyItem> surveys;
     protected final Attrs attrs;
 
-    public SurveyBaseAdapter(Activity activity) {
+    public SurveyBaseAdapter(Activity activity) throws StorageAccessException {
         this.activity = activity;
         this.surveys = surveys();
         attrs = new Attrs(activity);
     }
 
-    public void reloadSurveys() {
+    public void reloadSurveys() throws StorageAccessException {
         this.surveys = surveys();
         super.notifyDataSetChanged();
     }
 
-    private List<SurveyItem> surveys() {
+    private List<SurveyItem> surveys() throws StorageAccessException {
         List<SurveyItem> surveys = new ArrayList<SurveyItem>();
         File surveysRootDir = AppDirs.surveysDir(activity);
-        if (!surveysRootDir.exists())
-            surveysRootDir.mkdirs();
+        if (!surveysRootDir.exists() && !surveysRootDir.mkdirs()) {
+            throw new StorageAccessException();
+        }
         for (File databaseDir : surveysRootDir.listFiles())
             if (databaseDir.isDirectory())
                 surveys.add(new SurveyItem(databaseDir.getName(), databaseDir.getName()));

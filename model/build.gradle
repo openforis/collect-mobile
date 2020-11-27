@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:3.26.15') {
+    compile ('org.openforis.collect:collect-core:3.26.29') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.apache.poi'
     }

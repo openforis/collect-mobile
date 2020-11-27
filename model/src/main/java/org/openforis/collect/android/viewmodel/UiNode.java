@@ -209,6 +209,16 @@ public abstract class UiNode {
         this.validationErrors = validationErrors;
     }
 
+    public Collection<UiNode> getChildrenByDefId(int childDefId) {
+        ArrayList<UiNode> found = new ArrayList<UiNode>();
+        if (definition.id.equals(childDefId))
+            found.add(this);
+        if (this instanceof UiInternalNode)
+            for (UiNode childNode : ((UiInternalNode) this).getChildren())
+                found.addAll(childNode.getChildrenByDefId(childDefId));
+        return found;
+    }
+
     public Collection<UiNode> findAllByName(String name) {
         ArrayList<UiNode> found = new ArrayList<UiNode>();
         if (definition.name.equals(name))

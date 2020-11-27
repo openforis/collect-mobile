@@ -6,7 +6,7 @@ buildscript {
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
     }
 }
 
@@ -28,7 +28,7 @@ dependencies {
     // For loading and tinting drawables on older versions of the platform
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
 
     compile 'org.apache.commons:commons-lang3:3.4'
     compile('com.viewpagerindicator:library:2.4.1.1') {
@@ -63,7 +63,7 @@ dependencies {
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
     compile 'com.googlecode.openbeans:openbeans:1.0'
-    compile 'com.google.android.gms:play-services-vision:20.1.1'
+    compile 'com.google.android.gms:play-services-vision:20.1.2'
     compile 'org.apache.logging.log4j:log4j-core:2.3'
     compile 'com.github.medyo:android-about-page:1.2.5'
 

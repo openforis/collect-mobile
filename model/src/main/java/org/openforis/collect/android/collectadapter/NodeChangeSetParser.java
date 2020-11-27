@@ -83,7 +83,7 @@ class NodeChangeSetParser {
     private void parseRelevanceChanges(EntityChange entityChange, Map<UiNode, UiNodeChange> nodeChanges) {
         Entity parentNode = entityChange.getNode();
         UiInternalNode parentUiNode = (UiInternalNode) uiRecord.lookupNode(parentNode.getId());
-        for (Map.Entry<String, Boolean> relevanceEntry : entityChange.getChildrenRelevance().entrySet()) {
+        for (Map.Entry<Integer, Boolean> relevanceEntry : entityChange.getChildrenRelevance().entrySet()) {
             NodeDefinition nodeDefinition = parentNode.getDefinition().getChildDefinition(relevanceEntry.getKey());
             if (isHidden(nodeDefinition))
                 continue;
@@ -140,12 +140,12 @@ class NodeChangeSetParser {
     private void parseMinMaxCountValidation(EntityChange entityChange, boolean min, Map<UiNode, UiNodeChange> uiNodeChanges) {
         Entity entity = entityChange.getNode();
         UiEntity parentNode = (UiEntity) uiRecord.lookupNode(entity.getId());
-        Map<String, ValidationResultFlag> childrenValidation = entityChange.getChildrenMinCountValidation();
-        for (Map.Entry<String, ValidationResultFlag> validationEntry : childrenValidation.entrySet()) {
-            String childDefName = validationEntry.getKey();
-            NodeDefinition childDef = entity.getDefinition().getChildDefinition(childDefName);
+        Map<Integer, ValidationResultFlag> childrenValidation = entityChange.getChildrenMinCountValidation();
+        for (Map.Entry<Integer, ValidationResultFlag> validationEntry : childrenValidation.entrySet()) {
+            Integer childDefId = validationEntry.getKey();
+            NodeDefinition childDef = entity.getDefinition().getChildDefinition(childDefId);
             ValidationResultFlag validationResultFlag = validationEntry.getValue();
-            Collection<UiNode> childrenNodes = parentNode.findAllByName(childDefName);
+            Collection<UiNode> childrenNodes = parentNode.getChildrenByDefId(childDefId);
 
             for (UiNode childNode : childrenNodes) {
                 if (childDef instanceof AttributeDefinition && !((AttributeDefinition) childDef).isCalculated() && isShown(childDef)

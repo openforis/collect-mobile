@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import org.openforis.collect.android.gui.detail.NodeDetailFragment;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.commons.collection.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +69,12 @@ public class NodePagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setVisibleNodes(List<UiNode> nodes) {
-        previouslyVisibleNodes = this.visibleNodes;
-        this.visibleNodes = nodes;
-        notifyDataSetChanged();
+        List<Integer> newIds = CollectionUtils.project(nodes, "id");
+        List<Integer> oldIds = CollectionUtils.project(this.visibleNodes, "id");
+        if (!newIds.equals(oldIds)) {
+            this.previouslyVisibleNodes = this.visibleNodes;
+            this.visibleNodes = nodes;
+            notifyDataSetChanged();
+        }
     }
 }

@@ -115,11 +115,13 @@ class NodeChangeSetParser {
         addCountValidationErrorIfAny(uiAttribute, nodeChanges, requiredErrorResult, attribute.getParent().getMinCount(attribute.getDefinition()),
                 "validation.requiredField", "validation.minCount");
 
-        ValidationResults validationResults = attributeChange.getValidationResults();
         List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
-        for (ValidationResult validationResult : validationResults.getFailed()) {
-            if (!ignored(validationResult))
-                validationErrors.add(toValidationError(attribute, uiAttribute, validationResult));
+        ValidationResults validationResults = attributeChange.getValidationResults();
+        if (validationResults != null) {
+            for (ValidationResult validationResult : validationResults.getFailed()) {
+                if (!ignored(validationResult))
+                    validationErrors.add(toValidationError(attribute, uiAttribute, validationResult));
+            }
         }
         if (!validationErrors.isEmpty())
             nodeChange.validationErrors.addAll(validationErrors);

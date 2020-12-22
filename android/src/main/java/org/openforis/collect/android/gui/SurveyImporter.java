@@ -123,12 +123,11 @@ public class SurveyImporter {
     }
 
     private Version getAndVerifyVersion(SurveyBackupInfo info) {
-        Version version = info.getCollectVersion();
-        Version currentVersion = Collect.VERSION;
-        if (version.getMajor() > currentVersion.getMajor() || version.getMinor() > currentVersion.getMinor())
-            throw new WrongSurveyVersion(sourceSurveyPath, version);
-        return version;
-
+        Version surveyVer = info.getCollectVersion();
+        Version appVer = Collect.VERSION;
+        if (surveyVer.compareTo(appVer, Version.Significance.MINOR) > 0)
+            throw new WrongSurveyVersion(sourceSurveyPath, surveyVer);
+        return surveyVer;
     }
 
     private SurveyBackupInfo info(File dir) {

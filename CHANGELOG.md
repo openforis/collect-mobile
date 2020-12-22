@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 183 2020-12-22
+### Fixed
+- Fixed error importing survey generated with Collect v3
+
 ## [1.7.8] - build 182 2020-12-21
 ### Added
 - Use latest OF Collect core version (4.0.0)

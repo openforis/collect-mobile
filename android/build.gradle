@@ -70,9 +70,10 @@ dependencies {
     annotationProcessor 'org.apache.logging.log4j:log4j-core:2.3'
 }
 
-
+// load properties from local.properties file
 def localProps = new Properties()
-localProps.load(rootProject.file('local.properties').newDataInputStream())
+File localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) localProps.load(localPropsFile.newDataInputStream())
 
 int actualVersionCode = currentVersionCode as int
 String actualVersionName = currentVersionName

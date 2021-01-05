@@ -5,13 +5,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.FragmentActivity;
 
@@ -19,6 +16,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.components.OptionButton;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
@@ -103,7 +101,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     }
 
     protected void resetValidationErrors() {
-
     }
 
     protected void initOptions() {
@@ -181,10 +178,10 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private class LoadCodesTask implements Runnable {
         public void run() {
             initCodeList();
-            initView(codeList);
+            addCheckBoxes(codeList);
         }
 
-        private void initView(final UiCodeList codeList) {
+        private void addCheckBoxes(final UiCodeList codeList) {
             uiHandler.post(new Runnable() {
                 public void run() {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -197,32 +194,35 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                     for (int i = 0; i < codes.size(); i++) {
                         final UiCode code = codes.get(i);
                         final boolean qualifiable = codeList.isQualifiable(code);
-                        CheckBox cb = new AppCompatCheckBox(context);
+                        OptionButton cb = new OptionButton(context, OptionButton.DisplayType.CHECKBOX);
                         cb.setId(i + 1);
-                        cb.setText(code.toString());
-                        cb.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+                        cb.setLabel(code.toString());
+                        cb.setDescription(code.getDescription());
                         cb.setLayoutParams(layoutParams);
                         layout.addView(cb);
                         codeByViewId.put(cb.getId(), code);
                         boolean checked = attributesByCode.keySet().contains(code);
                         if (checked) {
-                            cb.setSelected(true);
                             cb.setChecked(true);
                             if (qualifiable)
                                 showQualifier();
                         }
-                        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                if (isChecked) {
-                                    attributesByCode.put(code, surveyService.addCodeAttribute(code, qualifier(code)));
-                                    if (qualifiable)
-                                        showQualifier();
-                                } else {
-                                    int attributeId = attributesByCode.get(code).getId();
-                                    surveyService.deletedAttribute(attributeId);
+                        cb.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                UiCodeAttribute oldAttribute = attributesByCode.get(code);
+                                boolean wasChecked = oldAttribute != null;
+                                if (wasChecked) {
+                                    // unchecked: delete existing attribute
+                                    surveyService.deletedAttribute(oldAttribute.getId());
                                     attributesByCode.remove(code);
                                     if (qualifiable)
                                         hideQualifier();
+                                } else {
+                                    // checked: add new attribute
+                                    UiCodeAttribute attribute = surveyService.addCodeAttribute(code, qualifier(code));
+                                    attributesByCode.put(code, attribute);
+                                    if (qualifiable)
+                                        showQualifier();
                                 }
                             }
                         });

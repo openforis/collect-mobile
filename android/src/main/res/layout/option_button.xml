@@ -4,10 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatRadioButton
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <!-- Radio/Checkbox to be inserted programmatically here -->
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -25,6 +22,8 @@
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="italic" />
     </LinearLayout>

@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.components.ExtendedRadioButton;
+import org.openforis.collect.android.gui.components.OptionButton;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -105,7 +105,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     for (int i = 0; i < codes.size(); i++) {
                         UiCode code = codes.get(i);
                         boolean selected = isAttributeCode(code);
-                        ExtendedRadioButton rb = addRadioButton(layoutParams, i, code, selected);
+                        OptionButton rb = addRadioButton(layoutParams, i, code, selected);
 
                         if (selected) {
                             selectedViewId = rb.getId();
@@ -116,9 +116,9 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         }
     }
 
-    private ExtendedRadioButton addRadioButton(RadioGroup.LayoutParams layoutParams, int index, UiCode code, boolean selected) {
+    private OptionButton addRadioButton(RadioGroup.LayoutParams layoutParams, int index, UiCode code, boolean selected) {
         if (! enumerator || selected) { //if it's enumerator, show only selected code
-            ExtendedRadioButton rb = new ExtendedRadioButton(context);
+            OptionButton rb = new OptionButton(context, OptionButton.DisplayType.RADIOBUTTON);
             rb.setId(index + 1);
             rb.setLabel(code.toString());
             rb.setDescription(code.getDescription());
@@ -126,14 +126,14 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             if (!enumerator) {
                 rb.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        ExtendedRadioButton view = (ExtendedRadioButton) v;
+                        OptionButton view = (OptionButton) v;
                         UiCode code = codeByViewId.get(view.getId());
                         boolean wasChecked = isAttributeCode(code);
                         if (selectedViewId != null) {
-                            ((ExtendedRadioButton) getContext().findViewById(selectedViewId)).setChecked(false);
+                            OptionButton oldSelectedView = getContext().findViewById(selectedViewId);
+                            oldSelectedView.setChecked(false);
                         }
                         boolean checked = !wasChecked;
-                        view.setChecked(checked);
                         selectedViewId = checked ? view.getId() : null;
 
                         if (codeList.isQualifiable(selectedCode()))

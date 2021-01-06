@@ -45,7 +45,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private final LinearLayout layout;
     private EditText qualifierInput;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private AtomicBoolean qualified = new AtomicBoolean();
+    private final AtomicBoolean qualified = new AtomicBoolean();
 
     CheckboxCodeAttributeCollectionComponent(UiAttributeCollection attributeCollection, CodeListService codeListService, SurveyService surveyService, FragmentActivity context) {
         super(attributeCollection, codeListService, surveyService, context);
@@ -201,7 +201,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                         cb.setLayoutParams(layoutParams);
                         layout.addView(cb);
                         codeByViewId.put(cb.getId(), code);
-                        boolean checked = attributesByCode.keySet().contains(code);
+                        boolean checked = attributesByCode.containsKey(code);
                         if (checked) {
                             cb.setChecked(true);
                             if (qualifiable)

@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.viewmodel.UiCode;
 
@@ -29,7 +30,7 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
         super(context, LAYOUT_RESOURCE_ID, codes);
         this.context = context;
         this.codes = codes;
-        filteredCodes = new CopyOnWriteArrayList<UiCode>(codes);
+        this.filteredCodes = new CopyOnWriteArrayList<UiCode>(codes);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -40,7 +41,8 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
             row = inflater.inflate(LAYOUT_RESOURCE_ID, parent, false);
 
             holder = new CodeHolder();
-            holder.code = (TextView) row.findViewById(android.R.id.text1);
+            holder.label = (TextView) row.findViewById(R.id.label);
+            holder.description = row.findViewById(R.id.description);
 
             row.setTag(holder);
         } else {
@@ -48,8 +50,16 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
         }
 
         UiCode code = filteredCodes.get(position);
-        holder.code.setText(code.toString());
-
+        holder.label.setText(code.toString());
+        String description = code.getDescription();
+        if (StringUtils.isBlank(description)) {
+            holder.description.setVisibility(View.GONE);
+        } else {
+            description = StringUtils.prependIfMissing(description, "(", "[");
+            description = StringUtils.appendIfMissing(description, ")", "]");
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(description);
+        }
         return row;
     }
 
@@ -110,7 +120,7 @@ class UiCodeAdapter extends ArrayAdapter<UiCode> {
     }
 
     private static class CodeHolder {
-        TextView code;
         TextView label;
+        TextView description;
     }
 }

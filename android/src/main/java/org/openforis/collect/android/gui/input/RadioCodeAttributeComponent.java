@@ -27,7 +27,8 @@ import static org.openforis.collect.android.gui.util.Views.px;
 class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private final SparseArray<UiCode> codeByViewId = new SparseArray<UiCode>();
     private final LinearLayout layout;
-    private EditText qualifierInput;
+    private final LinearLayout radioButtonsWrapperLayout;
+    private final EditText qualifierInput;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private Integer selectedViewId;
 
@@ -35,6 +36,9 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         super(attribute, codeListService, surveyService, context);
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
+        radioButtonsWrapperLayout = new LinearLayout(context);
+        radioButtonsWrapperLayout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(radioButtonsWrapperLayout);
         qualifierInput = CodeAttributeComponent.createQualifierInput(context, attribute.getQualifier(), new Runnable() {
             public void run() {
                 saveNode();
@@ -59,6 +63,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     protected void initOptions() {
         selectedViewId = null;
         codeByViewId.clear();
+        radioButtonsWrapperLayout.removeAllViews();
         executor.execute(new LoadCodesTask());
     }
 
@@ -125,12 +130,11 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
             rb.setLayoutParams(layoutParams);
             if (!enumerator) {
                 rb.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        OptionButton view = (OptionButton) v;
+                    public void onClick(View view) {
                         UiCode code = codeByViewId.get(view.getId());
                         boolean wasChecked = isAttributeCode(code);
-                        if (selectedViewId != null) {
-                            OptionButton oldSelectedView = getContext().findViewById(selectedViewId);
+                        if (selectedViewId != null && view.getId() != selectedViewId) {
+                            OptionButton oldSelectedView = radioButtonsWrapperLayout.findViewById(selectedViewId);
                             oldSelectedView.setChecked(false);
                         }
                         boolean checked = !wasChecked;
@@ -146,7 +150,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                 });
             }
             rb.setChecked(selected);
-            layout.addView(rb);
+            radioButtonsWrapperLayout.addView(rb);
             codeByViewId.put(rb.getId(), code);
             return rb;
         } else {

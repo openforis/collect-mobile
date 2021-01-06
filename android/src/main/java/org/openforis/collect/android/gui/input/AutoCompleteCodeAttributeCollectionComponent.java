@@ -97,11 +97,7 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
         CodeAttributeComponent attributeComponent = createAttributeComponent(attribute);
         attributeComponentByAttribute.put(attribute, attributeComponent);
         View inputView = attributeComponent.toInputView();
-        View button = view.findViewWithTag(CodeAttributeComponent.DESCRIPTION_BUTTON_TAG);
-        if (button == null)
-            view.addView(inputView);
-        else
-            view.addView(inputView, view.indexOfChild(button));
+        view.addView(inputView);
 
         showKeyboard(inputView);
         // TODO: Register listener when clearing

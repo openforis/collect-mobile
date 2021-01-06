@@ -1,16 +1,12 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.fragment.app.FragmentActivity;
 
@@ -19,13 +15,11 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
-import org.openforis.collect.android.gui.detail.CodeListDescriptionDialogFragment;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiCodeList;
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 /**
@@ -33,7 +27,6 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
  */
 public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAttribute> {
     static final int RADIO_GROUP_MAX_SIZE = 100;
-    static final String DESCRIPTION_BUTTON_TAG = "descriptionButton";
     private UiCode parentCode;
     final CodeListService codeListService;
     final boolean enumerator;
@@ -92,47 +85,10 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         return false;
     }
 
-    private boolean containsDescription() {
-        for (UiCode code : codeList.getCodes())
-            if (StringUtils.isNotEmpty(code.getDescription()))
-                return true;
-        return false;
-    }
-
     protected void initCodeList() {
         if (codeList == null || isCodeListRefreshForced()) {
             setCodeListRefreshForced(false);
             codeList = codeListService.codeList(attribute);
-            uiHandler.post(new Runnable() {
-                public void run() {
-                    if (containsDescription())
-                        includeDescriptionsButton();
-                }
-            });
-        }
-    }
-
-    private void includeDescriptionsButton() {
-        View inputView = toInputView();
-        ViewGroup parent = (ViewGroup) inputView.getParent();
-        if (parent == null)
-            return;
-        if (parent.findViewWithTag(DESCRIPTION_BUTTON_TAG) == null) {
-            Button button = new AppCompatButton(context);
-            button.setTextAppearance(context, android.R.style.TextAppearance_Small);
-            button.setTag(DESCRIPTION_BUTTON_TAG);
-            button.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
-            button.setText(context.getResources().getString(R.string.label_show_code_descriptions));
-            button.setBackgroundDrawable(null);
-            button.setPaintFlags(button.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    CodeListDescriptionDialogFragment.show(context.getSupportFragmentManager());
-                }
-            });
-            int linkColor = new TextView(context).getLinkTextColors().getDefaultColor();
-            button.setTextColor(linkColor);
-            parent.addView(button);
         }
     }
 

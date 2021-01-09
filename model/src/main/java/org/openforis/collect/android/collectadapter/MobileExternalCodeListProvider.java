@@ -33,10 +33,21 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         this.database = database;
     }
 
+    @Override
+    public int countRootItems(final CodeList codeList) {
+        return database.execute(new ConnectionCallback<Integer>() {
+            public Integer execute(Connection connection) throws SQLException {
+                String query = rootItemsQuery(codeList, true);
+                PreparedStatement ps = connection.prepareStatement(query);
+                return executeForCount(ps);
+            }
+        });
+    }
+
     public List<ExternalCodeListItem> getRootItems(final CodeList codeList) {
         return database.execute(new ConnectionCallback<List<ExternalCodeListItem>>() {
             public List<ExternalCodeListItem> execute(Connection connection) throws SQLException {
-                String query = rootItemsQuery(codeList);
+                String query = rootItemsQuery(codeList, false);
                 PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
                 List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
@@ -56,33 +67,28 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         });
     }
 
-    private String rootItemsQuery(CodeList codeList) {
+    private String rootItemsQuery(CodeList codeList, boolean selectCount) {
         String constraint = "1 = 1";
         int childLevel = 2; // Level is 1 based, so children of root is at level 2
         if (hasLevel(codeList, childLevel))
             constraint = levelName(codeList, childLevel) + " IS NULL";
-        return "SELECT *\n" +
+        return "SELECT " + (selectCount ? "COUNT(*)" : "*") + "\n" +
                 "FROM " + codeList.getLookupTable() + "\n" +
                 "WHERE " + constraint;
     }
 
     public List<ExternalCodeListItem> getChildItems(final ExternalCodeListItem parentItem) {
         final CodeList codeList = parentItem.getCodeList();
-        if (codeList.getHierarchy().size() <= parentItem.getLevel())
+        if (codeList.getHierarchy().size() <= parentItem.getLevel()) {
             return Collections.emptyList();
+        }
         return database.execute(new ConnectionCallback<List<ExternalCodeListItem>>() {
             public List<ExternalCodeListItem> execute(Connection connection) throws SQLException {
-                String query = childItemsQuery(parentItem);
+                String query = childItemsQuery(parentItem, false);
                 PreparedStatement ps = connection.prepareStatement(query);
 
-                // ancestor levels condition
-                List<CodeListLevel> ancestorLevels = getAncestorLevels(parentItem);
-                for (int level = 1; level <= ancestorLevels.size(); level ++) {
-                    String ancestorCode = level == parentItem.getLevel()
-                            ? parentItem.getCode()
-                            : parentItem.getParentKeyByLevel().get(ancestorLevels.get(level - 1).getName());
-                    ps.setString(level, ancestorCode);
-                }
+                addAncestorLevelsCondition(ps, parentItem);
+
                 ResultSet rs = ps.executeQuery();
                 List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
                 while (rs.next())
@@ -91,6 +97,24 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 ps.close();
                 Collections.sort(items, new NaturalOrderComparator<ExternalCodeListItem>());
                 return items;
+            }
+        });
+    }
+
+    @Override
+    public boolean hasChildItems(final ExternalCodeListItem parentItem) {
+        final CodeList codeList = parentItem.getCodeList();
+        if (codeList.getHierarchy().size() <= parentItem.getLevel()) {
+            return false;
+        }
+        return database.execute(new ConnectionCallback<Boolean>() {
+            public Boolean execute(Connection connection) throws SQLException {
+                String query = childItemsQuery(parentItem, false);
+                PreparedStatement ps = connection.prepareStatement(query);
+
+                addAncestorLevelsCondition(ps, parentItem);
+
+                return executeForCount(ps) > 0;
             }
         });
     }
@@ -150,7 +174,7 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
             appendSingleItemQueryConstraint(parent, codeList, s);
     }
 
-    private String childItemsQuery(ExternalCodeListItem parentItem) {
+    private String childItemsQuery(ExternalCodeListItem parentItem, boolean selectCount) {
         CodeList codeList = parentItem.getCodeList();
         List<CodeListLevel> hierarchy = codeList.getHierarchy();
 
@@ -171,7 +195,7 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
             constraints.add(descendantLevel.getName() + " IS NULL");
         }
 
-        return String.format("SELECT *\n" +
+        return String.format("SELECT " + (selectCount ? "COUNT(*)" : "*") + "\n" +
                 "FROM %s \n" +
                 "WHERE %s", codeList.getLookupTable(), StringUtils.join(constraints, " AND "));
     }
@@ -190,6 +214,16 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         return item.getCodeList().getHierarchy().subList(0, item.getLevel());
     }
 
+    private void addAncestorLevelsCondition(PreparedStatement ps, ExternalCodeListItem parentItem) throws SQLException {
+        List<CodeListLevel> ancestorLevels = getAncestorLevels(parentItem);
+        for (int level = 1; level <= ancestorLevels.size(); level ++) {
+            String ancestorCode = level == parentItem.getLevel()
+                    ? parentItem.getCode()
+                    : parentItem.getParentKeyByLevel().get(ancestorLevels.get(level - 1).getName());
+            ps.setString(level, ancestorCode);
+        }
+    }
+
     public String getCode(CodeList codeList, String s, Object... objects) {
         throw new UnsupportedOperationException("Not implemented - deprecated");
     }
@@ -200,5 +234,15 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         for (int i = 1; i < metaData.getColumnCount(); i++)
             row.put(metaData.getColumnName(i).toLowerCase(), rs.getString(i));
         return row;
+    }
+
+    private int executeForCount(PreparedStatement ps) throws SQLException {
+        ResultSet rs = ps.executeQuery();
+        int count = 0;
+        if (rs.next())
+            count = rs.getInt(1);
+        rs.close();
+        ps.close();
+        return count;
     }
 }

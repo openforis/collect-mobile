@@ -70,7 +70,10 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         Double altitude = attribute.getDefinition().includeAltitude ? toDouble(vh.altitudeView) : null;
         Double accuracy = attribute.getDefinition().includeAccuracy ? toDouble(vh.accuracyView) : null;
 
-        if (notEqual(srs, attribute.getSpatialReferenceSystem()) ||
+        // srs always set in ui, while it can be null in the attribute: avoid unnecessary updates
+        boolean srsUpdated = attribute.getSpatialReferenceSystem() != null && notEqual(srs, attribute.getSpatialReferenceSystem());
+
+        if (srsUpdated ||
                 notEqual(x, attribute.getX()) ||
                 notEqual(y, attribute.getY()) ||
                 notEqual(altitude, attribute.getAltitude()) ||
@@ -150,7 +153,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
     @Override
     protected void focusOnMessageContainerView() {
-        if (! (vh.xView.hasFocus() || vh.yView.hasFocus())) {
+        if (!(vh.xView.hasFocus() || vh.yView.hasFocus())) {
             super.focusOnMessageContainerView();
         }
     }
@@ -314,7 +317,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
                 }
 
                 public void afterTextChanged(Editable s) {
-                    if (! requestingLocation) {
+                    if (!requestingLocation) {
                         input.setError(null);
                         delaySaveNode();
                     }
@@ -335,8 +338,8 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
         private TextView createNumberField(Double value) {
             return attribute.getDefinition().onlyChangedByDevice
-                ? createNumberOutput(value)
-                : createNumberInput(value);
+                    ? createNumberOutput(value)
+                    : createNumberInput(value);
         }
 
         private ToggleButton createStartStopButton() {
@@ -399,7 +402,9 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
     private class UpdateListener implements LocationProvider.LocationUpdateListener {
         private final FragmentActivity context;
 
-        UpdateListener(FragmentActivity context) {this.context = context;}
+        UpdateListener(FragmentActivity context) {
+            this.context = context;
+        }
 
         public void onUpdate(Location location) {
             double accuracy = roundTo2Decimals(location.getAccuracy());

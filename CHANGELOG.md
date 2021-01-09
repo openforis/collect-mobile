@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 186 2021-01-09
+### Fixed
+- Default code item description to survey default language description;
+
 ## [1.7.8] - build 185 2021-01-09
 ### Added
 - Show code item description below label;

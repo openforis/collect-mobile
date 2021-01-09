@@ -335,15 +335,21 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     }
 
     private String determineSelectedSurveyPreferredLanguage() {
+        String lang;
         switch (languagePreference) {
             case SURVEY_DEFAULT:
-                return selectedSurvey.getDefaultLanguage();
+                lang = selectedSurvey.getDefaultLanguage();
+                break;
             case SPECIFIED:
-                return preferredLanguage;
+                lang = preferredLanguage;
+                break;
             case SYSTEM_DEFAULT:
             default:
-                return Locale.getDefault().getLanguage();
+                lang = Locale.getDefault().getLanguage();
         }
+        return selectedSurvey.getLanguages().contains(lang)
+                ? lang
+                : selectedSurvey.getDefaultLanguage();
     }
 
     private Entity extractAddedEntity(NodeChangeSet changeSet) {

@@ -44,7 +44,7 @@ class ModelConverter {
         UiCode qualifiableCode = null;
         for (CodeListItem item : codeList) {
             UiCode code = new UiCode(item.getCode(), item.getLabel(preferredLanguage, true),
-                    item.getDescription(preferredLanguage), valueShown);
+                    item.getDescription(preferredLanguage, true), valueShown);
             if (item.isQualifiable())
                 qualifiableCode = code;
             uiCodes.add(code);

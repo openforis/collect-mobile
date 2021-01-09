@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 185 2021-01-09
+### Added
+- Show code item description below label;
+
 ## [1.7.8] - build 184 2020-12-31
 ### Fixed
 - Fixed error importing surveys in Android 6/7

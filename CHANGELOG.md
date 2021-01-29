@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 187 2021-01-29
+### Fixed
+- Error using geometry (polygon) in text attribute;
+
 ## [1.7.8] - build 186 2021-01-09
 ### Fixed
 - Default code item description to survey default language description;

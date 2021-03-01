@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:4.0.14') {
+    compile ('org.openforis.collect:collect-core:4.0.16') {
         exclude group: 'commons-jxpath'
         exclude group: 'org.apache.poi'
     }
@@ -28,7 +28,7 @@ dependencies {
     compile 'org.liquibase:liquibase-core:3.1.1'
     compile 'com.google.guava:guava:20.0'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-    testCompile 'org.codehaus.groovy:groovy-all:2.4.12'
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.15'
     testCompile 'com.h2database:h2:1.4.189'
 }
 

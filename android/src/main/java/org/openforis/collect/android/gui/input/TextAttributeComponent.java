@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.text.InputFilter;
 import android.text.InputType;
 import android.widget.EditText;
 
@@ -7,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiTextAttribute;
+import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 
 /**
  * @author Daniel Wiell
@@ -25,8 +27,11 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
     }
 
     protected void onEditTextCreated(EditText input) {
-        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
+        int inputType = def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
+        input.setInputType(inputType);
+        if (def.isAutoUppercase()) {
+            input.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        }
     }
-
-
 }

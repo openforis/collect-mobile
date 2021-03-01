@@ -7,6 +7,7 @@ import org.openforis.collect.metamodel.CollectAnnotations.TextInput;
  */
 public class UiTextAttributeDefinition extends UiAttributeDefinition {
     public final TextInput inputType;
+    private boolean autoUppercase;
 
     public UiTextAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                      boolean calculated, boolean calculatedOnlyOneTime, boolean hidden,
@@ -19,5 +20,13 @@ public class UiTextAttributeDefinition extends UiAttributeDefinition {
 
     public TextInput getInputType() {
         return inputType;
+    }
+
+    public boolean isAutoUppercase() {
+        return autoUppercase;
+    }
+
+    public void setAutoUppercase(boolean autoUppercase) {
+        this.autoUppercase = autoUppercase;
     }
 }

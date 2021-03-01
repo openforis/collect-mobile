@@ -15,6 +15,7 @@ import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
 import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 import org.openforis.collect.metamodel.CollectAnnotations;
+import org.openforis.collect.metamodel.ui.UIOptions;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
@@ -128,9 +129,10 @@ public class Definitions {
         if (def instanceof AttributeDefinition) {
             CollectSurvey survey = def.getSurvey();
             CollectAnnotations annotations = survey.getAnnotations();
+            UIOptions uiOptions = survey.getUIOptions();
             boolean calculated = ((AttributeDefinition) def).isCalculated();
             boolean calculatedOnlyOneTime = annotations.isCalculatedOnlyOneTime(def);
-            boolean hidden = survey.getUIOptions().isHidden(def);
+            boolean hidden = uiOptions.isHidden(def);
             if (def instanceof TaxonAttributeDefinition)
                 return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
@@ -153,7 +155,7 @@ public class Definitions {
                 return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
                         nodeDescription(def), nodePrompt(def), interviewLabel, required,
-                        collectSurvey.getUIOptions().getShowCode((CodeAttributeDefinition) def), enumerator);
+                        uiOptions.getShowCode((CodeAttributeDefinition) def), enumerator);
             } else if (def instanceof FileAttributeDefinition) {
                 CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) def);
                 return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
@@ -161,9 +163,12 @@ public class Definitions {
                         nodeDescription(def), nodePrompt(def), interviewLabel, required, fileType);
             } else if (def instanceof TextAttributeDefinition) {
                 CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) def);
-                return new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId,
+                boolean autoUppercase = uiOptions.isAutoUppercase((TextAttributeDefinition) def);
+                UiTextAttributeDefinition uiTextAttributeDef = new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
                         inputType, nodeDescription(def), nodePrompt(def), interviewLabel, required);
+                uiTextAttributeDef.setAutoUppercase(autoUppercase);
+                return uiTextAttributeDef;
             } else
                 return new UiAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,

@@ -67,7 +67,7 @@ public class Dialogs {
 
     public static AlertDialog confirm(Context context, int titleKey, String message,
                                       final Runnable runOnPositiveButtonClick) {
-        return confirm(context, titleKey, message, runOnPositiveButtonClick, null, R.string.confirm_label, R.string.cancel_label);
+        return confirm(context, titleKey, message, runOnPositiveButtonClick, null, R.string.confirm_label, android.R.string.cancel);
     }
 
     public static AlertDialog confirm(Context context, int titleKey, int messageKey,

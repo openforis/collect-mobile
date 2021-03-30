@@ -11,14 +11,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
-import net.rdrei.android.dirchooser.DirectoryChooserFragment;
+import com.codekidlabs.storagechooser.StorageChooser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.Collect;
@@ -49,13 +48,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 
-import static org.openforis.collect.android.gui.util.AppDirs.PREFERENCE_KEY;
 
 /**
  * @author Daniel Wiell
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SettingsActivity extends Activity implements DirectoryChooserFragment.OnFragmentInteractionListener {
+public class SettingsActivity extends Activity {
 
     public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
     private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
@@ -73,22 +71,11 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
     public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
 
-    private DirectoryChooserFragment directoryChooserDialog;
-    private SettingsFragment settingsFragment;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
-        File workingDir = AppDirs.root(this);
-        final DirectoryChooserConfig directoryChooserConfig = DirectoryChooserConfig.builder()
-                .initialDirectory(workingDir.getAbsolutePath())
-                .newDirectoryName(workingDir.getName())
-                .allowNewDirectoryNameModification(true)
-                .build();
-        directoryChooserDialog = DirectoryChooserFragment.newInstance(directoryChooserConfig);
-
         // Display the fragment as the main content.
-        settingsFragment = new SettingsFragment();
+        SettingsFragment settingsFragment = new SettingsFragment();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, settingsFragment)
                 .commit();
@@ -105,23 +92,6 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         Settings.setRemoteCollectAddress(preferences.getString(REMOTE_COLLECT_ADDRESS, ""));
         Settings.setRemoteCollectUsername(preferences.getString(REMOTE_COLLECT_USERNAME, ""));
         Settings.setRemoteCollectPassword(preferences.getString(REMOTE_COLLECT_PASSWORD, ""));
-    }
-
-    public void onSelectDirectory(@NonNull String workingDir) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(PREFERENCE_KEY, workingDir);
-        editor.apply();
-        Preference workingDirPreference = settingsFragment.findPreference(PREFERENCE_KEY);
-        workingDirPreference.setSummary(workingDir);
-        directoryChooserDialog.dismiss();
-        ServiceLocator.reset(this);
-        Activities.startNewClearTask(this, MainActivity.class);
-        this.finish();
-    }
-
-    public void onCancelChooser() {
-        directoryChooserDialog.dismiss();
     }
 
     @Override
@@ -147,12 +117,62 @@ public class SettingsActivity extends Activity implements DirectoryChooserFragme
         }
 
         private void setupStorageLocationPreference() {
-            Preference workingDirPreference = findPreference(PREFERENCE_KEY);
-            workingDirPreference.setSummary(AppDirs.root(getActivity()).getAbsolutePath());
+            final Activity activity = getActivity();
+            final Preference workingDirPreference = findPreference(AppDirs.PREFERENCE_KEY);
+            workingDirPreference.setSummary(AppDirs.root(activity).getAbsolutePath());
             workingDirPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    ((SettingsActivity) getActivity()).directoryChooserDialog.show(getFragmentManager(), null);
+                    String predefinedPath = AppDirs.root(activity).getAbsolutePath();
+                    final StorageChooser chooser = new StorageChooser.Builder()
+                            .withActivity(activity)
+                            .withFragmentManager(getFragmentManager())
+                            .withMemoryBar(true)
+                            .allowCustomPath(true)
+                            .allowAddFolder(true)
+                            .setType(StorageChooser.DIRECTORY_CHOOSER)
+                            .withPredefinedPath(predefinedPath)
+                            .build();
+
+                    // handle path that the user has chosen
+                    chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
+                        public void onSelect(final String path) {
+                            onWorkingDirectorySelect(path);
+                        }
+                    });
+                    chooser.show();
                     return true;
+                }
+            });
+        }
+
+        private void onWorkingDirectorySelect(final String path) {
+            final Activity activity = getActivity();
+
+            String oldPath = AppDirs.root(activity).getAbsolutePath();
+            if (oldPath.equals(path)) {
+                // do nothing
+                return;
+            }
+            // check that selected path is writable
+            if (!new File(path).canWrite()) {
+                Dialogs.alert(activity, R.string.warning, R.string.settings_error_working_directory);
+                return;
+            }
+
+            // confirm working directory change
+            Dialogs.confirm(activity, R.string.confirm_label, getString(R.string.settings_working_directory_confirm_change, oldPath, path), new Runnable() {
+                public void run() {
+                    // save working directory to preferences
+                    Preference workingDirPreference = findPreference(AppDirs.PREFERENCE_KEY);
+                    SharedPreferences.Editor editor = workingDirPreference.getEditor();
+                    editor.putString(AppDirs.PREFERENCE_KEY, path);
+                    editor.apply();
+                    workingDirPreference.setSummary(path);
+
+                    // reset service locator and restart main activity
+                    ServiceLocator.reset(activity);
+                    Activities.startNewClearTask(activity, MainActivity.class);
+                    activity.finish();
                 }
             });
         }

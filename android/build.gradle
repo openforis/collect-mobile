@@ -6,7 +6,7 @@ buildscript {
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:4.1.3'
     }
 }
 
@@ -18,15 +18,13 @@ repositories {
     google()
     jcenter()
     maven { url "http://www.openforis.org/nexus/content/groups/public/" }
-    // dirchooser dependencies
-    maven { url 'http://guardian.github.com/maven/repo-releases' }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    def appcompat_version = "1.2.0"
-    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     // For loading and tinting drawables on older versions of the platform
-    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+    implementation 'androidx.appcompat:appcompat-resources:1.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.3.0'
 
@@ -35,10 +33,7 @@ dependencies {
         exclude group: 'com.google.android'
     }
     compile 'com.ipaulpro.afilechooser:afilechooser:0.0.1@aar'
-    // start of dirchooser dependencies
-    compile 'com.gu:option:1.3'
-    compile('net.rdrei.android.dirchooser:library:3.2@aar')
-    // end of dirchooser dependencies
+    implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
     compile 'com.inqbarna:tablefixheaders:1.0.0@aar'
     compile(project(':model')) {
         exclude group: 'org.springframework'
@@ -53,10 +48,6 @@ dependencies {
         exclude group: 'log4j'
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
-    }
-    compile('org.openforis.android:android-jxpath:1.0-Alpha2') {
-        exclude group: 'org.eclipse.jetty.orbit'
-        exclude group: 'org.apache.tomcat'
     }
     compile 'org.openforis.android:android-spring:1.0-Alpha2'
     compile 'org.sqldroid:sqldroid:1.0.3'
@@ -102,7 +93,7 @@ android {
     buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId 'org.openforis.collect'
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 30
         versionCode actualVersionCode
         versionName actualVersionName

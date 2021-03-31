@@ -49,6 +49,12 @@ dependencies {
         exclude group: 'org.apache.lucene'
         exclude group: 'org.liquibase'
     }
+    // TODO change dependency in collect-core
+    implementation ('com.github.apache:commons-jxpath') {
+        version {
+            strictly 'master-SNAPSHOT'
+        }
+    }
     compile 'org.openforis.android:android-spring:1.0-Alpha2'
     compile 'org.sqldroid:sqldroid:1.0.3'
     compile 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'

@@ -22,6 +22,7 @@ dependencies {
     compile ('org.openforis.collect:collect-core:4.0.19') {
         exclude group: 'org.apache.poi'
     }
+    // TODO change dependency in collect-core
     implementation ('com.github.apache:commons-jxpath') {
         version {
             strictly 'master-SNAPSHOT'

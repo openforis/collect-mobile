@@ -118,7 +118,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
                     };
                     if (file != null && file.exists()) {
                         Dialogs.confirm(context, R.string.warning, R.string.file_attribute_captured_file_overwrite_confirm_message,
-                                captureImageRunnable, null, R.string.overwrite_label, R.string.cancel_label);
+                                captureImageRunnable, null, R.string.overwrite_label, android.R.string.cancel);
                     } else {
                         captureImageRunnable.run();
                     }

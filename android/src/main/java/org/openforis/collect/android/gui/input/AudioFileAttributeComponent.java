@@ -103,7 +103,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
                                     public void run() {
                                         startRecording();
                                     }
-                                }, null, R.string.overwrite_label, R.string.cancel_label);
+                                }, null, R.string.overwrite_label, android.R.string.cancel);
                     } else {
                         startRecording();
                     }
@@ -148,7 +148,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
                                 reset();
                                 removeFile();
                             }
-                        }, null, R.string.delete, R.string.cancel_label);
+                        }, null, R.string.delete, android.R.string.cancel);
             }
         });
     }

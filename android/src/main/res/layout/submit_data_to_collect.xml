@@ -55,7 +55,7 @@
             android:id="@+id/cancelRemoteDataRestoreBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel_label" />
+            android:text="@android:string/cancel" />
     </LinearLayout>
 
     <LinearLayout

@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.detail;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +13,7 @@ import android.view.ViewManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import org.openforis.collect.R;
@@ -21,6 +23,7 @@ import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
@@ -39,6 +42,8 @@ import java.util.Map;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
+    private static final int TEXT_MAX_LINES_TWO_PANE = 8;
+    private static final int TEXT_MAX_LINES_SINGLE_PANE = 4;
 
     private boolean selected;
     private T node;
@@ -57,13 +62,13 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = createView(inflater, container, savedInstanceState);
-
-        String label = getActivity() instanceof SurveyNodeActivity && ((SurveyNodeActivity) getActivity()).isTwoPane()
-                ? node.getDefinition().getInterviewLabelOrLabel()
+        Definition nodeDef = node.getDefinition();
+        String label = isTwoPane()
+                ? nodeDef.getInterviewLabelOrLabel()
                 : node.getLabel();
         setOrRemoveText(rootView, R.id.node_label, label + " ");
-        setOrRemoveText(rootView, R.id.node_description, node.getDefinition().description);
-        setOrRemoveText(rootView, R.id.node_prompt, node.getDefinition().prompt);
+        setOrRemoveText(rootView, R.id.node_description, nodeDef.description);
+        setOrRemoveText(rootView, R.id.node_prompt, nodeDef.prompt);
 
         return rootView;
     }
@@ -73,11 +78,15 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private void setOrRemoveText(View rootView, int textViewId, String text) {
-        TextView textView = (TextView) rootView.findViewById(textViewId);
+        TextView textView = rootView.findViewById(textViewId);
         if (text == null)
             ((ViewManager) textView.getParent()).removeView(textView);
-        else
+        else {
             textView.setText(text);
+            textView.setMaxLines(isTwoPane() ? TEXT_MAX_LINES_TWO_PANE : TEXT_MAX_LINES_SINGLE_PANE);
+            // add vertical scroll
+            textView.setMovementMethod(new ScrollingMovementMethod());
+        }
     }
 
     @Override
@@ -87,10 +96,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
             onSelected();
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.node_detail_fragment_actions, menu);
-        SurveyNodeActivity activity = (SurveyNodeActivity) getActivity();
-        if (activity.isTwoPane())
+        if (isTwoPane())
             menu.removeItem(R.id.action_attribute_list);
     }
 
@@ -222,17 +231,21 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         Keyboard.hide(getActivity());
     }
 
-    public static NodeDetailFragment create(UiNode node) {
+    private boolean isTwoPane() {
+        return getActivity() instanceof SurveyNodeActivity && ((SurveyNodeActivity) getActivity()).isTwoPane();
+    }
+
+    public static NodeDetailFragment<?> create(UiNode node) {
         Bundle arguments = new Bundle();
         if (!(node instanceof UiRecordCollection)) // TODO: Ugly
             arguments.putInt(ARG_RECORD_ID, node.getUiRecord().getId());
         arguments.putInt(ARG_NODE_ID, node.getId());
-        NodeDetailFragment fragment = createInstance(node);
+        NodeDetailFragment<?> fragment = createInstance(node);
         fragment.setArguments(arguments);
         return fragment;
     }
 
-    private static NodeDetailFragment createInstance(UiNode node) {
+    private static NodeDetailFragment<?> createInstance(UiNode node) {
         if (node instanceof UiAttribute && node.isCalculated())
             return new CalculatedAttributeFragment();
         if (node instanceof UiAttribute || node instanceof UiAttributeCollection)

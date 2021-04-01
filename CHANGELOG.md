@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 190 NOT RELEASED YET 
+### Added
+- Layout adjustments;
+
 ## [1.7.8] - build 189 2021-04-01
 ### Added
 - Improved Working Directory chooser;

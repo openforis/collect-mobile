@@ -19,7 +19,7 @@ import org.openforis.collect.android.viewmodel.UiNode;
 public class SimpleNodePagerAdapter extends FragmentStatePagerAdapter {
 
     private final FragmentManager fm;
-    private NodeDetailFragment nodeDetailFragment;
+    private NodeDetailFragment<?> nodeDetailFragment;
 
     public SimpleNodePagerAdapter(FragmentManager fm) {
         super(fm);
@@ -28,8 +28,6 @@ public class SimpleNodePagerAdapter extends FragmentStatePagerAdapter {
 
     public Fragment getItem(int position) {
         switch(position) {
-            case 0:
-                return new LoadingFragment();
             case 1:
                 return nodeDetailFragment;
             default:
@@ -52,7 +50,7 @@ public class SimpleNodePagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-    public void setCurrentNodeFragment(NodeDetailFragment selectedFragment) {
+    public void setCurrentNodeFragment(NodeDetailFragment<?> selectedFragment) {
         if (nodeDetailFragment != null) {
             nodeDetailFragment.onDeselect();
         }
@@ -65,7 +63,7 @@ public class SimpleNodePagerAdapter extends FragmentStatePagerAdapter {
         setCurrentNodeFragment(NodeDetailFragment.create(node));
     }
 
-    public NodeDetailFragment getCurrentNodeDetailFragment() {
+    public NodeDetailFragment<?> getCurrentNodeDetailFragment() {
         return nodeDetailFragment;
     }
 

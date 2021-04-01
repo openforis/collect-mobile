@@ -1,22 +1,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/label_and_add_node"/>
+    <include layout="@layout/label_and_add_node" />
 
     <TextView
         android:id="@+id/node_prompt"
         style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="?attr/standardPadding"/>
+        android:maxLines="4"
+        android:paddingLeft="?attr/standardPadding"
+        android:paddingRight="?attr/standardPadding"
+        android:paddingBottom="?attr/standardPadding"
+        android:scrollbars="vertical" />
 
     <TextView
         android:id="@+id/node_description"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="?attr/standardPadding" />
+        android:maxLines="4"
+        android:paddingLeft="?attr/standardPadding"
+        android:paddingRight="?attr/standardPadding"
+        android:paddingBottom="?attr/standardPadding"
+        android:scrollbars="vertical" />
 
     <LinearLayout
         android:id="@+id/validation_error_container"
@@ -30,22 +38,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/red_circle"/>
+            android:src="@drawable/red_circle" />
 
         <TextView
             android:id="@+id/validation_error_messages"
-            android:textColor="#FF0000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp" />
+            android:paddingLeft="10dp"
+            android:textColor="#FF0000" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="?attr/standardPadding"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="?attr/standardPadding">
 
         <LinearLayout
             android:id="@+id/entity_list_header_wrapper"
@@ -105,10 +113,11 @@
 
             </RelativeLayout>
 
-            <View android:id="@+id/separator"
-                android:background="?entityListHeaderBorderColor"
+            <View
+                android:id="@+id/separator"
                 android:layout_width="match_parent"
-                android:layout_height="1dip"/>
+                android:layout_height="1dip"
+                android:background="?entityListHeaderBorderColor" />
 
         </LinearLayout>
 
@@ -117,7 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:choiceMode="singleChoice"
-            android:minHeight="0dp"/>
+            android:minHeight="0dp" />
 
     </LinearLayout>
 </LinearLayout>

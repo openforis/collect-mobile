@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.viewpagerindicator.PageIndicator;
+
+import com.rd.PageIndicatorView;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -123,13 +124,9 @@ public class NodePagerFragment extends Fragment {
                 }
             }
         };
-        final PageIndicator indicator = view.findViewById(R.id.attributePagerIndicator);
+        final PageIndicatorView indicator = view.findViewById(R.id.attributePagerIndicator);
         indicator.setViewPager(pager);
-        indicator.setOnPageChangeListener(pageChangeListener);
-        List<UiNode> relevantSiblings = selectedNode().getRelevantSiblings();
-        int selectedIndex = relevantSiblings.indexOf(selectedNode());
-        indicator.setCurrentItem(selectedIndex);
-
+        pager.addOnPageChangeListener(pageChangeListener);
         fragmentsByNode.get(selectedNode()).onSelect();
     }
 

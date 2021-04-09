@@ -79,7 +79,7 @@
         <activity
             android:name=".android.gui.AboutActivity"
             android:label="@string/action_about" />
-
+        <!--
         <activity
             android:name="com.ipaulpro.afilechooser.FileChooserActivity"
             android:enabled="@bool/use_activity"
@@ -107,7 +107,7 @@
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
-
+-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="org.openforis.collect.fileprovider"

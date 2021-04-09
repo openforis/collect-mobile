@@ -7,7 +7,7 @@
     <attr name="relevantTextColor" format="reference|color"/>
     <attr name="irrelevantTextColor" format="reference|color"/>
     <attr name="titleIndicatorColor" format="reference|color"/>
-    <attr name="nodePathDetailsBackground" format="reference|color"/>
+    <attr name="nodePathDetailsBackgroundColor" format="reference|color"/>
     <attr name="entityListHeaderBorderColor" format="reference|color"/>
     <attr name="nodeListSelectedBackgroundColor" format="reference|color"/>
 

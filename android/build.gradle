@@ -3,6 +3,7 @@ buildscript {
         mavenCentral()
         google()
         jcenter()
+//        maven { url "https://maven.repository.redhat.com/ga" }
         maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
@@ -17,8 +18,11 @@ repositories {
     mavenCentral()
     google()
     jcenter()
-    maven { url "http://www.openforis.org/nexus/content/groups/public/" }
     maven { url "https://jitpack.io" }
+    maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+
+    // for openbeans
+//    maven { url "https://maven.repository.redhat.com/ga" }
 }
 
 dependencies {
@@ -29,12 +33,14 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
 
     implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation('com.viewpagerindicator:library:2.4.1.1') {
-        exclude group: 'com.google.android'
-    }
-    implementation 'com.ipaulpro.afilechooser:afilechooser:0.0.1@aar'
+    implementation 'com.romandanylyk:pageindicatorview:1.0.3'
+    //
+//    implementation('com.viewpagerindicator:library:2.4.1') {
+//        exclude group: 'com.google.android'
+//    }
+//    implementation 'andhradroid.dev:aFileChooser:1.0.1'
     implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
-    implementation 'com.inqbarna:tablefixheaders:1.0.0@aar'
+    implementation 'com.github.InQBarna:TableFixHeaders:master'
     implementation(project(':model')) {
         transitive = true
         exclude group: 'commons-collections'
@@ -52,7 +58,7 @@ dependencies {
     implementation 'org.sqldroid:sqldroid:1.0.3'
     implementation 'org.openforis.android:android-liquibase-core:2.0.6-Alpha2'
     implementation 'org.slf4j:slf4j-android:1.6.1-RC1'
-    implementation 'com.googlecode.openbeans:openbeans:1.0'
+    //implementation 'com.googlecode.openbeans:openbeans:1.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
     implementation 'org.apache.logging.log4j:log4j-core:2.3'
     implementation 'com.github.medyo:android-about-page:1.2.5'

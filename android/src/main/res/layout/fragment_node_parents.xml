@@ -25,5 +25,5 @@
     <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/default_line_indicator_selected_color"/>
+            android:background="?attr/entityListHeaderBorderColor"/>
 </LinearLayout>

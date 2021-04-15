@@ -22,8 +22,9 @@ dependencies {
     compile ('org.openforis.collect:collect-core:4.0.20') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'
+        exclude group: 'org.liquibase'
     }
-    compile 'org.liquibase:liquibase-core:3.1.1'
+    compile 'com.github.openforis.android-liquibase:liquibase-core:327ef5926c'
     compile 'com.google.guava:guava:20.0'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.15'

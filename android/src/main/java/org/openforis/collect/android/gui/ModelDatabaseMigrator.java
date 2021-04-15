@@ -17,7 +17,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import liquibase.database.core.AndroidSQLiteDatabase;
+import liquibase.database.DatabaseConnection;
+import liquibase.database.core.SQLiteDatabase;
 import liquibase.exception.DatabaseException;
 
 public class ModelDatabaseMigrator {
@@ -38,6 +39,7 @@ public class ModelDatabaseMigrator {
         Properties collectVersion = new Properties();
         File surveyDir = new File(AppDirs.surveysDir(context), surveyName); // TODO: Use the survey dir instead
         File collectVersionFile = new File(surveyDir, "collect-version.properties");
+
         if (collectVersionFile.exists())
             migrateIfNeeded(currentVersion, collectVersion, collectVersionFile);
         else
@@ -72,12 +74,17 @@ public class ModelDatabaseMigrator {
 
     public void migrate() {
         long start = System.currentTimeMillis();
-        new ModelDatabaseSchemaUpdater().update(database, new AndroidSQLiteDatabase() {
+        new ModelDatabaseSchemaUpdater().update(database, new SQLiteDatabase() {
+            public static final String PRODUCT_NAME = "SQLite for Android";
+
+            @Override
             public boolean isLocalDatabase() throws DatabaseException {
                 return true;
             }
-            public void rollback() throws DatabaseException {
-                super.rollback();
+
+            public boolean isCorrectDatabaseImplementation(DatabaseConnection conn)
+                    throws DatabaseException {
+                return PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
             }
         });
         long time = System.currentTimeMillis() - start;

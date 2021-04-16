@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui;
 
 import android.content.Context;
 
+import org.apache.commons.io.IOUtils;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -36,39 +37,24 @@ public class ModelDatabaseMigrator {
 
     public void migrateIfNeeded() {
         Version currentVersion = Collect.VERSION;
-        Properties collectVersion = new Properties();
         File surveyDir = new File(AppDirs.surveysDir(context), surveyName); // TODO: Use the survey dir instead
         File collectVersionFile = new File(surveyDir, "collect-version.properties");
 
-        if (collectVersionFile.exists())
-            migrateIfNeeded(currentVersion, collectVersion, collectVersionFile);
-        else
-            migrate();
+        migrateIfNeeded(currentVersion, collectVersionFile);
 
-        try {
-            collectVersion.setProperty("major", String.valueOf(currentVersion.getMajor()));
-            collectVersion.setProperty("minor", String.valueOf(currentVersion.getMinor()));
-            collectVersion.store(new FileOutputStream(collectVersionFile), "");
-            AndroidFiles.makeDiscoverable(collectVersionFile, context);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Failed to store collect-version.properties file", e);
-        }
+        storeCollectVersion(currentVersion, collectVersionFile);
     }
 
-    private void migrateIfNeeded(Version currentVersion, Properties collectVersion, File collectVersionFile) {
-        try {
-            FileInputStream in = new FileInputStream(collectVersionFile);
-            collectVersion.load(in);
-
+    private void migrateIfNeeded(Version currentVersion, File collectVersionFile) {
+        Properties collectVersion = loadVersionFromFile(collectVersionFile);
+        if (collectVersion == null) {
+            migrate();
+        } else {
             int majorVersion = Integer.parseInt(collectVersion.getProperty("major"));
             int minorVersion = Integer.parseInt(collectVersion.getProperty("minor"));
 
             if (majorVersion < currentVersion.getMajor() || minorVersion < currentVersion.getMinor())
                 migrate();
-
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Failed to check if migration is needed", e);
-            migrate();
         }
     }
 
@@ -89,5 +75,34 @@ public class ModelDatabaseMigrator {
         });
         long time = System.currentTimeMillis() - start;
         System.out.println(time);
+    }
+
+    private void storeCollectVersion(Version currentVersion, File collectVersionFile) {
+        try {
+            Properties collectVersion = new Properties();
+            collectVersion.setProperty("major", String.valueOf(currentVersion.getMajor()));
+            collectVersion.setProperty("minor", String.valueOf(currentVersion.getMinor()));
+            collectVersion.store(new FileOutputStream(collectVersionFile), "");
+            AndroidFiles.makeDiscoverable(collectVersionFile, context);
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Failed to store collect-version.properties file", e);
+        }
+    }
+
+    private static Properties loadVersionFromFile(File file) {
+        if (file.exists()) {
+            FileInputStream in = null;
+            try {
+                Properties collectVersion = new Properties();
+                in = new FileInputStream(file);
+                collectVersion.load(in);
+                return collectVersion;
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Failed to determine collect version", e);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+        }
+        return null;
     }
 }

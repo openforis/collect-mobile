@@ -27,6 +27,7 @@ import java.util.Iterator;
 public abstract class AndroidFiles {
 
     private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.fileprovider";
+    public static final String COLTRANE_FILE_PICKER_URI_EXTRA_NAME = "com.mobilejazz.coltrane.ui.browser.result.document.id";
 
     /**
      * Workaround for https://code.google.com/p/android/issues/detail?id=38282.
@@ -116,8 +117,16 @@ public abstract class AndroidFiles {
         target.addCategory(Intent.CATEGORY_OPENABLE);
         Intent intent = Intent.createChooser(
                 target, context.getString(R.string.select_survey_to_import));
-
         context.startActivityForResult(intent, requestCode);
+    }
+
+    public static Uri getUriFromGetContentIntent(Intent data) {
+        if (data.getData() != null) {
+            return data.getData();
+        }
+        // Coltrane file picker activity result
+        String uri = data.getStringExtra(COLTRANE_FILE_PICKER_URI_EXTRA_NAME);
+        return Uri.parse(String.format("file://%s", uri));
     }
 
     public static long availableSize(File path) {

@@ -117,7 +117,8 @@ public class SurveyListActivity extends BaseActivity {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
-                    importSurvey(data.getData());
+                    Uri uri = AndroidFiles.getUriFromGetContentIntent(data);
+                    importSurvey(uri);
                 }
                 break;
         }

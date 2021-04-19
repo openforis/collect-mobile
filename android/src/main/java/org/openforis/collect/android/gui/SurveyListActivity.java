@@ -127,7 +127,7 @@ public class SurveyListActivity extends BaseActivity {
 
     protected static void showImportDialog(Activity context) {
         if (Permissions.checkStoragePermissionOrRequestIt(context)) {
-            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE);
+            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE, R.string.select_survey_to_import);
         }
     }
 

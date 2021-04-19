@@ -80,11 +80,11 @@
             android:name=".android.gui.AboutActivity"
             android:label="@string/action_about" />
 
-        <!-- File choose activity -->
+        <!-- File picker activity -->
         <activity
-            android:name="com.mobilejazz.coltrane.ui.DocumentBrowserActivity"
-            android:label="@string/choose_file"
-            android:theme="@style/Theme.Lollipop">
+            android:name="com.nononsenseapps.filepicker.FilePickerActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FilePickerTheme">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.OPENABLE" />
@@ -95,7 +95,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.openforis.collect.fileprovider"
+            android:authorities="org.openforis.collect.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

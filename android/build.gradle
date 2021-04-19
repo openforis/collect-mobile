@@ -49,12 +49,7 @@ dependencies {
     // page indicator
     implementation 'com.romandanylyk:pageindicatorview:1.0.3'
     // file chooser (survey import)
-    implementation ('com.github.mobilejazz.coltrane:coltrane-provider-filesystem:0.2.0-SNAPSHOT') {
-        exclude group: 'com.google.guava'
-    }
-    implementation ('com.github.mobilejazz.coltrane:coltrane-ui:0.2.0-SNAPSHOT') {
-        exclude group: 'com.google.guava'
-    }
+    implementation 'com.nononsenseapps:filepicker:4.1.0'
 
     // storage chooser (working directory chooser)
     implementation 'com.github.codekidX:storage-chooser:2.0.4.4'

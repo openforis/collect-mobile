@@ -12,10 +12,11 @@ import android.provider.MediaStore;
 
 import androidx.core.content.FileProvider;
 
+import com.nononsenseapps.filepicker.FilePickerActivity;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.openforis.collect.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +27,7 @@ import java.util.Iterator;
 
 public abstract class AndroidFiles {
 
-    private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.fileprovider";
+    private static final String FILE_PROVIDER_AUTHORITY = "org.openforis.collect.provider";
 
     /**
      * Workaround for https://code.google.com/p/android/issues/detail?id=38282.
@@ -59,7 +60,7 @@ public abstract class AndroidFiles {
 
     public static String getUriContentFileName(Context context, Uri uri) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if ("content".equals(uri.getScheme())) {
             Cursor cursor = null;
             try {
                 cursor = context.getContentResolver().query(uri, null, null, null, null);
@@ -72,7 +73,7 @@ public abstract class AndroidFiles {
                 }
             }
         }
-        if (result == null) {
+        if (result == null && uri.getPath() != null) {
             String[] pathParts = uri.getPath().split("/");
             result = pathParts[pathParts.length - 1];
         }
@@ -100,6 +101,7 @@ public abstract class AndroidFiles {
     public static File copyUriContentToCache(Context context, Uri uri) {
         try {
             ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+            if (fileDescriptor == null) return null;
             String fileName = getUriContentFileName(context, uri);
             InputStream is = new FileInputStream(fileDescriptor.getFileDescriptor());
             File fileCache = new File(context.getCacheDir(), fileName);
@@ -110,14 +112,22 @@ public abstract class AndroidFiles {
         }
     }
 
-    public static void showFileChooseActivity(Activity context, int requestCode) {
-        Intent target = new Intent(Intent.ACTION_GET_CONTENT);
-        target.setType("*/*");
-        target.addCategory(Intent.CATEGORY_OPENABLE);
-        Intent intent = Intent.createChooser(
-                target, context.getString(R.string.select_survey_to_import));
+    public static void showFileChooseActivity(Activity context, int requestCode, int titleKey) {
+        Intent getContentIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getContentIntent.setType("*/*");
+        getContentIntent.setAction(Intent.ACTION_GET_CONTENT);
+        getContentIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        // FilePicker extras
+        getContentIntent.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+        getContentIntent.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+        getContentIntent.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
 
+        Intent intent = Intent.createChooser(getContentIntent, context.getString(titleKey));
         context.startActivityForResult(intent, requestCode);
+    }
+
+    public static Uri getUriFromGetContentIntent(Intent data) {
+        return data.getData();
     }
 
     public static long availableSize(File path) {
@@ -138,7 +148,7 @@ public abstract class AndroidFiles {
 
     private static File firstExistingAncestorOrSelf(File file) {
         File current = file;
-        while (!current.exists()) {
+        while (current != null && !current.exists()) {
             current = current.getParentFile();
         }
         return current;

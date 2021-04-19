@@ -37,7 +37,7 @@
         <item name="aboutIcon">@drawable/ic_about_white_24dp</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list</item>
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
-        <item name="nodePathDetailsBackground">@color/dark_node_path_details_background_color</item>
+        <item name="nodePathDetailsBackgroundColor">@color/dark_node_path_details_background_color</item>
         <item name="entityListHeaderBorderColor">@color/dark_entity_list_header_border_color</item>
         <item name="nodeListSelectedBackgroundColor">@color/dark_node_list_selected_background_color</item>
         <item name="spinnerItemTextColor">#FFFFFF</item>
@@ -73,7 +73,7 @@
         <item name="openIcon">@drawable/ic_action_collection_light</item>
         <item name="closeIcon">@drawable/ic_close_black_24dp</item>
         <item name="removeIcon">@drawable/ic_action_remove_light</item>
-        <item name="nodePathDetailsBackground">@color/light_node_path_details_background_color</item>
+        <item name="nodePathDetailsBackgroundColor">@color/light_node_path_details_background_color</item>
         <item name="viewAsListIcon">@drawable/ic_action_view_as_list_light</item>
         <item name="deleteIcon">@drawable/ic_delete_forever_white_24dp</item>
         <item name="navigateToLocationIcon">@drawable/ic_navigation_black_24dp</item>
@@ -125,5 +125,28 @@
         <item name="android:background">@color/button_background_color</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- You can also inherit from NNF_BaseTheme.Light -->
+    <style name="FilePickerTheme" parent="NNF_BaseTheme">
+        <!-- Set these to match your theme -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Setting a divider is entirely optional -->
+        <item name="nnf_list_item_divider">?android:attr/listDivider</item>
+
+        <!-- Need to set this also to style create folder dialog -->
+        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
+
+        <!-- If you want to set a specific toolbar theme, do it here -->
+        <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+    </style>
+
+    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 </resources>

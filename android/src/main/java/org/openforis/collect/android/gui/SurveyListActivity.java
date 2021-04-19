@@ -117,7 +117,8 @@ public class SurveyListActivity extends BaseActivity {
         switch (requestCode) {
             case IMPORT_SURVEY_REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
-                    importSurvey(data.getData());
+                    Uri uri = AndroidFiles.getUriFromGetContentIntent(data);
+                    importSurvey(uri);
                 }
                 break;
         }
@@ -126,7 +127,7 @@ public class SurveyListActivity extends BaseActivity {
 
     protected static void showImportDialog(Activity context) {
         if (Permissions.checkStoragePermissionOrRequestIt(context)) {
-            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE);
+            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE, R.string.select_survey_to_import);
         }
     }
 

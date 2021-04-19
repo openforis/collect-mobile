@@ -1,7 +1,7 @@
 package org.openforis.collect.android.collectadapter
 
 import groovy.sql.Sql
-import liquibase.database.AbstractJdbcDatabase
+import liquibase.database.AbstractDatabase
 import liquibase.database.core.H2Database
 import liquibase.database.core.PostgresDatabase
 import org.h2.jdbc.JdbcConnection
@@ -85,17 +85,17 @@ class ModelTestDatabase implements Database {
         return result
     }
 
-    private static class H2DatabaseInPostgresMode extends AbstractJdbcDatabase {
+    private static class H2DatabaseInPostgresMode extends AbstractDatabase {
         @Delegate
         private final H2Database delegate = new H2Database();
         private final PostgresDatabase postgresDatabase = new PostgresDatabase();
 
         H2DatabaseInPostgresMode() {
-            super.unquotedObjectsAreUppercased = delegate.unquotedObjectsAreUppercased
+            //super.unquotedObjectsAreUppercased = delegate.unquotedObjectsAreUppercased
             super.currentDateTimeFunction = delegate.currentDateTimeFunction
-            delegate.getDateFunctions().each { this.dateFunctions.add(it) }
-            super.sequenceNextValueFunction = delegate.sequenceNextValueFunction;
-            super.sequenceCurrentValueFunction = delegate.sequenceCurrentValueFunction;
+            //delegate.getDateFunctions().each { this.dateFunctions.add(it) }
+            //super.sequenceNextValueFunction = delegate.sequenceNextValueFunction;
+            //super.sequenceCurrentValueFunction = delegate.sequenceCurrentValueFunction;
         }
 
         String getShortName() {

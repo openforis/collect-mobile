@@ -73,7 +73,7 @@ public class NodePathDetailsFragment extends Fragment {
         Context c = getContext();
         view.setPadding(px(c, 16), px(c, 8), px(c, 16), px(c,8));
         view.setOrientation(LinearLayout.VERTICAL);
-        view.setBackgroundColor(attrs.color(R.attr.nodePathDetailsBackground));
+        view.setBackgroundColor(attrs.color(R.attr.nodePathDetailsBackgroundColor));
 
         addKeyAttributes(view);
         return view;

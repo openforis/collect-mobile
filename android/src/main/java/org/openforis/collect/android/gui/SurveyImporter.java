@@ -99,13 +99,12 @@ public class SurveyImporter {
         ServiceLocator.reset(context);
     }
 
-    private void migrateIfNeeded(Version version, File targetSurveyDatabase, String surveyName) {
-        AndroidDatabase database = new AndroidDatabase(context, targetSurveyDatabase);
-        Version currentVersion = Collect.VERSION;
-        if (version.getMajor() < currentVersion.getMajor() || version.getMinor() < currentVersion.getMinor())
+    private void migrateIfNeeded(Version surveyAppVersion, File targetSurveyDatabase, String surveyName) {
+        if (surveyAppVersion.compareTo(Collect.VERSION, Version.Significance.MINOR) < 0) {
+            AndroidDatabase database = new AndroidDatabase(context, targetSurveyDatabase);
             new ModelDatabaseMigrator(database, surveyName, context).migrate();
+        }
     }
-
 
     public static void importDefaultSurvey(Context context) {
         try {
@@ -119,7 +118,6 @@ public class SurveyImporter {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-
     }
 
     private Version getAndVerifyVersion(SurveyBackupInfo info) {

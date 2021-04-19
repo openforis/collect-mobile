@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.viewpagerindicator.PageIndicator;
+import com.rd.PageIndicatorView;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
@@ -72,9 +72,9 @@ public class SimpleNodePagerFragment extends Fragment {
         pagerAdapter = new SimpleNodePagerAdapter(getChildFragmentManager());
         pager.setAdapter(pagerAdapter);
 
-        final PageIndicator indicator = (PageIndicator) view.findViewById(R.id.attributePagerIndicator);
+        final PageIndicatorView indicator = view.findViewById(R.id.attributePagerIndicator);
         indicator.setViewPager(pager);
-        int selectedIndex = selectedNode().getIndexInParent();
+
         ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             public void onPageSelected(int position) {
                 UiNode currentNode = surveyService.selectedNode();
@@ -104,8 +104,8 @@ public class SimpleNodePagerFragment extends Fragment {
                 }
             }
         };
-        indicator.setOnPageChangeListener(pageChangeListener);
-        indicator.setCurrentItem(selectedIndex);
+        pager.addOnPageChangeListener(pageChangeListener);
+//        indicator.animatePageSelected(selectedIndex);
 
         pagerAdapter.setCurrentNode(selectedNode());
         pager.setCurrentItem(1);

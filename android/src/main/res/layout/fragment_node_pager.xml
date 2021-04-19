@@ -11,11 +11,19 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-    <com.viewpagerindicator.UnderlinePageIndicator
-            android:id="@+id/attributePagerIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            app:fades="false"/>
+    <com.rd.PageIndicatorView
+        android:id="@+id/attributePagerIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        app:piv_animationType="scale"
+        app:piv_dynamicCount="true"
+        app:piv_interactiveAnimation="true"
+        app:piv_selectedColor="?attr/nodeListSelectedBackgroundColor"
+        app:piv_unselectedColor="?attr/nodePathDetailsBackgroundColor"
+        app:piv_padding="8dp"
+        app:piv_radius="4dp" />
 
     <FrameLayout
             android:id="@+id/node_path_details_container"

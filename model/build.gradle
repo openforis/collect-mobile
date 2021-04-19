@@ -19,16 +19,19 @@ repositories {
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:4.0.19') {
+    compile ('org.openforis.collect:collect-core:4.0.20') {
         exclude group: 'org.apache.poi'
+        exclude group: 'org.springframework'
+        exclude group: 'org.liquibase'
+        exclude module: 'commons-jxpath'
     }
-    // TODO change dependency in collect-core
-    implementation ('com.github.apache:commons-jxpath') {
-        version {
-            strictly 'master-SNAPSHOT'
-        }
+    // jxpath repacked using openbeans instead of java.beans
+    compile ('com.github.openforis.android-ports:android-jxpath:android-ports-1.0-Alpha2') {
+        exclude module: 'servlet-api'
+        exclude module: 'javax.servlet'
     }
-    compile 'org.liquibase:liquibase-core:3.1.1'
+    compile 'com.github.openforis.android-ports:android-liquibase-core:android-ports-1.0-Alpha2'
+    compile 'me.champeau.openbeans:openbeans:1.0.2'
     compile 'com.google.guava:guava:20.0'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.15'

@@ -3,9 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.8] - build 190 NOT RELEASED YET 
+## [1.7.8] - build 190 2021-04-21 
 ### Added
-- Layout adjustments;
+- Layout adjustments (scrolling long node definition tooltips/descriptions);
+- Updated page indicator;
+- Updated file chooser;
 
 ## [1.7.8] - build 189 2021-04-01
 ### Added

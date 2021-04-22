@@ -145,6 +145,8 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                         else
                             hideQualifier();
 
+                        ((OptionButton) view).setChecked(checked);
+
                         saveNode();
                     }
                 });

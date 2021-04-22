@@ -119,64 +119,66 @@ public class Definitions {
                 addNodeDefinition(childDefinition);
     }
 
-    private Definition createDefinition(NodeDefinition def) {
-        String id = nodeDefinitionId(def);
-        String name = def.getName();
-        String label = label(def);
-        String interviewLabel = def.getPrompt(Prompt.Type.INTERVIEW, preferredLanguageCode);
-        Integer keyOfDefinitionId = getKeyOfDefinitionId(def);
-        boolean required = isRequired(def);
-        if (def instanceof AttributeDefinition) {
-            CollectSurvey survey = def.getSurvey();
+    private Definition createDefinition(NodeDefinition nodeDef) {
+        String id = nodeDefinitionId(nodeDef);
+        String name = nodeDef.getName();
+        String label = label(nodeDef);
+        String interviewLabel = nodeDef.getPrompt(Prompt.Type.INTERVIEW, preferredLanguageCode);
+        Integer keyOfDefinitionId = getKeyOfDefinitionId(nodeDef);
+        boolean required = isRequired(nodeDef);
+        Definition def;
+        if (nodeDef instanceof AttributeDefinition) {
+            CollectSurvey survey = nodeDef.getSurvey();
             CollectAnnotations annotations = survey.getAnnotations();
             UIOptions uiOptions = survey.getUIOptions();
-            boolean calculated = ((AttributeDefinition) def).isCalculated();
-            boolean calculatedOnlyOneTime = annotations.isCalculatedOnlyOneTime(def);
-            boolean hidden = uiOptions.isHidden(def);
-            if (def instanceof TaxonAttributeDefinition)
-                return new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
+            boolean calculated = ((AttributeDefinition) nodeDef).isCalculated();
+            boolean calculatedOnlyOneTime = annotations.isCalculatedOnlyOneTime(nodeDef);
+            boolean hidden = uiOptions.isHidden(nodeDef);
+            if (nodeDef instanceof TaxonAttributeDefinition)
+                def = new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        ((TaxonAttributeDefinition) def).getTaxonomy(),
-                        nodeDescription(def), nodePrompt(def), interviewLabel, required);
-            else if (def instanceof CoordinateAttributeDefinition) {
-                CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) def;
-                return new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
+                        ((TaxonAttributeDefinition) nodeDef).getTaxonomy(),
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
+            else if (nodeDef instanceof CoordinateAttributeDefinition) {
+                CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) nodeDef;
+                def = new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        spatialReferenceSystems, nodeDescription(def),
-                        nodePrompt(def), interviewLabel, required,
+                        spatialReferenceSystems, nodeDescription(nodeDef),
+                        nodePrompt(nodeDef), interviewLabel, required,
                         isDestinationPointSpecified(coordinateDefn),
                         annotations.isAllowOnlyDeviceCoordinate(coordinateDefn),
                         annotations.isIncludeCoordinateAltitude(coordinateDefn),
                         annotations.isIncludeCoordinateAccuracy(coordinateDefn));
-            } else if (def instanceof CodeAttributeDefinition) {
-                EntityDefinition parentDef = def.getParentEntityDefinition();
+            } else if (nodeDef instanceof CodeAttributeDefinition) {
+                EntityDefinition parentDef = nodeDef.getParentEntityDefinition();
                 boolean enumerator = !parentDef.isRoot() && parentDef.isEnumerable() && parentDef.isEnumerate()
-                        && ((CodeAttributeDefinition) def).isKey();
-                return new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        && ((CodeAttributeDefinition) nodeDef).isKey();
+                def = new UiCodeAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        nodeDescription(def), nodePrompt(def), interviewLabel, required,
-                        uiOptions.getShowCode((CodeAttributeDefinition) def), enumerator);
-            } else if (def instanceof FileAttributeDefinition) {
-                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) def);
-                return new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required,
+                        uiOptions.getShowCode((CodeAttributeDefinition) nodeDef), enumerator);
+            } else if (nodeDef instanceof FileAttributeDefinition) {
+                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) nodeDef);
+                def = new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        nodeDescription(def), nodePrompt(def), interviewLabel, required, fileType);
-            } else if (def instanceof TextAttributeDefinition) {
-                CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) def);
-                boolean autoUppercase = uiOptions.isAutoUppercase((TextAttributeDefinition) def);
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required, fileType);
+            } else if (nodeDef instanceof TextAttributeDefinition) {
+                CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) nodeDef);
+                boolean autoUppercase = uiOptions.isAutoUppercase((TextAttributeDefinition) nodeDef);
                 UiTextAttributeDefinition uiTextAttributeDef = new UiTextAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        inputType, nodeDescription(def), nodePrompt(def), interviewLabel, required);
+                        inputType, nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
                 uiTextAttributeDef.setAutoUppercase(autoUppercase);
-                return uiTextAttributeDef;
+                def = uiTextAttributeDef;
             } else
-                return new UiAttributeDefinition(id, name, label, keyOfDefinitionId,
+                def = new UiAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        nodeDescription(def), nodePrompt(def), interviewLabel, required);
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
         } else {
-            return new Definition(id, name, label, keyOfDefinitionId, nodeDescription(def),
-                    nodePrompt(def), interviewLabel, required);
+            def = new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDef),
+                    nodePrompt(nodeDef), interviewLabel, required);
         }
+        return def;
     }
 
     private boolean isDestinationPointSpecified(CoordinateAttributeDefinition nodeDefinition) {
@@ -243,16 +245,10 @@ public class Definitions {
         return definitionById(collectionNodeDefinitionId(nodeDefinition));
     }
 
-    public static int extractOriginalDefinitionId(UiAttributeCollectionDefinition def) {
-        return extractOriginalDefinitionId(def.id);
-    }
-
-    public static int extractOriginalDefinitionId(UiEntityCollectionDefinition def) {
-        return extractOriginalDefinitionId(def.id);
-    }
-
-    private static int extractOriginalDefinitionId(String id) {
-        int definitionId = Integer.parseInt(id.substring(COLLECTION_ID_PREFIX.length()));
+    public static int extractOriginalDefinitionId(Definition def) {
+        String id = def.id;
+        String originalIdStr = id.startsWith(COLLECTION_ID_PREFIX) ? id.substring(COLLECTION_ID_PREFIX.length()) : id;
+        int definitionId = Integer.parseInt(originalIdStr);
         return definitionId;
     }
 

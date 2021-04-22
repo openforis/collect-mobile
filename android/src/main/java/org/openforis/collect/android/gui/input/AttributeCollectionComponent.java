@@ -46,12 +46,13 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
     public final void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         if (node instanceof UiAttribute)
             onAttributeChange((UiAttribute) node);
-        for (UiNode changedNode : nodeChanges.keySet())
-            if (isInAttributeCollection(changedNode)) {
-                Set<UiValidationError> validationErrors = nodeChanges.get(changedNode).validationErrors;
+        for (Map.Entry<UiNode, UiNodeChange> changeEntry : nodeChanges.entrySet()) {
+            if (isInAttributeCollection(changeEntry.getKey())) {
+                Set<UiValidationError> validationErrors = changeEntry.getValue().validationErrors;
                 if (validationErrors != null && node instanceof UiAttribute)
                     setValidationError((UiAttribute) node, validationErrors);
             }
+        }
     }
 
     void onAttributeChange(UiAttribute attribute) {
@@ -92,7 +93,7 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
     }
 
     private boolean isInAttributeCollection(UiNode node) {
-        return attributeCollection.containsChildWithId(node.getId());
+        return attributeCollection == node || attributeCollection.containsChildWithId(node.getId());
     }
 
     private void validateAttribute(UiAttribute attribute) {

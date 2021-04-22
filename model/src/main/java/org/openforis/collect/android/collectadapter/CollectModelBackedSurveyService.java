@@ -124,7 +124,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
         this.updating = true;
         try {
             // Remove validation errors from the unspecified attribute
-            UiCodeAttribute attribute = (UiCodeAttribute) addAttribute();
+            // attribute update will be dispatched later, when newly created attribute will be filled with values
+            UiCodeAttribute attribute = (UiCodeAttribute) addAttribute(false);
             attribute.setCode(code);
             attribute.setQualifier(qualifier);
 
@@ -149,7 +150,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
         }
     }
 
-    public UiAttribute addAttribute() {
+    public UiAttribute addAttribute(boolean notifyAttributeUpdate) {
         this.updating = true;
         try {
             UiAttributeCollection attributeCollection = viewModelManager.selectedAttributeCollection();
@@ -161,11 +162,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
             attribute.init(); // TODO: Don't want to care about these life-cycle methods here!!!
             attribute.updateStatusOfParents();
             viewModelManager.addAttribute(attribute, result.nodeChanges);
-            updateAttribute(attribute);
+            if (notifyAttributeUpdate) {
+                updateAttribute(attribute);
+            }
             return attribute;
         } finally {
             onRecordUpdateComplete();
         }
+    }
+
+    public UiAttribute addAttribute() {
+        return addAttribute(true);
     }
 
     public void deletedAttribute(int attributeId) {

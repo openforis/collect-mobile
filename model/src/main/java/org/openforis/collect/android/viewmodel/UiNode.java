@@ -1,5 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.collect.android.collectadapter.Definitions;
 import org.openforis.commons.collection.CollectionUtils;
 import org.openforis.commons.collection.Predicate;
 
@@ -211,11 +212,17 @@ public abstract class UiNode {
 
     public Collection<UiNode> getChildrenByDefId(int childDefId) {
         ArrayList<UiNode> found = new ArrayList<UiNode>();
-        if (definition.id.equals(childDefId))
+        if (Definitions.extractOriginalDefinitionId(definition) == childDefId)
             found.add(this);
-        if (this instanceof UiInternalNode)
-            for (UiNode childNode : ((UiInternalNode) this).getChildren())
-                found.addAll(childNode.getChildrenByDefId(childDefId));
+        if (this instanceof UiInternalNode) {
+            for (UiNode childNode : ((UiInternalNode) this).getChildren()) {
+                if (Definitions.extractOriginalDefinitionId(childNode.definition) == childDefId) {
+                    found.add(childNode);
+                } else {
+                    found.addAll(childNode.getChildrenByDefId(childDefId));
+                }
+            }
+        }
         return found;
     }
 

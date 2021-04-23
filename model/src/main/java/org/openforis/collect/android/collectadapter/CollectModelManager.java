@@ -219,6 +219,15 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return new NodeChangeSetParser(changeMap, uiAttribute.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
+    public Map<UiNode, UiNodeChange> validateEntityCollection(UiEntityCollection entityCollection) {
+        Entity parentEntity = recordNodes.getEntityById(entityCollection.getParentEntityId());
+        Validator validator = parentEntity.getRecord().getSurveyContext().getValidator();
+        ValidationResultFlag cardinalityResult = validator.validateMinCount(parentEntity, entityCollection.getName());
+        NodeChangeMap changeMap = new NodeChangeMap();
+        changeMap.addMinCountValidationResultChange(new NodePointer(parentEntity, entityCollection.getName()), cardinalityResult);
+        return new NodeChangeSetParser(changeMap, entityCollection.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
+    }
+
     /**
      * Update children attribute codes with correct label.
      */

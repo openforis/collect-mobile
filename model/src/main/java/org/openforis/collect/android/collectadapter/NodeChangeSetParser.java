@@ -179,8 +179,10 @@ class NodeChangeSetParser {
                                               ValidationResultFlag validationResultFlag, Integer requiredCount,
                                               String singleCountMessageKey, String multipleCountMessageKey) {
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
-            String message = requiredCount == null || requiredCount == 1 ? messages.getMessage(this.preferredLocale, singleCountMessageKey):
-                    messages.getMessage(this.preferredLocale, multipleCountMessageKey, requiredCount);
+            String message = requiredCount == null || requiredCount == 1 &&
+                    !(uiNode instanceof UiEntityCollection || uiNode instanceof UiEntityCollection)
+                    ? messages.getMessage(this.preferredLocale, singleCountMessageKey)
+                    : messages.getMessage(this.preferredLocale, multipleCountMessageKey, requiredCount);
             UiNodeChange nodeChange = getOrAddNodeChange(uiNode, nodeChanges);
             if (!nodeChange.validationErrors.isEmpty())
                 return; // We've already added required validation for this node

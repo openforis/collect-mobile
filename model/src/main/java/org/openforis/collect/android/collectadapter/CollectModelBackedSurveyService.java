@@ -82,6 +82,8 @@ public class CollectModelBackedSurveyService implements SurveyService {
         notifyNodeSelected(previousNode, selectedNode);
         if (selectedNode instanceof UiAttribute)
             lazilyInitValidationErrors((UiAttribute) selectedNode);
+        else if (selectedNode instanceof UiEntityCollection)
+            lazilyInitValidationErrors((UiEntityCollection) selectedNode);
         return selectedNode;
     }
 
@@ -98,6 +100,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
         }
     }
+
+    private void lazilyInitValidationErrors(UiEntityCollection entityCollection) {
+        if (entityCollection.getValidationErrors() == null) {
+            Map<UiNode, UiNodeChange> nodeChanges = collectModelManager.validateEntityCollection(entityCollection);
+            UiNodeChange entityChange = nodeChanges.get(entityCollection);
+            if (entityChange != null) {
+                entityCollection.setValidationErrors(entityChange.validationErrors);
+            }
+        }
+    }
+
 
     public UiNode selectedNode() {
         return viewModelManager.selectedNode();

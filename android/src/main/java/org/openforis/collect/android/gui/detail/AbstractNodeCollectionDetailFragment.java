@@ -94,6 +94,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         });
     }
 
+    @Override
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         super.onNodeChange(node, nodeChanges);
         boolean changedChildNode = node.getParent().equals(node());  // TODO: If removed, can we rely on parent to be present?
@@ -101,12 +102,14 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
             adapter.notifyDataSetChanged();
     }
 
+    @Override
     public void onPause() {
         super.onPause();
         if (adapterUpdateTimer != null)
             adapterUpdateTimer.cancel();
     }
 
+    @Override
     public void onResume() {
         super.onResume();
         setupNodeCollection(getView());

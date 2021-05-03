@@ -69,7 +69,11 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     protected final void resetValidationErrors() {
-        errorMessageContainerView().setError(null);
+        setValidationErrorMessage(null);
+    }
+
+    protected final void setValidationErrorMessage(CharSequence errorMessage) {
+        errorMessageContainerView().setError(errorMessage);
     }
 
     /**
@@ -87,8 +91,9 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
         if (node instanceof UiAttribute)
             onAttributeChange((UiAttribute) node);
         UiNodeChange attributeChange = nodeChange.get(attribute);
-        if (attributeChange != null)
+        if (attributeChange != null) {
             setValidationError(attributeChange.validationErrors);
+        }
     }
 
     protected void notifyAboutAttributeChange() {
@@ -107,9 +112,14 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
 
     public final void saveNode() {
         stopDelayedSaveNodeHandler();
-        resetValidationErrors(); // TODO: Will reset even if attribute hasn't changed
-        if (updateAttributeIfChanged())
+        CharSequence prevErrorMessage = errorMessageContainerView().getError();
+        resetValidationErrors();
+        if (updateAttributeIfChanged()) {
             notifyAboutAttributeChange();
+        } else {
+            // restore validation errors
+            setValidationErrorMessage(prevErrorMessage);
+        }
     }
 
     protected void delaySaveNode() {

@@ -48,7 +48,7 @@ class NodeChangeSetParser {
     private void updateCalculatedAttributeValues(Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeChange<?> nodeChange : nodeChangeSet.getChanges()) {
             if (nodeChange instanceof AttributeChange) {
-                Attribute attribute = ((AttributeChange) nodeChange).getNode();
+                Attribute<?,?> attribute = ((AttributeChange) nodeChange).getNode();
                 UiAttribute uiAttribute = getUiAttribute(nodeChange);
                 if (uiAttribute == null)
                     return;
@@ -116,7 +116,9 @@ class NodeChangeSetParser {
                 "validation.requiredField", "validation.minCount");
 
         List<UiValidationError> validationErrors = new ArrayList<UiValidationError>();
+
         ValidationResults validationResults = attributeChange.getValidationResults();
+        if (validationResults == null) validationResults = attribute.getValidationResults();
         if (validationResults != null) {
             for (ValidationResult validationResult : validationResults.getFailed()) {
                 if (!ignored(validationResult))
@@ -180,7 +182,7 @@ class NodeChangeSetParser {
                                               String singleCountMessageKey, String multipleCountMessageKey) {
         if (validationResultFlag != null && !validationResultFlag.isOk()) {
             String message = requiredCount == null || requiredCount == 1 &&
-                    !(uiNode instanceof UiEntityCollection || uiNode instanceof UiEntityCollection)
+                    !(uiNode instanceof UiAttributeCollection || uiNode instanceof UiEntityCollection)
                     ? messages.getMessage(this.preferredLocale, singleCountMessageKey)
                     : messages.getMessage(this.preferredLocale, multipleCountMessageKey, requiredCount);
             UiNodeChange nodeChange = getOrAddNodeChange(uiNode, nodeChanges);
@@ -194,7 +196,7 @@ class NodeChangeSetParser {
         return validationResult.getValidator() instanceof SpecifiedValidator;
     }
 
-    private UiAttribute getUiAttribute(NodeChange nodeChange) {
+    private UiAttribute getUiAttribute(NodeChange<?> nodeChange) {
         Integer attributeId = nodeChange.getNode().getId();
         return (UiAttribute) uiRecord.lookupNode(attributeId);
     }
@@ -208,7 +210,7 @@ class NodeChangeSetParser {
         return nodeChange;
     }
 
-    private UiValidationError toValidationError(Attribute attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
+    private UiValidationError toValidationError(Attribute<?, ?> attribute, UiAttribute uiAttribute, ValidationResult validationResult) {
         String message = validationMessageBuilder.getValidationMessage(attribute, validationResult, this.preferredLocale);
         return new UiValidationError(message, getLevel(validationResult), uiAttribute);
     }

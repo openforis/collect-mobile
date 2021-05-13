@@ -1,12 +1,13 @@
-Collect Mobile
-==============
+# Collect Mobile
 
-##Build instruction
+## Build instruction
+
 * Create a local.properties in project root, containing `sdk.dir=[adt-bundle path]/sdk`
 * Execute `./gradlew clean build`
 
 
-##Release instruction
+## Release instruction
+
 * Get the keystore with the private key to be used for signing the app
 * Execute `./release`. You can optionally specify the version name as an argument, if you want it to be different then previous release: `./release 1.1`
 *

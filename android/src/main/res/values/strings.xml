@@ -23,6 +23,7 @@
 
     <string name="info">Info</string>
     <string name="warning">Warning</string>
+    <string name="error">Error</string>
 
     <string name="low_storage_error">Low device storage</string>
 

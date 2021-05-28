@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.8] - build 193 NOT-RELEASED-YET 
+### Added
+- Show error dialog if unexpected error occurs on record creation;
+
 ## [1.7.8] - build 192 2021-05-03 
 ### Fixed
 - Validation error messages not showing properly in coordinate attributes;

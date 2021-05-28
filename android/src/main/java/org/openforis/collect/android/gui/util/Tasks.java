@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 
 import org.openforis.collect.R;
@@ -13,8 +14,7 @@ public class Tasks {
 
     public static void runSlowTask(Activity context, Runnable runnable, int progressDialogTitleResId,
                                    int progressDialogMessageResId) {
-        new SimpleSlowAsyncTask(context, runnable, progressDialogTitleResId, progressDialogMessageResId)
-                .execute();
+        runSlowTask(context, runnable, new DefaultExceptionHandler(context), progressDialogTitleResId, progressDialogMessageResId);
     }
 
     public static void runSlowTask(Activity context, Runnable runnable, SlowAsyncTask.ExceptionHandler exceptionHandler, int progressDialogTitleResId,
@@ -35,5 +35,17 @@ public class Tasks {
                 context.runOnUiThread(runnable);
             }
         }, delay);
+    }
+
+    private static class DefaultExceptionHandler implements SlowAsyncTask.ExceptionHandler {
+        private final Context context;
+
+        DefaultExceptionHandler(Context context) {
+            this.context = context;
+        }
+
+        public void handle(Exception e) {
+            Dialogs.alert(context, R.string.error, e.getMessage());
+        }
     }
 }

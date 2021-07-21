@@ -93,9 +93,17 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         return autoComplete;
     }
 
-    protected boolean updateAttributeIfChanged() {
+    @Override
+    public boolean hasChanged() {
+        UiTaxon oldTaxon = attribute.getTaxon();
+        if (oldTaxon == null)
+            return true;
         UiTaxon newTaxon = selectedTaxon();
-        if (hasChanged(newTaxon)) {
+        return !oldTaxon.equals(newTaxon);
+    }
+
+    protected boolean updateAttributeIfChanged() {
+        if (hasChanged()) {
             attribute.setTaxon(selectedTaxon);
             notifyAboutAttributeChange();
             return true;
@@ -130,13 +138,6 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
 
     public View getDefaultFocusedView() {
         return autoComplete;
-    }
-
-    private boolean hasChanged(UiTaxon newTaxon) {
-        UiTaxon oldTaxon = attribute.getTaxon();
-        if (oldTaxon == null)
-            return newTaxon != null;
-        return !oldTaxon.equals(newTaxon);
     }
 
     @SuppressWarnings("ConstantConditions")

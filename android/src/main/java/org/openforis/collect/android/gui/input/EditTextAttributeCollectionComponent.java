@@ -84,4 +84,9 @@ class TextAttributeCollectionComponent extends EditTextAttributeCollectionCompon
     protected TextAttributeComponent createAttributeComponent(UiTextAttribute attribute) {
         return new TextAttributeComponent(attribute, surveyService, context);
     }
+
+    @Override
+    public boolean hasChanged() {
+        return false;
+    }
 }

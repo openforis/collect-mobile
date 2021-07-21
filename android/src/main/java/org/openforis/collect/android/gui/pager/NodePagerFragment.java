@@ -91,7 +91,14 @@ public class NodePagerFragment extends Fragment {
             selectedFragment.onSelect();
     }
 
-    synchronized  public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
+    synchronized public void onNodeChanging(UiNode node) {
+        NodeDetailFragment fragment = fragmentsByNode.get(node);
+        if (fragment != null) {
+            fragment.onNodeChanging(node);
+        }
+    }
+
+    synchronized public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         for (NodeDetailFragment fragment : fragmentsByNode.values()) {
             fragment.onNodeChange(node, nodeChanges);
         }

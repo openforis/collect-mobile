@@ -36,6 +36,8 @@ public interface SurveyService {
 
     UiCodeAttribute addCodeAttribute(UiCode code, String qualifier);
 
+    void notifyAttributeChanging(UiAttribute attribute);
+
     void updateAttributes(Set<UiAttribute> attributes);
 
     void updateAttribute(UiAttribute attribute);

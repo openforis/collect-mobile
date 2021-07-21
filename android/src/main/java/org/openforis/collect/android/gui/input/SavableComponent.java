@@ -63,6 +63,8 @@ public abstract class SavableComponent {
 
     public abstract void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 
+    public abstract boolean hasChanged();
+
     protected abstract void resetValidationErrors();
 
     public void onSelect() {
@@ -197,6 +199,10 @@ public abstract class SavableComponent {
 
         }
 
+        public boolean hasChanged() {
+            return false;
+        }
+
         protected void resetValidationErrors() {
 
         }
@@ -211,10 +217,17 @@ public abstract class SavableComponent {
             view.setText("Unsupported attribute type: " + attribute.getClass().getSimpleName());
         }
 
+        @Override
+        public boolean hasChanged() {
+            return false;
+        }
+
+        @Override
         protected boolean updateAttributeIfChanged() {
             return false;
         }
 
+        @Override
         protected View toInputView() {
             return view;
         }

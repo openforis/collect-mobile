@@ -51,12 +51,8 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     }
 
     protected final boolean updateAttributeIfChanged() {
-        String newValue = getEditTextString();
-        if (StringUtils.isEmpty(newValue)) newValue = null;
-
-        String newAttributeValue = editTextToAttributeValue(newValue);
-        if (hasChanged(newAttributeValue)) {
-            updateAttributeValue(newAttributeValue);
+        if (hasChanged()) {
+            updateAttributeValue(extractNewAttributeValue());
             return true;
         } else {
             return false;
@@ -79,6 +75,18 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
         if (newValue == null)
             return !attribute.isEmpty();
         return !StringUtils.equals(attributeValue(), newValue);
+    }
+
+    private String extractNewAttributeValue() {
+        String newValue = StringUtils.trimToNull(getEditTextString());
+        String newAttributeValue = editTextToAttributeValue(newValue);
+        return newAttributeValue;
+    }
+
+    @Override
+    public boolean hasChanged() {
+        String newAttributeValue = extractNewAttributeValue();
+        return hasChanged(newAttributeValue);
     }
 
     private String getEditTextString() {

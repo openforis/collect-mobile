@@ -48,7 +48,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     private boolean selected;
     private T node;
-    private View _view;
+    private NodeDetailFragmentHolder holder; // do not store it in view tag: it could override the tag set in parent view
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,9 +78,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         setOrRemoveText(holder.description, nodeDef.description);
         setOrRemoveText(holder.prompt, nodeDef.prompt);
 
-        view.setTag(holder);
-
-        this._view = view;
+        this.holder = holder;
 
         return view;
     }
@@ -173,8 +171,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private void addSuffixToLabel(String suffix) {
-        if (this._view == null) return;
-        NodeDetailFragmentHolder holder = (NodeDetailFragmentHolder) this._view.getTag();
+        if (this.holder == null) return;
         holder.label.setText(extractNodeDefLabel() + " (" + suffix + ")");
     }
 

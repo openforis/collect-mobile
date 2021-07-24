@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.input;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -86,6 +88,18 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
                 commonNamesLayout.removeAllViews();
             }
         });
+        autoComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                notifyAboutAttributeChanging();
+            }
+        });
         autoComplete.setAdapter(new UiTaxonAdapter(context, attribute, ServiceLocator.taxonService()));
     }
 
@@ -96,13 +110,14 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     @Override
     public boolean hasChanged() {
         UiTaxon oldTaxon = attribute.getTaxon();
-        if (oldTaxon == null)
+        if (oldTaxon == null && StringUtils.isNotBlank(getText()))
             return true;
-        UiTaxon newTaxon = selectedTaxon();
-        return !oldTaxon.equals(newTaxon);
+        UiTaxon newTaxon = adjustSelectedTaxon();
+        return ObjectUtils.notEqual(oldTaxon, newTaxon);
     }
 
     protected boolean updateAttributeIfChanged() {
+        adjustSelectedTaxon();
         if (hasChanged()) {
             attribute.setTaxon(selectedTaxon);
             notifyAboutAttributeChange();
@@ -115,13 +130,10 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         return layout;
     }
 
-    private UiTaxon selectedTaxon() {
+    private UiTaxon adjustSelectedTaxon() {
         commonNamesLayout.removeAllViews();
         //loadCommonNames(); not necessary: entire component re-initialized on node change
-        Editable editable = autoComplete.getText();
-        if (editable == null)
-            throw new IllegalStateException("autoComplete text is null");
-        String text = editable.toString();
+        String text = getText();
         if (selectedTaxon == null || !selectedTaxon.toString().equals(text)) {
             if (StringUtils.isEmpty(text))
                 selectedTaxon = null;
@@ -138,6 +150,13 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
 
     public View getDefaultFocusedView() {
         return autoComplete;
+    }
+
+    private String getText() {
+        Editable editable = autoComplete.getText();
+        if (editable == null)
+            return null;
+        return editable.toString();
     }
 
     @SuppressWarnings("ConstantConditions")

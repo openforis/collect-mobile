@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -71,6 +72,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         holder.label = view.findViewById(R.id.node_label);
         holder.description = view.findViewById(R.id.node_description);
         holder.prompt = view.findViewById(R.id.node_prompt);
+        holder.loader = view.findViewById(R.id.node_loader);
 
         Definition nodeDef = node.getDefinition();
 
@@ -176,15 +178,18 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     protected void showAttributeSavingLoader() {
-        addSuffixToLabel("L");
+        if (holder == null || holder.loader == null) return;
+        holder.loader.setVisibility(View.VISIBLE);
     }
 
     protected void hideAttributeSavingLoader() {
-        addSuffixToLabel("OK");
+        if (holder == null || holder.loader == null) return;
+        holder.loader.setVisibility(View.INVISIBLE);
     }
 
     protected void showAttributeSavingError() {
-        addSuffixToLabel("E");
+        if (holder == null || holder.loader == null) return;
+        holder.loader.setVisibility(View.VISIBLE);
     }
 
     public void onNodeChanging(UiNode _node) {
@@ -301,5 +306,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         TextView label;
         TextView description;
         TextView prompt;
+        ProgressBar loader;
     }
 }

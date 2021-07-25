@@ -31,6 +31,15 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:indeterminate="true"/>
+
+            <ImageView
+                android:id="@+id/node_warning_icon"
+                android:layout_alignRight="@id/node_label"
+                android:layout_alignEnd="@id/node_label"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_warning_yellow_24dp" />
         </RelativeLayout>
         <TextView
                 android:id="@+id/node_prompt"

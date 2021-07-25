@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
@@ -73,6 +75,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         holder.description = view.findViewById(R.id.node_description);
         holder.prompt = view.findViewById(R.id.node_prompt);
         holder.loader = view.findViewById(R.id.node_loader);
+        holder.warningIcon = view.findViewById(R.id.node_warning_icon);
 
         Definition nodeDef = node.getDefinition();
 
@@ -172,24 +175,29 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addSuffixToLabel(String suffix) {
-        if (this.holder == null) return;
-        holder.label.setText(extractNodeDefLabel() + " (" + suffix + ")");
-    }
-
     protected void showAttributeSavingLoader() {
         if (holder == null || holder.loader == null) return;
         holder.loader.setVisibility(View.VISIBLE);
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void hideAttributeSavingLoader() {
         if (holder == null || holder.loader == null) return;
         holder.loader.setVisibility(View.INVISIBLE);
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void showAttributeSavingError() {
-        if (holder == null || holder.loader == null) return;
-        holder.loader.setVisibility(View.VISIBLE);
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onNodeChanging(UiNode _node) {
@@ -307,5 +315,6 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         TextView description;
         TextView prompt;
         ProgressBar loader;
+        ImageView warningIcon;
     }
 }

@@ -54,10 +54,9 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
         super.onNodeChange(node, attributeChanges);
         if (savableComponent != null) {
             savableComponent.onNodeChange(node, attributeChanges);
+            hideAttributeSavingLoader();
             if (savableComponent.hasChanged()) {
                 showAttributeSavingError();
-            } else {
-                hideAttributeSavingLoader();
             }
         }
     }

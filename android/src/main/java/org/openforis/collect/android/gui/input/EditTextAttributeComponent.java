@@ -124,8 +124,10 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
             }
 
             public void afterTextChanged(Editable s) {
-                editText.setError(null);
-                delaySaveNode();
+                if (hasChanged()) {
+                    editText.setError(null);
+                    delaySaveNode();
+                }
             }
         });
         onEditTextCreated(editText);

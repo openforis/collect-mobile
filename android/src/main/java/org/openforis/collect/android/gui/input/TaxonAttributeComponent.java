@@ -35,6 +35,7 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     private ClearableAutoCompleteTextView autoComplete;
     private LinearLayout commonNamesLayout;
     private UiTaxon selectedTaxon;
+    private boolean textChangingNotificationEnabled = true;
 
     protected TaxonAttributeComponent(UiTaxonAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -84,8 +85,11 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         });
         autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
             public void onClear() {
+                textChangingNotificationEnabled = false;
                 autoComplete.setText("");
                 commonNamesLayout.removeAllViews();
+                textChangingNotificationEnabled = true;
+                updateAttributeIfChanged();
             }
         });
         autoComplete.addTextChangedListener(new TextWatcher() {
@@ -97,7 +101,9 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
 
             @Override
             public void afterTextChanged(Editable s) {
-                notifyAboutAttributeChanging();
+                if (textChangingNotificationEnabled) {
+                    notifyAboutAttributeChanging();
+                }
             }
         });
         autoComplete.setAdapter(new UiTaxonAdapter(context, attribute, ServiceLocator.taxonService()));
@@ -163,10 +169,12 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     private void setText(String text) {
         // Hack to prevent pop-up from opening when setting text
         // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
+        textChangingNotificationEnabled = false;
         UiTaxonAdapter adapter = (UiTaxonAdapter) autoComplete.getAdapter();
         autoComplete.setAdapter(null);
         autoComplete.setText(text);
         autoComplete.setAdapter(adapter);
+        textChangingNotificationEnabled = true;
     }
 
     private void loadCommonNames() {

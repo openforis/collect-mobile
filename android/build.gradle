@@ -154,23 +154,23 @@ android {
     productFlavors {
     }
 }
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId 'org.openforis.collect.android'
-            artifactId 'collect-mobile'
-            version actualVersionCode as String
-            artifact file('build/outputs/apk/release/Collect.apk')
-        }
-    }
-    repositories {
-        maven {
-            url "http://www.openforis.org/nexus/content/repositories/releases/"
-            credentials {
-                username localProps.getProperty('nexus.username')
-                password localProps.getProperty('nexus.password')
-            }
-        }
-    }
-}
+//
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            groupId 'org.openforis.collect.android'
+//            artifactId 'collect-mobile'
+//            version actualVersionCode as String
+//            artifact file('build/outputs/apk/release/Collect.apk')
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "http://www.openforis.org/nexus/content/repositories/releases/"
+//            credentials {
+//                username localProps.getProperty('nexus.username')
+//                password localProps.getProperty('nexus.password')
+//            }
+//        }
+//    }
+//}

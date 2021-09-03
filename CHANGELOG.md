@@ -3,9 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.8] - build 193 NOT-RELEASED-YET 
+## [1.7.9] - build 193 2021-09-03 
 ### Added
 - Show error dialog if unexpected error occurs on record creation;
+- Improved Working Directory selection;
 
 ## [1.7.8] - build 192 2021-05-03 
 ### Fixed

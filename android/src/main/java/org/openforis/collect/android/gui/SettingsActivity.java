@@ -11,19 +11,18 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.JsonObject;
-
 import com.codekidlabs.storagechooser.StorageChooser;
+import com.google.gson.JsonObject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.Collect;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
 import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
@@ -38,6 +37,7 @@ import org.openforis.idm.metamodel.Languages;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
-
 
 /**
  * @author Daniel Wiell
@@ -59,6 +58,7 @@ public class SettingsActivity extends Activity {
     private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
     private static final Map<String, String> LANGUAGES = createLanguagesData();
 
+    public static final String PREFERENCE_WORKING_DIR_LOCATION = "workingDirLocation";
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
@@ -70,6 +70,63 @@ public class SettingsActivity extends Activity {
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
     public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
+
+    private enum WorkingDirLocation {
+        EXTERNAL_SD_CARD("external_sd_card", R.string.settings_working_directory_external_sd_card),
+        INTERNAL_EMULATED_SD_CARD("emulated_sd_card", R.string.settings_working_directory_emulated_sd_card),
+        INTERNAL_MEMORY("internal_memory", R.string.settings_working_directory_internal_memory),
+        CUSTOM_LOCATION("custom", R.string.settings_working_directory_custom);
+
+        private final String key;
+        private final int summaryKey;
+
+        WorkingDirLocation(String key, int summaryKey) {
+            this.key = key;
+            this.summaryKey = summaryKey;
+        }
+
+        static String[] keys() {
+            WorkingDirLocation[] values = values();
+            List<String> result = new ArrayList<String>(values.length);
+            for (WorkingDirLocation location : values) {
+                result.add(location.key);
+            }
+            return result.toArray(new String[values.length]);
+        }
+
+        static WorkingDirLocation getByKey(String key) {
+            for (WorkingDirLocation location : values()) {
+                if (location.key.equals(key)) return location;
+            }
+            return null;
+        }
+
+        public static WorkingDirLocation getCurrent(Context context) {
+            if (AppDirs.isRootSdCard(context)) {
+                return WorkingDirLocation.EXTERNAL_SD_CARD;
+            } else if (AppDirs.isRootInternalEmulatedSdCard(context)) {
+                return WorkingDirLocation.INTERNAL_EMULATED_SD_CARD;
+            } else if (AppDirs.isRootInternalFiles(context)) {
+                return WorkingDirLocation.INTERNAL_MEMORY;
+            } else {
+                return WorkingDirLocation.CUSTOM_LOCATION;
+            }
+        }
+
+        File getFile(Context context) {
+            switch (this) {
+                case EXTERNAL_SD_CARD:
+                    return AppDirs.sdCardDir(context);
+                case INTERNAL_EMULATED_SD_CARD:
+                    return AppDirs.externalFilesDir(context);
+                case INTERNAL_MEMORY:
+                    return AppDirs.filesDir(context);
+                case CUSTOM_LOCATION:
+                default:
+                    return null;
+            }
+        }
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,11 +157,44 @@ public class SettingsActivity extends Activity {
         super.onBackPressed();
     }
 
+    protected void onWorkingDirectorySelect(final String path) {
+        final Activity activity = this;
+
+        String oldPath = AppDirs.rootAbsolutePath(activity);
+        if (oldPath.equals(path)) {
+            // do nothing
+            return;
+        }
+        // check that selected path is writable
+        if (!new File(path).canWrite()) {
+            Dialogs.alert(activity, R.string.warning, R.string.settings_error_working_directory);
+            return;
+        }
+
+        // confirm working directory change
+        Dialogs.confirm(activity, R.string.confirm_label, getString(R.string.settings_working_directory_confirm_change, oldPath, path), new Runnable() {
+            public void run() {
+                // save working directory to preferences
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(AppDirs.PREFERENCE_KEY, path);
+
+                editor.apply();
+
+                // reset service locator and restart main activity
+                ServiceLocator.reset(activity);
+                Activities.startNewClearTask(activity, MainActivity.class);
+                activity.finish();
+            }
+        });
+    }
+
     public static class SettingsFragment extends PreferenceFragment {
+
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
-            setupStorageLocationPreference();
+            setupWorkingDirPreference();
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
@@ -116,66 +206,67 @@ public class SettingsActivity extends Activity {
             setupRemoteCollectConnectionTestPreference();
         }
 
-        private void setupStorageLocationPreference() {
-            final Activity activity = getActivity();
-            final Preference workingDirPreference = findPreference(AppDirs.PREFERENCE_KEY);
-            workingDirPreference.setSummary(AppDirs.root(activity).getAbsolutePath());
-            workingDirPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                public boolean onPreferenceClick(Preference preference) {
-                    String predefinedPath = AppDirs.root(activity).getAbsolutePath();
-                    final StorageChooser chooser = new StorageChooser.Builder()
-                            .withActivity(activity)
-                            .withFragmentManager(getFragmentManager())
-                            .withMemoryBar(true)
-                            .allowCustomPath(true)
-                            .allowAddFolder(true)
-                            .setType(StorageChooser.DIRECTORY_CHOOSER)
-                            .withPredefinedPath(predefinedPath)
-                            .build();
+        private void updateWorkingDirSummary() {
+            Activity activity = getActivity();
 
-                    // handle path that the user has chosen
-                    chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
-                        public void onSelect(final String path) {
-                            onWorkingDirectorySelect(path);
-                        }
-                    });
-                    chooser.show();
+            WorkingDirLocation location = WorkingDirLocation.getCurrent(activity);
+            File currentWorkingDir = AppDirs.root(activity);
+
+            Preference preference = findPreference(PREFERENCE_WORKING_DIR_LOCATION);
+            preference.setSummary(getString(location.summaryKey,
+                    AndroidFiles.availableSpaceMB(currentWorkingDir),
+                    currentWorkingDir.getAbsolutePath()
+                ));
+        }
+
+        private void setupWorkingDirPreference() {
+            final SettingsActivity activity = (SettingsActivity) getActivity();
+
+            ListPreference preference = (ListPreference) findPreference(PREFERENCE_WORKING_DIR_LOCATION);
+
+            WorkingDirLocation[] locations = WorkingDirLocation.values();
+            List<String> entries = new ArrayList<String>(locations.length);
+            for (WorkingDirLocation location : locations) {
+                File file = location.getFile(activity);
+                String path = file == null ? "" : file.getAbsolutePath();
+                long availableSpace = file == null ? 0 : AndroidFiles.availableSpaceMB(file);
+                entries.add(activity.getString(location.summaryKey, availableSpace, path));
+            }
+            preference.setEntries(entries.toArray(new String[0]));
+            preference.setEntryValues(WorkingDirLocation.keys());
+
+            updateWorkingDirSummary();
+
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    WorkingDirLocation location = WorkingDirLocation.getByKey((String) newValue);
+                    File file = location.getFile(activity);
+                    if (file != null) {
+                        activity.onWorkingDirectorySelect(file.getAbsolutePath());
+                    } else {
+                        final StorageChooser chooser = new StorageChooser.Builder()
+                                .withActivity(activity)
+                                .withFragmentManager(getFragmentManager())
+                                .withMemoryBar(true)
+                                .allowCustomPath(true)
+                                .allowAddFolder(true)
+                                .setType(StorageChooser.DIRECTORY_CHOOSER)
+                                .withPredefinedPath(AppDirs.rootAbsolutePath(activity))
+                                .build();
+
+                        // handle path that the user has chosen
+                        chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
+                            public void onSelect(final String path) {
+                                activity.onWorkingDirectorySelect(path);
+                            }
+                        });
+                        chooser.show();
+                    }
                     return true;
                 }
             });
         }
 
-        private void onWorkingDirectorySelect(final String path) {
-            final Activity activity = getActivity();
-
-            String oldPath = AppDirs.root(activity).getAbsolutePath();
-            if (oldPath.equals(path)) {
-                // do nothing
-                return;
-            }
-            // check that selected path is writable
-            if (!new File(path).canWrite()) {
-                Dialogs.alert(activity, R.string.warning, R.string.settings_error_working_directory);
-                return;
-            }
-
-            // confirm working directory change
-            Dialogs.confirm(activity, R.string.confirm_label, getString(R.string.settings_working_directory_confirm_change, oldPath, path), new Runnable() {
-                public void run() {
-                    // save working directory to preferences
-                    Preference workingDirPreference = findPreference(AppDirs.PREFERENCE_KEY);
-                    SharedPreferences.Editor editor = workingDirPreference.getEditor();
-                    editor.putString(AppDirs.PREFERENCE_KEY, path);
-                    editor.apply();
-                    workingDirPreference.setSummary(path);
-
-                    // reset service locator and restart main activity
-                    ServiceLocator.reset(activity);
-                    Activities.startNewClearTask(activity, MainActivity.class);
-                    activity.finish();
-                }
-            });
-        }
 
         private void setupCrewIdPreference() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());

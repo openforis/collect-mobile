@@ -142,6 +142,10 @@ public abstract class AndroidFiles {
         }
     }
 
+    public static long availableSpaceMB(File path) {
+        return availableSize(path) / 1024 / 1024;
+    }
+
     public static boolean enoughSpaceToCopy(File fromPath, File toPath) {
         return FileUtils.sizeOfDirectory(fromPath) < availableSize(toPath);
     }

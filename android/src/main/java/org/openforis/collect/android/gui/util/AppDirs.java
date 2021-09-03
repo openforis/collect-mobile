@@ -38,6 +38,11 @@ public abstract class AppDirs {
         return workingDir;
     }
 
+    public static String rootAbsolutePath(Context context) {
+        File root = root(context);
+        return root == null ? "" : root.getAbsolutePath();
+    }
+
     public static File surveyDatabasesDir(String surveyName, Context context) throws WorkingDirNotWritable {
         return new File(surveysDir(context), surveyName);
     }
@@ -69,13 +74,13 @@ public abstract class AppDirs {
         return workingDir;
     }
 
-    private static File filesDir(Context context) {
+    public static File filesDir(Context context) {
         File workingDir = context.getFilesDir();
         Log.d("CollectMobile", "Working dir - filesDir: " + workingDir);
         return workingDir;
     }
 
-    private static File externalFilesDir(Context context) {
+    public static File externalFilesDir(Context context) {
         File workingDir = context.getExternalFilesDir(null);
         Log.d("CollectMobile", "Working dir - getExternalFilesDir: " + workingDir);
         return workingDir;
@@ -113,7 +118,7 @@ public abstract class AppDirs {
         return workingDir;
     }
 
-    private static File sdCardDir(Context context) {
+    public static File sdCardDir(Context context) {
         File[] externalFilesDir = ContextCompat.getExternalFilesDirs(context, null);
         File emulatedStorageDir = Environment.isExternalStorageEmulated() ? context.getExternalFilesDir(null) : null;
 
@@ -134,7 +139,7 @@ public abstract class AppDirs {
         return it.hasNext() ? it.next() : null;
     }
 
-    private static File sdCardDirFromEnv() {
+    public static File sdCardDirFromEnv() {
         List<File> secondaryStorageLocations = new ArrayList<File>();
         final String rawSecondaryStorage = System.getenv(ENV_SECONDARY_STORAGE);
         if (!TextUtils.isEmpty(rawSecondaryStorage))
@@ -150,5 +155,27 @@ public abstract class AppDirs {
         Log.d("CollectMobile", "Working dir - sdCardDirFromEnv: " + workingDir);
         return workingDir;
     }
+
+    private static boolean isRoot(Context context, File location) {
+        String rootPath = rootAbsolutePath(context);
+        return location != null && location.getAbsolutePath().equals(rootPath) && location.canWrite();
+    }
+
+    public static boolean isRootSdCard(Context context) {
+        return isRoot(context, sdCardDir(context));
+    }
+
+    public static boolean isRootSdCardFromEnv(Context context) {
+        return isRoot(context, sdCardDirFromEnv());
+    }
+
+    public static boolean isRootInternalEmulatedSdCard(Context context) {
+        return isRoot(context, externalFilesDir(context));
+    }
+
+    public static boolean isRootInternalFiles(Context context) {
+        return isRoot(context, filesDir(context));
+    }
+
 
 }

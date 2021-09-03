@@ -41,6 +41,6 @@
 -keep interface liquibase.** { *; }
 
 -keep class org.jooq.** { *; }
--keep interface org..** { *; }
+-keep interface org.jooq.** { *; }
 
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod

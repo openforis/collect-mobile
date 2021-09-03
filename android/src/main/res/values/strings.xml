@@ -128,6 +128,10 @@
     <string name="settings_summaryOff_compassEnabled">Device compass is disabled</string>
 
     <string name="settings_workingDir">Working directory</string>
+    <string name="settings_working_directory_external_sd_card">External SD Card - %d MB free\n%s</string>
+    <string name="settings_working_directory_emulated_sd_card">Emulated (internal) SD Card - %d MB free\n%s</string>
+    <string name="settings_working_directory_internal_memory">Internal memory - %d MB free\n%s</string>
+    <string name="settings_working_directory_custom">Custom location ...</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>

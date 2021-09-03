@@ -131,7 +131,8 @@
     <string name="settings_working_directory_external_sd_card">External SD Card - %d MB free\n%s</string>
     <string name="settings_working_directory_emulated_sd_card">Emulated (internal) SD Card - %d MB free\n%s</string>
     <string name="settings_working_directory_internal_memory">Internal memory - %d MB free\n%s</string>
-    <string name="settings_working_directory_custom">Custom location ...</string>
+    <string name="settings_working_directory_custom">Custom location - %d MB free\n%s</string>
+    <string name="settings_working_directory_custom_entry">Custom location ...</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
@@ -166,7 +167,7 @@
     <string name="settings_remote_sync_test_failed_message_wrong_address">Wrong address or wrong username/password specified.</string>
     <string name="settings_remote_sync_test_failed_message_newer_version">Collect Server runs version %s and it\'s not compatible with the one supported by this version of Collect Mobile (%s).\n\nPlease consider updating Collect Mobile to the latest version.</string>
     <string name="settings_invalid_dialog_title">Invalid settings</string>
-    <string name="settings_working_directory_confirm_change">Change the working directory from "%s" to \"%s\"?</string>
+    <string name="settings_working_directory_confirm_change">Change the working directory\nfrom\n%s\n to \n%s?</string>
     <string name="settings_error_working_directory">Working directory invalid or not accessible: please change it.</string>
 
     <string name="select_survey_to_import">"Select survey to import"</string>

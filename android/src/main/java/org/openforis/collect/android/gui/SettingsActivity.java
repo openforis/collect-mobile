@@ -75,14 +75,20 @@ public class SettingsActivity extends Activity {
         EXTERNAL_SD_CARD("external_sd_card", R.string.settings_working_directory_external_sd_card),
         INTERNAL_EMULATED_SD_CARD("emulated_sd_card", R.string.settings_working_directory_emulated_sd_card),
         INTERNAL_MEMORY("internal_memory", R.string.settings_working_directory_internal_memory),
-        CUSTOM_LOCATION("custom", R.string.settings_working_directory_custom);
+        CUSTOM_LOCATION("custom", R.string.settings_working_directory_custom, R.string.settings_working_directory_custom_entry);
 
         private final String key;
         private final int summaryKey;
+        private final int entryLabelKey;
 
         WorkingDirLocation(String key, int summaryKey) {
+            this(key, summaryKey, summaryKey);
+        }
+
+        WorkingDirLocation(String key, int summaryKey, int entryLabelKey) {
             this.key = key;
             this.summaryKey = summaryKey;
+            this.entryLabelKey = entryLabelKey;
         }
 
         static String[] keys() {
@@ -125,6 +131,15 @@ public class SettingsActivity extends Activity {
                 default:
                     return null;
             }
+        }
+
+        String getSummaryLabel(Context context) {
+            File file = getFile(context);
+            String path = file == null ? "" : file.getAbsolutePath();
+            long availableSpace = file == null ? 0 : AndroidFiles.availableSpaceMB(file);
+            if (availableSpace == Long.MAX_VALUE) availableSpace = 0;
+
+            return context.getString(entryLabelKey, availableSpace, path);
         }
     }
 
@@ -206,19 +221,6 @@ public class SettingsActivity extends Activity {
             setupRemoteCollectConnectionTestPreference();
         }
 
-        private void updateWorkingDirSummary() {
-            Activity activity = getActivity();
-
-            WorkingDirLocation location = WorkingDirLocation.getCurrent(activity);
-            File currentWorkingDir = AppDirs.root(activity);
-
-            Preference preference = findPreference(PREFERENCE_WORKING_DIR_LOCATION);
-            preference.setSummary(getString(location.summaryKey,
-                    AndroidFiles.availableSpaceMB(currentWorkingDir),
-                    currentWorkingDir.getAbsolutePath()
-                ));
-        }
-
         private void setupWorkingDirPreference() {
             final SettingsActivity activity = (SettingsActivity) getActivity();
 
@@ -226,16 +228,19 @@ public class SettingsActivity extends Activity {
 
             WorkingDirLocation[] locations = WorkingDirLocation.values();
             List<String> entries = new ArrayList<String>(locations.length);
+            List<String> entryValues = new ArrayList<String>(locations.length);
             for (WorkingDirLocation location : locations) {
                 File file = location.getFile(activity);
-                String path = file == null ? "" : file.getAbsolutePath();
-                long availableSpace = file == null ? 0 : AndroidFiles.availableSpaceMB(file);
-                entries.add(activity.getString(location.summaryKey, availableSpace, path));
+                if (location == WorkingDirLocation.CUSTOM_LOCATION || file != null && (file.exists() || file.mkdirs()) && file.canWrite()) {
+                    entryValues.add(location.key);
+                    entries.add(location.getSummaryLabel(activity));
+                }
             }
-            preference.setEntries(entries.toArray(new String[0]));
-            preference.setEntryValues(WorkingDirLocation.keys());
+            preference.setEntryValues(entryValues.toArray(new String[entryValues.size()]));
+            preference.setEntries(entries.toArray(new String[entries.size()]));
 
-            updateWorkingDirSummary();
+            WorkingDirLocation location = WorkingDirLocation.getCurrent(activity);
+            preference.setSummary(location.getSummaryLabel(activity));
 
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {

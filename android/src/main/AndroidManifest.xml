@@ -73,7 +73,7 @@
             android:label="@string/action_submit_data_to_collect" />
 
         <activity
-            android:name=".android.gui.SettingsActivity"
+            android:name=".android.gui.settings.SettingsActivity"
             android:label="@string/settings" />
 
         <activity

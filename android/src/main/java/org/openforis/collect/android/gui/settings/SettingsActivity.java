@@ -1,4 +1,4 @@
-package org.openforis.collect.android.gui;
+package org.openforis.collect.android.gui.settings;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -14,30 +14,20 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
 
-import com.codekidlabs.storagechooser.StorageChooser;
-import com.google.gson.JsonObject;
-
 import org.apache.commons.lang3.StringUtils;
-import org.openforis.collect.Collect;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
-import org.openforis.collect.android.gui.util.Activities;
-import org.openforis.collect.android.gui.util.AndroidFiles;
-import org.openforis.collect.android.gui.util.AppDirs;
-import org.openforis.collect.android.gui.util.Dialogs;
-import org.openforis.collect.android.gui.util.SlowAsyncTask;
-import org.openforis.collect.android.util.HttpConnectionHelper;
+import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.ThemeInitializer;
+import org.openforis.collect.android.gui.UILanguageInitializer;
 import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.manager.MessageSource;
 import org.openforis.collect.manager.ResourceBundleMessageSource;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.commons.versioning.Version;
 import org.openforis.idm.metamodel.Languages;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,7 +48,6 @@ public class SettingsActivity extends Activity {
     private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
     private static final Map<String, String> LANGUAGES = createLanguagesData();
 
-    public static final String PREFERENCE_WORKING_DIR_LOCATION = "workingDirLocation";
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
@@ -70,78 +59,6 @@ public class SettingsActivity extends Activity {
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
     public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
-
-    private enum WorkingDirLocation {
-        EXTERNAL_SD_CARD("external_sd_card", R.string.settings_working_directory_external_sd_card),
-        INTERNAL_EMULATED_SD_CARD("emulated_sd_card", R.string.settings_working_directory_emulated_sd_card),
-        INTERNAL_MEMORY("internal_memory", R.string.settings_working_directory_internal_memory),
-        CUSTOM_LOCATION("custom", R.string.settings_working_directory_custom, R.string.settings_working_directory_custom_entry);
-
-        private final String key;
-        private final int summaryKey;
-        private final int entryLabelKey;
-
-        WorkingDirLocation(String key, int summaryKey) {
-            this(key, summaryKey, summaryKey);
-        }
-
-        WorkingDirLocation(String key, int summaryKey, int entryLabelKey) {
-            this.key = key;
-            this.summaryKey = summaryKey;
-            this.entryLabelKey = entryLabelKey;
-        }
-
-        static String[] keys() {
-            WorkingDirLocation[] values = values();
-            List<String> result = new ArrayList<String>(values.length);
-            for (WorkingDirLocation location : values) {
-                result.add(location.key);
-            }
-            return result.toArray(new String[values.length]);
-        }
-
-        static WorkingDirLocation getByKey(String key) {
-            for (WorkingDirLocation location : values()) {
-                if (location.key.equals(key)) return location;
-            }
-            return null;
-        }
-
-        public static WorkingDirLocation getCurrent(Context context) {
-            if (AppDirs.isRootSdCard(context)) {
-                return WorkingDirLocation.EXTERNAL_SD_CARD;
-            } else if (AppDirs.isRootInternalEmulatedSdCard(context)) {
-                return WorkingDirLocation.INTERNAL_EMULATED_SD_CARD;
-            } else if (AppDirs.isRootInternalFiles(context)) {
-                return WorkingDirLocation.INTERNAL_MEMORY;
-            } else {
-                return WorkingDirLocation.CUSTOM_LOCATION;
-            }
-        }
-
-        File getFile(Context context) {
-            switch (this) {
-                case EXTERNAL_SD_CARD:
-                    return AppDirs.sdCardDir(context);
-                case INTERNAL_EMULATED_SD_CARD:
-                    return AppDirs.externalFilesDir(context);
-                case INTERNAL_MEMORY:
-                    return AppDirs.filesDir(context);
-                case CUSTOM_LOCATION:
-                default:
-                    return null;
-            }
-        }
-
-        String getSummaryLabel(Context context) {
-            File file = getFile(context);
-            String path = file == null ? "" : file.getAbsolutePath();
-            long availableSpace = file == null ? 0 : AndroidFiles.availableSpaceMB(file);
-            if (availableSpace == Long.MAX_VALUE) availableSpace = 0;
-
-            return context.getString(entryLabelKey, availableSpace, path);
-        }
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,44 +89,12 @@ public class SettingsActivity extends Activity {
         super.onBackPressed();
     }
 
-    protected void onWorkingDirectorySelect(final String path) {
-        final Activity activity = this;
-
-        String oldPath = AppDirs.rootAbsolutePath(activity);
-        if (oldPath.equals(path)) {
-            // do nothing
-            return;
-        }
-        // check that selected path is writable
-        if (!new File(path).canWrite()) {
-            Dialogs.alert(activity, R.string.warning, R.string.settings_error_working_directory);
-            return;
-        }
-
-        // confirm working directory change
-        Dialogs.confirm(activity, R.string.confirm_label, getString(R.string.settings_working_directory_confirm_change, oldPath, path), new Runnable() {
-            public void run() {
-                // save working directory to preferences
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(AppDirs.PREFERENCE_KEY, path);
-
-                editor.apply();
-
-                // reset service locator and restart main activity
-                ServiceLocator.reset(activity);
-                Activities.startNewClearTask(activity, MainActivity.class);
-                activity.finish();
-            }
-        });
-    }
-
     public static class SettingsFragment extends PreferenceFragment {
 
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
-            setupWorkingDirPreference();
+            new WorkingDirectoryPreferenceInitializer(this).setupPreference();
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
@@ -220,58 +105,6 @@ public class SettingsActivity extends Activity {
             setupRemoteCollectPasswordPreference();
             setupRemoteCollectConnectionTestPreference();
         }
-
-        private void setupWorkingDirPreference() {
-            final SettingsActivity activity = (SettingsActivity) getActivity();
-
-            ListPreference preference = (ListPreference) findPreference(PREFERENCE_WORKING_DIR_LOCATION);
-
-            WorkingDirLocation[] locations = WorkingDirLocation.values();
-            List<String> entries = new ArrayList<String>(locations.length);
-            List<String> entryValues = new ArrayList<String>(locations.length);
-            for (WorkingDirLocation location : locations) {
-                File file = location.getFile(activity);
-                if (location == WorkingDirLocation.CUSTOM_LOCATION || file != null && (file.exists() || file.mkdirs()) && file.canWrite()) {
-                    entryValues.add(location.key);
-                    entries.add(location.getSummaryLabel(activity));
-                }
-            }
-            preference.setEntryValues(entryValues.toArray(new String[entryValues.size()]));
-            preference.setEntries(entries.toArray(new String[entries.size()]));
-
-            WorkingDirLocation location = WorkingDirLocation.getCurrent(activity);
-            preference.setSummary(location.getSummaryLabel(activity));
-
-            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    WorkingDirLocation location = WorkingDirLocation.getByKey((String) newValue);
-                    File file = location.getFile(activity);
-                    if (file != null) {
-                        activity.onWorkingDirectorySelect(file.getAbsolutePath());
-                    } else {
-                        final StorageChooser chooser = new StorageChooser.Builder()
-                                .withActivity(activity)
-                                .withFragmentManager(getFragmentManager())
-                                .withMemoryBar(true)
-                                .allowCustomPath(true)
-                                .allowAddFolder(true)
-                                .setType(StorageChooser.DIRECTORY_CHOOSER)
-                                .withPredefinedPath(AppDirs.rootAbsolutePath(activity))
-                                .build();
-
-                        // handle path that the user has chosen
-                        chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
-                            public void onSelect(final String path) {
-                                activity.onWorkingDirectorySelect(path);
-                            }
-                        });
-                        chooser.show();
-                    }
-                    return true;
-                }
-            });
-        }
-
 
         private void setupCrewIdPreference() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -535,55 +368,6 @@ public class SettingsActivity extends Activity {
         return String.format("%s (%s)", label, langCode);
     }
 
-    private static class RemoteConnectionTestTask extends SlowAsyncTask<Void, Void, JsonObject> {
-
-        private final String address;
-        private final String username;
-        private final String password;
-
-        RemoteConnectionTestTask(Activity context, String address, String username, String password) {
-            super(context);
-            this.address = address;
-            this.username = username;
-            this.password = password;
-        }
-
-        protected JsonObject runTask() throws Exception {
-            HttpConnectionHelper connectionHelper = new HttpConnectionHelper(address, username, password);
-            return connectionHelper.getJson();
-        }
-
-        @Override
-        protected void onPostExecute(JsonObject info) {
-            super.onPostExecute(info);
-            if (info != null) {
-                String remoteCollectVersionStr = info.get("version").getAsString();
-                Version remoteCollectVersion = new Version(remoteCollectVersionStr);
-
-                if (Collect.VERSION.compareTo(remoteCollectVersion, Version.Significance.MINOR) > 0) {
-                    String message = context.getString(R.string.settings_remote_sync_test_failed_message_newer_version,
-                            remoteCollectVersion.toString(), Collect.VERSION.toString());
-                    Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
-                } else {
-                    Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_successful_title),
-                            context.getString(R.string.settings_remote_sync_test_successful_message));
-                }
-            }
-        }
-
-        @Override
-        protected void handleException(Exception e) {
-            super.handleException(e);
-            String message;
-            if (e instanceof FileNotFoundException) {
-                message = context.getString(R.string.settings_remote_sync_test_failed_message_wrong_address);
-            } else {
-                message = e.getMessage();
-            }
-            Dialogs.alert(context, context.getString(R.string.settings_remote_sync_test_failed_title), message);
-        }
-    }
-
     private static class LanguagesResourceBundleMessageSource extends ResourceBundleMessageSource {
 
         LanguagesResourceBundleMessageSource() {
@@ -594,4 +378,5 @@ public class SettingsActivity extends Activity {
             return (PropertyResourceBundle) PropertyResourceBundle.getBundle(baseName, locale);
         }
     }
+
 }

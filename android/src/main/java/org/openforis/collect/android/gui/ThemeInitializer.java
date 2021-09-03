@@ -12,10 +12,10 @@ import org.openforis.collect.R;
  */
 public class ThemeInitializer {
 
-    protected static final String THEME_PREFERENCE_KEY = "theme";
+    public static final String THEME_PREFERENCE_KEY = "theme";
     private static final String DARK_THEME_PREFERENCE_KEY = "darkTheme";
 
-    enum Theme {
+    public enum Theme {
         DARK(R.style.AppTheme),
         LIGHT(R.style.AppTheme_Light);
 
@@ -35,7 +35,7 @@ public class ThemeInitializer {
         activity.setTheme(theme.getCode());
     }
 
-    protected static Theme determineThemeFromPreferences(Activity activity) {
+    public static Theme determineThemeFromPreferences(Activity activity) {
         SharedPreferences preferences = getPrefs(activity);
         String themeName = preferences.getString(THEME_PREFERENCE_KEY, null);
         if (themeName == null) {

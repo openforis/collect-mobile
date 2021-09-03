@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.openforis.collect.R;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
+import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MultipartUtility;

@@ -32,6 +32,7 @@ import org.openforis.collect.android.gui.input.ImageFileAttributeComponent;
 import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
+import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;

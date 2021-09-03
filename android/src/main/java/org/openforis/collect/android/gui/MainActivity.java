@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.exception.StorageAccessException;
+import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.Views;

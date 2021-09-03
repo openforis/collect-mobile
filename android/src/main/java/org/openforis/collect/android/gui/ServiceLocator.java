@@ -15,6 +15,7 @@ import org.openforis.collect.android.collectadapter.MobileRecordManager;
 import org.openforis.collect.android.collectadapter.RecordUniquenessChecker;
 import org.openforis.collect.android.collectadapter.TaxonRepository;
 import org.openforis.collect.android.databaseschema.NodeDatabaseSchemaChangeLog;
+import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.sqlite.AndroidDatabase;

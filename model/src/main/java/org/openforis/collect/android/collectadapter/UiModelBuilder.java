@@ -46,6 +46,10 @@ class UiModelBuilder {
         return new UiRecordUpdate().addUiEntity(entity, uiEntityCollection);
     }
 
+    public UiAttribute addUiAttribute(Attribute<?,?> attribute, UiEntity parentUiEntity) {
+        return new UiRecordUpdate().addUiAttribute(attribute, parentUiEntity);
+    }
+
     private class UiRecordUpdate {
         UiRecord uiRecord;
 
@@ -67,6 +71,14 @@ class UiModelBuilder {
             return uiEntity;
         }
 
+        UiAttribute addUiAttribute(Attribute<?,?> attribute, UiEntity uiEntity) {
+            if (uiRecord == null)
+                uiRecord = uiEntity.getUiRecord();
+            UiAttribute uiAttribute = createUiAttribute(attribute);
+            uiEntity.addChild(uiAttribute);
+            return uiAttribute;
+        }
+
         private UiNode createUiNode(NodeDefinition nodeDefinition, Entity parentEntity) {
             if (nodeDefinition instanceof AttributeDefinition)
                 return nodeDefinition.isMultiple()
@@ -79,12 +91,16 @@ class UiModelBuilder {
             throw new IllegalStateException("Unsupported node type: " + nodeDefinition);
         }
 
-        private UiNode createUiAttribute(AttributeDefinition attributeDefinition, Entity parentEntity) {
+        private UiAttribute createUiAttribute(AttributeDefinition attributeDefinition, Entity parentEntity) {
             Attribute attribute = (Attribute) childNode(parentEntity, attributeDefinition);
+            return createUiAttribute(attribute);
+        }
+
+        private UiAttribute createUiAttribute(Attribute<?,?> attribute) {
             UiAttribute uiAttribute = instantiateUiAttribute(attribute);
             if (uiAttribute.isEmpty())
                 uiAttribute.setStatus(UiNode.Status.EMPTY);
-            else if (!attributeDefinition.getAttributeDefaults().isEmpty())
+            else if (!attribute.getDefinition().getAttributeDefaults().isEmpty())
                 uiAttribute.setStatus(UiNode.Status.PENDING_VALIDATION); // An attribute with default value should be validated
             return uiAttribute;
         }

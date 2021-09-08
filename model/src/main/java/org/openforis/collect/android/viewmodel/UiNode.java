@@ -214,15 +214,6 @@ public abstract class UiNode {
         ArrayList<UiNode> found = new ArrayList<UiNode>();
         if (Definitions.extractOriginalDefinitionId(definition) == childDefId)
             found.add(this);
-        if (this instanceof UiInternalNode) {
-            for (UiNode childNode : ((UiInternalNode) this).getChildren()) {
-                if (Definitions.extractOriginalDefinitionId(childNode.definition) == childDefId) {
-                    found.add(childNode);
-                } else {
-                    found.addAll(childNode.getChildrenByDefId(childDefId));
-                }
-            }
-        }
         return found;
     }
 

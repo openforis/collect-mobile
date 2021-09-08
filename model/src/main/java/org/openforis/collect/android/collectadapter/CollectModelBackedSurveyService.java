@@ -7,7 +7,11 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.android.viewmodelmanager.ViewModelManager;
+import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.NodeVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +64,6 @@ public class CollectModelBackedSurveyService implements SurveyService {
     public UiRecord addRecord(String entityName) {
         UiRecord record = collectModelManager.addRecord(entityName, viewModelManager.getSelectedSurvey());
         viewModelManager.addRecord(record);
-        collectModelManager.recordSelected(record);
         return record;
     }
 
@@ -69,9 +72,27 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     public UiRecord selectRecord(int recordId) {
-        UiRecord record = viewModelManager.selectRecord(recordId);
+        final UiRecord uiRecord = viewModelManager.selectRecord(recordId);
+
+        CollectRecord record = collectModelManager.toCollectRecord(uiRecord);
         collectModelManager.recordSelected(record);
-        return record;
+
+        // insert missing nodes into db
+        record.getRootEntity().traverseDescendants(new NodeVisitor() {
+            @Override
+            public void visit(Node<? extends NodeDefinition> node, int idx) {
+                if (node.getId() == null) {
+                    // node not persisted before (added on Collect record initialization)
+                    UiNode convertedNode = collectModelManager.toUiNode(node, uiRecord);
+                    if (convertedNode != null) {
+                        viewModelManager.insertNode(convertedNode);
+                    }
+                }
+            }
+        });
+        // update CollectModelManager internal variables
+        collectModelManager.recordSelected(record);
+        return uiRecord;
     }
 
     public UiNode selectNode(int nodeId) {

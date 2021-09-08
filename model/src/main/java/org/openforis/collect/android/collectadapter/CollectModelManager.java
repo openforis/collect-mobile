@@ -23,6 +23,7 @@ import org.openforis.collect.android.viewmodel.UiCoordinateAttribute;
 import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
+import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 import org.openforis.collect.android.viewmodel.UiRecord;
@@ -265,12 +266,35 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return new NodeChangeSetParser(nodeChangeSet, uiEntity.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
-    public void recordSelected(UiRecord uiRecord) {
-        recordSelected(uiRecord, true);
+    public CollectRecord toCollectRecord(UiRecord uiRecord) {
+        return modelConverter.toCollectRecord(uiRecord, selectedSurvey, true);
     }
 
-    public void recordSelected(UiRecord uiRecord, boolean enableDependencyGraphs) {
-        CollectRecord record = modelConverter.toCollectRecord(uiRecord, selectedSurvey, enableDependencyGraphs);
+    public UiNode toUiNode(Node node, UiRecord uiRecord) {
+        Entity parent = node.getParent();
+        if (parent == null) return null;
+        UiNode parentUiNode = uiRecord.lookupNode(parent.getId());
+        if (parentUiNode == null) return null;
+
+        if (node.getDefinition().isMultiple()) {
+            // parent ui node is a node collection
+            parentUiNode = ((UiInternalNode) parentUiNode).getChildByDefId(node.getDefinition().getId());
+        }
+        UiNode uiNode = null;
+        if (node instanceof Entity && parentUiNode instanceof UiEntityCollection) {
+            uiNode = modelConverter.toUiEntity(selectedSurvey, (Entity) node, (UiEntityCollection) parentUiNode);
+        } else if (node instanceof Attribute && parentUiNode instanceof UiEntity) {
+            uiNode = modelConverter.toUiAttribute(selectedSurvey, (Attribute<?, ?>) node, (UiEntity) parentUiNode);
+        }
+        if (uiNode == null) {
+            return null;
+        } else {
+            recordNodes.add(node);
+            return uiNode;
+        }
+    }
+
+    public void recordSelected(CollectRecord record) {
         recordNodes = new RecordNodes(record);
     }
 

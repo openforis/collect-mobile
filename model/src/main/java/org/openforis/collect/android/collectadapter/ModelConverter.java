@@ -9,6 +9,7 @@ import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.ModelVersion;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.Node;
 
@@ -39,6 +40,10 @@ class ModelConverter {
         return new UiModelBuilder(collectSurvey, definitions).addUiEntity(entity, uiEntityCollection);
     }
 
+    public UiAttribute toUiAttribute(CollectSurvey collectSurvey, Attribute<?,?> attribute, UiEntity parentUiEntity) {
+        return new UiModelBuilder(collectSurvey, definitions).addUiAttribute(attribute, parentUiEntity);
+    }
+
     public UiCodeList toUiCodeList(List<CodeListItem> codeList, boolean valueShown, String preferredLanguage) {
         List<UiCode> uiCodes = new ArrayList<UiCode>();
         UiCode qualifiableCode = null;
@@ -66,7 +71,10 @@ class ModelConverter {
         collectRecord.setModifiedDate(uiRecord.getModifiedOn());
         rootEntity.setId(uiRecord.getId());
         addChildNodes(rootEntity, uiRecord, collectRecord);
+
+        // add empty nodes (if not added previously), evaluate calculated attributes, etc.
         new RecordUpdater().initializeRecord(collectRecord);
+
         return collectRecord;
     }
 

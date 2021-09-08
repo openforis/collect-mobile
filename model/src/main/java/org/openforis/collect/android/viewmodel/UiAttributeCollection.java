@@ -3,7 +3,7 @@ package org.openforis.collect.android.viewmodel;
 /**
  * @author Daniel Wiell
  */
-public class UiAttributeCollection extends UiInternalNode {
+public class UiAttributeCollection extends UiInternalNode implements UiNodeCollection {
     private final int parentEntityId;
 
     public UiAttributeCollection(int id, int parentEntityId, boolean relevant, UiAttributeCollectionDefinition definition) {

@@ -1,5 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
+import org.openforis.collect.android.collectadapter.Definitions;
 import org.openforis.commons.collection.CollectionUtils;
 import org.openforis.commons.collection.Predicate;
 
@@ -10,8 +11,8 @@ import java.util.*;
  */
 public class UiInternalNode extends UiNode {
     // TODO: Use LinkedHashMap instead
-    private Map<Integer, UiNode> childById = new HashMap<Integer, UiNode>();
-    private List<UiNode> children = new ArrayList<UiNode>();
+    private final Map<Integer, UiNode> childById = new HashMap<Integer, UiNode>();
+    private final List<UiNode> children = new ArrayList<UiNode>();
 
     public UiInternalNode(int id, boolean relevant, Definition definition) {
         super(id, relevant, definition);
@@ -39,6 +40,32 @@ public class UiInternalNode extends UiNode {
 
     public List<UiNode> getChildren() {
         return Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public Collection<UiNode> getChildrenByDefId(int childDefId) {
+        Collection<UiNode> found = super.getChildrenByDefId(childDefId);
+        for (UiNode childNode : children) {
+            if (Definitions.extractOriginalDefinitionId(childNode.getDefinition()) == childDefId) {
+                // single node definition
+                found.add(childNode);
+            } else {
+                // multiple node definition
+                found.addAll(childNode.getChildrenByDefId(childDefId));
+            }
+        }
+        return found;
+    }
+
+    public UiNode getChildByDefId(int childDefId) {
+        if (Definitions.extractOriginalDefinitionId(getDefinition()) == childDefId)
+            return this;
+        for (UiNode childNode : children) {
+            if (Definitions.extractOriginalDefinitionId(childNode.getDefinition()) == childDefId) {
+                return childNode;
+            }
+        }
+        return null;
     }
 
     public List<UiNode> getRelevantChildren() {
@@ -109,6 +136,12 @@ public class UiInternalNode extends UiNode {
             addChild(child);
     }
 
+    public void removeChild(UiNode node) {
+        childById.remove(node.getId());
+        children.remove(node);
+        unregister(node);
+    }
+
     public Status determineStatus(Set<UiValidationError> validationErrors) {
         Status status = super.determineStatus(validationErrors);
         for (UiNode child : children)
@@ -138,9 +171,4 @@ public class UiInternalNode extends UiNode {
         return getLabel();
     }
 
-    public void removeChild(UiNode node) {
-        childById.remove(node.getId());
-        children.remove(node);
-        unregister(node);
-    }
 }

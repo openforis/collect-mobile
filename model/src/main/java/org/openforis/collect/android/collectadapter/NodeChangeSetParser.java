@@ -198,6 +198,10 @@ class NodeChangeSetParser {
 
     private UiAttribute getUiAttribute(NodeChange<?> nodeChange) {
         Integer attributeId = nodeChange.getNode().getId();
+        if (attributeId == null) {
+            // it should never happen...
+            return null;
+        }
         return (UiAttribute) uiRecord.lookupNode(attributeId);
     }
 

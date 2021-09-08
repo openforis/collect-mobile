@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -84,7 +85,9 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     protected abstract boolean updateAttributeIfChanged();
 
     protected void onAttributeChange(UiAttribute attribute) {
-        // Do nothing by default
+        if (hasChanged()) {
+            Log.e("-----", "onAttributeChange: not same value!");
+        }
     }
 
     public final void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChange) {
@@ -94,6 +97,10 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
         if (attributeChange != null) {
             setValidationError(attributeChange.validationErrors);
         }
+    }
+
+    protected void notifyAboutAttributeChanging() {
+        surveyService.notifyAttributeChanging(attribute);
     }
 
     protected void notifyAboutAttributeChange() {
@@ -123,8 +130,9 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
     }
 
     protected void delaySaveNode() {
-        stopDelayedSaveNodeHandler();
+        notifyAboutAttributeChanging();
 
+        stopDelayedSaveNodeHandler();
         delayedSaveNodeHandler = Tasks.runDelayedOnUiThread(context, new Runnable() {
             public void run() {
                 saveNode();

@@ -2,9 +2,12 @@ package org.openforis.collect.android.gui.util;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.openforis.collect.android.util.StringUtils;
+
+import java.util.Stack;
 
 public abstract class Views {
 
@@ -53,5 +56,24 @@ public abstract class Views {
     public static int px(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
+    }
+
+    public static <T extends View> T findDescendant(View parent, int viewId) {
+        Stack<View> stack = new Stack<View>();
+        stack.push(parent);
+        while (!stack.isEmpty()) {
+            View currentView = stack.pop();
+            View view = currentView.findViewById(viewId);
+            if (view != null) {
+                return (T) view;
+            }
+            if (currentView instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) currentView;
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    stack.push(group.getChildAt(i));
+                }
+            }
+        }
+        return null;
     }
 }

@@ -76,6 +76,15 @@ class AutoCompleteCodeAttributeCollectionComponent extends CodeAttributeCollecti
         attributeComponentByAttribute.clear();
     }
 
+    @Override
+    public boolean hasChanged() {
+        for (AttributeComponent attributeComponent : attributeComponentByAttribute.values())
+            if (attributeComponent.hasChanged()) {
+                return true;
+            }
+        return false;
+    }
+
     protected Set<UiAttribute> updateChangedAttributes() {
         Set<UiAttribute> changedAttributes = new HashSet<UiAttribute>();
         for (AttributeComponent attributeComponent : attributeComponentByAttribute.values())

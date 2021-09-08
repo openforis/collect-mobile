@@ -12,5 +12,7 @@ public interface SurveyListener {
 
     void onNodeSelected(UiNode previous, UiNode selected);
 
+    void onNodeChanging(UiNode node);
+
     void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 }

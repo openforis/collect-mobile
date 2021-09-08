@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.input;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -33,6 +35,7 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     private ClearableAutoCompleteTextView autoComplete;
     private LinearLayout commonNamesLayout;
     private UiTaxon selectedTaxon;
+    private boolean textChangingNotificationEnabled = true;
 
     protected TaxonAttributeComponent(UiTaxonAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -82,8 +85,25 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         });
         autoComplete.setOnClearListener(new ClearableAutoCompleteTextView.OnClearListener() {
             public void onClear() {
+                textChangingNotificationEnabled = false;
                 autoComplete.setText("");
                 commonNamesLayout.removeAllViews();
+                textChangingNotificationEnabled = true;
+                updateAttributeIfChanged();
+            }
+        });
+        autoComplete.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (textChangingNotificationEnabled) {
+                    notifyAboutAttributeChanging();
+                }
             }
         });
         autoComplete.setAdapter(new UiTaxonAdapter(context, attribute, ServiceLocator.taxonService()));
@@ -93,9 +113,18 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         return autoComplete;
     }
 
+    @Override
+    public boolean hasChanged() {
+        UiTaxon oldTaxon = attribute.getTaxon();
+        if (oldTaxon == null && StringUtils.isNotBlank(getText()))
+            return true;
+        UiTaxon newTaxon = adjustSelectedTaxon();
+        return ObjectUtils.notEqual(oldTaxon, newTaxon);
+    }
+
     protected boolean updateAttributeIfChanged() {
-        UiTaxon newTaxon = selectedTaxon();
-        if (hasChanged(newTaxon)) {
+        adjustSelectedTaxon();
+        if (hasChanged()) {
             attribute.setTaxon(selectedTaxon);
             notifyAboutAttributeChange();
             return true;
@@ -107,13 +136,10 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         return layout;
     }
 
-    private UiTaxon selectedTaxon() {
+    private UiTaxon adjustSelectedTaxon() {
         commonNamesLayout.removeAllViews();
         //loadCommonNames(); not necessary: entire component re-initialized on node change
-        Editable editable = autoComplete.getText();
-        if (editable == null)
-            throw new IllegalStateException("autoComplete text is null");
-        String text = editable.toString();
+        String text = getText();
         if (selectedTaxon == null || !selectedTaxon.toString().equals(text)) {
             if (StringUtils.isEmpty(text))
                 selectedTaxon = null;
@@ -132,21 +158,23 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         return autoComplete;
     }
 
-    private boolean hasChanged(UiTaxon newTaxon) {
-        UiTaxon oldTaxon = attribute.getTaxon();
-        if (oldTaxon == null)
-            return newTaxon != null;
-        return !oldTaxon.equals(newTaxon);
+    private String getText() {
+        Editable editable = autoComplete.getText();
+        if (editable == null)
+            return null;
+        return editable.toString();
     }
 
     @SuppressWarnings("ConstantConditions")
     private void setText(String text) {
         // Hack to prevent pop-up from opening when setting text
         // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
+        textChangingNotificationEnabled = false;
         UiTaxonAdapter adapter = (UiTaxonAdapter) autoComplete.getAdapter();
         autoComplete.setAdapter(null);
         autoComplete.setText(text);
         autoComplete.setAdapter(adapter);
+        textChangingNotificationEnabled = true;
     }
 
     private void loadCommonNames() {

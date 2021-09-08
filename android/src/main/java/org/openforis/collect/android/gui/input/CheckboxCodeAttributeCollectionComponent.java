@@ -63,6 +63,11 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         saveQualifier();
     }
 
+    @Override
+    public boolean hasChanged() {
+        return false;
+    }
+
     protected Set<UiAttribute> updateChangedAttributes() {
         return new HashSet<UiAttribute>();
     }

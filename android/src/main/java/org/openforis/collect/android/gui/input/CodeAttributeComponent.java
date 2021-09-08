@@ -70,14 +70,31 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         this.codeListRefreshForced = codeListRefreshForced;
     }
 
-    protected final boolean updateAttributeIfChanged() {
+    @Override
+    public boolean hasChanged() {
         if (codeList == null)
             return false;
         UiCode newCode = selectedCode();
         String newQualifier = qualifier(newCode);
+        newQualifier = newQualifier == null ? "" : newQualifier;
+
         if (StringUtils.isNotEmpty(newQualifier) && newCode == null)
             newCode = codeList.getQualifiableCode();
-        if (hasChanged(newCode, newQualifier)) {
+        String oldQualifier = attribute.getQualifier() == null ? "" : attribute.getQualifier();
+
+        return notEqual(attribute.getCode(), newCode)
+                || notEqual(oldQualifier, newQualifier);
+    }
+
+    protected final boolean updateAttributeIfChanged() {
+        if (codeList == null)
+            return false;
+        if (hasChanged()) {
+            UiCode newCode = selectedCode();
+            String newQualifier = qualifier(newCode);
+            if (StringUtils.isNotEmpty(newQualifier) && newCode == null)
+                newCode = codeList.getQualifiableCode();
+
             attribute.setCode(newCode);
             attribute.setQualifier(newQualifier);
             return true;

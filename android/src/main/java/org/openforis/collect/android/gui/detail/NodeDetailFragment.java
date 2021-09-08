@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.openforis.collect.R;
@@ -22,6 +25,7 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
@@ -47,6 +51,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     private boolean selected;
     private T node;
+    private NodeDetailFragmentHolder holder; // do not store it in view tag: it could override the tag set in parent view
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,25 +65,34 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         }
     }
 
-    public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = createView(inflater, container, savedInstanceState);
-        Definition nodeDef = node.getDefinition();
-        String label = isTwoPane()
-                ? nodeDef.getInterviewLabelOrLabel()
-                : node.getLabel();
-        setOrRemoveText(rootView, R.id.node_label, label + " ");
-        setOrRemoveText(rootView, R.id.node_description, nodeDef.description);
-        setOrRemoveText(rootView, R.id.node_prompt, nodeDef.prompt);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = createView(inflater, container, savedInstanceState);
 
-        return rootView;
+        NodeDetailFragmentHolder holder = new NodeDetailFragmentHolder();
+        holder.label = view.findViewById(R.id.node_label);
+        holder.description = view.findViewById(R.id.node_description);
+        holder.prompt = view.findViewById(R.id.node_prompt);
+        holder.loader = view.findViewById(R.id.node_loader);
+        holder.warningIcon = view.findViewById(R.id.node_warning_icon);
+
+        Definition nodeDef = node.getDefinition();
+
+        setOrRemoveText(holder.label, extractNodeDefLabel() + " ");
+        setOrRemoveText(holder.description, nodeDef.description);
+        setOrRemoveText(holder.prompt, nodeDef.prompt);
+
+        this.holder = holder;
+
+        return view;
     }
 
     public void onPause() {
         super.onPause();
     }
 
-    private void setOrRemoveText(View rootView, int textViewId, String text) {
-        TextView textView = rootView.findViewById(textViewId);
+    private void setOrRemoveText(TextView textView, String text) {
         if (text == null)
             ((ViewManager) textView.getParent()).removeView(textView);
         else {
@@ -159,6 +173,35 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void showAttributeSavingLoader() {
+        if (holder == null || holder.loader == null) return;
+        holder.loader.setVisibility(View.VISIBLE);
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    protected void hideAttributeSavingLoader() {
+        if (holder == null || holder.loader == null) return;
+        holder.loader.setVisibility(View.INVISIBLE);
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    protected void showAttributeSavingError() {
+
+        if (holder.warningIcon != null) {
+            holder.warningIcon.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void onNodeChanging(UiNode _node) {
+        showAttributeSavingLoader();
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -257,5 +300,21 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (node instanceof UiInternalNode)
             return new InternalNodeDetailFragment();
         throw new IllegalStateException("Unexpected node type: " + node.getClass());
+    }
+
+    private String extractNodeDefLabel() {
+        Definition nodeDef = node.getDefinition();
+        String label = isTwoPane()
+                ? nodeDef.getInterviewLabelOrLabel()
+                : nodeDef.label;
+        return label;
+    }
+
+    private static class NodeDetailFragmentHolder {
+        TextView label;
+        TextView description;
+        TextView prompt;
+        ProgressBar loader;
+        ImageView warningIcon;
     }
 }

@@ -134,8 +134,10 @@ public class ViewModelManager {
         attributesChanged.add(attribute);
         Set<Map.Entry<UiNode, UiNodeChange>> entries = nodeChanges.entrySet();
         for (Map.Entry<UiNode, UiNodeChange> entry : entries) {
-            if (entry.getValue().valueChange) {
-                attributesChanged.add((UiAttribute) entry.getKey());
+            UiNodeChange change = entry.getValue();
+            UiNode node = entry.getKey();
+            if (change.valueChange && !attributesChanged.contains(node)) {
+                attributesChanged.add((UiAttribute) node);
             }
         }
         Map<Integer, StatusChange> statusChanges = statusChanges(nodeChanges);

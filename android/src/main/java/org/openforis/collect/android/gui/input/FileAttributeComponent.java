@@ -22,8 +22,13 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
     }
 
     @Override
+    public boolean hasChanged() {
+        return fileChanged;
+    }
+
+    @Override
     protected boolean updateAttributeIfChanged() {
-        if (fileChanged) {
+        if (hasChanged()) {
             attribute.setFile(file);
             fileChanged = false;
             return true;

@@ -62,22 +62,35 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         locationProvider = new LocationProvider(new UpdateListener(context), context, true);
     }
 
-    protected boolean updateAttributeIfChanged() {
-        stopLocationRequest();
+    @Override
+    public boolean hasChanged() {
         UiSpatialReferenceSystem srs = selectedSpatialReferenceSystem();
+
+        // srs always set in ui, while it can be null in the attribute: avoid unnecessary updates
+        boolean srsUpdated = attribute.getSpatialReferenceSystem() != null && notEqual(srs, attribute.getSpatialReferenceSystem());
+
         Double x = toDouble(vh.xView);
         Double y = toDouble(vh.yView);
         Double altitude = attribute.getDefinition().includeAltitude ? toDouble(vh.altitudeView) : null;
         Double accuracy = attribute.getDefinition().includeAccuracy ? toDouble(vh.accuracyView) : null;
 
-        // srs always set in ui, while it can be null in the attribute: avoid unnecessary updates
-        boolean srsUpdated = attribute.getSpatialReferenceSystem() != null && notEqual(srs, attribute.getSpatialReferenceSystem());
-
-        if (srsUpdated ||
+        return srsUpdated ||
                 notEqual(x, attribute.getX()) ||
                 notEqual(y, attribute.getY()) ||
                 notEqual(altitude, attribute.getAltitude()) ||
-                notEqual(accuracy, attribute.getAccuracy())) {
+                notEqual(accuracy, attribute.getAccuracy());
+    }
+
+    protected boolean updateAttributeIfChanged() {
+        stopLocationRequest();
+
+        if (hasChanged()) {
+            UiSpatialReferenceSystem srs = selectedSpatialReferenceSystem();
+            Double x = toDouble(vh.xView);
+            Double y = toDouble(vh.yView);
+            Double altitude = attribute.getDefinition().includeAltitude ? toDouble(vh.altitudeView) : null;
+            Double accuracy = attribute.getDefinition().includeAccuracy ? toDouble(vh.accuracyView) : null;
+
             attribute.setSpatialReferenceSystem(srs);
             attribute.setX(x);
             attribute.setY(y);

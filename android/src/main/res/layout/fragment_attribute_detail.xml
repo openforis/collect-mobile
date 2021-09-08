@@ -9,15 +9,38 @@
             android:orientation="vertical"
             android:padding="?attr/standardPadding">
 
-        <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
                 android:id="@+id/node_label"
                 style="?android:attr/textAppearanceLarge"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="?attr/standardPadding"/>
 
+            <ProgressBar
+                android:id="@+id/node_loader"
+                android:layout_alignRight="@id/node_label"
+                android:layout_alignEnd="@id/node_label"
+                android:layout_centerVertical="true"
+                android:visibility="invisible"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminate="true"/>
+
+            <ImageView
+                android:id="@+id/node_warning_icon"
+                android:layout_alignRight="@id/node_label"
+                android:layout_alignEnd="@id/node_label"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_warning_yellow_24dp" />
+        </RelativeLayout>
         <TextView
                 android:id="@+id/node_prompt"
                 style="?android:attr/textAppearanceMedium"

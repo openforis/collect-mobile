@@ -167,12 +167,21 @@ class CodeListTest extends Specification {
         final List<Map<String, UiNode>> selectNodeEvents = []
         final List<Map<String, ?>> changeEvents = []
 
+        @Override
         void onNodeSelected(UiNode previous, UiNode selected) {
             selectNodeEvents.add(previous: previous, selected: selected)
         }
 
+        @Override
+        void onNodeChanging(UiNode node) {
+            // Do nothing
+        }
+
+        @Override
         void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> changes) {
             changeEvents.add(node: node, changes: changes)
         }
+
+
     }
 }

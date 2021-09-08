@@ -147,6 +147,11 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         selectedNode = selected;
     }
 
+    @Override
+    public void onNodeChanging(UiNode node) {
+        nodePagerFragment().onNodeChanging(node);
+    }
+
     public void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         // TODO: Delete files when deleting nodes
         notifyOnValidationErrors(node, nodeChanges);

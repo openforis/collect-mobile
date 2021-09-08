@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.input.SavableComponent;
 import org.openforis.collect.android.viewmodel.UiNode;
@@ -51,7 +52,14 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> attributeChanges) {
         super.onNodeChange(node, attributeChanges);
-        if (savableComponent != null)
+        if (savableComponent != null) {
             savableComponent.onNodeChange(node, attributeChanges);
+            hideAttributeSavingLoader();
+            if (savableComponent.hasChanged()) {
+                showAttributeSavingError();
+            }
+        }
     }
+
+
 }

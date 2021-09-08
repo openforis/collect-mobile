@@ -251,6 +251,13 @@ public class CollectModelBackedSurveyService implements SurveyService {
         }
     }
 
+    @Override
+    public void notifyAttributeChanging(UiAttribute attribute) {
+        if (listener == null)
+            return;
+        listener.onNodeChanging(attribute);
+    }
+
     public void updateAttributes(Set<UiAttribute> attributes) {
         if (attributes == null)
             return;

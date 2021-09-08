@@ -62,11 +62,7 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
     }
 
     protected boolean updateAttributeIfChanged() {
-        Boolean previouslyChecked = attribute.getValue();
-        boolean changed = !Objects.equal(checked, previouslyChecked)
-                || (checked == null && previouslyChecked != null && previouslyChecked)
-                || (checked != null && checked && previouslyChecked == null);
-        if (changed) {
+        if (hasChanged()) {
             attribute.setValue(checked);
             return true;
         }
@@ -75,5 +71,13 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
 
     protected View toInputView() {
         return radioGroup;
+    }
+
+    @Override
+    public boolean hasChanged() {
+        Boolean previouslyChecked = attribute.getValue();
+        return !Objects.equal(checked, previouslyChecked)
+                || (checked == null && previouslyChecked != null && previouslyChecked)
+                || (checked != null && checked && previouslyChecked == null);
     }
 }

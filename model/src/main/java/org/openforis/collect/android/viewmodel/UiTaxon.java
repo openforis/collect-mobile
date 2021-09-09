@@ -1,7 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
-import com.google.common.base.Objects;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,14 +41,19 @@ public class UiTaxon {
         return scientificName + " (" + code + ")";
     }
 
-    public int hashCode() {
-        return Objects.hashCode(code);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UiTaxon uiTaxon = (UiTaxon) o;
+
+        return new EqualsBuilder().append(code, uiTaxon.code).isEquals();
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        UiTaxon other = (UiTaxon) obj;
-        return Objects.equal(this.code, other.code);
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(code).toHashCode();
     }
 }

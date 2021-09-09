@@ -1,6 +1,6 @@
 package org.openforis.collect.android.viewmodel;
 
-import com.google.common.base.MoreObjects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,11 +21,11 @@ public class UiNodeChange {
     }
 
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("statusChange", statusChange)
-                .add("valueChange", valueChange)
-                .add("relevanceChange", relevanceChange)
-                .add("validationErrors", validationErrors)
+        return new ToStringBuilder(this)
+                .append("statusChange", statusChange)
+                .append("valueChange", valueChange)
+                .append("relevanceChange", relevanceChange)
+                .append("validationErrors", validationErrors)
                 .toString();
     }
 }

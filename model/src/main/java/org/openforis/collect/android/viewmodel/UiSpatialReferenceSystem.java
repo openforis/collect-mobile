@@ -1,6 +1,7 @@
 package org.openforis.collect.android.viewmodel;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Daniel Wiell
@@ -29,16 +30,20 @@ public class UiSpatialReferenceSystem {
         this.label = label;
     }
 
-    public int hashCode() {
-        return Objects.hashCode(id);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UiSpatialReferenceSystem that = (UiSpatialReferenceSystem) o;
+
+        return new EqualsBuilder().append(id, that.id).isEquals();
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        UiSpatialReferenceSystem other = (UiSpatialReferenceSystem) obj;
-        return Objects.equal(this.id, other.id);
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(id).toHashCode();
     }
 
     public String toString() {

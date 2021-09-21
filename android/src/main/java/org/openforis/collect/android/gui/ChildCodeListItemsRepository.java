@@ -22,7 +22,7 @@ import androidx.collection.LruCache;
 
 public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository {
     public static final int ONE_MILLION_ITEMS = 1000 * 1000;
-    private LruCache<Key, List<PersistedCodeListItem>> cache;
+    private final LruCache<Key, List<PersistedCodeListItem>> cache;
     private final AndroidDatabase database;
 
     public ChildCodeListItemsRepository(AndroidDatabase database) {

@@ -7,8 +7,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.fragment.app.FragmentActivity;
 
-import com.google.common.base.Objects;
-
+import org.apache.commons.lang3.ObjectUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.UiBooleanAttribute;
@@ -76,7 +75,7 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
     @Override
     public boolean hasChanged() {
         Boolean previouslyChecked = attribute.getValue();
-        return !Objects.equal(checked, previouslyChecked)
+        return ObjectUtils.notEqual(checked, previouslyChecked)
                 || (checked == null && previouslyChecked != null && previouslyChecked)
                 || (checked != null && checked && previouslyChecked == null);
     }

@@ -1,11 +1,8 @@
 package org.openforis.collect.android.viewmodelmanager;
 
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.IdGenerator;
+import org.openforis.collect.android.util.Collections;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.util.persistence.PreparedStatementHelper;
@@ -19,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -69,13 +65,12 @@ public class DataSourceNodeRepository implements NodeRepository {
         // UPDATE
         List<String> fieldsToUpdate = new ArrayList<String>(Arrays.asList(FIELDS));
         fieldsToUpdate.remove("id");
-        Collection<String> fieldsUpdateArr = Collections2.transform(
-                fieldsToUpdate, new Function<String, String>() {
-                    @Override
-                    public String apply(String field) {
-                        return field + " = ?";
-                    }
-                });
+        List<String> fieldsUpdateArr = Collections.transform(fieldsToUpdate, new Collections.Transformer<String>() {
+            @Override
+            public String transform(String field) {
+                return field + " = ?";
+            }
+        });
         String fieldsUpdate = StringUtils.join(fieldsUpdateArr, ", ");
         UPDATE_QUERY = "UPDATE ofc_view_model\n" +
                 "SET " + fieldsUpdate + "\n" +

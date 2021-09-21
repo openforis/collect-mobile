@@ -1,7 +1,8 @@
 package org.openforis.collect.android.viewmodel;
 
-import com.google.common.base.Objects;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openforis.collect.android.util.StringUtils;
 
 /**
@@ -47,15 +48,19 @@ public class UiCode {
         return label + (label.equals(value) || !valueShown ? "" : " (" + value + ")");
     }
 
-    public int hashCode() {
-        return Objects.hashCode(value);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UiCode uiCode = (UiCode) o;
+
+        return new EqualsBuilder().append(value, uiCode.value).isEquals();
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        UiCode other = (UiCode) obj;
-        return Objects.equal(this.value, other.value);
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(value).toHashCode();
     }
 }

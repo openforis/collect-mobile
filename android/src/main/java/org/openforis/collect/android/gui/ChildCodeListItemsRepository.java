@@ -3,13 +3,9 @@ package org.openforis.collect.android.gui;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.Weigher;
-
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 import org.openforis.collect.android.sqlite.AndroidDatabaseCallback;
 import org.openforis.idm.metamodel.CodeList;
@@ -20,30 +16,33 @@ import java.util.List;
 
 import static org.openforis.collect.persistence.jooq.tables.OfcCodeList.OFC_CODE_LIST;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.LruCache;
+
 public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository {
     public static final int ONE_MILLION_ITEMS = 1000 * 1000;
-    private final LoadingCache<Key, List<PersistedCodeListItem>> cache;
+    private LruCache<Key, List<PersistedCodeListItem>> cache;
     private final AndroidDatabase database;
 
     public ChildCodeListItemsRepository(AndroidDatabase database) {
         this.database = database;
-        CacheLoader<Key, List<PersistedCodeListItem>> loader = new CacheLoader<Key, List<PersistedCodeListItem>>() {
-            public List<PersistedCodeListItem> load(Key key) {
+        this.cache = new LruCache<Key, List<PersistedCodeListItem>>(ONE_MILLION_ITEMS) {
+            @Nullable
+            @Override
+            protected List<PersistedCodeListItem> create(@NonNull Key key) {
                 return loadFromDatabase(key.codeList, key.parentItemId);
             }
+
+            @Override
+            protected int sizeOf(@NonNull Key key, @NonNull List<PersistedCodeListItem> items) {
+                return items.size();
+            }
         };
-        cache = CacheBuilder.newBuilder()
-                .maximumWeight(ONE_MILLION_ITEMS)
-                .weigher(new Weigher<Key, List<PersistedCodeListItem>>() {
-                    public int weigh(Key key, List<PersistedCodeListItem> items) {
-                        return items.size();
-                    }
-                })
-                .build(loader);
     }
 
     public List<PersistedCodeListItem> load(final CodeList codeList, final Long parentItemId) {
-        return cache.getUnchecked(new Key(codeList, parentItemId));
+        return cache.get(new Key(codeList, parentItemId));
     }
 
     private List<PersistedCodeListItem> loadFromDatabase(final CodeList codeList, final Long parentItemId) {
@@ -82,22 +81,26 @@ public class ChildCodeListItemsRepository extends AbstractCodeListItemRepository
         }
 
         public String toString() {
-            return MoreObjects.toStringHelper(this)
-                    .add("codeList", codeList)
-                    .add("parentItemId", parentItemId)
+            return new ToStringBuilder(this)
+                    .append("codeList", codeList)
+                    .append("parentItemId", parentItemId)
                     .toString();
         }
 
-        public int hashCode() {
-            return Objects.hashCode(codeList, parentItemId);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Key key = (Key) o;
+
+            return new EqualsBuilder().append(codeList, key.codeList).append(parentItemId, key.parentItemId).isEquals();
         }
 
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Key other = (Key) obj;
-            return Objects.equal(this.codeList, other.codeList)
-                    && Objects.equal(this.parentItemId, other.parentItemId);
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(codeList).append(parentItemId).toHashCode();
         }
     }
 }

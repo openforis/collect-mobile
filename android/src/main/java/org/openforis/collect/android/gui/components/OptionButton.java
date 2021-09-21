@@ -10,8 +10,7 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.google.common.base.Strings;
-
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 
 public class OptionButton extends LinearLayout {
@@ -51,7 +50,7 @@ public class OptionButton extends LinearLayout {
     }
 
     public void setDescription(String description) {
-        descriptionEmpty = Strings.isNullOrEmpty(description);
+        descriptionEmpty = StringUtils.isBlank(description);
         descriptionText.setVisibility(descriptionEmpty ? GONE : VISIBLE);
         descriptionText.setText(description);
     }

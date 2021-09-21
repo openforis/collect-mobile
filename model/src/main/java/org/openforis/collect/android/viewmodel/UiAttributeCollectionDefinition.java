@@ -16,7 +16,7 @@ public class UiAttributeCollectionDefinition extends Definition {
         this.attributeDefinition = attributeDefinition;
     }
 
-    public boolean isOfAttributeType(Class<? extends UiAttribute> uiTextAttributeClass) {
-        return uiTextAttributeClass.isAssignableFrom(attributeType);
+    public boolean isOfAttributeType(Class<? extends UiAttribute> uiAttributeClass) {
+        return uiAttributeClass.isAssignableFrom(attributeType);
     }
 }

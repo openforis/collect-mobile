@@ -176,7 +176,8 @@ public abstract class SavableComponent {
         private UnsupportedAttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
             super(surveyService, context);
             view = new TextView(context);
-            view.setText("Unsupported attribute collection type: " + attributeCollection.getDefinition().attributeType.getSimpleName());
+            String typeLabel = attributeCollection.getDefinition().attributeType.getSimpleName();
+            view.setText(context.getString(R.string.message_multiple_attribute_type_not_supported, typeLabel));
         }
 
         public int getViewResource() {

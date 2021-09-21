@@ -86,6 +86,7 @@
 
     <string name="message_invalid_date">Invalid date</string>
     <string name="message_not_a_number">Not a number</string>
+    <string name="message_multiple_attribute_type_not_supported">Multiple attributes of type %s are not supported. Please modify the attribute definition in Collect Desktop / Survey Designer</string>
 
     <string name="label_unspecified">[Empty]</string>
     <string name="label_yes">Yes</string>

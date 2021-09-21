@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.10] - build 195 NOT-RELEASED-YET
+### Added
+- Improved error message for multiple attribute types not supported;
+
 ## [1.7.9] - build 194 2021-09-08
 ### Added
 - Show loading spinner while saving text/numeric attributes;

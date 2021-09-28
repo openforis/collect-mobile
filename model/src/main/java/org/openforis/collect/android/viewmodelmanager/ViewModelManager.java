@@ -94,8 +94,12 @@ public class ViewModelManager {
 
     public UiNode lookupNode(int nodeId) {
         UiNode node = selectedSurvey.lookupRecordCollection(nodeId);
-        if (node == null)
+        if (node == null) {
+            if (selectedRecord == null) {
+                throw new IllegalStateException(String.format("Error looking up node %d: record not selected", nodeId));
+            }
             node = selectedRecord.lookupNode(nodeId);
+        }
         if (node == null)
             throw new IllegalStateException("Node not found: " + nodeId);
         return node;

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.viewmodelmanager;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openforis.collect.android.viewmodel.*;
 
 import java.io.File;
@@ -181,5 +183,62 @@ public class NodeDto {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NodeDto nodeDto = (NodeDto) o;
+
+        return new EqualsBuilder()
+                .append(id, nodeDto.id)
+                .append(relevant, nodeDto.relevant)
+                .append(surveyId, nodeDto.surveyId)
+                .append(recordId, nodeDto.recordId)
+                .append(recordKeyAttribute, nodeDto.recordKeyAttribute)
+                .append(status, nodeDto.status)
+                .append(parentId, nodeDto.parentId)
+                .append(parentEntityId, nodeDto.parentEntityId)
+                .append(definitionId, nodeDto.definitionId)
+                .append(recordCollectionName, nodeDto.recordCollectionName)
+                .append(type, nodeDto.type)
+                .append(text, nodeDto.text)
+                .append(date, nodeDto.date)
+                .append(hour, nodeDto.hour).append(minute, nodeDto.minute)
+                .append(codeValue, nodeDto.codeValue).append(codeQualifier, nodeDto.codeQualifier).append(codeLabel, nodeDto.codeLabel)
+                .append(booleanValue, nodeDto.booleanValue)
+                .append(intValue, nodeDto.intValue)
+                .append(intFrom, nodeDto.intFrom).append(intTo, nodeDto.intTo)
+                .append(doubleValue, nodeDto.doubleValue)
+                .append(doubleFrom, nodeDto.doubleFrom).append(doubleTo, nodeDto.doubleTo)
+                .append(x, nodeDto.x).append(y, nodeDto.y).append(srs, nodeDto.srs).append(altitude, nodeDto.altitude).append(accuracy, nodeDto.accuracy)
+                .append(taxonCode, nodeDto.taxonCode).append(taxonScientificName, nodeDto.taxonScientificName)
+                .append(file, nodeDto.file)
+//                .append(createdOn, nodeDto.createdOn)
+//                .append(modifiedOn, nodeDto.modifiedOn)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id).append(relevant).append(status).append(parentId).append(parentEntityId).append(definitionId).append(surveyId)
+                .append(recordCollectionName).append(recordId).append(recordKeyAttribute).append(type)
+                .append(text)
+                .append(date)
+                .append(hour).append(minute)
+                .append(codeValue).append(codeQualifier).append(codeLabel)
+                .append(booleanValue)
+                .append(intValue)
+                .append(intFrom).append(intTo)
+                .append(doubleValue)
+                .append(doubleFrom).append(doubleTo)
+                .append(x).append(y).append(srs).append(altitude).append(accuracy)
+                .append(taxonCode).append(taxonScientificName)
+                .append(file)
+//                .append(createdOn)
+//                .append(modifiedOn)
+                .toHashCode();
+    }
 }

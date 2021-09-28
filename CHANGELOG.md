@@ -3,9 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.10] - build 195 NOT-RELEASED-YET
+## [1.7.10] - build 195 2021-09-28
 ### Added
 - Improved error message for multiple attribute types not supported;
+### Fixed
+- Double check inserted value on node update;
 
 ## [1.7.9] - build 194 2021-09-08
 ### Added

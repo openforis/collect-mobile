@@ -8,11 +8,11 @@ import java.util.Map;
  */
 public interface NodeRepository {
 
-    void insert(List<NodeDto> nodes, Map<Integer, StatusChange> statusChanges);
+    boolean insert(List<NodeDto> nodes, Map<Integer, StatusChange> statusChanges);
 
     NodeDto.Collection recordNodes(int recordId);
 
-    void update(NodeDto node, Map<Integer, StatusChange> statusChanges);
+    boolean update(NodeDto node, Map<Integer, StatusChange> statusChanges);
 
     void updateModifiedOn(NodeDto record);
 

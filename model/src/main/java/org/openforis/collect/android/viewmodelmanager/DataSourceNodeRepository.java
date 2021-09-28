@@ -1,5 +1,6 @@
 package org.openforis.collect.android.viewmodelmanager;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.util.Collections;
@@ -25,8 +26,9 @@ import java.util.Map;
 public class DataSourceNodeRepository implements NodeRepository {
 
     private static final String[] FIELDS = new String[]{
-        "relevant", "status", "parent_id", "parent_entity_id", "definition_id",
-        "survey_id", "record_id", "record_collection_name", "record_key_attribute", "node_type",
+        "relevant", "status",
+        "parent_id", "parent_entity_id", "definition_id", "survey_id", "record_id", "record_collection_name",
+        "record_key_attribute", "node_type",
         "val_text",
         "val_date",
         "val_hour", "val_minute",
@@ -43,6 +45,7 @@ public class DataSourceNodeRepository implements NodeRepository {
     private static final String FIELDS_SELECT = StringUtils.join(FIELDS, ", ");
     private static final String SELECT_BY_RECORD_ID_QUERY;
     private static final String SELECT_BY_SURVEY_ID_QUERY;
+    private static final String SELECT_BY_ID_QUERY;
     private static final String INSERT_QUERY;
     private static final String UPDATE_QUERY;
     static {
@@ -54,7 +57,9 @@ public class DataSourceNodeRepository implements NodeRepository {
                 "FROM ofc_view_model\n" +
                 "WHERE survey_id = ? AND (parent_id IS NULL OR record_key_attribute = ?)\n" +
                 "ORDER BY id";
-
+        SELECT_BY_ID_QUERY = "SELECT " + FIELDS_SELECT + "\n" +
+                " FROM ofc_view_model\n" +
+                " WHERE id = ?";
         // INSERT
         String[] questionMarksArr = new String[FIELDS.length];
         Arrays.fill(questionMarksArr, "?");
@@ -64,7 +69,11 @@ public class DataSourceNodeRepository implements NodeRepository {
 
         // UPDATE
         List<String> fieldsToUpdate = new ArrayList<String>(Arrays.asList(FIELDS));
-        fieldsToUpdate.remove("id");
+        fieldsToUpdate.removeAll(Arrays.asList(
+                "id",
+                "parent_id", "parent_entity_id", "definition_id", "survey_id", "record_id", "record_collection_name",
+                "record_key_attribute", "node_type"
+        ));
         List<String> fieldsUpdateArr = Collections.transform(fieldsToUpdate, new Collections.Transformer<String>() {
             @Override
             public String transform(String field) {
@@ -94,18 +103,21 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void insert(final List<NodeDto> nodes, final Map<Integer, StatusChange> statusChanges) {
-        database.execute(new ConnectionCallback<Void>() {
-            public Void execute(Connection connection) throws SQLException {
+    public boolean insert(final List<NodeDto> nodes, final Map<Integer, StatusChange> statusChanges) {
+        return database.execute(new ConnectionCallback<Boolean>() {
+            public Boolean execute(Connection connection) throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
                 for (NodeDto node : nodes) {
-                    bind(ps, node);
+                    bind(ps, node, true);
                     ps.addBatch();
                 }
-                ps.executeBatch();
-                ps.close();
+                int[] results = ps.executeBatch();
                 updateStatusChanges(connection, statusChanges);
-                return null;
+                ps.close();
+                for (int result : results) {
+                    if (result != 1) return false;
+                }
+                return true;
             }
         });
     }
@@ -158,12 +170,12 @@ public class DataSourceNodeRepository implements NodeRepository {
         });
     }
 
-    public void update(final NodeDto node, final Map<Integer, StatusChange> statusChanges) {
-        database.execute(new ConnectionCallback<Void>() {
-            public Void execute(Connection connection) throws SQLException {
+    public boolean update(final NodeDto node, final Map<Integer, StatusChange> statusChanges) {
+        return database.execute(new ConnectionCallback<Boolean>() {
+            public Boolean execute(Connection connection) throws SQLException {
                 updateAttribute(connection, node);
                 updateStatusChanges(connection, statusChanges);
-                return null;
+                return true;
             }
         });
     }
@@ -195,12 +207,26 @@ public class DataSourceNodeRepository implements NodeRepository {
     }
 
     private void updateAttribute(Connection connection, NodeDto node) throws SQLException {
+        // check that the node that will be updated is in the same record and entity
+        NodeDto nodeOld = fetchNodeById(connection, node.id);
+        if (nodeOld.surveyId != node.surveyId ||
+            nodeOld.recordId != node.recordId ||
+            ObjectUtils.notEqual(nodeOld.definitionId, node.definitionId) ||
+            ObjectUtils.notEqual(nodeOld.parentId, node.parentId) ||
+            ObjectUtils.notEqual(nodeOld.parentEntityId, node.parentEntityId)) {
+            throw new IllegalStateException("Trying to update a node in an unexpected record or entity: " + node);
+        }
         PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
-        bind(ps, node);
+        bind(ps, node, false);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
             throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
         ps.close();
+        NodeDto nodeReloaded = fetchNodeById(connection, node.id);
+        boolean reloadedNodeIsNotEqual = ObjectUtils.notEqual(node, nodeReloaded);
+        if (reloadedNodeIsNotEqual) {
+            throw new IllegalStateException("Unexpected result of node update: " + node);
+        }
     }
 
     private void updateModifiedOn(Connection connection, NodeDto node) throws SQLException {
@@ -236,6 +262,24 @@ public class DataSourceNodeRepository implements NodeRepository {
                 return collection;
             }
         });
+    }
+
+    private NodeDto fetchNodeById(Connection connection, final int nodeId) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(SELECT_BY_ID_QUERY);
+        ps.setInt(1, nodeId);
+        ResultSet rs = ps.executeQuery();
+        NodeDto node = null;
+        int count = 0;
+        while (rs.next()) {
+            if (count == 1) {
+                throw new IllegalStateException("Multiple nodes found with id " + nodeId);
+            }
+            node = toNode(rs);
+            count ++;
+        }
+        rs.close();
+        ps.close();
+        return node;
     }
 
     private NodeDto toNode(ResultSet rs) throws SQLException {
@@ -281,18 +325,20 @@ public class DataSourceNodeRepository implements NodeRepository {
         return n;
     }
 
-    private void bind(PreparedStatement ps, NodeDto node) throws SQLException {
+    private void bind(PreparedStatement ps, NodeDto node, boolean insert) throws SQLException {
         PreparedStatementHelper psh = new PreparedStatementHelper(ps);
         psh.setBoolean(node.relevant);
         psh.setString(node.status);
-        psh.setIntOrNull(node.parentId);
-        psh.setIntOrNull(node.parentEntityId);
-        psh.setString(node.definitionId);
-        psh.setInt(node.surveyId);
-        psh.setInt(node.recordId);
-        psh.setString(node.recordCollectionName);
-        psh.setBoolean(node.recordKeyAttribute);
-        psh.setInt(node.type.id);
+        if (insert) {
+            psh.setIntOrNull(node.parentId);
+            psh.setIntOrNull(node.parentEntityId);
+            psh.setString(node.definitionId);
+            psh.setInt(node.surveyId);
+            psh.setInt(node.recordId);
+            psh.setString(node.recordCollectionName);
+            psh.setBoolean(node.recordKeyAttribute);
+            psh.setInt(node.type.id);
+        }
         psh.setString(node.text);
         psh.setLongOrNull(node.date == null ? null : node.date.getTime());
         psh.setIntOrNull(node.hour);

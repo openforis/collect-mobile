@@ -85,8 +85,11 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     @Override
     public boolean hasChanged() {
+        String editTextValue = StringUtils.trimToNull(getEditTextString());
         String newAttributeValue = extractNewAttributeValue();
-        return hasChanged(newAttributeValue);
+        return hasChanged(newAttributeValue) ||
+                // formatted value (e.g. number) could be shorter (with less precision) than the text in the input field
+                StringUtils.length(editTextValue) > StringUtils.length(newAttributeValue);
     }
 
     private String getEditTextString() {

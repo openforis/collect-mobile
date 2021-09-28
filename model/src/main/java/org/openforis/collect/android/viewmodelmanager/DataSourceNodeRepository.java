@@ -216,12 +216,15 @@ public class DataSourceNodeRepository implements NodeRepository {
             ObjectUtils.notEqual(nodeOld.parentEntityId, node.parentEntityId)) {
             throw new IllegalStateException("Trying to update a node in an unexpected record or entity: " + node);
         }
+        // perform the update
         PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
         bind(ps, node, false);
         int rowsUpdated = ps.executeUpdate();
         if (rowsUpdated != 1)
             throw new IllegalStateException("Expected exactly one row to be updated. Was " + rowsUpdated);
         ps.close();
+
+        // fetch node again and verify it's equal to the provided one
         NodeDto nodeReloaded = fetchNodeById(connection, node.id);
         boolean reloadedNodeIsNotEqual = ObjectUtils.notEqual(node, nodeReloaded);
         if (reloadedNodeIsNotEqual) {

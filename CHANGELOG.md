@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 197 2021-10-01
+### Added
+- Code calculated attributes: show code list item code and label;
+
 ## [1.7.9] - build 196 2021-10-01
 ### Fixed
 - Fixed error capturing images for file attributes;

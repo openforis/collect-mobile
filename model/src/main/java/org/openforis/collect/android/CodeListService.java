@@ -10,6 +10,8 @@ public interface CodeListService {
 
     UiCodeList codeList(UiAttributeCollection uiAttributeCollection);
 
+    UiCode codeListItem(UiCodeAttribute attribute);
+
     boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute);
 
     boolean isParentCodeAttribute(UiAttribute attribute, UiAttributeCollection attributeCollection);

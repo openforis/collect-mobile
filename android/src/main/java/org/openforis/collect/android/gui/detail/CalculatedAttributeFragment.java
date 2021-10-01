@@ -7,8 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import org.openforis.collect.R;
+import org.openforis.collect.android.CodeListService;
+import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.viewmodel.UiAttribute;
+import org.openforis.collect.android.viewmodel.UiCode;
+import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
 
@@ -34,7 +40,15 @@ public class CalculatedAttributeFragment<T extends UiNode> extends NodeDetailFra
     }
 
     private void updateViewWithAttributeValue() {
-        viewHolder.value.setText(attribute.valueAsString());
+        String text;
+        if (attribute instanceof UiCodeAttribute) {
+            CodeListService codeListService = ServiceLocator.codeListService();
+            UiCode codeItem = codeListService.codeListItem((UiCodeAttribute) attribute);
+            text = codeItem == null ? null : codeItem.toString();
+        } else {
+            text = attribute.valueAsString();
+        }
+        viewHolder.value.setText(text);
     }
 
     public void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
@@ -47,7 +61,8 @@ public class CalculatedAttributeFragment<T extends UiNode> extends NodeDetailFra
         TextView value;
 
         public ViewHolder(Context context) {
-            value = new TextView(context);
+            value = new AppCompatTextView(context);
+            value.setTextSize(20);
         }
     }
 }

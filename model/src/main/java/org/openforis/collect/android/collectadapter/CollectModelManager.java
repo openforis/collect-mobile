@@ -323,6 +323,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return modelConverter.toUiCodeList(items, valueShown, selectedSurveyPreferredLanguage);
     }
 
+    public UiCode codeListItem(UiCodeAttribute uiCodeAttribute) {
+        CodeAttribute attribute = recordNodes.getCodeAttribute(uiCodeAttribute.getId());
+        CodeListItem item = codeListManager.loadItemByAttribute(attribute);
+        if (item == null) return null;
+        boolean valueShown = selectedSurvey.getUIOptions().getShowCode(attribute.getDefinition());
+        return modelConverter.toUiCode(item, valueShown, selectedSurveyPreferredLanguage);
+    }
+
     public boolean isParentCodeAttribute(UiAttribute attribute, UiCodeAttribute codeAttribute) {
         if (!(attribute instanceof UiCodeAttribute))
             return false;

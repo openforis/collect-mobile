@@ -48,13 +48,17 @@ class ModelConverter {
         List<UiCode> uiCodes = new ArrayList<UiCode>();
         UiCode qualifiableCode = null;
         for (CodeListItem item : codeList) {
-            UiCode code = new UiCode(item.getCode(), item.getLabel(preferredLanguage, true),
-                    item.getDescription(preferredLanguage, true), valueShown);
+            UiCode code = toUiCode(item, valueShown, preferredLanguage);
             if (item.isQualifiable())
                 qualifiableCode = code;
             uiCodes.add(code);
         }
         return new UiCodeList(uiCodes, qualifiableCode);
+    }
+
+    public UiCode toUiCode(CodeListItem item, boolean valueShown, String preferredLanguage) {
+        return new UiCode(item.getCode(), item.getLabel(preferredLanguage, true),
+                item.getDescription(preferredLanguage, true), valueShown);
     }
 
     public CollectRecord toCollectRecord(UiRecord uiRecord, CollectSurvey collectSurvey) {

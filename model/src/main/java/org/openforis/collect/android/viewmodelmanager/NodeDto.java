@@ -214,7 +214,7 @@ public class NodeDto {
                 .append(doubleFrom, nodeDto.doubleFrom).append(doubleTo, nodeDto.doubleTo)
                 .append(x, nodeDto.x).append(y, nodeDto.y).append(srs, nodeDto.srs).append(altitude, nodeDto.altitude).append(accuracy, nodeDto.accuracy)
                 .append(taxonCode, nodeDto.taxonCode).append(taxonScientificName, nodeDto.taxonScientificName)
-                .append(file, nodeDto.file)
+//                .append(file, nodeDto.file)
 //                .append(createdOn, nodeDto.createdOn)
 //                .append(modifiedOn, nodeDto.modifiedOn)
                 .isEquals();
@@ -236,7 +236,7 @@ public class NodeDto {
                 .append(doubleFrom).append(doubleTo)
                 .append(x).append(y).append(srs).append(altitude).append(accuracy)
                 .append(taxonCode).append(taxonScientificName)
-                .append(file)
+//                .append(file)
 //                .append(createdOn)
 //                .append(modifiedOn)
                 .toHashCode();

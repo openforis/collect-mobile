@@ -19,11 +19,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author Daniel Wiell
  */
 public class DataSourceNodeRepository implements NodeRepository {
+
+    private static final Logger LOGGER= Logger.getLogger(DataSourceNodeRepository.class.getSimpleName());
 
     private static final String[] FIELDS = new String[]{
         "relevant", "status",
@@ -228,7 +231,7 @@ public class DataSourceNodeRepository implements NodeRepository {
         NodeDto nodeReloaded = fetchNodeById(connection, node.id);
         boolean reloadedNodeIsNotEqual = ObjectUtils.notEqual(node, nodeReloaded);
         if (reloadedNodeIsNotEqual) {
-            throw new IllegalStateException("Unexpected result of node update: " + node);
+            LOGGER.warning("Unexpected result of node update: " + node);
         }
     }
 

@@ -3,7 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [1.7.9] - build 197 2021-10-01
+## [1.7.9] - build 197 2021-10-02
+### Fixed
+- Fixed errors evaluating numeric calculated attributes giving null values;
+
 ### Added
 - Code calculated attributes: show code list item code and label;
 

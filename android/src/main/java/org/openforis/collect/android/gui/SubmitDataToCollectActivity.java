@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openforis.collect.R;
+import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.AppDirs;
@@ -208,7 +209,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
         protected File doInBackground(Void... voids) {
             SubmitDataToCollectActivity context = SubmitDataToCollectActivity.this;
             try {
-                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context),false, null);
+                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context), new SurveyDataExportParameters());
             } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
                 handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(context));
             } catch (Exception e) {

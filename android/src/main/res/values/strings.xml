@@ -182,6 +182,7 @@
     <string name="export_dialog_option_only_current_record">Only current record</string>
     <string name="export_dialog_option_only_selected_records">Only selected records</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
+    <string name="export_dialog_option_exclude_calculated_values">Exclude calculated attribute values</string>
     <string name="export_dialog_option_save_to_downloads">Save to Android device \"Download\" directory</string>
     <string name="export_progress_dialog_title">Exporting data</string>
     <string name="export_share_with_application">Send exported data to</string>

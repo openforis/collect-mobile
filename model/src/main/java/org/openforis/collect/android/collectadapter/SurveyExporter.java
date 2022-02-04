@@ -3,6 +3,7 @@ package org.openforis.collect.android.collectadapter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.Settings;
+import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.viewmodel.*;
 import org.openforis.collect.io.SurveyBackupInfo;
 import org.openforis.collect.io.SurveyBackupJob;
@@ -37,21 +38,19 @@ public class SurveyExporter {
     private final RecordFileManager recordFileManager;
     private final UiSurvey uiSurvey;
     private final CollectSurvey collectSurvey;
-    private final boolean excludeBinaries;
-    private final List<Integer> filterRecordIds;
+    private final SurveyDataExportParameters exportParameters;
 
     private final DataMarshaller dataMarshaller;
     private ZipOutputStream zipOutputStream;
 
     public SurveyExporter(SurveyManager surveyManager, CollectRecordProvider collectRecordProvider, RecordFileManager recordFileManager,
-                          UiSurvey uiSurvey, CollectSurvey collectSurvey, boolean excludeBinaries, List<Integer> filterRecordIds) {
+                          UiSurvey uiSurvey, CollectSurvey collectSurvey, SurveyDataExportParameters exportParameters) {
         this.surveyManager = surveyManager;
         this.collectRecordProvider = collectRecordProvider;
         this.recordFileManager = recordFileManager;
         this.uiSurvey = uiSurvey;
         this.collectSurvey = collectSurvey;
-        this.excludeBinaries = excludeBinaries;
-        this.filterRecordIds = filterRecordIds;
+        this.exportParameters = exportParameters;
         dataMarshaller = new DataMarshaller();
     }
 
@@ -133,7 +132,7 @@ public class SurveyExporter {
             record.setModifiedDate(recordPlaceholder.getModifiedOn());
             record.setOwner(user);
             exportRecord(record);
-            if (!excludeBinaries)
+            if (!exportParameters.excludeBinaries)
                 exportRecordFiles(record);
         } catch (Exception e) {
             throw new IOException(String.format("Error exporting record %s with id %d: %s",
@@ -182,7 +181,7 @@ public class SurveyExporter {
     }
 
     private boolean isIncluded(UiRecord.Placeholder recordPlaceholder) {
-        return !CollectionUtils.isNotEmpty(filterRecordIds) || filterRecordIds.contains(recordPlaceholder.getId());
+        return !CollectionUtils.isNotEmpty(exportParameters.filterRecordIds) || exportParameters.filterRecordIds.contains(recordPlaceholder.getId());
     }
 
     interface CollectRecordProvider {

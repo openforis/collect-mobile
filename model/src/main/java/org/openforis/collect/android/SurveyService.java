@@ -22,6 +22,8 @@ public interface SurveyService {
 
     UiRecord selectRecord(int recordId);
 
+    UiRecord selectRecord(int recordId, boolean recordWillBeUpdated);
+
     UiRecord addRecord(String rootEntityName);
 
     UiEntity addEntity();
@@ -48,7 +50,7 @@ public interface SurveyService {
 
     void deleteRecords(Collection<Integer> records);
 
-    File exportSurvey(File surveysDir, boolean excludeBinaries, List<Integer> filterRecordIds) throws IOException;
+    File exportSurvey(File surveysDir, SurveyDataExportParameters parameters) throws IOException;
 
     void setListener(SurveyListener listener);
 

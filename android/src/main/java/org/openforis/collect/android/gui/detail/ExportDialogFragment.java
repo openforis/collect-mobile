@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.AllRecordKeysNotSpecifiedDialog;
@@ -38,7 +39,8 @@ import java.util.List;
 public class ExportDialogFragment extends DialogFragment {
     private static final int EXCLUDE_BINARIES = 0;
     private static final int SAVE_TO_DOWNLOADS = 1;
-    private static final int ONLY_SELECTED_RECORDS = 2;
+    private static final int EXCLUDE_CALCULATED_ATTRIBUTE_VALUES = 2;
+    private static final int ONLY_SELECTED_RECORDS = 3;
 
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -46,12 +48,14 @@ public class ExportDialogFragment extends DialogFragment {
         UiNode selectedNode = surveyService.selectedNode();
         List<String> options = new ArrayList<String>(Arrays.asList(
                 getString(R.string.export_dialog_option_exclude_binary_file),
-                getString(R.string.export_dialog_option_save_to_downloads)
+                getString(R.string.export_dialog_option_save_to_downloads),
+                getString(R.string.export_dialog_option_exclude_calculated_values)
         ));
         if (!(selectedNode instanceof UiRecordCollection)) {
             options.add(getString(R.string.export_dialog_option_only_current_record));
         }
         final boolean[] selection = new boolean[options.size()];
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.export_dialog_title)
                 .setMultiChoiceItems(options.toArray(new String[options.size()]), selection, new DialogInterface.OnMultiChoiceClickListener() {
@@ -61,8 +65,13 @@ public class ExportDialogFragment extends DialogFragment {
                 })
                 .setPositiveButton(R.string.action_export, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        boolean onlySelectedRecords = selection.length > ONLY_SELECTED_RECORDS && selection[ONLY_SELECTED_RECORDS];
-                        new ExportTask(getActivity(), selection[SAVE_TO_DOWNLOADS], selection[EXCLUDE_BINARIES], onlySelectedRecords)
+                        final SurveyDataExportParameters exportParameters = new SurveyDataExportParameters();
+                        exportParameters.excludeBinaries = selection[EXCLUDE_BINARIES];
+                        exportParameters.saveToDownloads = selection[SAVE_TO_DOWNLOADS];
+                        exportParameters.excludeCalculatedAttributeValues = selection[EXCLUDE_CALCULATED_ATTRIBUTE_VALUES];
+                        exportParameters.onlySelectedRecords = selection.length > ONLY_SELECTED_RECORDS && selection[ONLY_SELECTED_RECORDS];
+
+                        new ExportTask(getActivity(), exportParameters)
                                 .execute();
                     }
                 })
@@ -72,24 +81,20 @@ public class ExportDialogFragment extends DialogFragment {
 
     private static class ExportTask extends SlowAsyncTask<Void, Void, File> {
 
-        final boolean saveToDownloads;
-        final boolean excludeBinaries;
-        final boolean onlySelectedRecords;
+        final SurveyDataExportParameters parameters;
 
-        ExportTask(Activity context, boolean saveToDownloads, boolean excludeBinaries, boolean onlySelectedRecords) {
+        ExportTask(Activity context, SurveyDataExportParameters parameters) {
             super(context, R.string.export_progress_dialog_title, R.string.please_wait);
-            this.saveToDownloads = saveToDownloads;
-            this.excludeBinaries = excludeBinaries;
-            this.onlySelectedRecords = onlySelectedRecords;
+            this.parameters = parameters;
         }
 
         @Override
         protected File runTask() throws Exception {
             SurveyService surveyService = ServiceLocator.surveyService();
-            List<Integer> filterRecordIds = onlySelectedRecords ? getSelectedRecordIds() : null;
-            File exportedFile = surveyService.exportSurvey(AppDirs.surveysDir(context), excludeBinaries, filterRecordIds);
+            parameters.filterRecordIds = parameters.onlySelectedRecords ? getSelectedRecordIds() : null;
+            File exportedFile = surveyService.exportSurvey(AppDirs.surveysDir(context), parameters);
             AndroidFiles.makeDiscoverable(exportedFile, context);
-            if (saveToDownloads) {
+            if (parameters.saveToDownloads) {
                 File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                 if (!downloadDir.exists() && !downloadDir.mkdirs()) {
                     throw new IOException("Cannot create Download folder: " + downloadDir.getAbsolutePath());
@@ -111,7 +116,7 @@ public class ExportDialogFragment extends DialogFragment {
         protected void onPostExecute(File exportedFile) {
             super.onPostExecute(exportedFile);
             if (exportedFile != null) {
-                if (saveToDownloads) {
+                if (parameters.saveToDownloads) {
                     Dialogs.alert(context, R.string.export_completed_title, R.string.export_to_downloads_completed_message);
                 } else {
                     Activities.shareFile(context, exportedFile, MimeType.BINARY, R.string.export_share_with_application, false);

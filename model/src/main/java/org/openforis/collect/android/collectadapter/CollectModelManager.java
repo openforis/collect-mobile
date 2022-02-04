@@ -7,6 +7,7 @@ import org.openforis.collect.android.CoordinateDestinationService;
 import org.openforis.collect.android.DefinitionProvider;
 import org.openforis.collect.android.IdGenerator;
 import org.openforis.collect.android.Settings;
+import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.SurveyException;
 import org.openforis.collect.android.attributeconverter.AttributeConverter;
 import org.openforis.collect.android.gui.util.meter.Timer;
@@ -266,8 +267,8 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return new NodeChangeSetParser(nodeChangeSet, uiEntity.getUiRecord(), selectedSurveyPreferredLanguage).extractChanges();
     }
 
-    public CollectRecord toCollectRecord(UiRecord uiRecord) {
-        return modelConverter.toCollectRecord(uiRecord, selectedSurvey, true);
+    public CollectRecord toCollectRecord(UiRecord uiRecord, boolean recordWillBeUpdated) {
+        return modelConverter.toCollectRecord(uiRecord, selectedSurvey, recordWillBeUpdated);
     }
 
     public UiNode toUiNode(Node node, UiRecord uiRecord) {
@@ -416,14 +417,14 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
         return versions.get(versions.size() - 1).getName();
     }
 
-    public void exportSurvey(UiSurvey uiSurvey, File exportFile, boolean excludeBinaries, final List<Integer> filterRecordIds,
+    public void exportSurvey(UiSurvey uiSurvey, File exportFile, SurveyDataExportParameters parameters,
                              final ExportListener exportListener) throws IOException {
         new SurveyExporter(surveyManager, new SurveyExporter.CollectRecordProvider() {
             public CollectRecord record(int recordId) {
                 exportListener.beforeRecordExport(recordId);
                 return getCollectRecordForExporting(recordId);
             }
-        }, recordFileManager, uiSurvey, selectedSurvey, excludeBinaries, filterRecordIds).export(exportFile);
+        }, recordFileManager, uiSurvey, selectedSurvey, parameters).export(exportFile);
     }
 
     private CollectRecord getCollectRecordForExporting(int recordId) {

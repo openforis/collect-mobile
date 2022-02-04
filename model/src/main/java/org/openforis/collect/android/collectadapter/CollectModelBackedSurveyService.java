@@ -3,6 +3,7 @@ package org.openforis.collect.android.collectadapter;
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.Settings;
+import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.viewmodel.*;
@@ -71,10 +72,16 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return viewModelManager.isRecordSelected(recordId);
     }
 
+    @Override
     public UiRecord selectRecord(int recordId) {
+        return selectRecord(recordId, true);
+    }
+
+    @Override
+    public UiRecord selectRecord(int recordId, boolean recordWillBeUpdated) {
         final UiRecord uiRecord = viewModelManager.selectRecord(recordId);
 
-        CollectRecord record = collectModelManager.toCollectRecord(uiRecord);
+        CollectRecord record = collectModelManager.toCollectRecord(uiRecord, recordWillBeUpdated);
         collectModelManager.recordSelected(record);
 
         // insert missing nodes into db
@@ -293,15 +300,16 @@ public class CollectModelBackedSurveyService implements SurveyService {
             }
     }
 
-    public File exportSurvey(File surveysDir, boolean excludeBinaries, List<Integer> filterRecordIds) throws IOException {
+    @Override
+    public File exportSurvey(File surveysDir, SurveyDataExportParameters parameters) throws IOException {
         // preserve previously selected record (if any)
         Integer oldSelectedRecordId = viewModelManager.getSelectedRecordId();
         File exportedFile = exportFile(surveysDir);
         try {
-            collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, excludeBinaries, filterRecordIds,
+            collectModelManager.exportSurvey(viewModelManager.getSelectedSurvey(), exportedFile, parameters,
                     new CollectModelManager.ExportListener() {
                         public void beforeRecordExport(int recordId) {
-                            selectRecord(recordId);
+                            selectRecord(recordId, false);
                         }
                     });
             if (oldSelectedRecordId != null)

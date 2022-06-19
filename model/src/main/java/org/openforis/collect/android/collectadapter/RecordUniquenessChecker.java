@@ -72,7 +72,7 @@ public interface RecordUniquenessChecker {
                 for (Iterator<NodeDto> iterator = keys.iterator(); iterator.hasNext(); ) {
                     NodeDto key = iterator.next();
                     constraint.append(" (definition_id = ? AND ")
-                            .append(constrain(key))
+                            .append(constraint(key))
                             .append(")");
                     if (iterator.hasNext())
                         constraint.append(" OR");
@@ -81,26 +81,37 @@ public interface RecordUniquenessChecker {
             }
 
             // TODO: Need some design - switch statement is repeated three times - NodeDto.recordKeyAttribute and two times here.
-            private String constrain(NodeDto key) {
+            private String constraint(NodeDto key) {
                 // SQLDroid uses SQLite rawQuery, which does not allow null values to be bound.
                 switch (key.type) {
                     case CODE_ATTRIBUTE:
                         return key.codeValue == null ? "val_code_value IS NULL" : "val_code_value = ?";
+                    case COORDINATE_ATTRIBUTE: {
+                        String constraint = "(";
+                        constraint += key.x == null ? "val_x IS NULL" : "val_x = ?";
+                        constraint += " AND ";
+                        constraint += key.y == null ? "val_y IS NULL" : "val_y = ?";
+                        constraint += " AND ";
+                        constraint += key.srs == null ? "val_srs IS NULL" : "val_srs = ?";
+                        constraint += ")";
+                        return constraint;
+                    }
+                    case DATE_ATTRIBUTE:
+                        return key.date == null ? "val_date IS NULL" : "val_date = ?";
                     case DOUBLE_ATTRIBUTE:
-                        return key.doubleValue == null ? "val_double  IS NULL" : "val_double = ?";
+                        return key.doubleValue == null ? "val_double IS NULL" : "val_double = ?";
                     case INTEGER_ATTRIBUTE:
                         return key.intValue == null ? "val_int IS NULL" : "val_int = ?";
                     case TEXT_ATTRIBUTE:
                         return key.text == null ? "val_text IS NULL" : "val_text = ?";
-                    case DATE_ATTRIBUTE:
-                        return key.date == null ? "val_date IS NULL" : "val_date = ?";
-                    case TIME_ATTRIBUTE:
+                    case TIME_ATTRIBUTE: {
                         String constraint = "(";
                         constraint += key.hour == null ? "val_hour IS NULL" : "val_hour = ?";
                         constraint += " AND ";
                         constraint += key.minute == null ? "val_minute IS NULL" : "val_minute = ?";
                         constraint += ")";
                         return constraint;
+                    }
                     default:
                         throw new IllegalStateException("Attribute type cannot be record key: " + key.type);
                 }
@@ -116,6 +127,15 @@ public interface RecordUniquenessChecker {
                         case CODE_ATTRIBUTE:
                             psh.setStringIfNotNull(key.codeValue);
                             break;
+                        case COORDINATE_ATTRIBUTE:
+                            psh.setDoubleIfNotNull(key.x);
+                            psh.setDoubleIfNotNull(key.y);
+                            psh.setStringIfNotNull(key.srs);
+                            break;
+                        case DATE_ATTRIBUTE:
+                            if (key.date != null)
+                                psh.setLongOrNull(key.date.getTime());
+                            break;
                         case DOUBLE_ATTRIBUTE:
                             psh.setDoubleIfNotNull(key.doubleValue);
                             break;
@@ -124,10 +144,6 @@ public interface RecordUniquenessChecker {
                             break;
                         case TEXT_ATTRIBUTE:
                             psh.setStringIfNotNull(key.text);
-                            break;
-                        case DATE_ATTRIBUTE:
-                            if (key.date != null)
-                                psh.setLongOrNull(key.date.getTime());
                             break;
                         case TIME_ATTRIBUTE:
                             psh.setIntIfNotNull(key.hour);

@@ -114,7 +114,7 @@ public abstract class AttributeConverter<T extends Attribute, U extends UiAttrib
         if (definition instanceof CodeAttributeDefinition)
             return UiCodeAttribute.class;
         if (definition instanceof CoordinateAttributeDefinition)
-            return UiCodeAttribute.class;
+            return UiCoordinateAttribute.class;
         if (definition instanceof FileAttributeDefinition)
             return UiFileAttribute.class;
         if (definition instanceof TaxonAttributeDefinition)

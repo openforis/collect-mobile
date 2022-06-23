@@ -3,6 +3,7 @@ package org.openforis.collect.android.viewmodelmanager;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.openforis.collect.android.viewmodel.*;
+import org.openforis.idm.model.Coordinate;
 
 import java.io.File;
 import java.text.ParseException;
@@ -63,6 +64,12 @@ public class NodeDto {
             switch (node.type) {
                 case CODE_ATTRIBUTE:
                     node.codeValue = value;
+                    break;
+                case COORDINATE_ATTRIBUTE:
+                    Coordinate coordinate = Coordinate.parseCoordinate(value);
+                    node.x = coordinate == null ? null : coordinate.getX();
+                    node.y = coordinate == null ? null : coordinate.getY();
+                    node.srs = coordinate == null ? null : coordinate.getSrsId();
                     break;
                 case DOUBLE_ATTRIBUTE:
                     node.doubleValue = Double.parseDouble(value);

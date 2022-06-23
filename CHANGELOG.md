@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 199 NOT-RELEASED-YET
+### Added
+- Sampling Point Data: use info column label_XX to give labels to sampling point items;
+
 ## [1.7.9] - build 198 2022-02-04
 ### Added
 - Data export: added option to export data without calculated attributes (faster);

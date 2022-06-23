@@ -19,11 +19,12 @@ repositories {
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:4.0.25') {
+    compile ('org.openforis.collect:collect-core:4.0.60') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'
         exclude group: 'org.liquibase'
         exclude group: 'com.opencsv'
+        exclude module: 'commons-io'
         exclude module: 'commons-jxpath'
         exclude module: 'commons-lang3'
     }
@@ -34,6 +35,7 @@ dependencies {
     }
     compile 'com.github.openforis.android-ports:android-liquibase-core:android-ports-1.0-Alpha2'
     compile 'me.champeau.openbeans:openbeans:1.0.2'
+    compile 'commons-io:commons-io:2.5' // latest version compatible with API 16
     compile 'org.apache.commons:commons-lang3:3.9' // latest version compatible with API 16
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.codehaus.groovy:groovy-all:2.4.15'

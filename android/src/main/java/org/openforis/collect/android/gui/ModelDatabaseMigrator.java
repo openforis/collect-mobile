@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui;
 import android.content.Context;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.Collect;
 import org.openforis.collect.android.databaseschema.ModelDatabaseSchemaUpdater;
 import org.openforis.collect.android.gui.util.AndroidFiles;
@@ -50,12 +51,17 @@ public class ModelDatabaseMigrator {
         if (collectVersion == null) {
             migrate();
         } else {
-            int majorVersion = Integer.parseInt(collectVersion.getProperty("major"));
-            int minorVersion = Integer.parseInt(collectVersion.getProperty("minor"));
+            int majorVersion = getIntProperty(collectVersion, "major");
+            int minorVersion = getIntProperty(collectVersion, "minor");
 
             if (majorVersion < currentVersion.getMajor() || minorVersion < currentVersion.getMinor())
                 migrate();
         }
+    }
+
+    private int getIntProperty(Properties props, String propName) {
+        String value = props.getProperty(propName);
+        return StringUtils.isBlank(value) ? 0 : Integer.parseInt(value);
     }
 
     public void migrate() {

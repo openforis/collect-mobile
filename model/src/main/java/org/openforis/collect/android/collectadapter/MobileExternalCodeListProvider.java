@@ -4,11 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.util.NaturalOrderComparator;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
+import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.persistence.DatabaseExternalCodeListProvider;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.CodeListLevel;
 import org.openforis.idm.metamodel.ExternalCodeListItem;
+import org.openforis.idm.metamodel.ReferenceDataSchema;
 import org.openforis.idm.model.CodeAttribute;
 
 import java.sql.Connection;
@@ -51,8 +53,17 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
                 List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
-                while (rs.next())
-                    items.add(parseRow(toRow(rs), codeList, 1));
+                CollectSurvey survey = codeList.getSurvey();
+                boolean isSamplingDesignCodeListWithLabelsInInfo = isSamplingDesignCodeList(codeList)
+                        && hasSamplingPointDataLabelsInInfo(survey);
+                while (rs.next()) {
+                    Map<String, String> row = toRow(rs);
+                    ExternalCodeListItem item = parseRow(row, codeList, 1);
+                    if (isSamplingDesignCodeListWithLabelsInInfo) {
+                        setSamplingPointItemLabels(survey, row, item);
+                    }
+                    items.add(item);
+                }
                 rs.close();
                 ps.close();
                 final Comparator<String> naturalOrderComparator =
@@ -65,6 +76,32 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 return items;
             }
         });
+    }
+
+    private boolean hasSamplingPointDataLabelsInInfo(final CollectSurvey survey) {
+        ReferenceDataSchema.SamplingPointDefinition samplingPointDefinition = survey.getReferenceDataSchema().getSamplingPointDefinition();
+        List<String> infoAttributeNames = samplingPointDefinition.getAttributeNames();
+        for (String languageCode : survey.getLanguages()) {
+            int infoAttributeIndex = infoAttributeNames.indexOf("label_" + languageCode);
+            if (infoAttributeIndex >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setSamplingPointItemLabels(final CollectSurvey survey, final Map<String, String> row, final ExternalCodeListItem item) {
+        ReferenceDataSchema.SamplingPointDefinition samplingPointDefinition = survey.getReferenceDataSchema().getSamplingPointDefinition();
+        List<String> infoAttributeNames = samplingPointDefinition.getAttributeNames();
+        for (String languageCode : survey.getLanguages()) {
+            int infoAttributeIndex = infoAttributeNames.indexOf("label_" + languageCode);
+            if (infoAttributeIndex >= 0) {
+                String label = row.get("info" + (infoAttributeIndex + 1));
+                if (label != null) {
+                    item.setLabel(languageCode, label);
+                }
+            }
+        }
     }
 
     private String rootItemsQuery(CodeList codeList, boolean selectCount) {
@@ -244,5 +281,9 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         rs.close();
         ps.close();
         return count;
+    }
+
+    private boolean isSamplingDesignCodeList(CodeList list) {
+        return ((CollectSurvey) list.getSurvey()).isSamplingDesignCodeList(list);
     }
 }

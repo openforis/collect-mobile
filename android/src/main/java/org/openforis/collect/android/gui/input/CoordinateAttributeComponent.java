@@ -30,6 +30,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.detail.NavigationDialogFragment;
 import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.CoordinateUtils;
@@ -311,7 +312,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
 
             input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus)
+                    if (AndroidVersion.greaterThan16() && !context.isDestroyed() && !hasFocus)
                         saveNode();
                 }
             });

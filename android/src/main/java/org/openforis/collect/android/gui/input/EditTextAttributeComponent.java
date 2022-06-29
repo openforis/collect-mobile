@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 
 /**
@@ -108,8 +109,9 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (AndroidVersion.greaterThan16() && !context.isDestroyed() && !hasFocus) {
                     saveNode();
+                }
             }
         });
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

@@ -17,6 +17,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.components.OptionButton;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
@@ -122,7 +123,7 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (AndroidVersion.greaterThan16() && !context.isDestroyed() && !hasFocus)
                     saveQualifier();
             }
         });

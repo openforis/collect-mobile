@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,6 +16,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
@@ -124,11 +126,11 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         return code.equals(attribute.getCode());
     }
 
-    protected static EditText createQualifierInput(Context context, String text, final Runnable onChangeHandler) {
+    protected static EditText createQualifierInput(final Activity context, String text, final Runnable onChangeHandler) {
         final EditText editText = new AppCompatEditText(context);
         editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (AndroidVersion.greaterThan16() && !context.isDestroyed() && !hasFocus)
                     onChangeHandler.run();
             }
         });

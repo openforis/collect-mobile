@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 200 2022-06-29
+### Fixed
+- Fixed numeric and text values being deleted randomly;
+
 ## [1.7.9] - build 199 2022-06-24
 ### Added
 - Sampling Point Data: use info column label_XX to give labels to sampling point items;

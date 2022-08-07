@@ -52,18 +52,8 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 String query = rootItemsQuery(codeList, false);
                 PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
-                List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
-                CollectSurvey survey = codeList.getSurvey();
-                boolean isSamplingDesignCodeListWithLabelsInInfo = isSamplingDesignCodeList(codeList)
-                        && hasSamplingPointDataLabelsInInfo(survey);
-                while (rs.next()) {
-                    Map<String, String> row = toRow(rs);
-                    ExternalCodeListItem item = parseRow(row, codeList, 1);
-                    if (isSamplingDesignCodeListWithLabelsInInfo) {
-                        setSamplingPointItemLabels(survey, row, item);
-                    }
-                    items.add(item);
-                }
+                int levelIndex = 1;
+                List<ExternalCodeListItem> items = parseRows(rs, codeList, levelIndex);
                 rs.close();
                 ps.close();
                 final Comparator<String> naturalOrderComparator =
@@ -104,6 +94,22 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
         }
     }
 
+    private List<ExternalCodeListItem> parseRows(final ResultSet rs, final CodeList codeList, final int levelIndex) throws SQLException {
+        List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
+        CollectSurvey survey = codeList.getSurvey();
+        boolean isSamplingDesignCodeListWithLabelsInInfo = isSamplingDesignCodeList(codeList)
+                && hasSamplingPointDataLabelsInInfo(survey);
+        while (rs.next()) {
+            Map<String, String> row = toRow(rs);
+            ExternalCodeListItem item = parseRow(row, codeList, levelIndex);
+            if (isSamplingDesignCodeListWithLabelsInInfo) {
+                setSamplingPointItemLabels(survey, row, item);
+            }
+            items.add(item);
+        }
+        return items;
+    }
+
     private String rootItemsQuery(CodeList codeList, boolean selectCount) {
         String constraint = "1 = 1";
         int childLevel = 2; // Level is 1 based, so children of root is at level 2
@@ -127,9 +133,10 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 addAncestorLevelsCondition(ps, parentItem);
 
                 ResultSet rs = ps.executeQuery();
-                List<ExternalCodeListItem> items = new ArrayList<ExternalCodeListItem>();
-                while (rs.next())
-                    items.add(parseRow(toRow(rs), codeList, parentItem.getLevel() + 1));
+
+                int levelIndex = parentItem.getLevel() + 1;
+                List<ExternalCodeListItem> items = parseRows(rs, codeList, levelIndex);
+
                 rs.close();
                 ps.close();
                 Collections.sort(items, new NaturalOrderComparator<ExternalCodeListItem>());
@@ -167,9 +174,11 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
                 PreparedStatement ps = connection.prepareStatement(query);
                 setItemQueryParams(ps, attribute);
                 ResultSet rs = ps.executeQuery();
-                ExternalCodeListItem item = null;
-                if (rs.next())
-                    item = parseRow(toRow(rs), codeList, definition.getLevelPosition());
+
+                int levelIndex = definition.getLevelPosition();
+                List<ExternalCodeListItem> items = parseRows(rs, codeList, levelIndex);
+                ExternalCodeListItem item = items.isEmpty() ? null :  items.get(0);
+
                 rs.close();
                 ps.close();
                 return item;
@@ -200,15 +209,27 @@ public class MobileExternalCodeListProvider extends DatabaseExternalCodeListProv
     }
 
     private void appendSingleItemQueryConstraint(CodeAttribute attribute, CodeList codeList, StringBuilder s) {
-        int level = attribute.getDefinition().getLevelPosition();
-        String levelName = levelName(codeList, level);
-        if (attribute.getValue().getCode() == null)
-            s.append(" AND ").append(levelName).append(" is NULL");
-        else
-            s.append(" AND ").append(levelName).append('=').append('?');
-        CodeAttribute parent = attribute.getCodeParent();
-        if (parent != null)
-            appendSingleItemQueryConstraint(parent, codeList, s);
+        int currentLevel = attribute.getDefinition().getLevelPosition();
+        CodeAttribute currentAttribute = attribute;
+        // append current level and ancestors conditions
+        while(currentLevel > 0 && currentAttribute != null) {
+            String levelName = levelName(codeList, currentLevel);
+            s.append(" AND ").append(levelName);
+            if (currentAttribute.getValue().getCode() == null) {
+                s.append(" IS NULL");
+            } else {
+                s.append(" = ?");
+            }
+            currentAttribute = attribute.getCodeParent();
+            currentLevel --;
+        }
+        // append following levels null conditions
+        int currentNextLevel = attribute.getDefinition().getLevelPosition() + 1;
+        while (currentNextLevel <= codeList.getHierarchy().size()) {
+            String levelName = levelName(codeList, currentNextLevel);
+            s.append(" AND ").append(levelName).append(" IS NULL");
+            currentNextLevel ++;
+        }
     }
 
     private String childItemsQuery(ExternalCodeListItem parentItem, boolean selectCount) {

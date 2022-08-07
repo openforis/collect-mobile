@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.10] - build 201 2022-08-07
+### Fixed
+- Fixed sampling point items label not showing in deeper levels;
+
 ## [1.7.9] - build 200 2022-06-29
 ### Fixed
 - Fixed numeric and text values being deleted randomly;

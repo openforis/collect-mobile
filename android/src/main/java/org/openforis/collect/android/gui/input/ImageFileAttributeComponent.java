@@ -2,7 +2,6 @@ package org.openforis.collect.android.gui.input;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -14,20 +13,20 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Attrs;
+import org.openforis.collect.android.gui.util.Bitmaps;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.util.Permissions;
+import org.openforis.collect.android.viewmodel.UIFileAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ImageFileAttributeComponent extends FileAttributeComponent {
@@ -35,7 +34,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private static final int MAX_DISPLAY_WIDTH = 375;
     private static final int MAX_DISPLAY_HEIGHT = 500;
 
-    private View inputView;
+    private final View inputView;
     private Button removeButton;
     private ImageView thumbnailImageView;
     private String tempImagePath;
@@ -144,7 +143,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
                 // Create temp file and store image there
                 File imageFile = createTempImageFile();
                 if (imageFile == null) {
-                    Toast.makeText(context, R.string.file_attribute_capture_image_error_creating_temp_file, Toast.LENGTH_SHORT);
+                    Toast.makeText(context, R.string.file_attribute_capture_image_error_creating_temp_file, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 imageUri = AndroidFiles.getUriForFile(context, imageFile);
@@ -217,13 +216,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void saveImageIntoFile(Bitmap bitmap) throws IOException {
-        FileOutputStream fo = null;
-        try {
-            fo = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
+        if (Bitmaps.saveToFile(bitmap, file, ((UIFileAttributeDefinition) attribute.getDefinition()).getMaxSize())) {
             fileChanged();
-        } finally {
-            IOUtils.closeQuietly(fo);
         }
     }
 
@@ -238,35 +232,11 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected Bitmap getFileThumbnail() {
-        return resizeImage(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
-    }
-
-    private Bitmap resizeImage(String filePath, int maxWidth, int maxHeight) {
-        BitmapFactory.Options bounds = new BitmapFactory.Options();
-        bounds.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, bounds);
-        int width = bounds.outWidth;
-        int height = bounds.outHeight;
-        boolean withinBounds = width <= maxWidth && height <= maxHeight;
-        BitmapFactory.Options resample = new BitmapFactory.Options();
-        if (!withinBounds)
-            resample.inSampleSize = (int) Math.round(Math.min((double) width / (double) maxWidth, (double) height / (double) maxHeight));
-        return BitmapFactory.decodeFile(filePath, resample);
+        return Bitmaps.scaleToFit(file.getAbsolutePath(), MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
     }
 
     Bitmap scaleToFit(Bitmap bitmap) {
-        return resizeImage(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
-    }
-
-    Bitmap resizeImage(Bitmap bitmap, int maxWidth, int maxHeight) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        float ratio = Math.min(
-                (float) maxWidth / width,
-                (float) maxHeight / height);
-        int scaledWith = Math.round(ratio * width);
-        int scaledHeight = Math.round(ratio * height);
-        return Bitmap.createScaledBitmap(bitmap, scaledWith, scaledHeight, false);
+        return Bitmaps.scaleToFit(bitmap, MAX_DISPLAY_WIDTH, MAX_DISPLAY_HEIGHT);
     }
 
     protected void updateViewState() {

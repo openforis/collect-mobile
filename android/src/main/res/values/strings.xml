@@ -20,6 +20,7 @@
     <string name="pause">Pause</string>
     <string name="select_file">Select file</string>
     <string name="delete">Delete</string>
+    <string name="rotate">Rotate</string>
 
     <string name="info">Info</string>
     <string name="warning">Warning</string>

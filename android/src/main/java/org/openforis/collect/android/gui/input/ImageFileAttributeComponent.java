@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private final View inputView;
     private Button removeButton;
+    private ImageButton rotateIconImageView;
     private ImageView thumbnailImageView;
     private String tempImagePath;
 
@@ -53,6 +55,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         setupImageView();
         setupCaptureButton();
         setupGalleryButton();
+        setupRotateButton();
         setupRemoveButton();
     }
 
@@ -103,6 +106,21 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
                 removeFile();
             }
         });
+    }
+
+    private void setupRotateButton() {
+        rotateIconImageView = inputView.findViewById(R.id.file_attribute_rotate);
+        rotateIconImageView.setImageDrawable(new Attrs(context).drawable(R.attr.rotateIcon));
+        rotateIconImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                rotateImage();
+            }
+        });
+    }
+
+    private void rotateImage() {
+        Bitmaps.rotateFile(file);
+        fileChanged();
     }
 
     private void setupCaptureButton() {

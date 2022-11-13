@@ -34,6 +34,13 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
+        <ImageButton
+            android:id="@+id/file_attribute_rotate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
         <Button
             android:id="@+id/file_attribute_remove"
             android:text="@string/delete"

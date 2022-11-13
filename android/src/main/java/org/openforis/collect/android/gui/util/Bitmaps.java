@@ -2,6 +2,7 @@ package org.openforis.collect.android.gui.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 
 import org.apache.commons.io.IOUtils;
 
@@ -79,5 +80,13 @@ public abstract class Bitmaps {
         int scaledWith = Math.round(ratio * width);
         int scaledHeight = Math.round(ratio * height);
         return Bitmap.createScaledBitmap(bitmap, scaledWith, scaledHeight, false);
+    }
+
+    public static void rotateFile(File file) {
+        Bitmap source = BitmapFactory.decodeFile(file.getAbsolutePath());
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotated = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+        saveToFile(rotated, file, Bitmap.CompressFormat.JPEG);
     }
 }

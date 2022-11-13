@@ -216,7 +216,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void saveImageIntoFile(Bitmap bitmap) throws IOException {
-        if (Bitmaps.saveToFile(bitmap, file, ((UIFileAttributeDefinition) attribute.getDefinition()).getMaxSize())) {
+        int maxSize = ((UIFileAttributeDefinition) attribute.getDefinition()).getMaxSize();
+        if (Bitmaps.saveToFile(bitmap, file, Bitmap.CompressFormat.JPEG, maxSize)) {
             fileChanged();
         }
     }

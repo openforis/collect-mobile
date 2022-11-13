@@ -11,11 +11,11 @@ import java.io.FileOutputStream;
 
 public abstract class Bitmaps {
 
-    public static boolean saveToFile(Bitmap bitmap, File file) {
+     public static boolean saveToFile(Bitmap bitmap, File file, Bitmap.CompressFormat compressFormat) {
         FileOutputStream fo = null;
         try {
             fo = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
+            bitmap.compress(compressFormat, 100, fo);
         } catch (FileNotFoundException e) {
             return false;
         } finally {
@@ -24,25 +24,29 @@ public abstract class Bitmaps {
         return true;
     }
 
-    public static boolean saveToFile(Bitmap bitmap, File file, Integer maxSizeBytes) {
-        if (!saveToFile(bitmap, file)) return false;
+    public static boolean saveToFile(Bitmap bitmap, File file, Bitmap.CompressFormat compressFormat, Integer maxSizeBytes) {
+        // something went wrong storing the bitmap
+        if (!saveToFile(bitmap, file, compressFormat)) return false;
 
+        // file is not exceeding maximum allowed
         if (maxSizeBytes == null || file.length() <= maxSizeBytes) return true;
 
+        // reduce file size; find the best scale ratio with a binary search
         boolean fileSaveResult = true,
                 exceedingMax = true,
-                exceedingMin = false;
-        float lastScaleRatio = 1;
+                lowerThanMin = false;
 
-        float TOLERANCE_MIN = (float) 0.1; // 10% of max size (scaled image cannot have a size less than max-size - 10%)
-        
-        while (fileSaveResult && (exceedingMax || exceedingMin)) {
-            float ratio = exceedingMax ? lastScaleRatio / 2 : (float) (lastScaleRatio * 1.5);
-            Bitmap scaledImage = scale(bitmap, ratio);
-            fileSaveResult = saveToFile(scaledImage, file);
-            lastScaleRatio = ratio;
+        float tolerance = 0.1f; // 10% of max size (scaled image cannot have a size less than max-size - 10%)
+        int minSizeAllowed = Double.valueOf(Math.ceil(maxSizeBytes * (1 - tolerance))).intValue();
+
+        float scaleRatio = 0.5f;
+
+        while (fileSaveResult && (exceedingMax || lowerThanMin)) {
+            Bitmap scaledImage = scale(bitmap, scaleRatio);
+            fileSaveResult = saveToFile(scaledImage, file, compressFormat);
             exceedingMax = file.length() > maxSizeBytes;
-            exceedingMin = file.length() < maxSizeBytes * (1 - TOLERANCE_MIN);
+            lowerThanMin = file.length() < minSizeAllowed;
+            scaleRatio = (float) (scaleRatio * (exceedingMax ? 0.5: 1.5));
         }
         return fileSaveResult;
     }

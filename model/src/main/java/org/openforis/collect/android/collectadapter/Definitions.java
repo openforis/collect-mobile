@@ -158,10 +158,11 @@ public class Definitions {
                         nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required,
                         uiOptions.getShowCode((CodeAttributeDefinition) nodeDef), enumerator);
             } else if (nodeDef instanceof FileAttributeDefinition) {
-                CollectAnnotations.FileType fileType = annotations.getFileType((FileAttributeDefinition) nodeDef);
+                FileAttributeDefinition fileAttributeDefinition = (FileAttributeDefinition) nodeDef;
+                CollectAnnotations.FileType fileType = annotations.getFileType(fileAttributeDefinition);
                 def = new UIFileAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
-                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required, fileType);
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required, fileType, fileAttributeDefinition.getMaxSize());
             } else if (nodeDef instanceof TextAttributeDefinition) {
                 CollectAnnotations.TextInput inputType = annotations.getTextInput((TextAttributeDefinition) nodeDef);
                 boolean autoUppercase = uiOptions.isAutoUppercase((TextAttributeDefinition) nodeDef);

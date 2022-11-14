@@ -36,7 +36,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private static final int MAX_DISPLAY_HEIGHT = 500;
 
     private final View inputView;
-    private Button removeButton;
+    private ImageButton removeButton;
     private ImageButton rotateIconImageView;
     private ImageView thumbnailImageView;
     private String tempImagePath;
@@ -92,7 +92,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private void setupRemoveButton() {
         removeButton = inputView.findViewById(R.id.file_attribute_remove);
-        removeButton.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.deleteIcon), null, null, null);
+        removeButton.setImageDrawable(new Attrs(context).drawable(R.attr.deleteIcon));
         removeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showRemoveDialog();
@@ -180,7 +180,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private void setupGalleryButton() {
         Button button = inputView.findViewById(R.id.file_attribute_select);
         if (canShowGallery()) {
-            button.setCompoundDrawablesWithIntrinsicBounds(new Attrs(context).drawable(R.attr.openIcon), null, null, null);
+            button.setCompoundDrawablesWithIntrinsicBounds(null, new Attrs(context).drawable(R.attr.openIcon), null, null);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     showGallery();

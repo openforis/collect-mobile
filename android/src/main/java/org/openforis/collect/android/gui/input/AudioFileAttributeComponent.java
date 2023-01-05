@@ -63,6 +63,11 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         return inputView;
     }
 
+    @Override
+    protected String getMediaType() {
+        return "audio/3gpp";
+    }
+
     private void reset() {
         if (audioPlayer != null) {
             audioPlayer.stop();

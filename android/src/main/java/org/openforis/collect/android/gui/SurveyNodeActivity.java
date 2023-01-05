@@ -28,6 +28,7 @@ import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.AudioFileAttributeComponent;
 import org.openforis.collect.android.gui.input.BarcodeTextAttributeComponent;
+import org.openforis.collect.android.gui.input.DocumentFileAttributeComponent;
 import org.openforis.collect.android.gui.input.ImageFileAttributeComponent;
 import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
@@ -63,6 +64,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public static final int VIDEO_CAPTURE_REQUEST_CODE = 6388;
     public static final int VIDEO_SELECTED_REQUEST_CODE = 6389;
     public static final int BARCODE_CAPTURE_REQUEST_CODE = 6390;
+    public static final int FILE_DOCUMENT_SELECTED_REQUEST_CODE = 6391;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -77,6 +79,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private ImageFileAttributeComponent imageListener;
     private AudioFileAttributeComponent audioListener;
     private VideoFileAttributeComponent videoListener;
+    private DocumentFileAttributeComponent fileDocumentListener;
     private BarcodeTextAttributeComponent barcodeCaptureListener;
 
     private boolean twoPane;
@@ -424,6 +427,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                         barcodeCaptureListener.barcodeCaptured(barcode);
                     }
                     break;
+                case FILE_DOCUMENT_SELECTED_REQUEST_CODE:
+                    if (fileDocumentListener != null && data != null) {
+                        fileDocumentListener.documentSelected(data.getData());
+                    }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -439,6 +446,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     public void setVideoChangedListener(VideoFileAttributeComponent listener) {
         videoListener = listener;
+    }
+
+    public void setFileDocumentChangeListener(DocumentFileAttributeComponent listener) {
+        fileDocumentListener = listener;
     }
 
     public void setBarcodeCaptureListener(BarcodeTextAttributeComponent barcodeCaptureListener) {

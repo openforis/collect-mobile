@@ -37,7 +37,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private final View inputView;
     private ImageButton removeButton;
-    private ImageButton rotateIconImageView;
+    private ImageButton rotateImageButton;
     private ImageView thumbnailImageView;
     private String tempImagePath;
 
@@ -63,22 +63,9 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         thumbnailImageView = inputView.findViewById(R.id.file_attribute_image);
         thumbnailImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startShowImageActivity();
+                startShowFileActivity();
             }
         });
-    }
-
-    private void startShowImageActivity() {
-        //TODO find nicer solution to prevent FileUriExposedException
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        Uri fileUri = Uri.fromFile(file);
-        intent.setDataAndType(fileUri, getMediaType());
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        context.startActivity(Intent.createChooser(intent, "View using"));
     }
 
     @Override
@@ -86,6 +73,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         return inputView;
     }
 
+    @Override
     protected String getMediaType() {
         return "image/*";
     }
@@ -109,9 +97,9 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupRotateButton() {
-        rotateIconImageView = inputView.findViewById(R.id.file_attribute_rotate);
-        rotateIconImageView.setImageDrawable(new Attrs(context).drawable(R.attr.rotateIcon));
-        rotateIconImageView.setOnClickListener(new View.OnClickListener() {
+        rotateImageButton = inputView.findViewById(R.id.file_attribute_rotate);
+        rotateImageButton.setImageDrawable(new Attrs(context).drawable(R.attr.rotateIcon));
+        rotateImageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 rotateImage();
             }
@@ -265,7 +253,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
             hideThumbnail();
         }
         Views.toggleVisibility(removeButton, file.exists());
-
+        Views.toggleVisibility(rotateImageButton, file.exists());
     }
 
     private File createTempImageFile() {

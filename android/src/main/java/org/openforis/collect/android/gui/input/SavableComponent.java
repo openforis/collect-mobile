@@ -148,14 +148,16 @@ public abstract class SavableComponent {
         if (attribute instanceof UiBooleanAttribute)
             return new BooleanAttributeComponent((UiBooleanAttribute) attribute, surveyService, context);
         if (attribute instanceof UiFileAttribute) {
+            UiFileAttribute uiFileAttribute = (UiFileAttribute) attribute;
             switch (((UIFileAttributeDefinition) attribute.getDefinition()).getType()) {
                 case IMAGE:
-                    return new ImageFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                    return new ImageFileAttributeComponent(uiFileAttribute, surveyService, context);
                 case AUDIO:
-                    return new AudioFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                    return new AudioFileAttributeComponent(uiFileAttribute, surveyService, context);
                 case VIDEO:
-                    return new VideoFileAttributeComponent((UiFileAttribute) attribute, surveyService, context);
+                    return new VideoFileAttributeComponent(uiFileAttribute, surveyService, context);
                 case DOCUMENT:
+                    return new DocumentFileAttributeComponent(uiFileAttribute, surveyService, context);
             }
         }
         return new UnsupportedAttributeComponent(attribute, surveyService, context);

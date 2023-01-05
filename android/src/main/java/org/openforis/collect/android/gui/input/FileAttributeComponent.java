@@ -1,6 +1,8 @@
 package org.openforis.collect.android.gui.input;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.StrictMode;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -12,7 +14,7 @@ import java.io.File;
 
 public abstract class FileAttributeComponent extends AttributeComponent<UiFileAttribute> {
 
-    protected final File file;
+    protected File file;
     private boolean fileChanged;
 
     public FileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
@@ -69,5 +71,21 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
         return intent;
     }
 
+    protected void startShowFileActivity() {
+        //TODO find nicer solution to prevent FileUriExposedException
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri fileUri = Uri.fromFile(file);
+        intent.setDataAndType(fileUri, getMediaType());
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        context.startActivity(Intent.createChooser(intent, "View using"));
+    }
+
     protected abstract void updateViewState();
+
+    protected abstract String getMediaType();
+
 }

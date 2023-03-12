@@ -11,6 +11,7 @@ import org.openforis.collect.android.viewmodel.UiAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCodeAttributeDefinition;
 import org.openforis.collect.android.viewmodel.UiCoordinateDefinition;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
+import org.openforis.collect.android.viewmodel.UiEntitySingleDefinition;
 import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 import org.openforis.collect.android.viewmodel.UiTaxonDefinition;
 import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
@@ -176,7 +177,7 @@ public class Definitions {
                         calculated, calculatedOnlyOneTime, hidden,
                         nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
         } else {
-            def = new Definition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDef),
+            def = new UiEntitySingleDefinition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDef),
                     nodePrompt(nodeDef), interviewLabel, required);
         }
         return def;

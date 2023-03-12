@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,8 +15,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import org.openforis.collect.R;
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
+import org.openforis.collect.android.viewmodel.UiEntitySingleDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 
@@ -64,10 +67,16 @@ public class SimpleNodeListFragment extends Fragment {
     }
 
     private void onNodeSelected(int nodeIndex) {
-        ViewPager viewPager = getActivity().findViewById(R.id.attributePager);
-        viewPager.setCurrentItem(nodeIndex);
-        UiNode node = listAdapter.getItem(nodeIndex);
-        ServiceLocator.surveyService().selectNode(node.getId());
+        FragmentActivity activity = getActivity();
+        ViewPager viewPager = activity.findViewById(R.id.attributePager);
+        if (viewPager.getCurrentItem() != nodeIndex) {
+            viewPager.setCurrentItem(nodeIndex);
+            UiNode node = listAdapter.getItem(nodeIndex);
+            ServiceLocator.surveyService().selectNode(node.getId());
+            if (node.getDefinition() instanceof UiEntitySingleDefinition && activity instanceof SurveyNodeActivity) {
+                ((SurveyNodeActivity) activity).smartNextAttribute(null);
+            }
+        }
     }
 
     public void notifyNodeChanged(UiNode node) {

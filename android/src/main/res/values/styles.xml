@@ -159,8 +159,8 @@
     </style>
 
     <style name="myActionButtonStyle" parent="Widget.AppCompat.ActionButton">
-        <item name="android:scaleX">1.6</item>
-        <item name="android:scaleY">1.6</item>
-        <item name="android:drawablePadding">10dp</item>
+        <item name="android:scaleX">1.2</item>
+        <item name="android:scaleY">1.2</item>
+        <item name="android:drawablePadding">8dp</item>
     </style>
 </resources>

@@ -15,10 +15,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
@@ -29,6 +25,7 @@ import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
+import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
@@ -37,6 +34,10 @@ import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 
 /**
@@ -288,9 +289,13 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     private static NodeDetailFragment<?> createInstance(UiNode node) {
-        if (node instanceof UiAttribute && node.isCalculated())
-            return new CalculatedAttributeFragment();
-        if (node instanceof UiAttribute || node instanceof UiAttributeCollection)
+        if (node instanceof UiAttribute) {
+            if (node.isCalculated() || node instanceof UiCodeAttribute && ((UiCodeAttribute) node).getDefinition().isEnumerator()) {
+                return new CalculatedAttributeFragment();
+            }
+            return new SavableNodeDetailFragment();
+        }
+        if (node instanceof UiAttributeCollection)
             return new SavableNodeDetailFragment();
         if (node instanceof UiEntityCollection)
             return new EntityCollectionDetailFragment();

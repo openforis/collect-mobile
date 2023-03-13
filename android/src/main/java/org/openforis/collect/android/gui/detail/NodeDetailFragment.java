@@ -25,7 +25,6 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SmartNext;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.NodeListDialogFragment;
-import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;

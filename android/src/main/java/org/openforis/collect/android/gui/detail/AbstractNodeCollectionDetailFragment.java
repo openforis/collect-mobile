@@ -171,7 +171,10 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         Runnable task = new Runnable() {
             public void run() {
                 UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
-                nodeNavigator().navigateTo(selectedNode.getFirstRelevantChild().getId());
+                UiNode firstEditableChild = selectedNode.getFirstEditableChild();
+                if (firstEditableChild != null) {
+                    nodeNavigator().navigateTo(firstEditableChild.getId());
+                }
             }
         };
         if (nodeCollection instanceof UiRecordCollection) {

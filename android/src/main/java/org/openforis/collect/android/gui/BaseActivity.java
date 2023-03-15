@@ -1,7 +1,11 @@
 package org.openforis.collect.android.gui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +21,21 @@ import org.openforis.collect.android.gui.util.Keyboard;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private void adjustFontScale(Configuration configuration, float scale) {
+        float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE, 1f);
+        configuration.fontScale = scale * systemScale;
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(metrics);
+        metrics.scaledDensity = configuration.fontScale * metrics.density;
+        getBaseContext().getResources().updateConfiguration(configuration, metrics);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeInitializer.init(this);
         UILanguageInitializer.init(this);
+        adjustFontScale(getResources().getConfiguration());
         super.onCreate(savedInstanceState);
     }
 

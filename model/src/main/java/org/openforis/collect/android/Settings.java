@@ -13,6 +13,8 @@ public class Settings {
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
 
+    private static float fontScale;
+
     public enum UILanguage {
         ALBANIAN("sq", "Albanian"),
         ENGLISH("en", "English"),
@@ -58,6 +60,12 @@ public class Settings {
 
     public enum PreferredLanguageMode {
         SYSTEM_DEFAULT,
+        SURVEY_DEFAULT,
+        SPECIFIED
+    }
+
+    public enum FontScale {
+        NORMAL(1.0f),
         SURVEY_DEFAULT,
         SPECIFIED
     }

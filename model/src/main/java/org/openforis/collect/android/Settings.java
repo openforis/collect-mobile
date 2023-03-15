@@ -13,7 +13,7 @@ public class Settings {
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
 
-    private static float fontScale;
+    private static FontScale fontScale;
 
     public enum UILanguage {
         ALBANIAN("sq", "Albanian"),
@@ -65,9 +65,20 @@ public class Settings {
     }
 
     public enum FontScale {
+        SMALL(0.8f),
         NORMAL(1.0f),
-        SURVEY_DEFAULT,
-        SPECIFIED
+        BIG(1.2f),
+        VERY_BIG(1.5f);
+
+        private float value;
+
+        FontScale(float value) {
+            this.value = value;
+        }
+
+        public float getValue() {
+            return value;
+        }
     }
 
     public synchronized static String getCrew() {
@@ -96,6 +107,14 @@ public class Settings {
 
     private static String crewToUsername() {
         return crew == null ? "" : crew.replaceAll("\\W", "_").toLowerCase();
+    }
+
+    public synchronized static FontScale getFontScale() {
+        return fontScale != null ? fontScale : FontScale.NORMAL;
+    }
+
+    public static void setFontScale(FontScale fontScale) {
+        Settings.fontScale = fontScale;
     }
 
     public synchronized static PreferredLanguageMode getPreferredLanguageMode() {

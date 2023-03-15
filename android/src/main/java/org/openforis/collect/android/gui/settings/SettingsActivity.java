@@ -50,6 +50,8 @@ public class SettingsActivity extends Activity {
 
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
+
+    public static final String FONT_SCALE = "fontScale";
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
     private final static String SURVEY_PREFERRED_LANGUAGE_SPECIFIED = "survey_preferred_language_specified";
     private final static String LANGUAGE_UI_KEY = "language_ui";
@@ -98,6 +100,7 @@ public class SettingsActivity extends Activity {
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
+            setupFontScalePreference();
             setupLanguagePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
@@ -137,6 +140,19 @@ public class SettingsActivity extends Activity {
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     preference.setSummary(getThemeSummary((String) newValue));
+                    return true;
+                }
+            });
+        }
+
+        private void setupFontScalePreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(FONT_SCALE);
+            String currentScaleName = preferences.getString(FONT_SCALE, Settings.FontScale.NORMAL.name());
+            preference.setSummary(currentScaleName);
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    preference.setSummary((String) newValue);
                     return true;
                 }
             });

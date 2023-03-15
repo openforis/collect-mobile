@@ -21,6 +21,12 @@
         android:entryValues="@array/theme_names"
         android:key="theme"
         android:title="@string/settings_theme_title" />
+    <ListPreference
+        android:defaultValue="NORMAL"
+        android:entries="@array/font_scale_labels"
+        android:entryValues="@array/font_scale_names"
+        android:key="fontScale"
+        android:title="@string/settings_font_scale_title" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="showKeyboard"

@@ -21,9 +21,10 @@ import org.openforis.collect.android.gui.util.Keyboard;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private void adjustFontScale(Configuration configuration, float scale) {
+    private void adjustFontScale(Configuration configuration) {
+        org.openforis.collect.android.Settings.FontScale fontScale = org.openforis.collect.android.Settings.getFontScale();
         float systemScale = Settings.System.getFloat(getContentResolver(), Settings.System.FONT_SCALE, 1f);
-        configuration.fontScale = scale * systemScale;
+        configuration.fontScale = fontScale.getValue() * systemScale;
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         wm.getDefaultDisplay().getMetrics(metrics);

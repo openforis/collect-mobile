@@ -21,7 +21,7 @@ public class IntegerAttributeComponent extends NumericAttributeComponent<UiInteg
     private static final NumberFormat NUMBER_FORMAT;
     static {
         NUMBER_FORMAT = NumberFormat.getInstance();
-        NUMBER_FORMAT.setGroupingUsed(true);
+        NUMBER_FORMAT.setGroupingUsed(false);
     }
 
     public IntegerAttributeComponent(UiIntegerAttribute attribute, SurveyService surveyService, FragmentActivity context) {

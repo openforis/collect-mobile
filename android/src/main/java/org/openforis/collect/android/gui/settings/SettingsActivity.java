@@ -41,7 +41,6 @@ import java.util.PropertyResourceBundle;
 /**
  * @author Daniel Wiell
  */
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity {
 
     public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
@@ -149,10 +148,12 @@ public class SettingsActivity extends Activity {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             Preference preference = findPreference(FONT_SCALE);
             String currentScaleName = preferences.getString(FONT_SCALE, Settings.FontScale.NORMAL.name());
-            preference.setSummary(currentScaleName);
+            preference.setSummary(getFontScaleSummary(Settings.FontScale.valueOf(currentScaleName)));
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    preference.setSummary((String) newValue);
+                    Settings.FontScale newFontScale = Settings.FontScale.valueOf((String) newValue);
+                    preference.setSummary(getFontScaleSummary(newFontScale));
+                    Settings.setFontScale(newFontScale);
                     return true;
                 }
             });
@@ -226,6 +227,24 @@ public class SettingsActivity extends Activity {
                     ? R.string.settings_theme_dark_summary
                     : R.string.settings_theme_light_summary
             );
+        }
+
+        private String getFontScaleSummary(Settings.FontScale fontScale) {
+            int key;
+            switch (fontScale) {
+                case SMALL:
+                    key = R.string.settings_font_scale_small;
+                    break;
+                case BIG:
+                    key = R.string.settings_font_scale_big;
+                    break;
+                case VERY_BIG:
+                    key = R.string.settings_font_scale_very_big;
+                    break;
+                default:
+                    key = R.string.settings_font_scale_normal;
+            }
+            return getString(key);
         }
 
         private void setupRemoteSyncEnabledPreference() {

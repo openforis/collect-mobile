@@ -12,7 +12,6 @@ public class Settings {
     private static String remoteCollectPassword;
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
-
     private static FontScale fontScale;
 
     public enum UILanguage {
@@ -23,8 +22,8 @@ public class Settings {
         SPANISH("es", "Spanish"),
         SWEDISH("sv", "Swedish");
 
-        private String code;
-        private String label;
+        private final String code;
+        private final String label;
 
         UILanguage(String code, String label) {
             this.code = code;
@@ -70,7 +69,7 @@ public class Settings {
         BIG(1.2f),
         VERY_BIG(1.5f);
 
-        private float value;
+        private final float value;
 
         FontScale(float value) {
             this.value = value;

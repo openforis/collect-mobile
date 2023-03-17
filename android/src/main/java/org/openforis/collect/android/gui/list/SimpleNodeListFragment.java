@@ -1,5 +1,7 @@
 package org.openforis.collect.android.gui.list;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -42,12 +45,12 @@ public class SimpleNodeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_node_list, container, false);
         nodeListView = rootView.findViewById(R.id.node_list_view);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        nodeListView.setLayoutManager(linearLayoutManager);
+        nodeListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
         itemAnimator.setAddDuration(1000);
         itemAnimator.setRemoveDuration(1000);
         nodeListView.setItemAnimator(itemAnimator);
+        setNodeListViewDivider();
 
         listAdapter = new SimpleNodeListAdapter(getActivity(), node().getParent(), new SimpleNodeListAdapter.OnItemClickListener() {
             public void onItemClick(int position, UiNode node) {
@@ -60,6 +63,15 @@ public class SimpleNodeListFragment extends Fragment {
 
         selectNode(node());
         return rootView;
+    }
+
+    private void setNodeListViewDivider() {
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        Drawable drawable = itemDecoration.getDrawable();
+        if (drawable instanceof GradientDrawable) {
+            ((GradientDrawable) drawable).setSize(4,4);
+        }
+        nodeListView.addItemDecoration(itemDecoration);
     }
 
     private UiNode node() {

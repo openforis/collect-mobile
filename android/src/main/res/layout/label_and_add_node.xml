@@ -18,13 +18,14 @@
         android:layout_gravity="right|top">
 
         <ImageButton
-            android:paddingTop="8dp"
             android:id="@+id/action_add_node"
+            style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_input_add"
             android:contentDescription="@string/action_add_node"
-            style="@style/Widget.AppCompat.ActionButton" />
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@android:drawable/ic_input_add" />
 
         <ProgressBar
             android:layout_width="wrap_content"

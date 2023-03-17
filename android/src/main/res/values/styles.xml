@@ -44,6 +44,9 @@
         <item name="spinnerItemTextColor">#FFFFFF</item>
         <item name="spinnerItemBackground">#10FFFFFF</item>
         <item name="iconButtonBorderColor">#FFFFFF</item>
+
+        <item name="android:actionButtonStyle">@style/myActionButtonStyle</item>
+        <item name="actionButtonStyle">@style/myActionButtonStyle</item>
     </style>
 
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light">
@@ -89,6 +92,9 @@
         <item name="spinnerItemTextColor">#000000</item>
         <item name="spinnerItemBackground">#10000000</item>
         <item name="iconButtonBorderColor">#000000</item>
+
+        <item name="android:actionButtonStyle">@style/myActionButtonStyle</item>
+        <item name="actionButtonStyle">@style/myActionButtonStyle</item>
     </style>
 
     <style name="actionMenuItem">
@@ -150,5 +156,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="myActionButtonStyle" parent="Widget.AppCompat.ActionButton">
+        <item name="android:scaleX">1.2</item>
+        <item name="android:scaleY">1.2</item>
+        <item name="android:drawablePadding">4dp</item>
     </style>
 </resources>

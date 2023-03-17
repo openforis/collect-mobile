@@ -11,6 +11,9 @@ public class AndroidVersion {
     private static boolean greaterThan(int version) {
         return VERSION.SDK_INT > version;
     }
+    private static boolean greaterEqualThan(int version) {
+        return VERSION.SDK_INT >= version;
+    }
 
     public static boolean greaterThan10() {
         return greaterThan(VERSION_CODES.GINGERBREAD_MR1);
@@ -43,4 +46,9 @@ public class AndroidVersion {
     public static boolean greaterThan20() {
         return greaterThan(VERSION_CODES.KITKAT_WATCH);
     }
+
+    public static boolean greaterEqualThan30() {
+        return greaterEqualThan(VERSION_CODES.R);
+    }
+
 }

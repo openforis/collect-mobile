@@ -276,6 +276,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     public void exportDialog(MenuItem item) {
         if (Permissions.checkStoragePermissionOrRequestIt(this)) {
+
             new ExportDialogFragment().show(getSupportFragmentManager(), "export-dialog");
         }
     }

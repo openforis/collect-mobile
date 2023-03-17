@@ -1,11 +1,9 @@
 package org.openforis.collect.android.gui.settings;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -77,6 +75,8 @@ public class SettingsActivity extends Activity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
+        Settings.setFontScale(Settings.FontScale.valueOf(preferences.getString(FONT_SCALE, Settings.FontScale.NORMAL.name())));
+        Settings.setLockScreenToPortraitMode(preferences.getBoolean(LOCK_SCREEN_TO_PORTRAIT_MODE, false));
         Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE,
                 Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name())));
         Settings.setPreferredLanguage(preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.getDefault().getLanguage()));

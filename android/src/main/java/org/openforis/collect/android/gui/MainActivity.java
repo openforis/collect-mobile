@@ -76,16 +76,14 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedState) {
-        super.onCreate(savedState);
-
         if (getIntent().getBooleanExtra(EXIT_FLAG, false)) {
             finish();
             return;
         }
-
         if (Permissions.checkStoragePermissionOrRequestIt(this)) {
             initialize();
         }
+        super.onCreate(savedState);
     }
 
     @Override

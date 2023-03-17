@@ -1,11 +1,9 @@
 package org.openforis.collect.android.gui.settings;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -41,7 +39,6 @@ import java.util.PropertyResourceBundle;
 /**
  * @author Daniel Wiell
  */
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SettingsActivity extends Activity {
 
     public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
@@ -50,6 +47,10 @@ public class SettingsActivity extends Activity {
 
     public static final String CREW_ID = "crewId";
     public static final String COMPASS_ENABLED = "compassEnabled";
+
+    public static final String FONT_SCALE = "fontScale";
+    public static final String LOCK_SCREEN_TO_PORTRAIT_MODE = "lockScreenToPortraitMode";
+
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
     private final static String SURVEY_PREFERRED_LANGUAGE_SPECIFIED = "survey_preferred_language_specified";
     private final static String LANGUAGE_UI_KEY = "language_ui";
@@ -74,6 +75,8 @@ public class SettingsActivity extends Activity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Settings.setCrew(preferences.getString(CREW_ID, ""));
         Settings.setCompassEnabled(preferences.getBoolean(COMPASS_ENABLED, true));
+        Settings.setFontScale(Settings.FontScale.valueOf(preferences.getString(FONT_SCALE, Settings.FontScale.NORMAL.name())));
+        Settings.setLockScreenToPortraitMode(preferences.getBoolean(LOCK_SCREEN_TO_PORTRAIT_MODE, false));
         Settings.setPreferredLanguageMode(Settings.PreferredLanguageMode.valueOf(preferences.getString(SURVEY_PREFERRED_LANGUAGE_MODE,
                 Settings.PreferredLanguageMode.SYSTEM_DEFAULT.name())));
         Settings.setPreferredLanguage(preferences.getString(SURVEY_PREFERRED_LANGUAGE_SPECIFIED, Locale.getDefault().getLanguage()));
@@ -98,6 +101,8 @@ public class SettingsActivity extends Activity {
             setupCrewIdPreference();
             setupCompassEnabledPreference();
             setupThemePreference();
+            setupFontScalePreference();
+            setupFontLockScreenToPortraitModePreference();
             setupLanguagePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
@@ -137,6 +142,32 @@ public class SettingsActivity extends Activity {
             preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     preference.setSummary(getThemeSummary((String) newValue));
+                    return true;
+                }
+            });
+        }
+
+        private void setupFontScalePreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(FONT_SCALE);
+            String currentScaleName = preferences.getString(FONT_SCALE, Settings.FontScale.NORMAL.name());
+            preference.setSummary(getFontScaleSummary(Settings.FontScale.valueOf(currentScaleName)));
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Settings.FontScale newFontScale = Settings.FontScale.valueOf((String) newValue);
+                    preference.setSummary(getFontScaleSummary(newFontScale));
+                    Settings.setFontScale(newFontScale);
+                    return true;
+                }
+            });
+        }
+
+        private void setupFontLockScreenToPortraitModePreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(LOCK_SCREEN_TO_PORTRAIT_MODE);
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Settings.setLockScreenToPortraitMode((Boolean) newValue);
                     return true;
                 }
             });
@@ -210,6 +241,24 @@ public class SettingsActivity extends Activity {
                     ? R.string.settings_theme_dark_summary
                     : R.string.settings_theme_light_summary
             );
+        }
+
+        private String getFontScaleSummary(Settings.FontScale fontScale) {
+            int key;
+            switch (fontScale) {
+                case SMALL:
+                    key = R.string.settings_font_scale_small;
+                    break;
+                case BIG:
+                    key = R.string.settings_font_scale_big;
+                    break;
+                case VERY_BIG:
+                    key = R.string.settings_font_scale_very_big;
+                    break;
+                default:
+                    key = R.string.settings_font_scale_normal;
+            }
+            return getString(key);
         }
 
         private void setupRemoteSyncEnabledPreference() {

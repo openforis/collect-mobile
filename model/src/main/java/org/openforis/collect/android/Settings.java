@@ -12,6 +12,8 @@ public class Settings {
     private static String remoteCollectPassword;
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
+    private static FontScale fontScale;
+    private static boolean lockScreenToPortraitMode = false;
 
     public enum UILanguage {
         ALBANIAN("sq", "Albanian"),
@@ -21,8 +23,8 @@ public class Settings {
         SPANISH("es", "Spanish"),
         SWEDISH("sv", "Swedish");
 
-        private String code;
-        private String label;
+        private final String code;
+        private final String label;
 
         UILanguage(String code, String label) {
             this.code = code;
@@ -62,6 +64,23 @@ public class Settings {
         SPECIFIED
     }
 
+    public enum FontScale {
+        SMALL(0.8f),
+        NORMAL(1.0f),
+        BIG(1.4f),
+        VERY_BIG(1.8f);
+
+        private final float value;
+
+        FontScale(float value) {
+            this.value = value;
+        }
+
+        public float getValue() {
+            return value;
+        }
+    }
+
     public synchronized static String getCrew() {
         return crew;
     }
@@ -88,6 +107,22 @@ public class Settings {
 
     private static String crewToUsername() {
         return crew == null ? "" : crew.replaceAll("\\W", "_").toLowerCase();
+    }
+
+    public synchronized static FontScale getFontScale() {
+        return fontScale != null ? fontScale : FontScale.NORMAL;
+    }
+
+    public synchronized static void setFontScale(FontScale fontScale) {
+        Settings.fontScale = fontScale;
+    }
+
+    public synchronized static boolean isLockScreenToPortraitMode() {
+        return lockScreenToPortraitMode;
+    }
+
+    public synchronized static void setLockScreenToPortraitMode(boolean lockScreenToPortraitMode) {
+        Settings.lockScreenToPortraitMode = lockScreenToPortraitMode;
     }
 
     public synchronized static PreferredLanguageMode getPreferredLanguageMode() {

@@ -15,17 +15,33 @@
         android:switchTextOff="@string/settings_switchTextOff_compassEnabled"
         android:switchTextOn="@string/settings_switchTextOn_compassEnabled"
         android:title="@string/settings_title_compass" />
-    <ListPreference
-        android:defaultValue="dark"
-        android:entries="@array/theme_labels"
-        android:entryValues="@array/theme_names"
-        android:key="theme"
-        android:title="@string/settings_theme_title" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="showKeyboard"
         android:summary="@string/settings_summary_showKeyboard"
         android:title="@string/settings_title_showKeyboard" />
+
+    <PreferenceCategory
+        android:key="appearance_category"
+        android:title="@string/settings_category_appearance">
+        <ListPreference
+            android:defaultValue="dark"
+            android:entries="@array/theme_labels"
+            android:entryValues="@array/theme_names"
+            android:key="theme"
+            android:title="@string/settings_theme_title" />
+        <ListPreference
+            android:defaultValue="NORMAL"
+            android:entries="@array/font_scale_labels"
+            android:entryValues="@array/font_scale_names"
+            android:key="fontScale"
+            android:title="@string/settings_font_scale_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="lockScreenToPortraitMode"
+            android:summary="@string/settings_lockScreenToPortraitMode_summary"
+            android:title="@string/settings_lockScreenToPortraitMode_title" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="language"

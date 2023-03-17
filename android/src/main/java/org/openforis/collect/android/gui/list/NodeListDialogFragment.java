@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -25,8 +26,9 @@ public class NodeListDialogFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.fragment_node_list, container, false);
         rootView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.node_list_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        final RecyclerView recyclerView = rootView.findViewById(R.id.node_list_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
         UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
 
         SimpleNodeListAdapter adapter = new SimpleNodeListAdapter(getActivity(), selectedNode.getParent(),

@@ -118,11 +118,28 @@ public class UiInternalNode extends UiNode {
         return children.get(0);
     }
 
-    public UiNode getFirstRelevantChild() {
-        List<UiNode> relevantChildren = getRelevantChildren();
-        if (relevantChildren.isEmpty())
-            throw new IllegalStateException("Node " + this + " contains no relevant children");
-        return relevantChildren.get(0);
+    public UiNode getFirstEditableChild() {
+        List<UiNode> relevantEditableChildren = getRelevantChildren();
+        // filter out calculated and enumerator attributes
+        CollectionUtils.filter(relevantEditableChildren, new Predicate<UiNode>() {
+            public boolean evaluate(UiNode item) {
+                Definition def = item.getDefinition();
+                // if entity => true
+                if (!(def instanceof UiAttributeDefinition)) return true;
+                UiAttributeDefinition attrDef = (UiAttributeDefinition) def;
+                // calculated attribute => false
+                if (attrDef.calculated) return false;
+                // enumerator attribute => false
+                if ((def instanceof UiCodeAttributeDefinition && ((UiCodeAttributeDefinition) def).isEnumerator())) return false;
+                // otherwise true
+                return true;
+            }
+        });
+        if (relevantEditableChildren.isEmpty()) {
+            // throw new IllegalStateException("Node " + this + " contains no relevant children");
+            return null;
+        }
+        return relevantEditableChildren.get(0);
     }
 
     public UiNode getChildAt(int childIndex) {

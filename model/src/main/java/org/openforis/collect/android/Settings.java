@@ -13,6 +13,7 @@ public class Settings {
     private static PreferredLanguageMode preferredLanguageMode;
     private static String preferredLanguage;
     private static FontScale fontScale;
+    private static boolean lockScreenToPortraitMode = false;
 
     public enum UILanguage {
         ALBANIAN("sq", "Albanian"),
@@ -66,8 +67,8 @@ public class Settings {
     public enum FontScale {
         SMALL(0.8f),
         NORMAL(1.0f),
-        BIG(1.2f),
-        VERY_BIG(1.5f);
+        BIG(1.4f),
+        VERY_BIG(1.8f);
 
         private final float value;
 
@@ -112,8 +113,16 @@ public class Settings {
         return fontScale != null ? fontScale : FontScale.NORMAL;
     }
 
-    public static void setFontScale(FontScale fontScale) {
+    public synchronized static void setFontScale(FontScale fontScale) {
         Settings.fontScale = fontScale;
+    }
+
+    public synchronized static boolean isLockScreenToPortraitMode() {
+        return lockScreenToPortraitMode;
+    }
+
+    public synchronized static void setLockScreenToPortraitMode(boolean lockScreenToPortraitMode) {
+        Settings.lockScreenToPortraitMode = lockScreenToPortraitMode;
     }
 
     public synchronized static PreferredLanguageMode getPreferredLanguageMode() {

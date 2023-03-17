@@ -51,6 +51,8 @@ public class SettingsActivity extends Activity {
     public static final String COMPASS_ENABLED = "compassEnabled";
 
     public static final String FONT_SCALE = "fontScale";
+    public static final String LOCK_SCREEN_TO_PORTRAIT_MODE = "lockScreenToPortraitMode";
+
     private final static String SURVEY_PREFERRED_LANGUAGE_MODE = "survey_preferred_language_mode";
     private final static String SURVEY_PREFERRED_LANGUAGE_SPECIFIED = "survey_preferred_language_specified";
     private final static String LANGUAGE_UI_KEY = "language_ui";
@@ -100,6 +102,7 @@ public class SettingsActivity extends Activity {
             setupCompassEnabledPreference();
             setupThemePreference();
             setupFontScalePreference();
+            setupFontLockScreenToPortraitModePreference();
             setupLanguagePreference();
             setupRemoteSyncEnabledPreference();
             setupRemoteCollectAddressPreference();
@@ -154,6 +157,17 @@ public class SettingsActivity extends Activity {
                     Settings.FontScale newFontScale = Settings.FontScale.valueOf((String) newValue);
                     preference.setSummary(getFontScaleSummary(newFontScale));
                     Settings.setFontScale(newFontScale);
+                    return true;
+                }
+            });
+        }
+
+        private void setupFontLockScreenToPortraitModePreference() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Preference preference = findPreference(LOCK_SCREEN_TO_PORTRAIT_MODE);
+            preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Settings.setLockScreenToPortraitMode((Boolean) newValue);
                     return true;
                 }
             });

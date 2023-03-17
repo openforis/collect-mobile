@@ -32,7 +32,10 @@ public class MainActivity extends BaseActivity {
     private SurveySpinnerAdapter surveyAdapter;
     private Spinner surveySpinner;
 
-    private void initialize() {
+    protected void initialize() {
+        if (!Permissions.checkStoragePermissionOrRequestIt(this)) {
+            return;
+        }
         try {
             ServiceLocator.init(this);
 
@@ -66,6 +69,8 @@ public class MainActivity extends BaseActivity {
                     handleImportNewSurvey();
                 }
             });
+
+            super.initialize();
         } catch (WorkingDirNotWritable ignore) {
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
@@ -79,9 +84,6 @@ public class MainActivity extends BaseActivity {
         if (getIntent().getBooleanExtra(EXIT_FLAG, false)) {
             finish();
             return;
-        }
-        if (Permissions.checkStoragePermissionOrRequestIt(this)) {
-            initialize();
         }
         super.onCreate(savedState);
     }

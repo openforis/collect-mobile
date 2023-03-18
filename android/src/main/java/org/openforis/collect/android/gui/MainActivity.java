@@ -36,47 +36,55 @@ public class MainActivity extends BaseActivity {
         if (!Permissions.checkStoragePermissionOrRequestIt(this)) {
             return;
         }
+        initializeServices();
+
+        super.initialize();
+
+        initializeView();
+    }
+
+    private void initializeServices() {
         try {
             ServiceLocator.init(this);
-
-            surveyAdapter = new SurveySpinnerAdapter(this);
-
-            setContentView(R.layout.activity_main);
-
-            TextView mainTitle = findViewById(R.id.mainTitle);
-            mainTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/caviar_dreams_normal.ttf"));
-
-            TextView versionText = findViewById(R.id.appVersion);
-            versionText.setText(App.versionFull(this));
-
-            initializeSurveySpinner();
-
-            findViewById(R.id.goToDataEntry).setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    int selectedSurveyPosition = surveySpinner.getSelectedItemPosition();
-                    boolean surveySelected = surveyAdapter.isSurveyItem(selectedSurveyPosition);
-                    handleGoToDataEntryButtonClick(surveySelected);
-                }
-            });
-            findViewById(R.id.importDemoSurvey).setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //empty survey list, show survey list activity
-                    SurveyListActivity.startActivity(MainActivity.this);
-                }
-            });
-            findViewById(R.id.importNewSurvey).setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    handleImportNewSurvey();
-                }
-            });
-
-            super.initialize();
         } catch (WorkingDirNotWritable ignore) {
             DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
         } catch (StorageAccessException e) {
             handleStorageAccessException(e);
         }
+    }
+
+    private void initializeView() {
+        surveyAdapter = new SurveySpinnerAdapter(this);
+
+        setContentView(R.layout.activity_main);
+
+        TextView mainTitle = findViewById(R.id.mainTitle);
+        mainTitle.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/caviar_dreams_normal.ttf"));
+
+        TextView versionText = findViewById(R.id.appVersion);
+        versionText.setText(App.versionFull(this));
+
+        initializeSurveySpinner();
+
+        findViewById(R.id.goToDataEntry).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int selectedSurveyPosition = surveySpinner.getSelectedItemPosition();
+                boolean surveySelected = surveyAdapter.isSurveyItem(selectedSurveyPosition);
+                handleGoToDataEntryButtonClick(surveySelected);
+            }
+        });
+        findViewById(R.id.importDemoSurvey).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //empty survey list, show survey list activity
+                SurveyListActivity.startActivity(MainActivity.this);
+            }
+        });
+        findViewById(R.id.importNewSurvey).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleImportNewSurvey();
+            }
+        });
     }
 
     @Override

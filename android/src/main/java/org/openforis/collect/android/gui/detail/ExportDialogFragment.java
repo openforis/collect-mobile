@@ -38,9 +38,10 @@ import java.util.List;
 
 public class ExportDialogFragment extends DialogFragment {
     private static final int EXCLUDE_BINARIES = 0;
-    private static final int SAVE_TO_DOWNLOADS = 1;
-    private static final int EXCLUDE_CALCULATED_ATTRIBUTE_VALUES = 2;
-    private static final int ONLY_SELECTED_RECORDS = 3;
+    private static final int EXCLUDE_CALCULATED_ATTRIBUTE_VALUES = 1;
+    private static final int ONLY_SELECTED_RECORDS = 2;
+
+    private Dialog dialog = null;
 
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,7 +49,6 @@ public class ExportDialogFragment extends DialogFragment {
         UiNode selectedNode = surveyService.selectedNode();
         List<String> options = new ArrayList<String>(Arrays.asList(
                 getString(R.string.export_dialog_option_exclude_binary_file),
-                getString(R.string.export_dialog_option_save_to_downloads),
                 getString(R.string.export_dialog_option_exclude_calculated_values)
         ));
         if (!(selectedNode instanceof UiRecordCollection)) {
@@ -56,7 +56,7 @@ public class ExportDialogFragment extends DialogFragment {
         }
         final boolean[] selection = new boolean[options.size()];
 
-        return new AlertDialog.Builder(getActivity())
+        this.dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.export_dialog_title)
                 .setMultiChoiceItems(options.toArray(new String[options.size()]), selection, new DialogInterface.OnMultiChoiceClickListener() {
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -67,16 +67,47 @@ public class ExportDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         final SurveyDataExportParameters exportParameters = new SurveyDataExportParameters();
                         exportParameters.excludeBinaries = selection[EXCLUDE_BINARIES];
-                        exportParameters.saveToDownloads = selection[SAVE_TO_DOWNLOADS];
                         exportParameters.excludeCalculatedAttributeValues = selection[EXCLUDE_CALCULATED_ATTRIBUTE_VALUES];
                         exportParameters.onlySelectedRecords = selection.length > ONLY_SELECTED_RECORDS && selection[ONLY_SELECTED_RECORDS];
 
-                        new ExportTask(getActivity(), exportParameters)
-                                .execute();
+                        Activity activity = getActivity();
+
+                        if (ExportDialogFragment.this.dialog != null) ExportDialogFragment.this.dialog.dismiss();
+
+                        openShareOrSaveDialog(activity, exportParameters);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
+
+        return dialog;
+    }
+
+    private static void openShareOrSaveDialog(final Activity activity, final SurveyDataExportParameters exportParameters) {
+        List<String> options = new ArrayList<String>(Arrays.asList(
+                activity.getString(R.string.export_dialog_option_share),
+                activity.getString(R.string.export_dialog_option_save_to_downloads)
+        ));
+        final int[] checkedItem = {0};
+
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.export_dialog_title)
+                .setSingleChoiceItems(options.toArray(new String[options.size()]), checkedItem[0], new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkedItem[0] = which;
+                    }
+                })
+                .setPositiveButton(R.string.action_export, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (checkedItem[0] == 1) {
+                            exportParameters.saveToDownloads = true;
+                        }
+                        new ExportTask(activity, exportParameters)
+                                .execute();
+                    }
+                })
+                .create()
+                .show();
     }
 
     private static class ExportTask extends SlowAsyncTask<Void, Void, File> {

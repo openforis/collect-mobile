@@ -26,7 +26,9 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
         attribute.setText(newValue);
     }
 
+    @Override
     protected void onEditTextCreated(EditText input) {
+        super.onEditTextCreated(input);
         UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
         int inputType = def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
         input.setInputType(inputType);

@@ -105,6 +105,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
+
         onEditTextCreated(editText);
 
         editText.setSingleLine();

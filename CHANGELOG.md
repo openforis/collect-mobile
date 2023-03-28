@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 208 2023-03-28
+### Fixed
+- Numeric attribute formatting;
+
+## [1.7.9] - build 207 2023-03-17
+### Added
+- Settings; option to lock screen in portrait mode; font size;
+
 ## [1.7.9] - build 206 2023-01-20
 ### Fixed
 - Expressions: evaluations of calculated attributes inside single entities;

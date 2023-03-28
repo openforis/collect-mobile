@@ -9,32 +9,38 @@ import androidx.annotation.NonNull;
 import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
-public class DecimalNumberTextWatcher implements TextWatcher {
+public class NumberTextWatcher implements TextWatcher {
 
-    private static final DecimalFormat NUMBER_FORMAT;
-    private static final char DECIMAL_SEPARATOR;
-    private static final char GROUPING_SEPARATOR;
     private static final char MINUS_SIGN = '-';
     private static final char ZERO = '0';
-    private static final String DECIMAL_SEPARATOR_STR;
-    private static final String GROUPING_SEPARATOR_STR;
 
-    static {
-        NUMBER_FORMAT = (DecimalFormat) DecimalFormat.getInstance();
-        NUMBER_FORMAT.setGroupingUsed(true);
-        NUMBER_FORMAT.setMaximumFractionDigits(Integer.MAX_VALUE);
-        NUMBER_FORMAT.setMaximumIntegerDigits(Integer.MAX_VALUE);
+    private final EditText editText;
+    private final boolean groupingUsed;
+    private final Character groupingSeparator;
+    private final String groupingSeparatorStr;
+    private final DecimalFormat numberFormat;
+    private final char decimalSeparator;
+    private final String decimalSeparatorStr;
 
-        DECIMAL_SEPARATOR = NUMBER_FORMAT.getDecimalFormatSymbols().getDecimalSeparator();
-        DECIMAL_SEPARATOR_STR = String.valueOf(DECIMAL_SEPARATOR);
-        GROUPING_SEPARATOR = NUMBER_FORMAT.getDecimalFormatSymbols().getGroupingSeparator();
-        GROUPING_SEPARATOR_STR = String.valueOf(GROUPING_SEPARATOR);
-    }
-
-    private EditText editText;
-
-    public DecimalNumberTextWatcher(EditText editText) {
+    public NumberTextWatcher(EditText editText, boolean groupingUsed) {
         this.editText = editText;
+        this.groupingUsed = groupingUsed;
+
+        numberFormat = (DecimalFormat) DecimalFormat.getInstance();
+        numberFormat.setGroupingUsed(groupingUsed);
+        numberFormat.setMaximumFractionDigits(Integer.MAX_VALUE);
+        numberFormat.setMaximumIntegerDigits(Integer.MAX_VALUE);
+
+        decimalSeparator = numberFormat.getDecimalFormatSymbols().getDecimalSeparator();
+        decimalSeparatorStr = String.valueOf(decimalSeparator);
+
+        if (groupingUsed) {
+            groupingSeparator = numberFormat.getDecimalFormatSymbols().getGroupingSeparator();
+            groupingSeparatorStr = String.valueOf(groupingSeparator);
+        } else {
+            groupingSeparator = null;
+            groupingSeparatorStr = null;
+        }
     }
 
     @Override
@@ -77,15 +83,15 @@ public class DecimalNumberTextWatcher implements TextWatcher {
 
         if (! absVal.isEmpty()) {
             //remove invalid starting characters
-            if (absVal.charAt(0) != DECIMAL_SEPARATOR && !Character.isDigit(absVal.charAt(0))) {
+            if (absVal.charAt(0) != decimalSeparator && !Character.isDigit(absVal.charAt(0))) {
                 absVal = absVal.substring(1);
             }
             if (! absVal.isEmpty()) {
-                if (absVal.charAt(0) == DECIMAL_SEPARATOR) {
+                if (absVal.charAt(0) == decimalSeparator) {
                     //starts with .XXX => add leading 0 => 0.XXX
                     absVal = ZERO + absVal;
                 } else if (absVal.length() > 1
-                        && absVal.charAt(0) == ZERO && absVal.charAt(1) != DECIMAL_SEPARATOR) {
+                        && absVal.charAt(0) == ZERO && absVal.charAt(1) != decimalSeparator) {
                     //starts with 0XXX => remove leading 0 => XXX
                     absVal = absVal.substring(1);
                 }
@@ -94,7 +100,7 @@ public class DecimalNumberTextWatcher implements TextWatcher {
         return (negative ? MINUS_SIGN : "") + absVal;
     }
 
-    private static String format(String value) {
+    private String format(String value) {
         String absVal;
         boolean negative;
         if (value.charAt(0) == MINUS_SIGN) {
@@ -105,12 +111,14 @@ public class DecimalNumberTextWatcher implements TextWatcher {
             absVal = value;
         }
         //remove all grouping separators
-        absVal = absVal.replaceAll(Pattern.quote(GROUPING_SEPARATOR_STR), "");
+        if (groupingUsed) {
+            absVal = absVal.replaceAll(Pattern.quote(groupingSeparatorStr), "");
+        }
 
         StringBuilder sb = new StringBuilder();
 
         if (! absVal.isEmpty()) {
-            String[] parts = absVal.split(Pattern.quote(DECIMAL_SEPARATOR_STR));
+            String[] parts = absVal.split(Pattern.quote(decimalSeparatorStr));
             String integerPart;
             String decimalPart;
             switch(parts.length) {
@@ -128,15 +136,15 @@ public class DecimalNumberTextWatcher implements TextWatcher {
                     decimalPart = parts[2];
             }
             int j = integerPart.length() - 1;
-            if (integerPart.charAt(integerPart.length() -1) == DECIMAL_SEPARATOR) {
+            if (integerPart.charAt(integerPart.length() -1) == decimalSeparator) {
                 j--;
-                sb.append(DECIMAL_SEPARATOR_STR);
+                sb.append(decimalSeparatorStr);
             }
             //add grouping separator
             int groupSize = 0;
             for (int k = j; k >= 0; k--) {
-                if (groupSize == 3) {
-                    sb.insert(0, GROUPING_SEPARATOR);
+                if (groupingUsed && groupSize == 3) {
+                    sb.insert(0, groupingSeparator);
                     groupSize = 0;
                 }
                 sb.insert(0, integerPart.charAt(k));
@@ -144,7 +152,7 @@ public class DecimalNumberTextWatcher implements TextWatcher {
             }
             //add decimal part (if any)
             if (decimalPart.length() > 0) {
-                sb.append(DECIMAL_SEPARATOR);
+                sb.append(decimalSeparator);
                 sb.append(decimalPart);
             }
         }
@@ -154,27 +162,31 @@ public class DecimalNumberTextWatcher implements TextWatcher {
         return sb.toString();
     }
 
-    private static int calculateNewSelectionIndex(String oldText, int oldSelection, String newText) {
+    private int calculateNewSelectionIndex(String oldText, int oldSelection, String newText) {
         int newSelectionIndex;
         if (oldSelection > 0) {
-            int groupingSeparators = countOccurrences(oldText.substring(0, oldSelection), GROUPING_SEPARATOR);
+            int groupingSeparators = countOccurrences(oldText.substring(0, oldSelection), groupingSeparator);
             int absoluteSelection = oldSelection - groupingSeparators;
             int newGroupingSeparators = 0;
             //count grouping separators in new text
             int i = 0;
-            while(i < newText.length() && i <= (absoluteSelection + newGroupingSeparators)) {
-                if (newText.charAt(i) == GROUPING_SEPARATOR) {
-                    newGroupingSeparators++;
+            if (groupingUsed) {
+                while (i < newText.length() && i <= (absoluteSelection + newGroupingSeparators)) {
+                    if (newText.charAt(i) == groupingSeparator) {
+                        newGroupingSeparators++;
+                        i++;
+                    }
                     i++;
                 }
-                i++;
             }
             newSelectionIndex = absoluteSelection + newGroupingSeparators;
             if (newSelectionIndex > newText.length()) {
                 newSelectionIndex = newText.length();
             }
-            if (newSelectionIndex > 0 && newText.charAt(newSelectionIndex-1) == GROUPING_SEPARATOR) {
-                newSelectionIndex--; //helps deleting value
+            if (groupingUsed) {
+                if (newSelectionIndex > 0 && newText.charAt(newSelectionIndex - 1) == groupingSeparator) {
+                    newSelectionIndex--; //helps deleting value
+                }
             }
         } else {
             newSelectionIndex = 0;
@@ -182,7 +194,14 @@ public class DecimalNumberTextWatcher implements TextWatcher {
         return newSelectionIndex;
     }
 
-    private static int countOccurrences(String text, char character) {
+    public DecimalFormat getNumberFormat() {
+        return numberFormat;
+    }
+
+    private static int countOccurrences(String text, Character character) {
+        if (character == null) {
+            return 0;
+        }
         int count = 0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == character) {

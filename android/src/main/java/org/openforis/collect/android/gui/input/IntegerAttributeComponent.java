@@ -7,9 +7,8 @@ import android.widget.EditText;
 import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.NumberTextWatcher;
 import org.openforis.collect.android.viewmodel.UiIntegerAttribute;
-
-import java.text.NumberFormat;
 
 import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
 
@@ -17,12 +16,6 @@ import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
  * @author Daniel Wiell
  */
 public class IntegerAttributeComponent extends NumericAttributeComponent<UiIntegerAttribute, Integer> {
-
-    private static final NumberFormat NUMBER_FORMAT;
-    static {
-        NUMBER_FORMAT = NumberFormat.getInstance();
-        NUMBER_FORMAT.setGroupingUsed(false);
-    }
 
     public IntegerAttributeComponent(UiIntegerAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -34,13 +27,8 @@ public class IntegerAttributeComponent extends NumericAttributeComponent<UiInteg
     }
 
     @Override
-    protected String format(Integer value) {
-        return NUMBER_FORMAT.format(value);
-    }
-
-    @Override
     protected Integer parse(String value) throws Exception {
-        return NUMBER_FORMAT.parse(value).intValue();
+        return numberTextWatcher.getNumberFormat().parse(value).intValue();
     }
 
     @Override
@@ -52,5 +40,10 @@ public class IntegerAttributeComponent extends NumericAttributeComponent<UiInteg
         super.onEditTextCreated(input);
         input.setInputType(InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(13)}); //10 digits + 3 grouping characters
+    }
+
+    @Override
+    protected void initializeNumberTextWatcher(EditText input) {
+        numberTextWatcher = new NumberTextWatcher(input, false);
     }
 }

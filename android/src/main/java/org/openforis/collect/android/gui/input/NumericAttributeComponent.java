@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import org.jooq.tools.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.util.DecimalNumberTextWatcher;
+import org.openforis.collect.android.gui.util.NumberTextWatcher;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 
 /**
@@ -15,6 +15,8 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
  */
 
 public abstract class NumericAttributeComponent<A extends UiAttribute, T extends Number> extends EditTextAttributeComponent<A> {
+
+    protected NumberTextWatcher numberTextWatcher;
 
     protected NumericAttributeComponent(A attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -74,12 +76,26 @@ public abstract class NumericAttributeComponent<A extends UiAttribute, T extends
 
     protected abstract void setValueOnAttribute(T value);
 
-    protected abstract String format(T value);
+    protected String format(T value) {
+        return numberTextWatcher.getNumberFormat().format(value);
+    }
 
     protected abstract T parse(String value) throws Exception;
 
+    @Override
     protected void onEditTextCreated(EditText input) {
-        input.addTextChangedListener(new DecimalNumberTextWatcher(input));
+        super.onEditTextCreated(input);
+        initializeNumberTextWatcher(input);
+    }
+
+    protected void initializeNumberTextWatcher(EditText input) {
+        numberTextWatcher = new NumberTextWatcher(input, true);
+    }
+
+    @Override
+    protected void afterEditTextCreated(EditText input) {
+        super.afterEditTextCreated(input);
+        input.addTextChangedListener(numberTextWatcher);
     }
 
     private void setNotANumberError() {

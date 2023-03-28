@@ -45,7 +45,9 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected abstract void updateAttributeValue(String newValue);
 
-    protected abstract void onEditTextCreated(EditText input);
+    protected void onEditTextCreated(EditText input) {}
+
+    protected void afterEditTextCreated(EditText input) {}
 
     protected TextView errorMessageContainerView() {
         return editText;
@@ -103,6 +105,8 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
+        onEditTextCreated(editText);
+
         editText.setSingleLine();
 
         editText.setText(formattedAttributeValue());
@@ -135,7 +139,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
                 }
             }
         });
-        onEditTextCreated(editText);
+        afterEditTextCreated(editText);
         return editText;
     }
 }

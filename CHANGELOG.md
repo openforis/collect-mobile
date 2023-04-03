@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 209 2023-04-03
+### Fixed
+- Record validation: avoid infinite loops;
+
 ## [1.7.9] - build 208 2023-03-28
 ### Fixed
 - Numeric attribute formatting;

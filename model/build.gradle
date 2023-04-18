@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile ('org.openforis.collect:collect-core:4.0.79') {
+    compile ('org.openforis.collect:collect-core:4.0.82') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'
         exclude group: 'org.liquibase'

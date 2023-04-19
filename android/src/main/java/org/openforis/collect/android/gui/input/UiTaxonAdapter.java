@@ -80,9 +80,11 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     public Filter getFilter() {
         return new Filter() {
             protected FilterResults performFiltering(CharSequence constraint) {
-                constraint = constraint == null ? "" : ((String) constraint).trim();
-                List values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
                 FilterResults results = new FilterResults();
+                if (constraint == null) return results;
+
+                constraint = ((String) constraint).trim();
+                List values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
                 results.values = values;
                 results.count = values.size();
                 return results;

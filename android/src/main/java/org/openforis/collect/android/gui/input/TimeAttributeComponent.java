@@ -76,10 +76,10 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         ImageButton button = new AppCompatImageButton(context);
         view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         button.setImageResource(new Attrs(context).resourceId(R.attr.timeIcon));
-//
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveNode();
+                hideKeyboard();
                 TimePickerFragment newFragment = new TimePickerFragment();
                 newFragment.setComponent(TimeAttributeComponent.this);
                 newFragment.show(context.getSupportFragmentManager(), "timePicker");

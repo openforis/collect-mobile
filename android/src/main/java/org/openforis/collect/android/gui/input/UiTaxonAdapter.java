@@ -16,6 +16,7 @@ import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -26,6 +27,10 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
     private static final int MAX_RESULTS = 50;
     // TODO: Use custom layout
     private static final int LAYOUT_RESOURCE_ID = R.layout.taxon_dropdown_item;
+    private static final List<UiTaxon> UNKNOWN_UNLISTED_TAXON_ITEMS = Arrays.asList(
+            new UiTaxon("UNK", "Unknown"),
+            new UiTaxon("UNL", "Unlisted")
+    );
     private final Context context;
     private final UiTaxonAttribute attribute;
     private final TaxonService taxonService;
@@ -84,7 +89,10 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
                 if (constraint == null) return results;
 
                 constraint = ((String) constraint).trim();
-                List values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
+                List<UiTaxon> values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
+                if (values.isEmpty()) {
+                    values.addAll(UNKNOWN_UNLISTED_TAXON_ITEMS);
+                }
                 results.values = values;
                 results.count = values.size();
                 return results;

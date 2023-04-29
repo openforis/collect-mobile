@@ -82,6 +82,7 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveNode();
+                hideKeyboard();
                 DatePickerFragment newFragment = new DatePickerFragment();
                 newFragment.setComponent(DateAttributeComponent.this);
                 newFragment.show(context.getSupportFragmentManager(), "datePicker");

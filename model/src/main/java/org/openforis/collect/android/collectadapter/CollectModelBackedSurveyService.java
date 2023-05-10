@@ -296,7 +296,9 @@ public class CollectModelBackedSurveyService implements SurveyService {
             if (uiNode instanceof UiAttribute && uiNode.isCalculated()) {
                 // TODO: Do this in same transaction as value update, but ideally don't persist at all
                 viewModelManager.updateAttribute((UiAttribute) uiNode, emptyMap);
-                listener.onNodeChanged(UPDATED, uiNode, emptyMap);
+                if (listener != null) {
+                    listener.onNodeChanged(UPDATED, uiNode, emptyMap);
+                }
             }
     }
 

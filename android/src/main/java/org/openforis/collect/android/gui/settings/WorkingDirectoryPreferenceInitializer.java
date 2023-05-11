@@ -159,6 +159,7 @@ class WorkingDirectoryPreferenceInitializer {
 
         WorkingDirLocation location = WorkingDirLocation.getCurrent(context);
         preference.setSummary(location.getSummaryLabel(context));
+        preference.setValue(location.key);
 
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {

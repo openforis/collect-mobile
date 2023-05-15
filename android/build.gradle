@@ -52,7 +52,8 @@ dependencies {
     implementation 'com.nononsenseapps:filepicker:4.1.0'
 
     // storage chooser (working directory chooser)
-    implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
+//    implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
+    implementation 'com.github.mendhak:storage-chooser:2.0.4.4b'
     // TableFixHeaders (entity list)
     implementation 'com.github.InQBarna:TableFixHeaders:master'
     // about page

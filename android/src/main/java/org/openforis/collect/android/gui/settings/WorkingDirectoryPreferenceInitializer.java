@@ -8,8 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
-
 import com.codekidlabs.storagechooser.StorageChooser;
 
 import org.openforis.collect.R;
@@ -23,6 +21,8 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 class WorkingDirectoryPreferenceInitializer {
 

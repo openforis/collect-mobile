@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 214 2023-05-15
+### Fixed
+- Settings: fixed error selecting custom working directory (Android 11+);
+
 ## [1.7.9] - build 213 2023-04-29
 ### Added
 - Taxon attribute autocomplete: added UNK/UNL items;

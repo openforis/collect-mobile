@@ -306,6 +306,8 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             final TextView input = new AppCompatEditText(context);
 
             input.setSingleLine();
+            input.setMinWidth(100);
+
             if (value != null)
                 input.setText(formatDouble(value));
             input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);

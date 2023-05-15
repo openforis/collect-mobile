@@ -8,8 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
-
 import com.codekidlabs.storagechooser.StorageChooser;
 
 import org.openforis.collect.R;
@@ -23,6 +21,8 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 class WorkingDirectoryPreferenceInitializer {
 
@@ -159,6 +159,7 @@ class WorkingDirectoryPreferenceInitializer {
 
         WorkingDirLocation location = WorkingDirLocation.getCurrent(context);
         preference.setSummary(location.getSummaryLabel(context));
+        preference.setValue(location.key);
 
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {

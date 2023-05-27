@@ -84,6 +84,7 @@ public class SettingsActivity extends Activity {
         Settings.setRemoteCollectAddress(preferences.getString(REMOTE_COLLECT_ADDRESS, ""));
         Settings.setRemoteCollectUsername(preferences.getString(REMOTE_COLLECT_USERNAME, ""));
         Settings.setRemoteCollectPassword(preferences.getString(REMOTE_COLLECT_PASSWORD, ""));
+        Settings.setInitialized(true);
     }
 
     @Override
@@ -96,6 +97,9 @@ public class SettingsActivity extends Activity {
 
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            if (!Settings.isInitialized()) {
+                init(this.getActivity());
+            }
             addPreferencesFromResource(R.xml.preferences);
             new WorkingDirectoryPreferenceInitializer(this).setupPreference();
             setupCrewIdPreference();

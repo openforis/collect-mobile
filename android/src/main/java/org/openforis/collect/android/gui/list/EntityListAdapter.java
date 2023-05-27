@@ -31,10 +31,10 @@ import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 import org.openforis.collect.android.viewmodel.UiCodeList;
 import org.openforis.collect.android.viewmodel.UiDateAttribute;
-import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiNodes;
 import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
@@ -108,10 +108,7 @@ public class EntityListAdapter extends NodeListAdapter {
     }
 
     public List<UiAttribute> getSummaryAttributes(UiNode node) {
-        List<UiAttribute> keyAttributes = getKeyAttributes(node);
-        if (keyAttributes.isEmpty())
-            keyAttributes = allChildAttributes(node);
-        return keyAttributes;
+        return UiNodes.getSummaryAttributes(node);
     }
 
     private List<String> getSummaryAttributeValues(UiNode node) {
@@ -121,14 +118,6 @@ public class EntityListAdapter extends NodeListAdapter {
             result.add(summaryText);
         }
         return result;
-    }
-
-    private List<UiAttribute> getKeyAttributes(UiNode child) {
-        if (child instanceof UiEntity)
-            return ((UiEntity) child).getKeyAttributes();
-        if (child instanceof UiRecord.Placeholder)
-            return ((UiRecord.Placeholder) child).getKeyAttributes();
-        throw new IllegalStateException("Unexpected node type. Expected UiEntity or UiRecord.Placeholder, was " + child.getClass());
     }
 
     protected String toNodeLabel(UiAttribute attribute) {
@@ -160,19 +149,6 @@ public class EntityListAdapter extends NodeListAdapter {
 
     protected int layoutResourceId() {
         return LAYOUT_RESOURCE_ID;
-    }
-
-    private List<UiAttribute> allChildAttributes(UiNode node) {
-        List<UiAttribute> attributes = new ArrayList<UiAttribute>();
-        if (node instanceof UiInternalNode) {
-            for (UiNode potentialAttribute : ((UiInternalNode) node).getChildren()) {
-                if (potentialAttribute instanceof UiAttribute)
-                    attributes.add((UiAttribute) potentialAttribute);
-                if (attributes.size() >= MAX_SUMMARY_ATTRIBUTES)
-                    return attributes;
-            }
-        }
-        return attributes;
     }
 
     protected void onPrepareView(final UiNode node, View row) {

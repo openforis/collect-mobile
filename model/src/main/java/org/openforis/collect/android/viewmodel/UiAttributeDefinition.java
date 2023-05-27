@@ -4,6 +4,7 @@ public class UiAttributeDefinition extends Definition {
     public final boolean calculated;
     public final boolean calculatedOnlyOneTime;
     public final boolean hidden;
+    public boolean showInSummary;
 
     public UiAttributeDefinition(String id, String name, String label, Integer keyOfDefinitionId,
                                  boolean calculated, boolean calculatedOnlyOneTime, boolean hidden,
@@ -20,4 +21,13 @@ public class UiAttributeDefinition extends Definition {
         calculatedOnlyOneTime = false;
         hidden = false;
     }
+
+    public boolean isShowInSummary() {
+        return showInSummary;
+    }
+
+    public void setShowInSummary(boolean showInSummary) {
+        this.showInSummary = showInSummary;
+    }
+
 }

@@ -32,6 +32,7 @@ import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiNodes;
 import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
@@ -253,31 +254,7 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     }
 
     private List<UiAttribute> getSummaryAttributes(UiNode node) {
-        List<UiAttribute> keyAttributes = getKeyAttributes(node);
-        if (!keyAttributes.isEmpty()) {
-            return keyAttributes;
-        } else if (node instanceof UiEntity) {
-            List<UiAttribute> summaryAttributes = new ArrayList<UiAttribute>();
-            for (UiNode child : ((UiEntity) node).getChildren()) {
-                if (child instanceof  UiAttribute &&
-                        summaryAttributes.size() < EntityListAdapter.MAX_SUMMARY_ATTRIBUTES) {
-                    summaryAttributes.add((UiAttribute) child);
-                }
-            }
-            return summaryAttributes;
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    private List<UiAttribute> getKeyAttributes(UiNode node) {
-        List<UiAttribute> keyAttributes;
-        if (node instanceof UiRecord.Placeholder) {
-            keyAttributes = ((UiRecord.Placeholder) node).getKeyAttributes();
-        } else {
-            keyAttributes = ((UiEntity) node).getKeyAttributes();
-        }
-        return keyAttributes;
+        return UiNodes.getSummaryAttributes(node);
     }
 
     private NodeNavigator nodeNavigator() {

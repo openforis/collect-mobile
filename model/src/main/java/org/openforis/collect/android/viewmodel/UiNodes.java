@@ -16,7 +16,11 @@ public abstract class UiNodes {
         summaryAttributes.addAll(getChildrenAttributesShownInSummary(node));
         if (summaryAttributes.isEmpty())
             summaryAttributes = allChildAttributes(node);
-        return summaryAttributes.subList(0, MAX_SUMMARY_ATTRIBUTES);
+
+        if (summaryAttributes.size() > MAX_SUMMARY_ATTRIBUTES) {
+            return summaryAttributes.subList(0, MAX_SUMMARY_ATTRIBUTES);
+        }
+        return summaryAttributes;
     }
 
     private static List<UiAttribute> getKeyAttributes(UiNode child) {

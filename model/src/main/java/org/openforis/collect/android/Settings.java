@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.model.User;
 
 public class Settings {
+
+    private static boolean initialized = false;
     private static String crew;
     private static boolean compassEnabled;
     private static boolean remoteSyncEnabled = false;
@@ -79,6 +81,14 @@ public class Settings {
         public float getValue() {
             return value;
         }
+    }
+
+    public synchronized static boolean isInitialized() {
+        return initialized;
+    }
+
+    public synchronized static void setInitialized(boolean initialized) {
+        Settings.initialized = initialized;
     }
 
     public synchronized static String getCrew() {

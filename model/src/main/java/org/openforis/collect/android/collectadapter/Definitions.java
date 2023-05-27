@@ -172,10 +172,14 @@ public class Definitions {
                         inputType, nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
                 uiTextAttributeDef.setAutoUppercase(autoUppercase);
                 def = uiTextAttributeDef;
-            } else
+            } else {
                 def = new UiAttributeDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
                         nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
+            }
+            if (annotations.isShowInSummary((AttributeDefinition) nodeDef)) {
+                ((UiAttributeDefinition) def).setShowInSummary(true);
+            }
         } else {
             def = new UiEntitySingleDefinition(id, name, label, keyOfDefinitionId, nodeDescription(nodeDef),
                     nodePrompt(nodeDef), interviewLabel, required);

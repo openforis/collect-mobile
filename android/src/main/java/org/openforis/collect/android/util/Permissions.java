@@ -6,9 +6,11 @@ import androidx.core.app.ActivityCompat;
 import android.widget.Toast;
 
 import org.openforis.collect.R;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Dialogs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -52,6 +54,27 @@ public abstract class Permissions {
         GRANTED,
         NOT_GRANTED,
         SHOULD_SHOW_RATIONALE
+    }
+
+    private static final String[] readStoragePermissions;
+    static {
+        List<String> readStoragePermissionsList = new ArrayList<String>();
+        if (AndroidVersion.greaterEqualThan33()) {
+            readStoragePermissionsList.addAll(Arrays.asList(
+                    Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO));
+        } else {
+            readStoragePermissionsList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        readStoragePermissions = readStoragePermissionsList.toArray(new String[readStoragePermissionsList.size()]);
+    }
+
+    private static final String[] storagePermissions;
+    static {
+        List<String> storagePermissionsList = new ArrayList<String>(Arrays.asList(readStoragePermissions));
+        if (!AndroidVersion.greaterEqualThan33()) {
+            storagePermissionsList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        storagePermissions = storagePermissionsList.toArray(new String[storagePermissionsList.size()]);
     }
 
     private static void requestPermissions(Activity context, List<String> permissions, int code) {
@@ -103,18 +126,11 @@ public abstract class Permissions {
     }
 
     public static boolean checkStoragePermissionOrRequestIt(Activity context) {
-        return checkPermissionsOrRequestThem(context, Request.STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return checkPermissionsOrRequestThem(context, Request.STORAGE, storagePermissions);
     }
 
     public static boolean checkReadExternalStoragePermissionOrRequestIt(Activity context) {
-        return checkPermissionsOrRequestThem(context, Request.READ_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    public static boolean checkWriteExternalStoragePermissionOrRequestIt(Activity context) {
-        return checkPermissionsOrRequestThem(context, Request.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return checkPermissionsOrRequestThem(context, Request.READ_EXTERNAL_STORAGE, readStoragePermissions);
     }
 
     public static boolean checkLocationAccessPermissionOrRequestIt(Activity context) {

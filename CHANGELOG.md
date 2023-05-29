@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.9] - build 216 2023-05-29
+### Fixed
+- Fixed storage permissions on Android 13+;s
+
 ## [1.7.9] - build 215 2023-05-27
 ### Added
 - Entities summary list: include attributes marked with "Show in summary";

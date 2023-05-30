@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui.components;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
@@ -17,8 +16,8 @@ import org.openforis.collect.R;
 
 public class ExpandableTextView extends AppCompatTextView {
 
-    private static final int MAX_LINE = 2;
-    private int maxLine = 2;
+    private static final int MAX_LINES = 3;
+    private int currentMaxLines = MAX_LINES;
     private boolean isViewMore = true;
 
     public ExpandableTextView(Context context) {
@@ -60,30 +59,30 @@ public class ExpandableTextView extends AppCompatTextView {
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int lineEndIndex;
                 ViewTreeObserver obs = textView.getViewTreeObserver();
                 obs.removeOnGlobalLayoutListener(this);
-                int lineCount = textView.getLayout().getLineCount();
 
                 String textCurrent = textView.getText().toString();
                 String expandText = textView.getContext().getString(isViewMore ? R.string.show_more : R.string.show_less);
                 String textNext;
-                if (lineCount <= maxLine) {
+
+                int lineCount = textView.getLayout().getLineCount();
+                if (lineCount <= currentMaxLines) {
                     // text remains unchanged
                     textNext = textCurrent;
-                } else if (isViewMore && maxLine > 0 && lineCount >= maxLine) {
+                } else if (isViewMore && currentMaxLines > 0 && lineCount >= currentMaxLines) {
                     // truncate text
-                    lineEndIndex = textView.getLayout().getLineEnd(maxLine - 1);
+                    int lineEndIndex = textView.getLayout().getLineEnd(currentMaxLines - 1);
                     String suffix = "... " + expandText;
                     textNext = textCurrent.subSequence(0, lineEndIndex - suffix.length()) + suffix;
                 } else {
                     // expand text
-                    lineEndIndex = textView.getLayout().getLineEnd(lineCount - 1);
+                    int lineEndIndex = textView.getLayout().getLineEnd(lineCount - 1);
                     textNext = textCurrent.subSequence(0, lineEndIndex) + " " + expandText;
                 }
                 textView.setTextInternal(textNext);
                 textView.setMovementMethod(LinkMovementMethod.getInstance());
-                if (lineCount > maxLine)
+                if (lineCount > currentMaxLines)
                     textView.setTextInternal(addClickablePartTextViewResizable(expandText),
                             BufferType.SPANNABLE);
                 textView.setSelected(true);
@@ -104,7 +103,7 @@ public class ExpandableTextView extends AppCompatTextView {
                     textView.setLayoutParams(textView.getLayoutParams());
                     textView.setText(textView.getTag().toString(), BufferType.SPANNABLE);
                     textView.invalidate();
-                    maxLine = isViewMore ? -1 : MAX_LINE;
+                    currentMaxLines = isViewMore ? -1 : MAX_LINES;
                     isViewMore = !isViewMore;
                     initViews();
                 }

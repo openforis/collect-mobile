@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:padding="?attr/standardPadding"/>
 
-    <TextView
+    <org.openforis.collect.android.gui.components.ExpandableTextView
             android:id="@+id/node_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -97,7 +97,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
             ((ViewManager) textView.getParent()).removeView(textView);
         else {
             textView.setText(text);
-            textView.setMaxLines(isTwoPane() ? TEXT_MAX_LINES_TWO_PANE : TEXT_MAX_LINES_SINGLE_PANE);
+            // textView.setMaxLines(isTwoPane() ? TEXT_MAX_LINES_TWO_PANE : TEXT_MAX_LINES_SINGLE_PANE);
             // add vertical scroll
             textView.setMovementMethod(new ScrollingMovementMethod());
         }

@@ -14,6 +14,9 @@
 
     <string name="ok">Ok</string>
     <string name="yes">Yes</string>
+    <string name="show_more">Show more</string>
+    <string name="show_less">Show less</string>
+
     <string name="record">Record</string>
     <string name="stop">Stop</string>
     <string name="play">Play</string>

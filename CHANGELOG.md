@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.10] - build 218 2023-06-03
+### Fixed
+- Fixed long description being shown inside scrollbar in multiple entity summary view;
+
 ## [1.7.10] - build 217 2023-06-02
 ### Added
 - Descriptions: show max 3 lines and use show more/less;

@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.input;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -62,9 +63,15 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
 
     protected void afterEditTextCreated(EditText input) {
         selectedDateView = input;
+        selectedDateView.setInputType(InputType.TYPE_NULL);
         selectedDateView.setHint(context.getResources().getString(R.string.hint_date_pattern) + " ");
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedDateView.setLayoutParams(params);
+        selectedDateView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openDatePicker();
+            }
+        });
     }
 
     protected View toInputView() {
@@ -75,18 +82,21 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
         selectedDateView.setText(format(date));
     }
 
+    private void openDatePicker() {
+        saveNode();
+        hideKeyboard();
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.setComponent(DateAttributeComponent.this);
+        newFragment.show(context.getSupportFragmentManager(), "datePicker");
+    }
+
     private View createButton() {
         ImageButton button = new AppCompatImageButton(context);
         view.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         button.setImageResource(new Attrs(context).resourceId(R.attr.goToTodayIcon));
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                saveNode();
-                hideKeyboard();
-                DatePickerFragment newFragment = new DatePickerFragment();
-                newFragment.setComponent(DateAttributeComponent.this);
-                newFragment.show(context.getSupportFragmentManager(), "datePicker");
-
+                openDatePicker();
             }
         });
         return button;

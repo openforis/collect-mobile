@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.10] - build 220 2023-07-13
+### Fixed
+- Fixed error entering invalid date/time in input fields;
+
 ## [1.7.10] - build 219 2023-06-13
 ### Fixed
 - Fixed error exporting data when multiple attribute is marked as 'include in summary list';

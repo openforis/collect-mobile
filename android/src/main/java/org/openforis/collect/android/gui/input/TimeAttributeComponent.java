@@ -3,6 +3,7 @@ package org.openforis.collect.android.gui.input;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -64,12 +65,26 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         super.onEditTextCreated(input);
         selectedTimeView = input;
         selectedTimeView.setHint(context.getResources().getString(R.string.hint_time_pattern) + " ");
+        selectedTimeView.setInputType(InputType.TYPE_NULL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedTimeView.setLayoutParams(params);
+        selectedTimeView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openTimePicker();
+            }
+        });
     }
 
     protected View toInputView() {
         return view;
+    }
+
+    private void openTimePicker() {
+        saveNode();
+        hideKeyboard();
+        TimePickerFragment newFragment = new TimePickerFragment();
+        newFragment.setComponent(TimeAttributeComponent.this);
+        newFragment.show(context.getSupportFragmentManager(), "timePicker");
     }
 
     private View createButton() {
@@ -78,12 +93,7 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         button.setImageResource(new Attrs(context).resourceId(R.attr.timeIcon));
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                saveNode();
-                hideKeyboard();
-                TimePickerFragment newFragment = new TimePickerFragment();
-                newFragment.setComponent(TimeAttributeComponent.this);
-                newFragment.show(context.getSupportFragmentManager(), "timePicker");
-
+               openTimePicker();
             }
         });
         return button;

@@ -2,6 +2,7 @@ package org.openforis.collect.android.collectadapter;
 
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
+import org.openforis.collect.android.viewmodel.UITaxonVernacularName;
 import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 
@@ -31,12 +32,12 @@ public class TaxonRepository implements TaxonService {
             public List<UiTaxon> execute(Connection connection) throws SQLException {
                 ConstraintBuilder constraintBuilder = new ConstraintBuilder(query);
                 PreparedStatement ps = connection.prepareStatement("" +
-                        "SELECT taxonomy_id, code, scientific_name, vernacular_name\n" +
+                        "SELECT taxonomy_id, code, scientific_name, vernacular_name, language_code\n" +
                         "FROM ofc_taxon t\n" +
                         "LEFT JOIN ofc_taxon_vernacular_name v ON t.id = v.taxon_id\n" +
                         "WHERE taxonomy_id = ? AND code IS NOT NULL\n" +
                         "AND " + constraintBuilder.constraint() + "\n" +
-                        "ORDER BY scientific_name, vernacular_name\n" +
+                        "ORDER BY scientific_name, vernacular_name, language_code\n" +
                         "LIMIT ?");
                 ps.setInt(1, taxonomyId(taxonomy));
                 int i = 1;
@@ -49,23 +50,23 @@ public class TaxonRepository implements TaxonService {
 
 
                 List<UiTaxon> result = new ArrayList<UiTaxon>();
-                List<String> commonNames = new ArrayList<String>();
                 String code = null;
                 String scientificName = null;
+                UITaxonVernacularName vernacularName = null;
+                String vernacularNameName = null;
+                String languageCode = null;
                 while (rs.next()) {
-                    if (code != null && !code.equals(rs.getString("code"))) {
-                        result.add(new UiTaxon(code, scientificName, commonNames));
-                        commonNames = new ArrayList<String>();
-                    }
-
                     code = rs.getString("code");
                     scientificName = rs.getString("scientific_name");
-                    String commonName = rs.getString("vernacular_name");
-                    if (commonName != null)
-                        commonNames.add(commonName);
+                    vernacularNameName = rs.getString("vernacular_name");
+                    if (vernacularNameName != null) {
+                        languageCode = rs.getString("language_code");
+                        vernacularName = new UITaxonVernacularName(vernacularNameName, languageCode);
+                    } else {
+                        vernacularName = null;
+                    }
+                    result.add(new UiTaxon(code, scientificName, vernacularName));
                 }
-                if (code != null)
-                    result.add(new UiTaxon(code, scientificName, commonNames));
 
                 ps.close();
                 rs.close();

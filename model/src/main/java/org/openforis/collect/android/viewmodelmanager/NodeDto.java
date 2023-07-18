@@ -51,6 +51,9 @@ public class NodeDto {
     public Double accuracy;
     public String taxonCode;
     public String taxonScientificName;
+    public String taxonVernacularName;
+    public String taxonVernacularNameLangCode;
+
     public File file;
     public Date createdOn = new Date();
     public Date modifiedOn = new Date();
@@ -220,7 +223,7 @@ public class NodeDto {
                 .append(doubleValue, nodeDto.doubleValue)
                 .append(doubleFrom, nodeDto.doubleFrom).append(doubleTo, nodeDto.doubleTo)
                 .append(x, nodeDto.x).append(y, nodeDto.y).append(srs, nodeDto.srs).append(altitude, nodeDto.altitude).append(accuracy, nodeDto.accuracy)
-                .append(taxonCode, nodeDto.taxonCode).append(taxonScientificName, nodeDto.taxonScientificName)
+                .append(taxonCode, nodeDto.taxonCode).append(taxonScientificName, nodeDto.taxonScientificName).append(taxonVernacularName, nodeDto.taxonVernacularName).append(taxonVernacularNameLangCode, nodeDto.taxonVernacularNameLangCode)
 //                .append(file, nodeDto.file)
 //                .append(createdOn, nodeDto.createdOn)
 //                .append(modifiedOn, nodeDto.modifiedOn)
@@ -242,7 +245,7 @@ public class NodeDto {
                 .append(doubleValue)
                 .append(doubleFrom).append(doubleTo)
                 .append(x).append(y).append(srs).append(altitude).append(accuracy)
-                .append(taxonCode).append(taxonScientificName)
+                .append(taxonCode).append(taxonScientificName).append(taxonVernacularName).append(taxonVernacularNameLangCode)
 //                .append(file)
 //                .append(createdOn)
 //                .append(modifiedOn)

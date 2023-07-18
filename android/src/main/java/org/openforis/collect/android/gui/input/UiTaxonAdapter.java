@@ -12,10 +12,13 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.util.LanguageNames;
+import org.openforis.collect.android.viewmodel.UITaxonVernacularName;
 import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 import org.openforis.collect.android.viewmodelmanager.TaxonService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -73,9 +76,10 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
 
         UiTaxon taxon = filteredValues.get(position);
         holder.text1.setText(taxon.toString());
-        if (!taxon.getCommonNames().isEmpty()) {
-            String commonNames = StringUtils.join(taxon.getCommonNames(), ", ");
-            holder.text2.setText(commonNames);
+        UITaxonVernacularName vernacularName = taxon.getVernacularName();
+        if (vernacularName != null) {
+            String vernacularNameSummary = vernacularName.getName() + " [" + LanguageNames.nameOfIso3(vernacularName.getLanguageCode()) + "]";
+            holder.text2.setText(vernacularNameSummary);
         } else
             holder.text2.setText("");
 

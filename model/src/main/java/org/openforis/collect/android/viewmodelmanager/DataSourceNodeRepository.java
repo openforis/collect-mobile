@@ -40,7 +40,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         "val_int", "val_int_from", "val_int_to",
         "val_double", "val_double_from", "val_double_to",
         "val_x", "val_y", "val_srs", "val_altitude", "val_accuracy",
-        "val_taxon_code", "val_taxon_scientific_name", "val_file",
+        "val_taxon_code", "val_taxon_scientific_name", "val_taxon_vern_name", "val_taxon_vern_name_lang",
+        "val_file",
         "created_on", "modified_on",
         "id"
     };
@@ -324,6 +325,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         n.accuracy = helper.getDouble("val_accuracy");
         n.taxonCode = rs.getString("val_taxon_code");
         n.taxonScientificName = rs.getString("val_taxon_scientific_name");
+        n.taxonVernacularName = rs.getString("val_taxon_vern_name");
+        n.taxonVernacularNameLangCode = rs.getString("val_taxon_vern_name_lang");
         String filePath = rs.getString("val_file");
         n.file = filePath == null ? null : new File(filePath);
         n.createdOn = helper.getTimestamp("created_on");
@@ -366,6 +369,8 @@ public class DataSourceNodeRepository implements NodeRepository {
         psh.setDoubleOrNull(node.accuracy);
         psh.setString(node.taxonCode);
         psh.setString(node.taxonScientificName);
+        psh.setString(node.taxonVernacularName);
+        psh.setString(node.taxonVernacularNameLangCode);
         psh.setStringOrNull(node.file == null ? null : node.file.getAbsolutePath());
         psh.setTimestamp(node.createdOn);
         psh.setTimestamp(node.modifiedOn);

@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.input;
 
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -17,40 +16,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
-import org.openforis.collect.android.util.LanguageNames;
+import org.openforis.collect.android.viewmodel.UITaxonVernacularName;
 import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
-import org.openforis.collect.android.viewmodelmanager.TaxonService;
-
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author Daniel Wiell
  */
 public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute> {
     private LinearLayout layout;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private ClearableAutoCompleteTextView autoComplete;
-    private LinearLayout commonNamesLayout;
+    private TextView vernacularNameTextView;
     private UiTaxon selectedTaxon;
     private boolean textChangingNotificationEnabled = true;
 
     protected TaxonAttributeComponent(UiTaxonAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
-        createAutoComplete(attribute, context);
 
-        commonNamesLayout = new LinearLayout(context);
-        commonNamesLayout.setOrientation(LinearLayout.VERTICAL);
-        commonNamesLayout.setPadding(8, 16, 8, 0);
+        vernacularNameTextView = new TextView(context);
+        vernacularNameTextView.setPadding(8, 16, 8, 0);
+
+        createAutoComplete(attribute, context);
 
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(autoComplete);
-        layout.addView(commonNamesLayout);
-
-        loadCommonNames();
+        layout.addView(vernacularNameTextView);
     }
 
     private void createAutoComplete(UiTaxonAttribute attribute, FragmentActivity context) {
@@ -58,8 +49,8 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         if (attribute.getTaxon() != null) {
-            setText(attribute.getTaxon().toString());
             selectedTaxon = attribute.getTaxon();
+            updateUIBySelectedTaxon();
         }
         autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,7 +78,7 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
             public void onClear() {
                 textChangingNotificationEnabled = false;
                 autoComplete.setText("");
-                commonNamesLayout.removeAllViews();
+                vernacularNameTextView.setText("");
                 textChangingNotificationEnabled = true;
                 updateAttributeIfChanged();
             }
@@ -137,8 +128,6 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
     }
 
     private UiTaxon adjustSelectedTaxon() {
-        commonNamesLayout.removeAllViews();
-        //loadCommonNames(); not necessary: entire component re-initialized on node change
         String text = getText();
         if (selectedTaxon == null || !selectedTaxon.toString().equals(text)) {
             if (StringUtils.isEmpty(text))
@@ -148,10 +137,17 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         }
         if (selectedTaxon == null) {
             setText("");
+            vernacularNameTextView.setText("");
             return null;
         }
-        setText(selectedTaxon.toString());
+        updateUIBySelectedTaxon();
         return selectedTaxon;
+    }
+
+    private void updateUIBySelectedTaxon() {
+        setText(selectedTaxon.toString());
+        UITaxonVernacularName vernacularName = selectedTaxon.getVernacularName();
+        vernacularNameTextView.setText(vernacularName == null ? "" : vernacularName.toString());
     }
 
     public View getDefaultFocusedView() {
@@ -175,40 +171,5 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         autoComplete.setText(text);
         autoComplete.setAdapter(adapter);
         textChangingNotificationEnabled = true;
-    }
-
-    private void loadCommonNames() {
-        executor.execute(new LoadCommonNamesTask());
-    }
-
-    private class LoadCommonNamesTask implements Runnable {
-        /**
-         * Handle bound to main thread, to post updates to AutoCompleteTextView on the main thread.
-         * The AutoCompleteTextView itself might not yet be bound to the window.
-         */
-        Handler uiHandler = new Handler();
-
-        public void run() {
-            TaxonService taxonService = ServiceLocator.taxonService();
-            UiTaxon taxon = attribute.getTaxon();
-            if (taxon == null)
-                return;
-
-            final Map<String, String> nameByLanguage = taxonService.commonNameByLanguage(
-                    taxon.getCode(), attribute.getDefinition().taxonomy
-            );
-            uiHandler.post(new Runnable() {
-                public void run() {
-                    commonNamesLayout.removeAllViews();
-                    for (Map.Entry<String, String> entry : nameByLanguage.entrySet()) {
-                        String language = entry.getKey();
-                        String name = entry.getValue();
-                        TextView textView = new TextView(context);
-                        textView.setText(name + " (" + LanguageNames.nameOfIso3(language) + ")");
-                        commonNamesLayout.addView(textView);
-                    }
-                }
-            });
-        }
     }
 }

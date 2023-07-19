@@ -34,7 +34,7 @@ public class TaxonRepository implements TaxonService {
                 PreparedStatement ps = connection.prepareStatement("" +
                         "SELECT taxonomy_id, code, scientific_name, vernacular_name, language_code\n" +
                         "FROM ofc_taxon t\n" +
-                        "LEFT JOIN ofc_taxon_vernacular_name v ON t.id = v.taxon_id\n" +
+                        "LEFT OUTER JOIN ofc_taxon_vernacular_name v ON t.id = v.taxon_id\n" +
                         "WHERE taxonomy_id = ? AND code IS NOT NULL\n" +
                         "AND " + constraintBuilder.constraint() + "\n" +
                         "ORDER BY scientific_name, vernacular_name, language_code\n" +
@@ -48,8 +48,8 @@ public class TaxonRepository implements TaxonService {
                 ps.setInt(i + 1, maxResults * 3);
                 ResultSet rs = ps.executeQuery();
 
-
                 List<UiTaxon> result = new ArrayList<UiTaxon>();
+                String lastCode = null;
                 String code = null;
                 String scientificName = null;
                 UITaxonVernacularName vernacularName = null;
@@ -58,14 +58,17 @@ public class TaxonRepository implements TaxonService {
                 while (rs.next()) {
                     code = rs.getString("code");
                     scientificName = rs.getString("scientific_name");
+                    if (lastCode == null || !lastCode.equals(code)) {
+                        // always add the taxon without vernacular name
+                        result.add(new UiTaxon(code, scientificName));
+                    }
                     vernacularNameName = rs.getString("vernacular_name");
                     if (vernacularNameName != null) {
                         languageCode = rs.getString("language_code");
                         vernacularName = new UITaxonVernacularName(vernacularNameName, languageCode);
-                    } else {
-                        vernacularName = null;
+                        result.add(new UiTaxon(code, scientificName, vernacularName));
                     }
-                    result.add(new UiTaxon(code, scientificName, vernacularName));
+                    lastCode = code;
                 }
 
                 ps.close();

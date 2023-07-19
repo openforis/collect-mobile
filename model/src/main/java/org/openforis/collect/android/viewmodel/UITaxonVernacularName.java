@@ -2,6 +2,7 @@ package org.openforis.collect.android.viewmodel;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.openforis.collect.android.util.LanguageNames;
 
 public class UITaxonVernacularName {
 
@@ -36,5 +37,10 @@ public class UITaxonVernacularName {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(languageCode).append(name).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return name == null ? "" :  name + " (" + LanguageNames.nameOfIso3(languageCode) + ")";
     }
 }

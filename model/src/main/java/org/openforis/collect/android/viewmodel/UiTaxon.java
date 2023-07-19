@@ -38,7 +38,11 @@ public class UiTaxon {
     public UITaxonVernacularName getVernacularName() { return vernacularName; }
 
     public String toString() {
-        return scientificName + " (" + code + ")" + (vernacularName == null ? "" : " [" + vernacularName.getName() + "]");
+        return scientificName + " (" + code + ")";
+    }
+
+    public String toStringFull() {
+        return this + (vernacularName == null ? "" : " [" + vernacularName.getName() + "]");
     }
 
     @Override

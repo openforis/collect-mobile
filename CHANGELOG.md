@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.11] - build 221 2023-07-19
+### Added
+- Taxon attribute: store vernacular name if selected from autocomplete;
+
 ## [1.7.10] - build 220 2023-07-13
 ### Fixed
 - Fixed error entering invalid date/time in input fields;

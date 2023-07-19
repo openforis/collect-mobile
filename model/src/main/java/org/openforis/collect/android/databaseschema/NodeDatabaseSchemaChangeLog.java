@@ -54,7 +54,10 @@ public class NodeDatabaseSchemaChangeLog {
                         "UPDATE ofc_view_model SET modified_on = CURRENT_TIMESTAMP"),
 
                 new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN val_altitude REAL",
-                        "ALTER TABLE ofc_view_model ADD COLUMN val_accuracy REAL ")
+                        "ALTER TABLE ofc_view_model ADD COLUMN val_accuracy REAL "),
+
+                new SchemaChange("ALTER TABLE ofc_view_model ADD COLUMN val_taxon_vern_name TEXT",
+                        "ALTER TABLE ofc_view_model ADD COLUMN val_taxon_vern_name_lang TEXT ")
         );
     }
 }

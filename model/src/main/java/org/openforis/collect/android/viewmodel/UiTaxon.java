@@ -13,18 +13,18 @@ import java.util.List;
 public class UiTaxon {
     private final String code;
     private final String scientificName;
-    private final List<String> commonNames;
+    private final UITaxonVernacularName vernacularName;
 
     public UiTaxon(String code, String scientificName) {
-        this(code, scientificName, Collections.<String>emptyList());
+        this(code, scientificName, null);
     }
 
-    public UiTaxon(String code, String scientificName, List<String> commonNames) {
+    public UiTaxon(String code, String scientificName, UITaxonVernacularName vernacularName) {
         Validate.notEmpty(code, "code is required");
         Validate.notEmpty(scientificName, "scientificName is required");
         this.code = code;
         this.scientificName = scientificName;
-        this.commonNames = commonNames;
+        this.vernacularName = vernacularName;
     }
 
     public String getCode() {
@@ -35,10 +35,14 @@ public class UiTaxon {
         return scientificName;
     }
 
-    public List<String> getCommonNames() { return commonNames; }
+    public UITaxonVernacularName getVernacularName() { return vernacularName; }
 
     public String toString() {
         return scientificName + " (" + code + ")";
+    }
+
+    public String toStringFull() {
+        return this + (vernacularName == null ? "" : " [" + vernacularName.getName() + "]");
     }
 
     @Override
@@ -49,11 +53,14 @@ public class UiTaxon {
 
         UiTaxon uiTaxon = (UiTaxon) o;
 
-        return new EqualsBuilder().append(code, uiTaxon.code).isEquals();
+        return new EqualsBuilder()
+                .append(code, uiTaxon.code)
+                .append(vernacularName, uiTaxon.vernacularName)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(code).toHashCode();
+        return new HashCodeBuilder(17, 37).append(code).append(vernacularName).toHashCode();
     }
 }

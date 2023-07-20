@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.11] - build 222 2023-07-20
+### Added
+- Taxon attribute: show vernacular name in summary list;
+
 ## [1.7.11] - build 221 2023-07-19
 ### Added
 - Taxon attribute: store vernacular name if selected from autocomplete;

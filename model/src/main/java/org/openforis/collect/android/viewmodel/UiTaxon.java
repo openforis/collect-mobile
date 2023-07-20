@@ -4,9 +4,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * @author Daniel Wiell
  */
@@ -43,6 +40,17 @@ public class UiTaxon {
 
     public String toStringFull() {
         return this + (vernacularName == null ? "" : " [" + vernacularName.getName() + "]");
+    }
+
+    public String toStringSummary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(scientificName);
+        if (vernacularName != null) {
+            sb.append(" [");
+            sb.append(vernacularName.getName());
+            sb.append("]");
+        }
+        return sb.toString();
     }
 
     @Override

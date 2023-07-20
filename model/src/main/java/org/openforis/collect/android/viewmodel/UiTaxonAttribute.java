@@ -23,7 +23,7 @@ public class UiTaxonAttribute extends UiAttribute {
     }
 
     public String valueAsString() {
-        return taxon == null ? null : taxon.toString();
+        return taxon == null ? null : taxon.toStringSummary();
     }
 
     public boolean isEmpty() {

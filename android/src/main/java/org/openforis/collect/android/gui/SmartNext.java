@@ -33,7 +33,7 @@ public class SmartNext {
             result.add(nodeToTry);
             if (isNext(nodeToTry))
                 return result;
-            nodeToTry = nextToTry(nodeToTry, true);
+            nodeToTry = nextToTry(nodeToTry, false);
         }
         result.add(fromNode.getUiSurvey().getFirstChild()); // Back to record collection if no other
         return result;

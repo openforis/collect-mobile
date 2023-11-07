@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openforis.collect.R;
@@ -236,7 +237,7 @@ public class SubmitDataToCollectActivity extends BaseActivity {
 
         @Override
         protected String doInBackground(String... args) {
-            String uploadUrl = remoteAddress + DATA_RESTORE_ENDPOINT;
+            String uploadUrl = StringUtils.removeEnd(remoteAddress, "/") + DATA_RESTORE_ENDPOINT;
             Log.d(LOG_TAG, "Uploading data file to: " + uploadUrl);
 
             try {

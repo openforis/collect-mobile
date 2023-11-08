@@ -10,7 +10,8 @@
 
         <org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView
             android:id="@+id/node_parents_scroll_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            app:layout_constraintHorizontal_weight="1"
             android:layout_height="40dp"
             android:layout_marginTop="4dp"
             app:layout_constraintEnd_toStartOf="@id/record_lock_button"
@@ -25,21 +26,22 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="?attr/standardPadding"
-                android:paddingRight="?attr/standardPadding">
-
-
-            </LinearLayout>
+                android:paddingRight="?attr/standardPadding"/>
         </org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView>
 
         <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/record_lock_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_record_locked_black"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:gravity="center"
+            android:background="@null"
             app:layout_constraintStart_toEndOf="@id/node_parents_scroll_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text=""/>
+            android:text=""
+            android:textOn=""
+            android:textOff=""
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

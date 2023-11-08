@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatToggleButton;
 import androidx.fragment.app.Fragment;
 
 import org.openforis.collect.R;
@@ -55,6 +57,18 @@ public class NodeParentsFragment extends Fragment {
                 ? createSurveySelectedView()
                 : createCurrentNodeView(node);
         parentsContainer.addView(currentNodeView);
+
+        final AppCompatToggleButton recordLockButton = view.findViewById(R.id.record_lock_button);
+        if (node.getParent() == null) {
+            recordLockButton.setVisibility(View.GONE);
+        }
+        recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean checked) {
+                int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
+                button.setButtonDrawable(attrs.resourceId(iconKey));
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
         return view;
     }

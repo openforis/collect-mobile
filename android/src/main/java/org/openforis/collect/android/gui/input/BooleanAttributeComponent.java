@@ -25,6 +25,7 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
         super(attribute, surveyService, context);
         checked = attribute.getValue();
         radioGroup = createRadioGroup();
+        updateEditableState();
     }
 
     private RadioGroup createRadioGroup() {
@@ -34,14 +35,14 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
         radioGroup.addView(yes);
         radioGroup.addView(no);
 
-        if (checked != null && checked) {
-            yes.setSelected(true);
-            radioGroup.check(TRUE_ID);
-        }
-
-        if (checked != null && !checked) {
-            no.setSelected(true);
-            radioGroup.check(FALSE_ID);
+        if (checked != null) {
+            if (checked) {
+                yes.setSelected(true);
+                radioGroup.check(TRUE_ID);
+            } else {
+                no.setSelected(true);
+                radioGroup.check(FALSE_ID);
+            }
         }
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -50,6 +51,7 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
                 saveNode();
             }
         });
+        radioGroup.setEnabled(!isRecordEditLocked());
         return radioGroup;
     }
 
@@ -78,5 +80,10 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
         return ObjectUtils.notEqual(checked, previouslyChecked)
                 || (checked == null && previouslyChecked != null && previouslyChecked)
                 || (checked != null && checked && previouslyChecked == null);
+    }
+
+    @Override
+    protected void updateEditableState() {
+        radioGroup.setEnabled(!isRecordEditLocked());
     }
 }

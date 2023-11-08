@@ -21,6 +21,7 @@ import java.util.Set;
  */
 public abstract class AttributeCollectionComponent extends SavableComponent {
     protected final UiAttributeCollection attributeCollection;
+    private View addAttributeButton;
 
     protected AttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         super(surveyService, context);
@@ -71,11 +72,16 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
         if (addListener == null)
             return;
 
-        final View addAttributeButton = view.findViewById(R.id.action_add_node);
+        addAttributeButton = view.findViewById(R.id.action_add_node);
         if (addAttributeButton == null)
             throw new IllegalStateException(getClass().getSimpleName() +
                     " specifies onAddAttribute, but view doesn't contain button with id action_add_node");
         addAttributeButton.setOnClickListener(addListener);
+    }
+
+    @Override
+    protected void updateEditableState() {
+
     }
 
     protected final void notifyAboutAttributeCollectionChange(Set<UiAttribute> changedAttributes) {

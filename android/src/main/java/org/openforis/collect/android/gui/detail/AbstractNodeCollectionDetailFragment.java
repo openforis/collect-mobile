@@ -298,6 +298,5 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     private class ViewHolder {
         ViewSwitcher addButtonSwitcher;
         View addButton;
-
     }
 }

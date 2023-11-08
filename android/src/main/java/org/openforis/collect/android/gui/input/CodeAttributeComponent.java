@@ -146,6 +146,11 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         editText.setHint(R.string.hint_code_qualifier_specify);
         return editText;
     }
+
+    @Override
+    protected void updateEditableState() {
+
+    }
 }
 
 

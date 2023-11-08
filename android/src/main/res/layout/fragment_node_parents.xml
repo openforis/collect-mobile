@@ -31,8 +31,8 @@
 
         <androidx.appcompat.widget.AppCompatToggleButton
             android:id="@+id/record_lock_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:gravity="center"
             android:background="@null"
             app:layout_constraintStart_toEndOf="@id/node_parents_scroll_view"

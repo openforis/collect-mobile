@@ -172,4 +172,9 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         autoComplete.setAdapter(adapter);
         textChangingNotificationEnabled = true;
     }
+
+    @Override
+    protected void updateEditableState() {
+        autoComplete.setEnabled(!isRecordEditLocked());
+    }
 }

@@ -38,8 +38,12 @@ public class IntegerAttributeComponent extends NumericAttributeComponent<UiInteg
 
     protected void onEditTextCreated(EditText input) {
         super.onEditTextCreated(input);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED);
         input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(13)}); //10 digits + 3 grouping characters
+    }
+
+    @Override
+    protected int determineInputType() {
+        return isRecordEditLocked() ? InputType.TYPE_NULL : InputType.TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED;
     }
 
     @Override

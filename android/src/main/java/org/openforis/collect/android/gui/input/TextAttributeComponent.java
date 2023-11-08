@@ -7,6 +7,7 @@ import android.widget.EditText;
 import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiTextAttribute;
 import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 
@@ -37,11 +38,9 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
     }
 
     @Override
-    public void onRecordEditLockChange(boolean locked) {
-        editText.setInputType(determineInputType());
-    }
-    private int determineInputType() {
-        if (attribute.getUiRecord().isEditLocked()) {
+    protected int determineInputType() {
+        if (isRecordEditLocked()) {
+            Keyboard.hide(getContext());
             return InputType.TYPE_NULL;
         }
         UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();

@@ -30,6 +30,7 @@ import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.List;
@@ -230,7 +231,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (view == null || !node.isRelevant())
             hideKeyboard();
         else {
-            if (view instanceof EditText && view.isEnabled())
+            UiRecord record = node.getUiRecord();
+            if (view instanceof EditText && view.isEnabled() && !record.isEditLocked())
                 showKeyboard(view);
             else {
                 hideKeyboard();

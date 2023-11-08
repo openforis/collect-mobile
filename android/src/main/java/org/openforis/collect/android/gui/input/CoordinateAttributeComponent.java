@@ -172,6 +172,11 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
     }
 
+    @Override
+    protected void updateEditableState() {
+
+    }
+
     private class ViewHolder {
         LinearLayout view;
         Spinner srsSpinner;

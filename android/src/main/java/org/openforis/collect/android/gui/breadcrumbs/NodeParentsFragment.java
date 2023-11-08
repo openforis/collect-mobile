@@ -59,31 +59,48 @@ public class NodeParentsFragment extends Fragment {
                 : createCurrentNodeView(node);
         parentsContainer.addView(currentNodeView);
 
-        initRecordLockButton(view);
+        ViewHolder viewHolder = new ViewHolder();
+        viewHolder.recordLockButton = initRecordLockButton(view);
+        view.setTag(viewHolder);
+
         super.onViewCreated(view, savedInstanceState);
+
+        updateRecordLockButtonView(view);
+
         return view;
     }
 
-    private void initRecordLockButton(View view) {
+    private AppCompatToggleButton initRecordLockButton(View view) {
         final AppCompatToggleButton recordLockButton = view.findViewById(R.id.record_lock_button);
 
         UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
-        UiInternalNode node = selectedNode.getParent();
         final UiRecord record = selectedNode.getUiRecord();
 
-        if (node.getParent() == null || (record != null && record.isNewRecord())) {
+        recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean checked) {
+                record.setEditLocked(checked);
+                updateRecordLockButtonView(null);
+                ServiceLocator.surveyService().notifyRecordEditLockChange(checked);
+            }
+        });
+        return recordLockButton;
+    }
+
+    private void updateRecordLockButtonView(View view) {
+        ViewHolder viewHolder = (ViewHolder) (view == null ? getView() : view).getTag();
+        AppCompatToggleButton recordLockButton = viewHolder.recordLockButton;
+        UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
+        UiInternalNode node = selectedNode.getParent();
+        final UiRecord record = selectedNode.getUiRecord();
+        boolean checked = record != null ? record.isEditLocked() : false;
+        if (node.getParent() == null || record == null || record.isNewRecord()) {
             recordLockButton.setVisibility(View.GONE);
         } else {
-            recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton button, boolean checked) {
-                    int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
-                    button.setButtonDrawable(attrs.resourceId(iconKey));
-                    record.setEditLocked(checked);
-                    ServiceLocator.surveyService().notifyRecordEditLock(checked);
-                }
-            });
+            recordLockButton.setChecked(checked);
         }
+        int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
+        recordLockButton.setButtonDrawable(attrs.resourceId(iconKey));
     }
 
     private View createSurveySelectedView() {
@@ -158,5 +175,9 @@ public class NodeParentsFragment extends Fragment {
             label += " [" + (node.getIndexInParent() + 1) + "]";
         }
         return label;
+    }
+
+    private class ViewHolder {
+        AppCompatToggleButton recordLockButton;
     }
 }

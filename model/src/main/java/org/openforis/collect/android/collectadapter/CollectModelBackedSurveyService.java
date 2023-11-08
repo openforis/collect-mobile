@@ -266,7 +266,7 @@ public class CollectModelBackedSurveyService implements SurveyService {
     }
 
     @Override
-    public void notifyRecordEditLock(boolean locked) {
+    public void notifyRecordEditLockChange(boolean locked) {
         if (listener == null) return;
 
         UiNode selectedNode = selectedNode();

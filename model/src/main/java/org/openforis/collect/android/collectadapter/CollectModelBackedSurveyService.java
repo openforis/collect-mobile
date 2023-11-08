@@ -265,6 +265,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
         listener.onNodeChanging(attribute);
     }
 
+    @Override
+    public void notifyRecordEditLock(boolean locked) {
+        if (listener == null) return;
+
+        UiNode selectedNode = selectedNode();
+        if (selectedNode == null) return;
+
+        UiRecord record = selectedNode.getUiRecord();
+        listener.onRecordEditLockChange(record, locked);
+    }
+
     public void updateAttributes(Set<UiAttribute> attributes) {
         if (attributes == null)
             return;

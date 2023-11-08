@@ -83,6 +83,8 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     }
 
     private void openDatePicker() {
+        if (attribute.getUiRecord().isEditLocked()) return;
+
         saveNode();
         hideKeyboard();
         DatePickerFragment newFragment = new DatePickerFragment();

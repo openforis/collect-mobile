@@ -24,6 +24,7 @@ import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiRecord;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,19 +59,31 @@ public class NodeParentsFragment extends Fragment {
                 : createCurrentNodeView(node);
         parentsContainer.addView(currentNodeView);
 
-        final AppCompatToggleButton recordLockButton = view.findViewById(R.id.record_lock_button);
-        if (node.getParent() == null) {
-            recordLockButton.setVisibility(View.GONE);
-        }
-        recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton button, boolean checked) {
-                int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
-                button.setButtonDrawable(attrs.resourceId(iconKey));
-            }
-        });
+        initRecordLockButton(view);
         super.onViewCreated(view, savedInstanceState);
         return view;
+    }
+
+    private void initRecordLockButton(View view) {
+        final AppCompatToggleButton recordLockButton = view.findViewById(R.id.record_lock_button);
+
+        UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
+        UiInternalNode node = selectedNode.getParent();
+        final UiRecord record = selectedNode.getUiRecord();
+
+        if (node.getParent() == null || (record != null && record.isNewRecord())) {
+            recordLockButton.setVisibility(View.GONE);
+        } else {
+            recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton button, boolean checked) {
+                    int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
+                    button.setButtonDrawable(attrs.resourceId(iconKey));
+                    record.setEditLocked(checked);
+                    ServiceLocator.surveyService().notifyRecordEditLock(checked);
+                }
+            });
+        }
     }
 
     private View createSurveySelectedView() {

@@ -61,5 +61,9 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
         }
     }
 
-
+    public void onRecordEditLockChange(boolean locked) {
+        if (savableComponent != null) {
+            savableComponent.onRecordEditLockChange(locked);
+        }
+    }
 }

@@ -40,6 +40,8 @@ public interface SurveyService {
 
     void notifyAttributeChanging(UiAttribute attribute);
 
+    void notifyRecordEditLock(boolean locked);
+
     void updateAttributes(Set<UiAttribute> attributes);
 
     void updateAttribute(UiAttribute attribute);

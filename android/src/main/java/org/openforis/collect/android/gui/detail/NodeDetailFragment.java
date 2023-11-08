@@ -211,6 +211,10 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         }
     }
 
+    public void onRecordEditLockChange(boolean locked) {
+        // to be implemented by subclasses
+    }
+
     public void onDeselect() {
         selected = false;
         // Empty default implementation

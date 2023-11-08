@@ -63,6 +63,10 @@ public abstract class SavableComponent {
 
     public abstract void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 
+    public void onRecordEditLockChange(boolean locked) {
+        // to be extended by subclasses
+    }
+
     public abstract boolean hasChanged();
 
     protected abstract void resetValidationErrors();

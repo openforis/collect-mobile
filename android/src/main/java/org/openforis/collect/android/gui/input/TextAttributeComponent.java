@@ -29,11 +29,22 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
     @Override
     protected void onEditTextCreated(EditText input) {
         super.onEditTextCreated(input);
+        input.setInputType(determineInputType());
         UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
-        int inputType = def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
-        input.setInputType(inputType);
         if (def.isAutoUppercase()) {
             input.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         }
+    }
+
+    @Override
+    public void onRecordEditLockChange(boolean locked) {
+        editText.setInputType(determineInputType());
+    }
+    private int determineInputType() {
+        if (attribute.getUiRecord().isEditLocked()) {
+            return InputType.TYPE_NULL;
+        }
+        UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
+        return def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
     }
 }

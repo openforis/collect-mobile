@@ -162,6 +162,11 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         support.onNodeChanged(node); // TODO: Only do this if one of the child nodes updated its status or relevance
     }
 
+    @Override
+    public void onRecordEditLockChange(UiRecord record, boolean locked) {
+        nodePagerFragment().onRecordEditLockChange(locked);
+    }
+
     private void notifyOnValidationErrors(UiNode node, Map<UiNode, UiNodeChange> nodeChanges) {
         if (!node.equals(selectedNode) && nodeChanges.containsKey(node)) {
             Set<UiValidationError> validationErrors = nodeChanges.get(node).validationErrors;

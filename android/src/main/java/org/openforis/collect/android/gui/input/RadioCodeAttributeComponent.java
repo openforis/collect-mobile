@@ -45,12 +45,13 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         layout.addView(radioButtonsWrapperLayout);
 
         // qualifier fields
-        qualifierInput = CodeAttributeComponent.createQualifierInput(context, attribute.getQualifier(), new Runnable() {
+        String qualifier = attribute.getQualifier();
+        qualifierInput = CodeAttributeComponent.createQualifierInput(context, qualifier, new Runnable() {
             public void run() {
                 saveNode();
             }
         });
-        qualifierReadonlyText = createQualifierReadonlyText(context, attribute.getQualifier());
+        qualifierReadonlyText = createQualifierReadonlyText(context, qualifier);
 
         initOptions();
     }

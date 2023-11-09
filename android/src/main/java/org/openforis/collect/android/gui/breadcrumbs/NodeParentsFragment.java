@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -37,6 +39,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * A fragment representing the parents of a node.
  */
 public class NodeParentsFragment extends Fragment {
+    public static final String AVOID_NOTIFICATION_TAG = "avoidNotification";
     private Attrs attrs;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,11 +66,13 @@ public class NodeParentsFragment extends Fragment {
         viewHolder.recordLockButton = initRecordLockButton(view);
         view.setTag(viewHolder);
 
-        super.onViewCreated(view, savedInstanceState);
-
-        updateRecordLockButtonView(view);
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        updateRecordLockButtonView(view);
     }
 
     private AppCompatToggleButton initRecordLockButton(View view) {
@@ -79,6 +84,8 @@ public class NodeParentsFragment extends Fragment {
         recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton button, boolean checked) {
+                if (AVOID_NOTIFICATION_TAG.equals((button.getTag()))) return;
+
                 record.setEditLocked(checked);
                 updateRecordLockButtonView(null);
                 ServiceLocator.surveyService().notifyRecordEditLockChange(checked);
@@ -97,7 +104,9 @@ public class NodeParentsFragment extends Fragment {
         if (node.getParent() == null || record == null || record.isNewRecord()) {
             recordLockButton.setVisibility(View.GONE);
         } else {
+            recordLockButton.setTag(AVOID_NOTIFICATION_TAG);
             recordLockButton.setChecked(checked);
+            recordLockButton.setTag(null);
         }
         int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
         recordLockButton.setButtonDrawable(attrs.resourceId(iconKey));

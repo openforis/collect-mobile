@@ -67,6 +67,16 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         executor.execute(new LoadCodesTask());
     }
 
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        int numRadioButtons = radioButtonsWrapperLayout.getChildCount();
+        for (int i = 0; i < numRadioButtons; i++) {
+            View rb = radioButtonsWrapperLayout.getChildAt(i);
+            rb.setEnabled(!isRecordEditLocked());
+        }
+    }
+
     protected String qualifier(UiCode selectedCode) {
         return qualifierInput.getText().toString();
     }
@@ -122,42 +132,41 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     private OptionButton addRadioButton(RadioGroup.LayoutParams layoutParams, int index, UiCode code, boolean selected) {
-        if (! enumerator || selected) { //if it's enumerator, show only selected code
-            OptionButton rb = new OptionButton(context, OptionButton.DisplayType.RADIOBUTTON);
-            rb.setId(index + 1);
-            rb.setLabel(code.toString());
-            rb.setDescription(code.getDescription());
-            rb.setLayoutParams(layoutParams);
-            if (!enumerator) {
-                rb.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        UiCode code = codeByViewId.get(view.getId());
-                        boolean wasChecked = isAttributeCode(code);
-                        if (selectedViewId != null && view.getId() != selectedViewId) {
-                            OptionButton oldSelectedView = radioButtonsWrapperLayout.findViewById(selectedViewId);
-                            oldSelectedView.setChecked(false);
-                        }
-                        boolean checked = !wasChecked;
-                        selectedViewId = checked ? view.getId() : null;
+        if (enumerator && !selected) return null; //if it's enumerator, show only selected code
 
-                        if (codeList.isQualifiable(selectedCode()))
-                            showQualifier();
-                        else
-                            hideQualifier();
-
-                        ((OptionButton) view).setChecked(checked);
-
-                        saveNode();
+        OptionButton rb = new OptionButton(context, OptionButton.DisplayType.RADIOBUTTON);
+        rb.setId(index + 1);
+        rb.setLabel(code.toString());
+        rb.setDescription(code.getDescription());
+        rb.setLayoutParams(layoutParams);
+        if (!enumerator) {
+            rb.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    UiCode code = codeByViewId.get(view.getId());
+                    boolean wasChecked = isAttributeCode(code);
+                    if (selectedViewId != null && view.getId() != selectedViewId) {
+                        OptionButton oldSelectedView = radioButtonsWrapperLayout.findViewById(selectedViewId);
+                        oldSelectedView.setChecked(false);
                     }
-                });
-            }
-            rb.setChecked(selected);
-            radioButtonsWrapperLayout.addView(rb);
-            codeByViewId.put(rb.getId(), code);
-            return rb;
-        } else {
-            return null;
+                    boolean checked = !wasChecked;
+                    selectedViewId = checked ? view.getId() : null;
+
+                    if (codeList.isQualifiable(selectedCode()))
+                        showQualifier();
+                    else
+                        hideQualifier();
+
+                    ((OptionButton) view).setChecked(checked);
+
+                    saveNode();
+                }
+            });
         }
+        rb.setChecked(selected);
+        rb.setEnabled(!isRecordEditLocked());
+        radioButtonsWrapperLayout.addView(rb);
+        codeByViewId.put(rb.getId(), code);
+        return rb;
     }
 
 }

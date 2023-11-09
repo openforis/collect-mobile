@@ -36,13 +36,21 @@ public class DoubleAttributeComponent extends NumericAttributeComponent<UiDouble
         attribute.setValue(value);
     }
 
-    protected void afterEditTextCreated(EditText input) {
-        super.afterEditTextCreated(input);
-        input.setKeyListener(new DecimalSeparatorAwareKeyListener());
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        if (isRecordEditLocked()) {
+            editText.setKeyListener(null);
+        } else {
+            editText.setKeyListener(new DecimalSeparatorAwareKeyListener());
+        }
     }
 
     @Override
     protected int determineInputType() {
-        return isRecordEditLocked() ? InputType.TYPE_NULL : TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL;
+        if (isRecordEditLocked()) {
+            return InputType.TYPE_NULL;
+        }
+        return TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL;
     }
 }

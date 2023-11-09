@@ -30,7 +30,6 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
     @Override
     protected void onEditTextCreated(EditText input) {
         super.onEditTextCreated(input);
-        input.setInputType(determineInputType());
         UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
         if (def.isAutoUppercase()) {
             input.setFilters(new InputFilter[]{new InputFilter.AllCaps()});

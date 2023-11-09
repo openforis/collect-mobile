@@ -99,6 +99,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
         });
         // update CollectModelManager internal variables
         collectModelManager.recordSelected(record);
+
+        if (recordWillBeUpdated) {
+            uiRecord.setEditLocked(true);
+        }
         return uiRecord;
     }
 

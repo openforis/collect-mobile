@@ -35,6 +35,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText initializeEditText() {
         editText = createEditText();
+        afterEditTextCreated(editText);
         return editText;
     }
 
@@ -143,7 +144,6 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
                 }
             }
         });
-        afterEditTextCreated(editText);
         return editText;
     }
 

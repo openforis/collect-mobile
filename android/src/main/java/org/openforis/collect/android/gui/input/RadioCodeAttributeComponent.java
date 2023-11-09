@@ -6,12 +6,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.components.OptionButton;
+import org.openforis.collect.android.gui.util.Views;
+import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -29,6 +32,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     private final LinearLayout layout;
     private final LinearLayout radioButtonsWrapperLayout;
     private final EditText qualifierInput;
+    private final TextView qualifierReadonlyText;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private Integer selectedViewId;
 
@@ -39,11 +43,15 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         radioButtonsWrapperLayout = new LinearLayout(context);
         radioButtonsWrapperLayout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(radioButtonsWrapperLayout);
+
+        // qualifier fields
         qualifierInput = CodeAttributeComponent.createQualifierInput(context, attribute.getQualifier(), new Runnable() {
             public void run() {
                 saveNode();
             }
         });
+        qualifierReadonlyText = createQualifierReadonlyText(context, attribute.getQualifier());
+
         initOptions();
     }
 
@@ -68,12 +76,28 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     @Override
+    public void onAttributeChange(UiAttribute changedAttribute) {
+        super.onAttributeChange(changedAttribute);
+        if (changedAttribute == attribute && codeList.isQualifiable(selectedCode())) {
+            qualifierReadonlyText.setText(attribute.getQualifier());
+        }
+    }
+
+    @Override
     protected void updateEditableState() {
         super.updateEditableState();
+        boolean editable = !isRecordEditLocked();
         int numRadioButtons = radioButtonsWrapperLayout.getChildCount();
         for (int i = 0; i < numRadioButtons; i++) {
             View rb = radioButtonsWrapperLayout.getChildAt(i);
-            rb.setEnabled(!isRecordEditLocked());
+            rb.setEnabled(editable);
+        }
+        if (codeList.isQualifiable(selectedCode())) {
+            Views.addChild(layout, editable ? qualifierInput : qualifierReadonlyText);
+            layout.removeView(editable ? qualifierReadonlyText : qualifierInput);
+        } else {
+            layout.removeView(qualifierInput);
+            layout.removeView(qualifierReadonlyText);
         }
     }
 
@@ -81,32 +105,11 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
         return qualifierInput.getText().toString();
     }
 
-    private void showQualifier() {
-        uiHandler.post(new Runnable() {
-            public void run() {
-                if (layout.getChildCount() == 1) {
-                    layout.addView(qualifierInput);
-                    showKeyboard(qualifierInput);
-                }
-            }
-        });
-    }
-
-    private void hideQualifier() {
-        uiHandler.post(new Runnable() {
-            public void run() {
-                hideKeyboard();
-                layout.removeView(qualifierInput);
-            }
-        });
-    }
 
     private class LoadCodesTask implements Runnable {
         public void run() {
             initCodeList();
             addRadioButtons(codeList.getCodes());
-            if (codeList.isQualifiable(attribute.getCode()))
-                showQualifier();
         }
 
         private void addRadioButtons(final List<UiCode> codes) {
@@ -126,6 +129,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                             selectedViewId = rb.getId();
                         }
                     }
+                    updateEditableState();
                 }
             });
         }
@@ -151,10 +155,7 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     boolean checked = !wasChecked;
                     selectedViewId = checked ? view.getId() : null;
 
-                    if (codeList.isQualifiable(selectedCode()))
-                        showQualifier();
-                    else
-                        hideQualifier();
+                    updateEditableState();
 
                     ((OptionButton) view).setChecked(checked);
 

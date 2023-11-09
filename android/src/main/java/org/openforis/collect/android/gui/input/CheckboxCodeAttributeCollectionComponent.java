@@ -165,7 +165,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         });
     }
 
-
     private String qualifier(UiCode code) {
         UiCodeAttribute attribute = attributesByCode.get(code);
         return attribute == null ? null : attribute.getQualifier();

@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UITaxonVernacularName;
 import org.openforis.collect.android.viewmodel.UiTaxon;
 import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
@@ -26,6 +27,7 @@ import org.openforis.collect.android.viewmodel.UiTaxonAttribute;
 public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute> {
     private LinearLayout layout;
     private ClearableAutoCompleteTextView autoComplete;
+    private TextView taxonReadonlyTextView;
     private TextView vernacularNameTextView;
     private UiTaxon selectedTaxon;
     private boolean textChangingNotificationEnabled = true;
@@ -36,12 +38,19 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         vernacularNameTextView = new TextView(context);
         vernacularNameTextView.setPadding(8, 16, 8, 0);
 
+        taxonReadonlyTextView = new TextView(context);
+        taxonReadonlyTextView.setTextSize(20);
+        taxonReadonlyTextView.setPadding(8, 16, 8, 0);
+
         createAutoComplete(attribute, context);
 
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(autoComplete);
+        layout.addView(taxonReadonlyTextView);
         layout.addView(vernacularNameTextView);
+
+        updateEditableState();
     }
 
     private void createAutoComplete(UiTaxonAttribute attribute, FragmentActivity context) {
@@ -170,11 +179,14 @@ public class TaxonAttributeComponent extends AttributeComponent<UiTaxonAttribute
         autoComplete.setAdapter(null);
         autoComplete.setText(text);
         autoComplete.setAdapter(adapter);
+        taxonReadonlyTextView.setText(text);
         textChangingNotificationEnabled = true;
     }
 
     @Override
     protected void updateEditableState() {
-        autoComplete.setEnabled(!isRecordEditLocked());
+        boolean editable = !isRecordEditLocked();
+        Views.toggleVisibility(autoComplete, editable);
+        Views.toggleVisibility(taxonReadonlyTextView, !editable);
     }
 }

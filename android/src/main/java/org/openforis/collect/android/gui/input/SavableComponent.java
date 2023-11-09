@@ -64,10 +64,15 @@ public abstract class SavableComponent {
     public abstract void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 
     public void onRecordEditLockChange(boolean locked) {
+        if (locked) {
+            hideKeyboard();
+        }
         updateEditableState();
     }
 
-    protected abstract void updateEditableState();
+    protected void updateEditableState() {
+        // to be extended by subclasses
+    }
 
     public abstract boolean hasChanged();
 

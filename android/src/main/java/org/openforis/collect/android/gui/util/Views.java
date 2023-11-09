@@ -76,4 +76,18 @@ public abstract class Views {
         }
         return null;
     }
+
+    public static boolean hasChild(ViewGroup viewGroup, View child) {
+        int childCount = viewGroup.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            if (viewGroup.getChildAt(i) == child) return true;
+        }
+        return false;
+    }
+
+    public static void addChild(ViewGroup viewGroup, View child) {
+        if (!hasChild(viewGroup, child)) {
+            viewGroup.addView(child);
+        }
+    }
 }

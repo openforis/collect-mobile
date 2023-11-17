@@ -280,6 +280,6 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     @Override
     protected void updateEditableState() {
-
+        updateViewState();
     }
 }

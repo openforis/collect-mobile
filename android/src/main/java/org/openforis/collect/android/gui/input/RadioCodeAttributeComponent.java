@@ -156,9 +156,9 @@ class RadioCodeAttributeComponent extends CodeAttributeComponent {
                     boolean checked = !wasChecked;
                     selectedViewId = checked ? view.getId() : null;
 
-                    updateEditableState();
-
                     ((OptionButton) view).setChecked(checked);
+
+                    updateEditableState();
 
                     saveNode();
                 }

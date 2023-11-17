@@ -149,7 +149,9 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
     protected static TextView createQualifierReadonlyText(Activity context, String text) {
         TextView textView = new TextView(context);
         textView.setTextSize(20);
-        textView.setText(text);
+        if (text != null) {
+            textView.setText(text);
+        }
         return textView;
     }
 }

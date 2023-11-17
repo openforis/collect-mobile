@@ -11,6 +11,7 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Map;
@@ -79,6 +80,10 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
         addAttributeButton.setOnClickListener(addListener);
     }
 
+    protected boolean isRecordEditLocked() {
+        UiRecord record = attributeCollection == null ? null : attributeCollection.getUiRecord();
+        return record == null ? true: record.isEditLocked();
+    }
     @Override
     protected void updateEditableState() {
 

@@ -16,6 +16,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -33,8 +34,8 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     private final TextView readonlyTextView;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final LinearLayout layout;
-    private EditText qualifierInput;
-    private TextView qualifierReadonlyText;
+    private final EditText qualifierInput;
+    private final TextView qualifierReadonlyText;
 
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
@@ -140,33 +141,33 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     private void setText(String text) {
-        if (text.equals(autoComplete.getText().toString()))
-            return;
-        // Hack to prevent pop-up from opening when setting text
-        // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
-        UiCodeAdapter adapter = (UiCodeAdapter) autoComplete.getAdapter();
-        autoComplete.setAdapter(null);
-        autoComplete.setText(text);
-        autoComplete.setAdapter(adapter);
-
-        readonlyTextView.setText(text);
+        if (!text.equals(autoComplete.getText().toString())) {
+            // Hack to prevent pop-up from opening when setting text
+            // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
+            UiCodeAdapter adapter = (UiCodeAdapter) autoComplete.getAdapter();
+            autoComplete.setAdapter(null);
+            autoComplete.setText(text);
+            autoComplete.setAdapter(adapter);
+        }
+        if (!text.equals(readonlyTextView.getText().toString())) {
+            readonlyTextView.setText(text);
+        }
     }
 
     @Override
     protected void updateEditableState() {
         boolean editable = !isRecordEditLocked();
+        boolean editableOld = Views.hasChild(layout, autoComplete);
         boolean qualifiable = attribute != null  && codeList.isQualifiable(attribute.getCode());
+        boolean qualifiableOld = Views.hasChild(layout, editable ? qualifierInput: qualifierReadonlyText);
+        if (editable == editableOld && qualifiable != qualifiableOld) {
+            // do nothing
+            return;
+        }
         layout.removeAllViews();
-        if (editable) {
-            layout.addView(autoComplete);
-            if (qualifiable) {
-                layout.addView(qualifierInput);
-            }
-        } else {
-            layout.addView(readonlyTextView);
-            if (qualifiable) {
-                layout.addView(qualifierReadonlyText);
-            }
+        layout.addView(editable ? autoComplete : readonlyTextView);
+        if (qualifiable) {
+            layout.addView(editable ? qualifierInput: qualifierReadonlyText);
         }
     }
 
@@ -189,6 +190,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
             uiHandler.post(new Runnable() {
                 public void run() {
                     autoComplete.setAdapter(new UiCodeAdapter(context, codes));
+                    updateEditableState();
                 }
             });
         }

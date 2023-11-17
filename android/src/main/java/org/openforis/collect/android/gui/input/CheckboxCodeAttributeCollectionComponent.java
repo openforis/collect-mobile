@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatEditText;
@@ -19,6 +20,7 @@ import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.components.OptionButton;
 import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.gui.util.Keyboard;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiCode;
@@ -44,7 +46,8 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
     private final SparseArray<UiCode> codeByViewId = new SparseArray<UiCode>();
     private final Map<UiCode, UiCodeAttribute> attributesByCode = new HashMap<UiCode, UiCodeAttribute>();
     private final LinearLayout layout;
-    private EditText qualifierInput;
+    private final EditText qualifierInput;
+    private final TextView qualifierReadonlyText;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final AtomicBoolean qualified = new AtomicBoolean();
 
@@ -56,6 +59,9 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
             UiCodeAttribute attribute = (UiCodeAttribute) uiNode;
             attributesByCode.put(attribute.getCode(), attribute);
         }
+        qualifierInput = createQualifierInput();
+        qualifierReadonlyText = CodeAttributeComponent.createQualifierReadonlyText(context, null);
+
         initOptions();
     }
 
@@ -134,7 +140,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                 return false;
             }
         });
-        editText.setText(qualifier(codeList.getQualifiableCode()));
         editText.setSingleLine();
         return editText;
     }
@@ -158,8 +163,11 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
         uiHandler.post(new Runnable() {
             public void run() {
                 if (layout.getChildCount() == codeList.getCodes().size()) {
-                    layout.addView(qualifierInput);
-                    showKeyboard(qualifierInput);
+                    boolean editable = !isRecordEditLocked();
+                    layout.addView(editable ? qualifierInput : qualifierReadonlyText);
+                    if (editable) {
+                        showKeyboard(qualifierInput);
+                    }
                 }
             }
         });
@@ -176,8 +184,36 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
             public void run() {
                 Keyboard.hide(context);
                 layout.removeView(qualifierInput);
+                layout.removeView(qualifierReadonlyText);
             }
         });
+    }
+
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        boolean editable = !isRecordEditLocked();
+        int childCount = layout.getChildCount();
+        for(int i = 0; i < childCount; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof OptionButton) {
+                ((OptionButton) view).setEnabled(editable);
+            }
+        }
+        if (qualified.get()) {
+            if (editable) {
+                if (!Views.hasChild(layout, qualifierInput)) {
+                    layout.removeView(qualifierReadonlyText);
+                    layout.addView(qualifierInput);
+                }
+            } else {
+                if (!Views.hasChild(layout, qualifierReadonlyText)) {
+                    layout.removeView(qualifierInput);
+                    layout.addView(qualifierReadonlyText);
+                }
+            }
+        }
+
     }
 
     private class LoadCodesTask implements Runnable {
@@ -194,7 +230,6 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                     layoutParams.setMargins(px(context, 1), px(context, 1),
                             px(context, 1), px(context, 15));
 
-                    qualifierInput = createQualifierInput();
                     java.util.List<UiCode> codes = codeList.getCodes();
                     for (int i = 0; i < codes.size(); i++) {
                         final UiCode code = codes.get(i);
@@ -232,6 +267,10 @@ class CheckboxCodeAttributeCollectionComponent extends CodeAttributeCollectionCo
                             }
                         });
                     }
+                    String qualifierText = qualifier(codeList.getQualifiableCode());
+                    qualifierInput.setText(qualifierText);
+                    qualifierReadonlyText.setText(qualifierText);
+                    updateEditableState();
                 }
             });
         }

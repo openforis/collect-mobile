@@ -63,6 +63,12 @@ public class OptionButton extends LinearLayout {
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        button.setEnabled(enabled);
+    }
+
+    @Override
     public void setOnClickListener(@Nullable final OnClickListener listener) {
         super.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {

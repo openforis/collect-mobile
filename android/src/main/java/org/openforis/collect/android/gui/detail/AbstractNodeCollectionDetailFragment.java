@@ -22,6 +22,7 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.list.EntityListAdapter;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.PreferencesUtils;
 import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.Definition;
@@ -49,6 +50,7 @@ import java.util.TimerTask;
 public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalNode> extends NodeDetailFragment<T> {
 
     private static final Typeface HEADER_TYPEFACE = Typeface.DEFAULT_BOLD;
+    private static final String SHOW_RECORD_LOCKED_MESSAGE_PREFERENCE_KEY = "SHOW_RECORD_LOCKED_MESSAGE";
     private EntityListAdapter adapter;
     private Timer adapterUpdateTimer;
 
@@ -171,11 +173,40 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         final T nodeCollection = node();
         Runnable task = new Runnable() {
             public void run() {
-                UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
-                UiNode firstEditableChild = selectedNode.getFirstEditableChild();
-                if (firstEditableChild != null) {
-                    nodeNavigator().navigateTo(firstEditableChild.getId());
+                final UiInternalNode selectedNode = getSelectedNode(position, nodeCollection);
+                final Runnable navigateToFirstEditableNode = new Runnable() {
+                    @Override
+                    public void run() {
+                        UiNode firstEditableChild = selectedNode.getFirstEditableChild();
+                        if (firstEditableChild != null) {
+                            nodeNavigator().navigateTo(firstEditableChild.getId());
+                        }
+                    }
+                };
+                if (selectedNode instanceof UiRecord
+                        && ((UiRecord) selectedNode).isEditLocked()
+                        && PreferencesUtils.getPreference(getActivity(), SHOW_RECORD_LOCKED_MESSAGE_PREFERENCE_KEY, Boolean.class, true)) {
+                    showRecordEditLockedMessage(navigateToFirstEditableNode);
+                } else {
+                    navigateToFirstEditableNode.run();
                 }
+            }
+
+            private void showRecordEditLockedMessage(final Runnable onOk) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Dialogs.info(getActivity(), R.string.info, R.string.record_edit_locked_message, new Dialogs.RunnableWithDoNotShowAgain() {
+                            @Override
+                            public void run(boolean doNotShowAgain) {
+                                if (doNotShowAgain) {
+                                    PreferencesUtils.setPreference(getActivity(), SHOW_RECORD_LOCKED_MESSAGE_PREFERENCE_KEY, !doNotShowAgain);
+                                }
+                                onOk.run();
+                            }
+                        }, true);
+                    }
+                });
             }
         };
         if (nodeCollection instanceof UiRecordCollection) {

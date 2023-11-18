@@ -241,7 +241,7 @@
     <string name="entity_list_modified">Modified</string>
     <string name="entity_list_date_pattern">dd/MM/yyyy</string>
 
-    <string name="record_edit_locked_message">Record is in read-only mode; to enable editing the record, use the lock icon in the top right corner.</string>
+    <string name="record_edit_locked_message">Record is in READ-ONLY mode; to enable editing the record, use the LOCK ICON in the top right corner.</string>
     <string name="go_to_record_list">Go to record list</string>
     <string name="navigate_to_record_list_confirm_title">Record completed</string>
     <string name="navigate_to_record_list_confirm_message">Go back to record list?</string>

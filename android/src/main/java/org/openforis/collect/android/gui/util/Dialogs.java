@@ -54,31 +54,30 @@ public class Dialogs {
 
     private static AlertDialog showDialog(Context context, String title, String message, int icon,
                                           final Runnable runOnPositiveButtonClick, final boolean showDoNotShowAgainOption) {
-        final boolean[] doNotShowAgainSelection = new boolean[]{false};
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setCancelable(false)
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (runOnPositiveButtonClick != null) {
-                            if (showDoNotShowAgainOption && runOnPositiveButtonClick instanceof RunnableWithDoNotShowAgain) {
-                                ((RunnableWithDoNotShowAgain) runOnPositiveButtonClick).run(doNotShowAgainSelection[0]);
-                            } else {
-                                runOnPositiveButtonClick.run();
-                            }
+                            runOnPositiveButtonClick.run();
                         }
                     }
                 })
                 .setIcon(icon);
         if (showDoNotShowAgainOption) {
-            builder.setMultiChoiceItems(new String[]{context.getString(R.string.do_not_show_again)},
-                    doNotShowAgainSelection, new DialogInterface.OnMultiChoiceClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                            doNotShowAgainSelection[which] = isChecked;
-                        }
-                    });
+            builder.setNeutralButton(R.string.do_not_show_again, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (runOnPositiveButtonClick == null) return;
+
+                    if (runOnPositiveButtonClick instanceof RunnableWithDoNotShowAgain) {
+                        ((RunnableWithDoNotShowAgain) runOnPositiveButtonClick).run(true);
+                    } else {
+                        runOnPositiveButtonClick.run();
+                    }
+                }
+            });
         }
         AlertDialog dialog = builder.create();
         dialog.show();

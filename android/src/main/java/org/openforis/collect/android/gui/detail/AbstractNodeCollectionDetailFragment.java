@@ -27,7 +27,6 @@ import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.Definition;
 import org.openforis.collect.android.viewmodel.UiAttribute;
-import org.openforis.collect.android.viewmodel.UiEntity;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiEntityCollectionDefinition;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
@@ -38,7 +37,6 @@ import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiRecordCollection;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -70,7 +68,10 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                     initializeAddButton(holder);
                 }
             }
+            holder.entitiesListView = view.findViewById(R.id.entity_list);
             view.setTag(holder);
+
+            updateEditableState();
         }
     }
 
@@ -95,6 +96,13 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 }
             }
         });
+    }
+
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        ViewHolder viewHolder = (ViewHolder) getView().getTag();
+        Views.toggleVisibility(viewHolder.addButtonSwitcher, !isRecordEditLocked());
     }
 
     @Override
@@ -326,8 +334,9 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
         }
     }
 
-    private class ViewHolder {
+    protected class ViewHolder {
         ViewSwitcher addButtonSwitcher;
         View addButton;
+        ListView entitiesListView;
     }
 }

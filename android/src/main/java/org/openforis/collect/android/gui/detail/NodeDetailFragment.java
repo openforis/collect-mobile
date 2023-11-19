@@ -212,7 +212,16 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         }
     }
 
+    protected boolean isRecordEditLocked() {
+        UiRecord record = node == null ? null : node.getUiRecord();
+        return record != null && record.isEditLocked();
+    }
+
     public void onRecordEditLockChange(boolean locked) {
+        updateEditableState();
+    }
+
+    protected void updateEditableState() {
         // to be implemented by subclasses
     }
 
@@ -231,8 +240,7 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
         if (view == null || !node.isRelevant())
             hideKeyboard();
         else {
-            UiRecord record = node.getUiRecord();
-            if (view instanceof EditText && view.isEnabled() && !record.isEditLocked())
+            if (view instanceof EditText && view.isEnabled() && !isRecordEditLocked())
                 showKeyboard(view);
             else {
                 hideKeyboard();

@@ -17,6 +17,7 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.openforis.collect.android.gui.WorkingDirNotAccessible;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +53,12 @@ public abstract class AndroidFiles {
             if (!file.isDirectory())
                 makeFileDiscoverable(file, context);
         }
+    }
+
+    public static void createAndMakeDiscoverableDir(File dir, Context context) {
+        if (!dir.mkdirs())
+            throw new WorkingDirNotAccessible(dir);
+        makeDiscoverable(dir, context);
     }
 
     public static Uri getUriForFile(Context context, File file) {

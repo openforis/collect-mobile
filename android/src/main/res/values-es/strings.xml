@@ -21,7 +21,7 @@
     <string name="backup_complete">Encuesta copiada a %s</string>
     <string name="backup_failed">Error al crear copia de seguridad: %s</string>
 
-    <string name="storage_not_found_message">Almacenamiento secundario no encontrado</string>
+    <string name="working_directory_not_accessible_message">Almacenamiento secundario no encontrado</string>
     <string name="storage_not_found_retry">Probar de nuevo</string>
     <string name="storage_not_found_settings">Configurar ubicaci&#243;n</string>
 

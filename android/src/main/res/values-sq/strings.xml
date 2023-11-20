@@ -51,7 +51,7 @@
     <string name="backup_failed">Kopja Rezerve Deshtoi: %s</string>
     <string name="toast_not_relevant_attribute_selected">Ky Atribut nuk eshte i Pershtatshem</string>
 
-    <string name="storage_not_found_message">Nuk u Gjet Memorie Shtese</string>
+    <string name="working_directory_not_accessible_message">Nuk u Gjet Memorie Shtese</string>
     <string name="storage_not_found_retry">Provoje Perseri</string>
     <string name="storage_not_found_settings">Konfiguro Pozicionin</string>
 

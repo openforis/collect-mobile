@@ -85,7 +85,7 @@
     <string name="survey_guide_error_opening_file">Error opening Survey Guide file: %s</string>
     <string name="survey_guide_not_found_alert_message">Survey guide not found in the survey</string>
 
-    <string name="storage_not_found_message">Secondary storage not found</string>
+    <string name="working_directory_not_accessible_message">Working directory not accessible</string>
     <string name="storage_not_found_retry">Retry</string>
     <string name="storage_not_found_settings">Configure location</string>
 

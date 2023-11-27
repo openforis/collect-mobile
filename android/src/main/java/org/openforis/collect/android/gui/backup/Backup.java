@@ -16,15 +16,22 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.apache.commons.io.FileUtils;
 import org.openforis.collect.R;
+import org.openforis.collect.android.collectadapter.BackupGenerator;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
+import org.openforis.collect.android.gui.util.MimeType;
 import org.openforis.collect.android.sqlite.AndroidDatabase;
 
 import java.io.File;
 import java.io.IOException;
 
 public class Backup {
+
+    private static String BACKUP_FILE_PREFIX = "collect_mobile_backup_";
+    private static String BACKUP_FILE_EXTENSION = "ofcmbck";
 
     public static void showBackupModeChooseDialog(FragmentActivity activity) {
         DialogFragment dialogFragment = new BackupModeDialogFragment();
@@ -105,6 +112,44 @@ public class Backup {
             }
         }
 
+        private void backupIntoDownloads() {
+            try {
+                File downloadDir = AndroidFiles.getDownloadsDir(context);
+                File backupFile = generateBackupFile();
+                if (backupFile == null) return;
+                File downloadDirDestinationFile = new File(downloadDir, backupFile.getName());
+                FileUtils.copyFile(backupFile, downloadDirDestinationFile);
+                AndroidFiles.makeDiscoverable(downloadDirDestinationFile, context);
+                Dialogs.alert(context, R.string.backup_file_generation_complete, R.string.backup_file_generation_into_downloads_complete_message);
+            } catch (Exception e) {
+                showBackupErrorMessage(e);
+            }
+        }
+
+        private void backupAndShare() {
+            File backupFile = generateBackupFile();
+            if (backupFile == null) return;
+            Activities.shareFile(context, backupFile, MimeType.BINARY, R.string.share_file, false);
+        }
+
+        private File generateBackupFile() {
+            File destFile = null;
+            try {
+                destFile = File.createTempFile(BACKUP_FILE_PREFIX, "." + BACKUP_FILE_EXTENSION);
+                if (AndroidFiles.enoughSpaceToCopy(surveysDir, destFile.getParentFile())) {
+                    BackupGenerator backupGenerator = new BackupGenerator(surveysDir, App.versionName(context), destFile);
+                    backupGenerator.generate();
+                } else {
+                    destFile.delete();
+                }
+            } catch (IOException e) {
+                showBackupErrorMessage(e);
+                if (destFile != null) {
+                    destFile.delete();
+                }
+            }
+            return destFile;
+        }
 
         private void showInsertSdCardDialog() {
             Intent intent = new Intent();
@@ -177,6 +222,12 @@ public class Backup {
                                     break;
                                 case 1:
                                     backupExecutor.backupInternally();
+                                    break;
+                                case 2:
+                                    backupExecutor.backupIntoDownloads();
+                                    break;
+                                case 3:
+                                    backupExecutor.backupAndShare();
                                     break;
                             }
                             alertDialog.dismiss();

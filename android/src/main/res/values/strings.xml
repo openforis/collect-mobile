@@ -30,6 +30,7 @@
     <string name="warning">Warning</string>
     <string name="error">Error</string>
 
+    <string name="share_file">Share (by email, DropBox, Google Drive, etc.)</string>
     <string name="low_storage_error">Low device storage</string>
 
     <string name="app_name">Collect</string>
@@ -58,6 +59,8 @@
     <string name="backup_mode_choose">Choose backup mode</string>
     <string name="backup_mode_new_sdcard">Into NEW SD card</string>
     <string name="backup_mode_internal">Internal</string>
+    <string name="backup_mode_save_to_downloads">Save to \"Download\" folder</string>
+    <string name="backup_mode_share">Share</string>
     <string name="backup_not_enough_space_internal">Not enough space in internal memory to complete the backup process</string>
     <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the backup process</string>
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
@@ -65,6 +68,9 @@
     <string name="backup_failed">Backup failed: %s</string>
     <string name="backup_delete_oldest_snapshot">Delete oldest snapshot of the %s and try again?</string>
     <string name="backup_delete_oldest_snapshot_failed">Failed to delete the oldest snapshot: %s</string>
+    <string name="backup_file_generation_complete">Backup file generation complete</string>
+    <string name="backup_file_generation_into_downloads_complete_message">Backup file generated into \"Download\" folder</string>
+    <string name="backup_file_share_with_application">Send backup file to</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>
@@ -196,8 +202,7 @@
     <string name="export_dialog_option_only_selected_records">Only selected records</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
     <string name="export_dialog_option_exclude_calculated_values">Exclude calculated attribute values</string>
-    <string name="export_dialog_option_share">Share (by email, DropBox, Google Drive, etc.)</string>
-    <string name="export_dialog_option_save_to_downloads">Save to \"Download\" directory</string>
+    <string name="export_dialog_option_save_to_downloads">Save to \"Download\" folder</string>
     <string name="export_progress_dialog_title">Exporting data</string>
     <string name="export_share_with_application">Send exported data to</string>
     <string name="export_completed_title">Data export completed</string>
@@ -286,6 +291,9 @@
     <string name="permission_external_storage">external storage</string>
     <string name="permission_record_audio">audio record</string>
     <string name="permission_camera_barcode_scanner">camera to acquire the barcode</string>
+
+
+    <string name="error_cannot_create_downloads_folder">Cannot create \"Download\" folder with path %s</string>
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

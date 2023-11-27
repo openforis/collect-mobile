@@ -49,8 +49,8 @@ public class MainActivity extends BaseActivity {
         } catch (WorkingDirNotAccessible ignore) {
             DialogFragment newFragment = new WorkingDirectoryNotAccessibleFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
-        } catch (StorageAccessException e) {
-            handleStorageAccessException(e);
+        } catch (Exception e) {
+            handleStorageAccessException(new StorageAccessException());
         }
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.provider.MediaStore;
@@ -17,6 +18,7 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.openforis.collect.R;
 import org.openforis.collect.android.gui.WorkingDirNotAccessible;
 
 import java.io.File;
@@ -163,5 +165,13 @@ public abstract class AndroidFiles {
             current = current.getParentFile();
         }
         return current;
+    }
+
+    public static File getDownloadsDir(Context context) throws IOException {
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (!downloadDir.exists() && !downloadDir.mkdirs()) {
+            throw new IOException(context.getResources().getString(R.string.error_cannot_create_downloads_folder, downloadDir.getAbsolutePath()));
+        }
+        return downloadDir;
     }
 }

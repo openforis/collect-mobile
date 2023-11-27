@@ -101,6 +101,15 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
         }
     }
 
+    protected void showWarning(final int messageKey) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialogs.alert(context, R.string.warning, messageKey);
+            }
+        });
+    }
+
     public interface ExceptionHandler {
         void handle(Exception e);
     }

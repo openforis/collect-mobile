@@ -107,17 +107,21 @@ public abstract class AndroidFiles {
         }
     }
 
-    public static File copyUriContentToCache(Context context, Uri uri) {
+    public static File copyUriContentToCache(Context context, Uri uri) throws Exception {
         try {
             ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
-            if (fileDescriptor == null) return null;
+            if (fileDescriptor == null) throw new Exception("Error ");
             String fileName = getUriContentFileName(context, uri);
             InputStream is = new FileInputStream(fileDescriptor.getFileDescriptor());
             File fileCache = new File(context.getCacheDir(), fileName);
             IOUtils.copy(is, new FileOutputStream(fileCache));
+            if (fileCache.length() == 0) {
+                throw new IllegalStateException(context.getString(R.string.survey_import_failed_empty_file_message));
+            }
             return fileCache;
         } catch (Exception e) {
-            return null;
+            throw new Exception(String.format(
+                    "Error copying file; could not determine file path for URI: %s", uri), e);
         }
     }
 
@@ -156,7 +160,7 @@ public abstract class AndroidFiles {
     }
 
     public static boolean enoughSpaceToCopy(File fromPath, File toPath) {
-        return FileUtils.sizeOfDirectory(fromPath) < availableSize(toPath);
+        return (fromPath.isDirectory() ? FileUtils.sizeOfDirectory(fromPath) : fromPath.length()) < availableSize(toPath);
     }
 
     private static File firstExistingAncestorOrSelf(File file) {

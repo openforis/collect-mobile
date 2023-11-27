@@ -23,6 +23,7 @@ import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.backup.Backup;
+import org.openforis.collect.android.gui.backup.Restore;
 import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
@@ -65,6 +66,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     public static final int VIDEO_SELECTED_REQUEST_CODE = 6389;
     public static final int BARCODE_CAPTURE_REQUEST_CODE = 6390;
     public static final int FILE_DOCUMENT_SELECTED_REQUEST_CODE = 6391;
+    public static final int RESTORE_FILE_SELECTED_REQUEST_CODE = 6400;
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
@@ -81,6 +83,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private VideoFileAttributeComponent videoListener;
     private DocumentFileAttributeComponent fileDocumentListener;
     private BarcodeTextAttributeComponent barcodeCaptureListener;
+    private Restore.RestoreFileSelectedListener restoreFileSelectedListener;
 
     private boolean twoPane;
 
@@ -274,6 +277,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         Backup.showBackupModeChooseDialog(this);
     }
 
+    public void restore(MenuItem item) {
+        Restore.selectFileToRestore(this);
+    }
+
     public void exportDialog(MenuItem item) {
         if (Permissions.checkStoragePermissionOrRequestIt(this)) {
 
@@ -432,6 +439,11 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                     if (fileDocumentListener != null && data != null) {
                         fileDocumentListener.documentSelected(data.getData());
                     }
+                    break;
+                case RESTORE_FILE_SELECTED_REQUEST_CODE:
+                    if (restoreFileSelectedListener != null) {
+                        restoreFileSelectedListener.fileSelected(data.getData());
+                    }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -455,6 +467,10 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     public void setBarcodeCaptureListener(BarcodeTextAttributeComponent barcodeCaptureListener) {
         this.barcodeCaptureListener = barcodeCaptureListener;
+    }
+
+    public void setRestoreFileSelectedListener(Restore.RestoreFileSelectedListener restoreFileSelectedListener) {
+        this.restoreFileSelectedListener = restoreFileSelectedListener;
     }
 
     public void showEntityTable(MenuItem menuItem) {

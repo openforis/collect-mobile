@@ -165,13 +165,6 @@ public class SurveyListActivity extends BaseActivity {
         protected Boolean runTask() throws Exception {
             super.runTask();
             File file = AndroidFiles.copyUriContentToCache(context, uri);
-            if (file == null) {
-                throw new IllegalStateException(String.format(
-                        "Failed to import survey; could not determine file path for URI: %s", uri));
-            }
-            if (file.length() == 0) {
-                throw new IllegalStateException(context.getString(R.string.survey_import_failed_empty_file_message));
-            }
             if (ServiceLocator.importSurvey(file.getAbsolutePath(), overwrite, context) || overwrite) {
                 onSurveyImportComplete();
                 return false; //survey imported successfully

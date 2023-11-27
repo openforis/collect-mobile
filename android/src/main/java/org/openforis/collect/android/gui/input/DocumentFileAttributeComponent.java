@@ -110,12 +110,10 @@ public class DocumentFileAttributeComponent extends FileAttributeComponent {
     public void documentSelected(Uri uri) {
         try {
             File selectedFile = AndroidFiles.copyUriContentToCache(context, uri);
-            if (selectedFile != null) {
-                String extension = FilenameUtils.getExtension(selectedFile.getName());
-                file = Files.changeExtension(file, extension);
-                FileUtils.copyFile(selectedFile, file);
-                fileChanged();
-            }
+            String extension = FilenameUtils.getExtension(selectedFile.getName());
+            file = Files.changeExtension(file, extension);
+            FileUtils.copyFile(selectedFile, file);
+            fileChanged();
         } catch (Exception e) {
             Toast.makeText(context, context.getString(R.string.file_attribute_file_select_error, e.getMessage()), Toast.LENGTH_LONG).show();
         }

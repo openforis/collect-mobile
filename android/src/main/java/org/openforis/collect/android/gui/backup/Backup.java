@@ -31,7 +31,7 @@ import java.io.IOException;
 public class Backup {
 
     private static String BACKUP_FILE_PREFIX = "collect_mobile_backup_";
-    private static String BACKUP_FILE_EXTENSION = "ofcmbck";
+    public static String BACKUP_FILE_EXTENSION = "ofcmbck";
 
     public static void showBackupModeChooseDialog(FragmentActivity activity) {
         DialogFragment dialogFragment = new BackupModeDialogFragment();

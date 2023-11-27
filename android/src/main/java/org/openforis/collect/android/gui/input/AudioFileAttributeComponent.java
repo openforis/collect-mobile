@@ -89,7 +89,7 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
             mediaRecorder.setOutputFile(file.getPath());
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             mediaRecorder.prepare();
         } catch (IOException e) {
             Log.e("CollectAudioRecorder", "Error setting up media recorder", e);
@@ -206,15 +206,20 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
     public void audioSelected(Uri uri) {
         try {
             File selectedFile = AndroidFiles.copyUriContentToCache(context, uri);
-            if (selectedFile != null && "3gp".equalsIgnoreCase(FilenameUtils.getExtension(selectedFile.getName()))) {
+            if ("3gp".equalsIgnoreCase(FilenameUtils.getExtension(selectedFile.getName()))) {
                 reset();
                 FileUtils.copyFile(selectedFile, file);
                 fileChanged();
             } else {
-                Dialogs.alert(context, R.string.warning, R.string.file_attribute_audio_wrong_file_type_selected);
+                showWrongAudioFileSelectedMessage();
             }
         } catch (Exception e) {
+            showWrongAudioFileSelectedMessage();
         }
+    }
+
+    private void showWrongAudioFileSelectedMessage() {
+        Dialogs.alert(context, R.string.warning, R.string.file_attribute_audio_wrong_file_type_selected);
     }
 
     private void resetRecordingChronometer() {

@@ -62,7 +62,7 @@
     <string name="backup_mode_save_to_downloads">Save to \"Download\" folder</string>
     <string name="backup_mode_share">Share</string>
     <string name="backup_not_enough_space_internal">Not enough space in internal memory to complete the backup process</string>
-    <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the backup process</string>
+    <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the process</string>
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
     <string name="backup_complete">Backed up survey to %s</string>
     <string name="backup_failed">Backup failed: %s</string>
@@ -71,6 +71,9 @@
     <string name="backup_file_generation_complete">Backup file generation complete</string>
     <string name="backup_file_generation_into_downloads_complete_message">Backup file generated into \"Download\" folder</string>
     <string name="backup_file_share_with_application">Send backup file to</string>
+    <string name="restore_progress_dialog_title">Restoring backup file</string>
+    <string name="restore_error_invalid_backup_file">Invalid backup file selected; only valid Collect Mobile Backup files (with extension .ofcmbck) can be selected</string>
+    <string name="restore_error_backup_file_generated_with_newer_version">Backup file generated with a newer version of Collect Mobile</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>

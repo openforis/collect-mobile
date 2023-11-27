@@ -40,6 +40,20 @@ public class Unzipper {
         }
     }
 
+    public void unzipAll() throws IOException {
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile));
+        try {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            while (zipEntry != null) {
+                String entryName = entryName(zipEntry);
+                extractEntry(zipInputStream, entryName);
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } finally {
+            zipInputStream.close();
+        }
+    }
+
     private String entryName(ZipEntry zipEntry) {
         String name = zipEntry.getName();
         int i = name.lastIndexOf('/'); // Ignore directories

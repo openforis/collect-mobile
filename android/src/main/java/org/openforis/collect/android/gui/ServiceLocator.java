@@ -161,7 +161,8 @@ public class ServiceLocator {
     }
 
     public static boolean isSurveyImported(String surveyName, Context context) {
-        return context.getDatabasePath(databasePath(MODEL_DB, surveyName, context).getAbsolutePath()).exists();
+        File dbFile = context.getDatabasePath(databasePath(MODEL_DB, surveyName, context).getAbsolutePath());
+        return dbFile.exists();
     }
 
     private static AndroidDatabase createModelDatabase(String surveyName, Context applicationContext) {

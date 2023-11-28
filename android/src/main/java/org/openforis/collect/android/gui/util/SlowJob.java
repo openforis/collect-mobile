@@ -19,7 +19,7 @@ public class SlowJob<Params, Progress, Result> {
 
     protected Status status = Status.PENDING;
     private ProgressDialog progressDialog;
-    private Exception lastException;
+    protected Exception lastException;
 
     public SlowJob(Activity context, Runnable runnable, int progressDialogTitleResId, int progressDialogMessageResId) {
         this(context, runnable, null, progressDialogTitleResId, progressDialogMessageResId);
@@ -84,11 +84,24 @@ public class SlowJob<Params, Progress, Result> {
         }
     }
 
-    protected void showWarning(final int messageKey) {
+    protected void showInfo(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.info, messageKey, messageArgs);
+    }
+
+    protected void showWarning(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.warning, messageKey, messageArgs);
+    }
+
+    protected void showError(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.error, messageKey, messageArgs);
+    }
+
+    protected void showMessage(final int titleKey, final int messageKey, final Object ...messageArgs) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Dialogs.alert(context, R.string.warning, messageKey);
+                String message = context.getString(messageKey, messageArgs);
+                Dialogs.alert(context, titleKey, message);
             }
         });
     }

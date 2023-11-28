@@ -2,7 +2,6 @@ package org.openforis.collect.android.collectadapter;
 
 import org.apache.commons.io.IOUtils;
 import org.openforis.collect.android.util.FileUtils;
-import org.openforis.collect.io.SurveyBackupJob;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +14,9 @@ import java.util.zip.ZipOutputStream;
 
 public class BackupGenerator {
     private static final Logger LOG = Logger.getLogger(BackupGenerator.class.getName());
+
+    public static String INFO_FILE_NAME = "info.properties";
+    public static String SURVEYS_DIR = "surveys";
 
     private File surveysDir;
     private String appVersion;
@@ -41,14 +43,14 @@ public class BackupGenerator {
         List<File> files = FileUtils.listFilesRecursively(surveysDir);
         for (File file: files) {
             String filePath = file.getAbsolutePath();
-            String entryName = "surveys/" + filePath.substring(surveysDir.getAbsolutePath().length() + 1, filePath.length());
+            String entryName = SURVEYS_DIR + "/" + filePath.substring(surveysDir.getAbsolutePath().length() + 1, filePath.length());
             writeFile(file, entryName);
         }
     }
 
     private void addInfoFile() throws IOException {
         try {
-            zipOutputStream.putNextEntry(new ZipEntry(SurveyBackupJob.INFO_FILE_NAME));
+            zipOutputStream.putNextEntry(new ZipEntry(INFO_FILE_NAME));
             BackupInfo info = new BackupInfo(appVersion);
             info.store(zipOutputStream);
         } finally {

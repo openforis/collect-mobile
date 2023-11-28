@@ -13,18 +13,6 @@
                 app:showAsAction="never"
                 android:onClick="openSurveyGuide" />
             <item
-                android:id="@+id/action_backup"
-                android:title="@string/action_backup"
-                android:icon="?attr/backupIcon"
-                app:showAsAction="never"
-                android:onClick="backup"/>
-            <item
-                android:id="@+id/action_restore"
-                android:title="Restore"
-                android:icon="?attr/backupIcon"
-                app:showAsAction="never"
-                android:onClick="restore"/>
-            <item
                 android:id="@+id/action_export"
                 android:title="@string/action_export"
                 android:icon="?attr/exportIcon"

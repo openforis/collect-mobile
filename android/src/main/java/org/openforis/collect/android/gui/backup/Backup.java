@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.backup;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -33,7 +35,7 @@ public class Backup {
     private static String BACKUP_FILE_PREFIX = "collect_mobile_backup_";
     public static String BACKUP_FILE_EXTENSION = "ofcmbck";
 
-    public static void showBackupModeChooseDialog(FragmentActivity activity) {
+    public static void showBackupModeChooseDialog(AppCompatActivity activity) {
         DialogFragment dialogFragment = new BackupModeDialogFragment();
         dialogFragment.show(activity.getSupportFragmentManager(), "backupModeSelection");
     }

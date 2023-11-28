@@ -56,6 +56,9 @@
     <string name="action_about">About</string>
     <string name="action_exit">Exit</string>
 
+    <string name="backup_restore">Backup / Restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_summary">Tap to generate a full backup of the application</string>
     <string name="backup_mode_choose">Choose backup mode</string>
     <string name="backup_mode_new_sdcard">Into NEW SD card</string>
     <string name="backup_mode_internal">Internal</string>
@@ -71,9 +74,16 @@
     <string name="backup_file_generation_complete">Backup file generation complete</string>
     <string name="backup_file_generation_into_downloads_complete_message">Backup file generated into \"Download\" folder</string>
     <string name="backup_file_share_with_application">Send backup file to</string>
+    <string name="restore">Restore</string>
+    <string name="restore_summary">Tap to start a full data restore process</string>
     <string name="restore_progress_dialog_title">Restoring backup file</string>
     <string name="restore_error_invalid_backup_file">Invalid backup file selected; only valid Collect Mobile Backup files (with extension .ofcmbck) can be selected</string>
     <string name="restore_error_backup_file_generated_with_newer_version">Backup file generated with a newer version of Collect Mobile</string>
+    <string name="restore_error_empty_surveys_folder">Empty surveys folder in backup file; nothing could be restored.</string>
+    <string name="restore_confirm_title">Confirm data restore</string>
+    <string name="restore_confirm_message">The data restore process will DELETE ALL the existing data and restore the one in the selected .ofcmbck file. Continue?</string>
+    <string name="restore_successful">Data restored successfully!</string>
+    <string name="restore_error">Error restoring data: %s</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>

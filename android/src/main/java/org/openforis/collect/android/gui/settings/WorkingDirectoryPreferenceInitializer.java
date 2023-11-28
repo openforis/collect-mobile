@@ -8,12 +8,12 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
+
 import com.codekidlabs.storagechooser.StorageChooser;
 
 import org.openforis.collect.R;
-import org.openforis.collect.android.gui.MainActivity;
-import org.openforis.collect.android.gui.ServiceLocator;
-import org.openforis.collect.android.gui.util.Activities;
+import org.openforis.collect.android.gui.BaseActivity;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
@@ -21,8 +21,6 @@ import org.openforis.collect.android.gui.util.Dialogs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 class WorkingDirectoryPreferenceInitializer {
 
@@ -131,10 +129,7 @@ class WorkingDirectoryPreferenceInitializer {
 
                 editor.apply();
 
-                // reset service locator and restart main activity
-                ServiceLocator.reset(activity);
-                Activities.startNewClearTask(activity, MainActivity.class);
-                activity.finish();
+                BaseActivity.restartMainActivity(activity);
             }
         });
     }

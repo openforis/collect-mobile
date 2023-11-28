@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -69,5 +70,11 @@ public abstract class BaseActivity extends AppCompatActivity {
                 Activities.startNewClearTask(BaseActivity.this, MainActivity.class, bundle);
             }
         });
+    }
+
+    public static void restartMainActivity(Activity context) {
+        ServiceLocator.reset(context);
+        Activities.startNewClearTask(context, MainActivity.class);
+        context.finish();
     }
 }

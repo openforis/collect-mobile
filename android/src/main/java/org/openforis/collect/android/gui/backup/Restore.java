@@ -7,15 +7,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.collectadapter.BackupInfo;
+import org.openforis.collect.android.gui.BaseActivity;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
+import org.openforis.collect.android.gui.util.SlowJob;
 import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.util.Unzipper;
-import org.openforis.collect.io.SurveyBackupInfo;
 import org.openforis.collect.io.SurveyBackupJob;
 import org.openforis.commons.versioning.Version;
 
@@ -30,19 +31,19 @@ public class Restore {
             ((SurveyNodeActivity) context).setRestoreFileSelectedListener(new RestoreFileSelectedListener() {
                 @Override
                 public void fileSelected(Uri fileUri) {
-                    new RestoreTask(context, fileUri).execute();
+                    new RestoreJob(context, fileUri).execute();
                 }
             });
             Activities.startFileChooserActivity(context, "Select file to restore", SurveyNodeActivity.RESTORE_FILE_SELECTED_REQUEST_CODE, "*/*");
         }
     }
 
-    private static class RestoreTask extends SlowAsyncTask<Void, Void, Boolean> {
+    private static class RestoreJob extends SlowJob<Void, Void, Boolean> {
 
         private Uri fileUri;
 
-        RestoreTask(Activity context, Uri fileUri) {
-            super(context, R.string.restore_progress_dialog_title, R.string.please_wait);
+        RestoreJob(Activity context, Uri fileUri) {
+            super(context, null, R.string.restore_progress_dialog_title, R.string.please_wait);
             this.fileUri = fileUri;
         }
 
@@ -108,6 +109,14 @@ public class Restore {
             } else {
                 showWarning(R.string.backup_not_enough_space_working_directory);
                 return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result) {
+                BaseActivity.restartMainActivity(context);
             }
         }
     }

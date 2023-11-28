@@ -32,7 +32,6 @@ public class Restore {
                 selectFileToRestore(context);
             }
         });
-
     }
 
     private static void selectFileToRestore(final Activity context) {
@@ -62,7 +61,7 @@ public class Restore {
 
     private static class RestoreJob extends SlowJob<Void, Void, Boolean> {
 
-        private Uri fileUri;
+        private final Uri fileUri;
 
         RestoreJob(Activity context, Uri fileUri) {
             super(context, null, R.string.restore_progress_dialog_title, R.string.please_wait);

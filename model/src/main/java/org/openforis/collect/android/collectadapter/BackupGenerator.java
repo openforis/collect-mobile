@@ -16,13 +16,13 @@ import java.util.zip.ZipOutputStream;
 public class BackupGenerator {
     private static final Logger LOG = Logger.getLogger(BackupGenerator.class.getName());
 
-    private File sourceDir;
+    private File surveysDir;
     private String appVersion;
     private File destFile;
     private ZipOutputStream zipOutputStream;
 
-    public BackupGenerator(File sourceDir, String appVersion, File destFile) {
-        this.sourceDir = sourceDir;
+    public BackupGenerator(File surveysDir, String appVersion, File destFile) {
+        this.surveysDir = surveysDir;
         this.appVersion = appVersion;
         this.destFile = destFile;
     }
@@ -38,10 +38,11 @@ public class BackupGenerator {
     }
 
     private void addSourceFiles() throws IOException {
-        List<File> files = FileUtils.listFilesRecursively(sourceDir);
+        List<File> files = FileUtils.listFilesRecursively(surveysDir);
         for (File file: files) {
             String filePath = file.getAbsolutePath();
-            writeFile(file, filePath.substring(sourceDir.getAbsolutePath().length() + 1, filePath.length()));
+            String entryName = "surveys/" + filePath.substring(surveysDir.getAbsolutePath().length() + 1, filePath.length());
+            writeFile(file, entryName);
         }
     }
 

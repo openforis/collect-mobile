@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class AppDirs {
+
+    public static final String SURVEYS_DIR_NAME = "surveys";
     public static final String PREFERENCE_KEY = "workingDir";
     private static final String ENV_SECONDARY_STORAGE = "SECONDARY_STORAGE";
 
@@ -46,7 +48,7 @@ public abstract class AppDirs {
     }
 
     public static File surveysDir(Context context) throws WorkingDirNotAccessible {
-        return new File(root(context), "surveys");
+        return new File(root(context), SURVEYS_DIR_NAME);
     }
 
     public static File surveyImagesDir(String surveyName, Context context) throws WorkingDirNotAccessible {

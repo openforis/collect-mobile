@@ -69,7 +69,8 @@ public class Restore {
                     }
                     File infoFile = new File(unzippedDir, SurveyBackupJob.INFO_FILE_NAME);
                     infoFile.delete();
-                    FileUtils.moveDirectory(unzippedDir, surveysDir);
+                    File unzippedSurveysDir = new File(unzippedDir, AppDirs.SURVEYS_DIR_NAME);
+                    FileUtils.moveDirectory(unzippedSurveysDir, surveysDir);
                     AndroidFiles.makeDiscoverable(surveysDir, context);
                     return true;
                 } else {

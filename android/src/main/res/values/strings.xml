@@ -81,8 +81,8 @@
     <string name="restore_error_backup_file_generated_with_newer_version">Backup file generated with a newer version of Collect Mobile</string>
     <string name="restore_error_empty_surveys_folder">Empty surveys folder in backup file; nothing could be restored.</string>
     <string name="restore_confirm_title">Confirm data restore</string>
-    <string name="restore_confirm_message">Please select a valid .ofcmbck file to restore. The data restore process will DELETE ALL EXISTING DATA. Continue?</string>
-    <string name="restore_confirm_message_2">ALL EXISTING DATA WILL BE DELETED and the one in the selected .ofcmbck file will be restored. Continue?</string>
+    <string name="restore_confirm_message">Please select a valid backup file (with .ofcmbck extension) to restore. The data restore process will DELETE ALL EXISTING DATA. Continue?</string>
+    <string name="restore_confirm_message_2">ALL EXISTING DATA WILL BE DELETED and the selected backup file will be restored. Continue?</string>
     <string name="restore_successful">Data restored successfully!</string>
     <string name="restore_error">Error restoring data: %s</string>
 

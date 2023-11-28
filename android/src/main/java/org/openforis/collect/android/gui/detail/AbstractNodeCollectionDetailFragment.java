@@ -101,7 +101,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
     @Override
     protected void updateEditableState() {
         super.updateEditableState();
-        ViewHolder viewHolder = (ViewHolder) getView().getTag();
+        ViewHolder viewHolder = getViewHolder();
+        if (viewHolder == null) return;
         Views.toggleVisibility(viewHolder.addButtonSwitcher, !isRecordEditLocked());
     }
 
@@ -250,6 +251,8 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
 
         adapterUpdateTimer = new Timer();
         adapterUpdateTimer.schedule(new AdapterUpdaterTask(), 60000, 60000);
+
+        updateEditableState();
     }
 
     private void buildDynamicHeaderPart(View rootView) {
@@ -332,6 +335,12 @@ public abstract class AbstractNodeCollectionDetailFragment<T extends UiInternalN
                 }
             });
         }
+    }
+
+    protected ViewHolder getViewHolder() {
+        View view = getView();
+        if (view == null) return null;
+        return (ViewHolder) view.getTag();
     }
 
     protected class ViewHolder {

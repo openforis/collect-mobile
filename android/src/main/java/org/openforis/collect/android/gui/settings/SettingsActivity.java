@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.settings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,8 +13,6 @@ import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.vision.barcode.Barcode;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.Settings;
@@ -25,7 +22,6 @@ import org.openforis.collect.android.gui.ThemeInitializer;
 import org.openforis.collect.android.gui.UILanguageInitializer;
 import org.openforis.collect.android.gui.backup.Backup;
 import org.openforis.collect.android.gui.backup.Restore;
-import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.manager.MessageSource;
@@ -383,7 +379,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference preference = findPreference(RESTORE);
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    Restore.selectFileToRestore(getActivity());
+                    Restore.confirmRestore(getActivity());
                     return false;
                 }
             });

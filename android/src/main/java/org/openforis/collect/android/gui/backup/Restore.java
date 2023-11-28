@@ -26,21 +26,38 @@ import java.io.IOException;
 
 public class Restore {
 
-    public static void selectFileToRestore(final Activity context) {
+    public static void confirmRestore(final Activity context) {
         Dialogs.confirm(context, R.string.restore_confirm_title, R.string.restore_confirm_message, new Runnable() {
             public void run() {
-                if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-                    ((SettingsActivity) context).setRestoreFileSelectedListener(new RestoreFileSelectedListener() {
-                        @Override
-                        public void fileSelected(Uri fileUri) {
-                            new RestoreJob(context, fileUri).execute();
-                        }
-                    });
-                    Activities.startFileChooserActivity(context, "Select file to restore", SettingsActivity.RESTORE_FILE_SELECTED_REQUEST_CODE, "*/*");
-                }
+                selectFileToRestore(context);
             }
         });
 
+    }
+
+    private static void selectFileToRestore(final Activity context) {
+        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
+            ((SettingsActivity) context).setRestoreFileSelectedListener(new RestoreFileSelectedListener() {
+                @Override
+                public void fileSelected(Uri fileUri) {
+                    onFileSelected(fileUri, context);
+                }
+            });
+            Activities.startFileChooserActivity(context, "Select file to restore", SettingsActivity.RESTORE_FILE_SELECTED_REQUEST_CODE, "*/*");
+        }
+    }
+
+    private static void onFileSelected(final Uri fileUri, final Activity context) {
+        String fileName = AndroidFiles.getUriContentFileName(context, fileUri);
+        if (!Backup.BACKUP_FILE_EXTENSION.equals(FilenameUtils.getExtension(fileName))) {
+            Dialogs.alert(context, R.string.warning, R.string.restore_error_invalid_backup_file);
+        } else {
+            Dialogs.confirm(context, R.string.restore_confirm_title, R.string.restore_confirm_message_2, new Runnable() {
+                public void run() {
+                    new RestoreJob(context, fileUri).execute();
+                }
+            });
+        }
     }
 
     private static class RestoreJob extends SlowJob<Void, Void, Boolean> {
@@ -59,10 +76,6 @@ public class Restore {
                 unzippedDir = null;
             try {
                 zipFile = AndroidFiles.copyUriContentToCache(context, fileUri);
-                if (!Backup.BACKUP_FILE_EXTENSION.equals(FilenameUtils.getExtension(zipFile.getName()))) {
-                    showWarning(R.string.restore_error_invalid_backup_file);
-                    return false;
-                }
                 unzippedDir = org.openforis.collect.android.util.FileUtils.createTempDir();
                 if (AndroidFiles.enoughSpaceToCopy(zipFile, unzippedDir)) {
                     new Unzipper(zipFile, unzippedDir).unzipAll();
@@ -126,7 +139,6 @@ public class Restore {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result != null && result.booleanValue()) {
-                showInfo(R.string.restore_successful);
                 BaseActivity.restartMainActivity(context);
             } else {
                 String errorDetails = lastException == null ? null : lastException.getMessage();

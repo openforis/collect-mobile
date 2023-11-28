@@ -38,7 +38,6 @@
 
     <string-array name="backup_modes">
         <item>@string/backup_mode_new_sdcard</item>
-        <item>@string/backup_mode_internal</item>
         <item>@string/backup_mode_save_to_downloads</item>
         <item>@string/backup_mode_share</item>
     </string-array>

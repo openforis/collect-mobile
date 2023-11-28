@@ -1,6 +1,5 @@
 package org.openforis.collect.android.gui.backup;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -235,12 +234,9 @@ public class Backup {
                                     backupExecutor.backupToNewSdCard();
                                     break;
                                 case 1:
-                                    backupExecutor.backupInternally();
-                                    break;
-                                case 2:
                                     backupExecutor.backupIntoDownloads();
                                     break;
-                                case 3:
+                                case 2:
                                     backupExecutor.backupAndShare();
                                     break;
                             }

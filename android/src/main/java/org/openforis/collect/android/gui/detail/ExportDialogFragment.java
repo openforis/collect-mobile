@@ -85,7 +85,7 @@ public class ExportDialogFragment extends DialogFragment {
 
     private static void openShareOrSaveDialog(final Activity activity, final SurveyDataExportParameters exportParameters) {
         List<String> options = new ArrayList<String>(Arrays.asList(
-                activity.getString(R.string.export_dialog_option_share),
+                activity.getString(R.string.share_file),
                 activity.getString(R.string.export_dialog_option_save_to_downloads)
         ));
         final int[] checkedItem = {0};
@@ -126,10 +126,7 @@ public class ExportDialogFragment extends DialogFragment {
             File exportedFile = surveyService.exportSurvey(AppDirs.surveysDir(context), parameters);
             AndroidFiles.makeDiscoverable(exportedFile, context);
             if (parameters.saveToDownloads) {
-                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadDir.exists() && !downloadDir.mkdirs()) {
-                    throw new IOException("Cannot create Download folder: " + downloadDir.getAbsolutePath());
-                }
+                File downloadDir = AndroidFiles.getDownloadsDir(context);
                 File downloadDirDestinationFile = new File(downloadDir, exportedFile.getName());
                 IOUtils.copy(new FileInputStream(exportedFile), new FileOutputStream(downloadDirDestinationFile));
                 AndroidFiles.makeDiscoverable(downloadDirDestinationFile, context);

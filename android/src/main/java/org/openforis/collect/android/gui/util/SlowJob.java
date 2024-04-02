@@ -2,20 +2,14 @@ package org.openforis.collect.android.gui.util;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 
 import org.openforis.collect.R;
 
-/**
- * @author Stefano Ricci
- *
- * It shows a progress dialog while the actual task is running.
- * Excpetion thrown in doInBackground method can be handled by extending the method handleException
- * or by passing an ExceptionHandler to the constructor
- *
- * Subclasses should override the method runTask and handleException
- */
-public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public class SlowJob<Params, Progress, Result> {
+
+    enum Status {
+        PENDING, RUNNING, COMPLETED, ERROR
+    }
 
     protected final Activity context;
     private final Runnable runnable;
@@ -23,29 +17,15 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
     private final int progressDialogMessageResId;
     private final ExceptionHandler exceptionHandler;
 
-    protected Status status = Status.INITIALIZING;
+    protected Status status = Status.PENDING;
     private ProgressDialog progressDialog;
-    private Exception lastException;
+    protected Exception lastException;
 
-    enum Status {
-        INITIALIZING, RUNNING, COMPLETED, ERROR
-    }
-
-    public SlowAsyncTask(Activity context) {
-        this(context, R.string.processing, R.string.please_wait);
-    }
-
-    public SlowAsyncTask(Activity context, int progressDialogTitleResId,
-                         int progressDialogMessageResId) {
-        this(context, null, null, progressDialogTitleResId, progressDialogMessageResId);
-    }
-
-    public SlowAsyncTask(Activity context, Runnable runnable, int progressDialogTitleResId,
-                         int progressDialogMessageResId) {
+    public SlowJob(Activity context, Runnable runnable, int progressDialogTitleResId, int progressDialogMessageResId) {
         this(context, runnable, null, progressDialogTitleResId, progressDialogMessageResId);
     }
 
-    public SlowAsyncTask(Activity context, Runnable runnable, ExceptionHandler exceptionHandler, int progressDialogTitleResId, int progressDialogMessageResId) {
+    public SlowJob(Activity context, Runnable runnable, ExceptionHandler exceptionHandler, int progressDialogTitleResId, int progressDialogMessageResId) {
         super();
         this.context = context;
         this.runnable = runnable;
@@ -54,14 +34,19 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
         this.progressDialogMessageResId = progressDialogMessageResId;
     }
 
-    @Override
+    public void execute() {
+        onPreExecute();
+
+        Result result = doInBackground();
+
+        onPostExecute(result);
+    }
+
     protected void onPreExecute() {
-        super.onPreExecute();
         progressDialog = ProgressDialog.show(context, context.getString(progressDialogTitleResId),
                 context.getString(progressDialogMessageResId), true);
     }
 
-    @Override
     protected Result doInBackground(Params... params) {
         status = Status.RUNNING;
         try {
@@ -83,8 +68,6 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
     }
 
     protected void onPostExecute(Result result) {
-        super.onPostExecute(result);
-
         if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
@@ -101,11 +84,24 @@ public abstract class SlowAsyncTask<Params, Progress, Result> extends AsyncTask<
         }
     }
 
-    protected void showWarning(final int messageKey) {
+    protected void showInfo(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.info, messageKey, messageArgs);
+    }
+
+    protected void showWarning(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.warning, messageKey, messageArgs);
+    }
+
+    protected void showError(int messageKey, Object ...messageArgs) {
+        showMessage(R.string.error, messageKey, messageArgs);
+    }
+
+    protected void showMessage(final int titleKey, final int messageKey, final Object ...messageArgs) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Dialogs.alert(context, R.string.warning, messageKey);
+                String message = context.getString(messageKey, messageArgs);
+                Dialogs.alert(context, titleKey, message);
             }
         });
     }

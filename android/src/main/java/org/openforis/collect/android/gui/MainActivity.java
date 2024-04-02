@@ -46,11 +46,11 @@ public class MainActivity extends BaseActivity {
     private void initializeServices() {
         try {
             ServiceLocator.init(this);
-        } catch (WorkingDirNotWritable ignore) {
-            DialogFragment newFragment = new SecondaryStorageNotFoundFragment();
+        } catch (WorkingDirNotAccessible ignore) {
+            DialogFragment newFragment = new WorkingDirectoryNotAccessibleFragment();
             newFragment.show(getSupportFragmentManager(), "secondaryStorageNotFound");
-        } catch (StorageAccessException e) {
-            handleStorageAccessException(e);
+        } catch (Exception e) {
+            handleStorageAccessException(new StorageAccessException());
         }
     }
 
@@ -98,6 +98,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         if (!Permissions.isPermissionGranted(grantResults)) {
             return;
         }

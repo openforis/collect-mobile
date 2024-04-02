@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.provider.MediaStore;
@@ -17,6 +18,8 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.openforis.collect.R;
+import org.openforis.collect.android.gui.WorkingDirNotAccessible;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +55,12 @@ public abstract class AndroidFiles {
             if (!file.isDirectory())
                 makeFileDiscoverable(file, context);
         }
+    }
+
+    public static void createAndMakeDiscoverableDir(File dir, Context context) {
+        if (!dir.mkdirs())
+            throw new WorkingDirNotAccessible(dir);
+        makeDiscoverable(dir, context);
     }
 
     public static Uri getUriForFile(Context context, File file) {
@@ -98,17 +107,21 @@ public abstract class AndroidFiles {
         }
     }
 
-    public static File copyUriContentToCache(Context context, Uri uri) {
+    public static File copyUriContentToCache(Context context, Uri uri) throws Exception {
         try {
             ParcelFileDescriptor fileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
-            if (fileDescriptor == null) return null;
+            if (fileDescriptor == null) throw new Exception("Error ");
             String fileName = getUriContentFileName(context, uri);
             InputStream is = new FileInputStream(fileDescriptor.getFileDescriptor());
             File fileCache = new File(context.getCacheDir(), fileName);
             IOUtils.copy(is, new FileOutputStream(fileCache));
+            if (fileCache.length() == 0) {
+                throw new IllegalStateException(context.getString(R.string.survey_import_failed_empty_file_message));
+            }
             return fileCache;
         } catch (Exception e) {
-            return null;
+            throw new Exception(String.format(
+                    "Error copying file; could not determine file path for URI: %s", uri), e);
         }
     }
 
@@ -147,7 +160,7 @@ public abstract class AndroidFiles {
     }
 
     public static boolean enoughSpaceToCopy(File fromPath, File toPath) {
-        return FileUtils.sizeOfDirectory(fromPath) < availableSize(toPath);
+        return (fromPath.isDirectory() ? FileUtils.sizeOfDirectory(fromPath) : fromPath.length()) < availableSize(toPath);
     }
 
     private static File firstExistingAncestorOrSelf(File file) {
@@ -156,5 +169,13 @@ public abstract class AndroidFiles {
             current = current.getParentFile();
         }
         return current;
+    }
+
+    public static File getDownloadsDir(Context context) throws IOException {
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (!downloadDir.exists() && !downloadDir.mkdirs()) {
+            throw new IOException(context.getResources().getString(R.string.error_cannot_create_downloads_folder, downloadDir.getAbsolutePath()));
+        }
+        return downloadDir;
     }
 }

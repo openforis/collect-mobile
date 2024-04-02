@@ -30,6 +30,7 @@
     <string name="warning">Warning</string>
     <string name="error">Error</string>
 
+    <string name="share_file">Share (by email, DropBox, Google Drive, etc.)</string>
     <string name="low_storage_error">Low device storage</string>
 
     <string name="app_name">Collect</string>
@@ -55,16 +56,35 @@
     <string name="action_about">About</string>
     <string name="action_exit">Exit</string>
 
+    <string name="backup_restore">Backup / Restore</string>
+    <string name="backup">Backup</string>
+    <string name="backup_summary">Tap to generate a full backup of the application</string>
     <string name="backup_mode_choose">Choose backup mode</string>
     <string name="backup_mode_new_sdcard">Into NEW SD card</string>
     <string name="backup_mode_internal">Internal</string>
+    <string name="backup_mode_save_to_downloads">Save to \"Download\" folder</string>
+    <string name="backup_mode_share">Share</string>
     <string name="backup_not_enough_space_internal">Not enough space in internal memory to complete the backup process</string>
-    <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the backup process</string>
+    <string name="backup_not_enough_space_working_directory">Not enough space in working directory to complete the process</string>
     <string name="backup_insert_sd_card">Please insert SD card to store backup on</string>
     <string name="backup_complete">Backed up survey to %s</string>
     <string name="backup_failed">Backup failed: %s</string>
     <string name="backup_delete_oldest_snapshot">Delete oldest snapshot of the %s and try again?</string>
     <string name="backup_delete_oldest_snapshot_failed">Failed to delete the oldest snapshot: %s</string>
+    <string name="backup_file_generation_complete">Backup file generation complete</string>
+    <string name="backup_file_generation_into_downloads_complete_message">Backup file generated into \"Download\" folder</string>
+    <string name="backup_file_share_with_application">Send backup file to</string>
+    <string name="restore">Restore</string>
+    <string name="restore_summary">Tap to start a full data restore process</string>
+    <string name="restore_progress_dialog_title">Restoring backup file</string>
+    <string name="restore_error_invalid_backup_file">Invalid backup file selected; only valid Collect Mobile Backup files (with extension .ofcmbck) can be selected</string>
+    <string name="restore_error_backup_file_generated_with_newer_version">Backup file generated with a newer version of Collect Mobile</string>
+    <string name="restore_error_empty_surveys_folder">Empty surveys folder in backup file; nothing could be restored.</string>
+    <string name="restore_confirm_title">Confirm data restore</string>
+    <string name="restore_confirm_message">Please select a valid backup file (with .ofcmbck extension) to restore. The data restore process will DELETE ALL EXISTING DATA. Continue?</string>
+    <string name="restore_confirm_message_2">ALL EXISTING DATA WILL BE DELETED and the selected backup file will be restored. Continue?</string>
+    <string name="restore_successful">Data restored successfully!</string>
+    <string name="restore_error">Error restoring data: %s</string>
 
     <string name="toast_exported_survey">Exported survey to %s</string>
     <string name="toast_exported_survey_failed">Failed to export survey: %s</string>
@@ -85,7 +105,7 @@
     <string name="survey_guide_error_opening_file">Error opening Survey Guide file: %s</string>
     <string name="survey_guide_not_found_alert_message">Survey guide not found in the survey</string>
 
-    <string name="storage_not_found_message">Secondary storage not found</string>
+    <string name="working_directory_not_accessible_message">Working directory not accessible</string>
     <string name="storage_not_found_retry">Retry</string>
     <string name="storage_not_found_settings">Configure location</string>
 
@@ -196,8 +216,7 @@
     <string name="export_dialog_option_only_selected_records">Only selected records</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>
     <string name="export_dialog_option_exclude_calculated_values">Exclude calculated attribute values</string>
-    <string name="export_dialog_option_share">Share (by email, DropBox, Google Drive, etc.)</string>
-    <string name="export_dialog_option_save_to_downloads">Save to \"Download\" directory</string>
+    <string name="export_dialog_option_save_to_downloads">Save to \"Download\" folder</string>
     <string name="export_progress_dialog_title">Exporting data</string>
     <string name="export_share_with_application">Send exported data to</string>
     <string name="export_completed_title">Data export completed</string>
@@ -286,6 +305,9 @@
     <string name="permission_external_storage">external storage</string>
     <string name="permission_record_audio">audio record</string>
     <string name="permission_camera_barcode_scanner">camera to acquire the barcode</string>
+
+
+    <string name="error_cannot_create_downloads_folder">Cannot create \"Download\" folder with path %s</string>
 
     <string name="exit_confirm_message">Exit from Collect Mobile?\n\n(data has been automatically saved already)</string>
 </resources>

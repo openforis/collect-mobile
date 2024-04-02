@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 
 import androidx.annotation.Nullable;
 
+import org.openforis.commons.versioning.Version;
+
 /**
  * @author Stefano Ricci
  */
@@ -23,6 +25,10 @@ public abstract class App {
 
     public static String versionFull(Context context) {
         return versionName(context) + " [" + versionCode(context) + "]";
+    }
+
+    public static Version version(Context context) {
+        return new Version(versionName(context));
     }
 
     @Nullable

@@ -28,7 +28,7 @@
     <string name="backup_complete">Questionnaire sauvegardé sur %s</string>
     <string name="backup_failed">Sauvegarde échouée: %s</string>
 
-    <string name="storage_not_found_message">Stockage secondaire non trouvée</string>
+    <string name="working_directory_not_accessible_message">Stockage secondaire non trouvée</string>
     <string name="storage_not_found_retry">Veuillez réessayer</string>
     <string name="storage_not_found_settings">Veuillez configurez l’emplacement</string>
 

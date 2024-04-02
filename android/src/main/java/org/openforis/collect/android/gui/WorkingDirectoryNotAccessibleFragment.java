@@ -12,11 +12,11 @@ import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AppDirs;
 
-public class SecondaryStorageNotFoundFragment extends DialogFragment {
+public class WorkingDirectoryNotAccessibleFragment extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.storage_not_found_message)
+        builder.setTitle(R.string.working_directory_not_accessible_message)
                 .setMessage(AppDirs.root(getActivity()).getAbsolutePath())
                 .setPositiveButton(R.string.storage_not_found_retry, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

@@ -97,4 +97,19 @@
             android:summary="@string/settings_remote_sync_test_summary"
             android:title="@string/settings_remote_sync_test" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="backup_restore"
+        android:title="@string/backup_restore">
+        <Preference
+            android:key="backup"
+            android:persistent="false"
+            android:summary="@string/backup_summary"
+            android:title="@string/backup" />
+        <Preference
+            android:key="restore"
+            android:persistent="false"
+            android:summary="@string/restore_summary"
+            android:title="@string/restore" />
+    </PreferenceCategory>
 </PreferenceScreen>

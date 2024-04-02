@@ -108,7 +108,7 @@ public class SurveyImporter {
 
     public static void importDefaultSurvey(Context context) {
         try {
-            File tempDir = createTempDir();
+            File tempDir = org.openforis.collect.android.util.FileUtils.createTempDir();
             InputStream sourceInput = SurveyImporter.class.getResourceAsStream("/demo.collect-mobile");
             File intermediateSurveyPath = new File(tempDir, "demo.collect-mobile");
             FileOutputStream intermediateOutput = new FileOutputStream(intermediateSurveyPath);
@@ -138,13 +138,13 @@ public class SurveyImporter {
         } catch (IOException e) {
             throw new MalformedSurvey(sourceSurveyPath, e);
         } finally {
-            close(is);
+            IOUtils.closeQuietly(is);
         }
         return info;
     }
 
     private File unzipSurveyDefinition() throws IOException {
-        File folder = createTempDir();
+        File folder = org.openforis.collect.android.util.FileUtils.createTempDir();
         File zipFile = new File(sourceSurveyPath);
         if (!zipFile.exists())
             throw new FileNotFoundException("File not found: " + sourceSurveyPath);
@@ -155,23 +155,6 @@ public class SurveyImporter {
         }
 
         return folder;
-    }
-
-    private static File createTempDir() throws IOException {
-        File tempDir = File.createTempFile("collect", Long.toString((System.nanoTime())));
-        if (!tempDir.delete())
-            throw new IOException("Failed to create temp dir:" + tempDir.getAbsolutePath());
-        if (!tempDir.mkdir())
-            throw new IOException("Failed to create temp dir:" + tempDir.getAbsolutePath());
-        return tempDir;
-    }
-
-    private void close(InputStream is) {
-        if (is != null)
-            try {
-                is.close();
-            } catch (IOException ignore) {
-            }
     }
 
     public static String surveyMinorVersion(Version version) {

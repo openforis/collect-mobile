@@ -94,4 +94,24 @@ public abstract class Activities {
 
         context.startActivity(Intent.createChooser(intent, context.getText(messageKey)));
     }
+
+    public static void startFileChooserActivity(Activity context, String title, int requestCode, String type, String... extraMimeTypes) {
+        Intent intent = createFileSelectorIntent(type, extraMimeTypes);
+        context.startActivityForResult(Intent.createChooser(intent, title), requestCode);
+    }
+
+    public static boolean canStartFileChooserActivity(Activity context, String type) {
+        Intent intent = createFileSelectorIntent(type);
+        return intent.resolveActivity(context.getPackageManager()) != null;
+    }
+
+    private static Intent createFileSelectorIntent(String type, String... extraMimeTypes) {
+        Intent intent = new Intent();
+        intent.setType(type);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        if (extraMimeTypes != null && extraMimeTypes.length > 0) {
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
+        }
+        return intent;
+    }
 }

@@ -70,7 +70,7 @@ public class ServiceLocator {
      * Initializes the ServiceLocator.
      * Returns true if there is a selected survey, false otherwise
      */
-    public static boolean init(Context applicationContext) throws WorkingDirNotWritable {
+    public static boolean init(Context applicationContext) throws WorkingDirNotAccessible {
         if (surveyService == null) {
             SettingsActivity.init(applicationContext);
             UILanguageInitializer.init(applicationContext);
@@ -161,7 +161,8 @@ public class ServiceLocator {
     }
 
     public static boolean isSurveyImported(String surveyName, Context context) {
-        return context.getDatabasePath(databasePath(MODEL_DB, surveyName, context).getAbsolutePath()).exists();
+        File dbFile = context.getDatabasePath(databasePath(MODEL_DB, surveyName, context).getAbsolutePath());
+        return dbFile.exists();
     }
 
     private static AndroidDatabase createModelDatabase(String surveyName, Context applicationContext) {
@@ -264,9 +265,7 @@ public class ServiceLocator {
         RecordFileManager recordFileManager = new RecordFileManager() {{
             storageDirectory = AppDirs.surveyImagesDir(surveyName, context);
             if (!storageDirectory.exists()) {
-                if (!storageDirectory.mkdirs())
-                    throw new WorkingDirNotWritable(storageDirectory);
-                AndroidFiles.makeDiscoverable(storageDirectory, context);
+                AndroidFiles.createAndMakeDiscoverableDir(storageDirectory, context);
             }
         }};
         recordFileManager.setDefaultRootStoragePath(AppDirs.surveyDatabasesDir(surveyName, context).getAbsolutePath());

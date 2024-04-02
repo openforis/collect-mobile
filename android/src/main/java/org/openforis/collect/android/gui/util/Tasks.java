@@ -17,10 +17,31 @@ public class Tasks {
         runSlowTask(context, runnable, new DefaultExceptionHandler(context), progressDialogTitleResId, progressDialogMessageResId);
     }
 
-    public static void runSlowTask(Activity context, Runnable runnable, SlowAsyncTask.ExceptionHandler exceptionHandler, int progressDialogTitleResId,
+    public static void runSlowTask(Activity context, final Runnable runnable, SlowAsyncTask.ExceptionHandler exceptionHandler, int progressDialogTitleResId,
                                    int progressDialogMessageResId) {
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        final Handler handler = new Handler(Looper.getMainLooper());
+//        executor.execute(new Runnable() {
+//                             @Override
+//                             public void run() {
+//                                 handler.post(new Runnable() {
+//                                     @Override
+//                                     public void run() {
+//
+//                                         runnable.run();
+//                                     }
+//                                 });
+//                             }
+//                         });
+//
+
         new SimpleSlowAsyncTask(context, runnable, exceptionHandler, progressDialogTitleResId, progressDialogMessageResId)
                 .execute();
+    }
+
+    public static void runSlowJob(Activity context, final Runnable runnable, SlowJob.ExceptionHandler exceptionHandler, int progressDialogTitleResId,
+                                   int progressDialogMessageResId) {
+        new SimpleSlowJob(context, runnable, exceptionHandler, progressDialogTitleResId, progressDialogMessageResId).execute();
     }
 
     public static Handler runDelayed(final Runnable runnable, int delay) {

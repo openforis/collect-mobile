@@ -1,5 +1,7 @@
 package org.openforis.collect.android.util;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,14 +42,30 @@ public class Unzipper {
         }
     }
 
+    public void unzipAll() throws IOException {
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile));
+        try {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            while (zipEntry != null) {
+                // keep folders hierarchy
+                String entryOutputFileName = zipEntry.getName().replace("/", File.separator);
+                extractEntry(zipInputStream, entryOutputFileName);
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } finally {
+            zipInputStream.close();
+        }
+    }
+
     private String entryName(ZipEntry zipEntry) {
         String name = zipEntry.getName();
         int i = name.lastIndexOf('/'); // Ignore directories
         return i == -1 ? name : name.substring(i + 1);
     }
 
-    private void extractEntry(ZipInputStream zipInputStream, String entryName) throws IOException {
-        File newFile = new File(outputFolder + File.separator + entryName);
+    private void extractEntry(ZipInputStream zipInputStream, String outputFileName) throws IOException {
+        File newFile = new File(outputFolder + File.separator + outputFileName);
+        FileUtils.forceMkdirParent(newFile);
         OutputStream fos = new FileOutputStream(newFile);
         write(zipInputStream, fos);
     }

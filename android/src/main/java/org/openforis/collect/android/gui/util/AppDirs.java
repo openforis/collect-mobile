@@ -9,7 +9,7 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
-import org.openforis.collect.android.gui.WorkingDirNotWritable;
+import org.openforis.collect.android.gui.WorkingDirNotAccessible;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,10 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public abstract class AppDirs {
+
+    public static final String SURVEYS_DIR_NAME = "surveys";
     public static final String PREFERENCE_KEY = "workingDir";
     private static final String ENV_SECONDARY_STORAGE = "SECONDARY_STORAGE";
 
-    public static File root(Context context) throws WorkingDirNotWritable {
+    public static File root(Context context) throws WorkingDirNotAccessible {
         File workingDir = readFromPreference(context);
         if (workingDir == null) {
             workingDir = defaultWorkingDir(context);
@@ -29,11 +31,9 @@ public abstract class AppDirs {
         }
 
         if (!workingDir.exists()) {
-            if (!workingDir.mkdirs())
-                throw new WorkingDirNotWritable(workingDir);
-            AndroidFiles.makeDiscoverable(workingDir, context);
-        } else if (!workingDir.canWrite())
-            throw new WorkingDirNotWritable(workingDir);
+            AndroidFiles.createAndMakeDiscoverableDir(workingDir, context);
+        } else if (!workingDir.canRead() || !workingDir.canWrite())
+            throw new WorkingDirNotAccessible(workingDir);
         Log.i("CollectMobile", "Working dir: " + workingDir);
         return workingDir;
     }
@@ -43,15 +43,15 @@ public abstract class AppDirs {
         return root == null ? "" : root.getAbsolutePath();
     }
 
-    public static File surveyDatabasesDir(String surveyName, Context context) throws WorkingDirNotWritable {
+    public static File surveyDatabasesDir(String surveyName, Context context) throws WorkingDirNotAccessible {
         return new File(surveysDir(context), surveyName);
     }
 
-    public static File surveysDir(Context context) throws WorkingDirNotWritable {
-        return new File(root(context), "surveys");
+    public static File surveysDir(Context context) throws WorkingDirNotAccessible {
+        return new File(root(context), SURVEYS_DIR_NAME);
     }
 
-    public static File surveyImagesDir(String surveyName, Context context) throws WorkingDirNotWritable {
+    public static File surveyImagesDir(String surveyName, Context context) throws WorkingDirNotAccessible {
         return new File(surveyDatabasesDir(surveyName, context), "collect_upload");
     }
 

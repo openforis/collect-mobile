@@ -22,7 +22,6 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.backup.Backup;
 import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
@@ -81,7 +80,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private VideoFileAttributeComponent videoListener;
     private DocumentFileAttributeComponent fileDocumentListener;
     private BarcodeTextAttributeComponent barcodeCaptureListener;
-
     private boolean twoPane;
 
     public static void startClearSurveyNodeActivity(Context context) {
@@ -270,10 +268,6 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         navigateDown();
     }
 
-    public void backup(MenuItem item) {
-        Backup.showBackupModeChooseDialog(this);
-    }
-
     public void exportDialog(MenuItem item) {
         if (Permissions.checkStoragePermissionOrRequestIt(this)) {
 
@@ -432,6 +426,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
                     if (fileDocumentListener != null && data != null) {
                         fileDocumentListener.documentSelected(data.getData());
                     }
+                    break;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

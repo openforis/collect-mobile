@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Activities;
 import org.openforis.collect.android.gui.util.AndroidFiles;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
@@ -52,23 +53,11 @@ public abstract class FileAttributeComponent extends AttributeComponent<UiFileAt
     }
 
     protected void startFileChooserActivity(String title, int requestCode, String type, String... extraMimeTypes) {
-        Intent intent = createFileSelectorIntent(type, extraMimeTypes);
-        context.startActivityForResult(Intent.createChooser(intent, title), requestCode);
+        Activities.startFileChooserActivity(context, title, requestCode, type, extraMimeTypes);
     }
 
     protected boolean canStartFileChooserActivity(String type) {
-        Intent intent = createFileSelectorIntent(type);
-        return intent.resolveActivity(context.getPackageManager()) != null;
-    }
-
-    private Intent createFileSelectorIntent(String type, String... extraMimeTypes) {
-        Intent intent = new Intent();
-        intent.setType(type);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        if (extraMimeTypes != null && extraMimeTypes.length > 0) {
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes);
-        }
-        return intent;
+        return Activities.canStartFileChooserActivity(context, type);
     }
 
     protected void startShowFileActivity() {

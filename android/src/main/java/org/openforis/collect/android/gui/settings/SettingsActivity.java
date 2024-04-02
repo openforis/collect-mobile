@@ -1,7 +1,7 @@
 package org.openforis.collect.android.gui.settings;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openforis.collect.R;
@@ -19,6 +20,8 @@ import org.openforis.collect.android.gui.ServiceLocator;
 import org.openforis.collect.android.gui.SurveyNodeActivity;
 import org.openforis.collect.android.gui.ThemeInitializer;
 import org.openforis.collect.android.gui.UILanguageInitializer;
+import org.openforis.collect.android.gui.backup.Backup;
+import org.openforis.collect.android.gui.backup.Restore;
 import org.openforis.collect.android.util.MessageSources;
 import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.manager.MessageSource;
@@ -39,7 +42,7 @@ import java.util.PropertyResourceBundle;
 /**
  * @author Daniel Wiell
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
 
     public static final String LANGUAGES_RESOURCE_BUNDLE_NAME = "org/openforis/collect/resourcebundles/languages";
     private static final MessageSource LANGUAGE_MESSAGE_SOURCE = new LanguagesResourceBundleMessageSource();
@@ -60,6 +63,14 @@ public class SettingsActivity extends Activity {
     public static final String REMOTE_COLLECT_USERNAME = "remoteCollectUsername";
     public static final String REMOTE_COLLECT_PASSWORD = "remoteCollectPassword";
     public static final String REMOTE_COLLECT_TEST = "remoteCollectTest";
+
+    public static final String BACKUP = "backup";
+
+    public static final String RESTORE = "restore";
+
+    public static final int RESTORE_FILE_SELECTED_REQUEST_CODE = 6400;
+
+    private Restore.RestoreFileSelectedListener restoreFileSelectedListener;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +104,23 @@ public class SettingsActivity extends Activity {
         super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case RESTORE_FILE_SELECTED_REQUEST_CODE:
+                    if (restoreFileSelectedListener != null) {
+                        restoreFileSelectedListener.fileSelected(data.getData());
+                    }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void setRestoreFileSelectedListener(Restore.RestoreFileSelectedListener restoreFileSelectedListener) {
+        this.restoreFileSelectedListener = restoreFileSelectedListener;
+    }
+
     public static class SettingsFragment extends PreferenceFragment {
 
         public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +141,8 @@ public class SettingsActivity extends Activity {
             setupRemoteCollectUsernamePreference();
             setupRemoteCollectPasswordPreference();
             setupRemoteCollectConnectionTestPreference();
+            setupBackupPreference();
+            setupRestorePreference();
         }
 
         private void setupCrewIdPreference() {
@@ -330,6 +360,26 @@ public class SettingsActivity extends Activity {
                         new RemoteConnectionTestTask(getActivity(), address, username, password)
                                 .execute();
                     }
+                    return false;
+                }
+            });
+        }
+
+        private void setupBackupPreference() {
+            Preference preference = findPreference(BACKUP);
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    Backup.showBackupModeChooseDialog((AppCompatActivity) getActivity());
+                    return false;
+                }
+            });
+        }
+
+        private void setupRestorePreference() {
+            Preference preference = findPreference(RESTORE);
+            preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    Restore.confirmRestore(getActivity());
                     return false;
                 }
             });

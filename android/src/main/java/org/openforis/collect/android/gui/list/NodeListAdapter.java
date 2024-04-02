@@ -44,6 +44,7 @@ public class NodeListAdapter extends BaseAdapter {
     protected final UiInternalNode parentNode;
     private final Attrs attrs;
     private List<UiNode> nodes;
+    protected boolean selectionEnabled;
 
     public NodeListAdapter(FragmentActivity activity, UiInternalNode parentNode) {
         this.activity = activity;
@@ -208,6 +209,14 @@ public class NodeListAdapter extends BaseAdapter {
     public void notifyDataSetChanged() {
         this.nodes = new ArrayList<UiNode>(parentNode.getChildren());
         super.notifyDataSetChanged();
+    }
+
+    public boolean isSelectionEnabled() {
+        return selectionEnabled;
+    }
+
+    public void setSelectionEnabled(boolean selectionEnabled) {
+        this.selectionEnabled = selectionEnabled;
     }
 
     private int iconResource(UiNode node) {

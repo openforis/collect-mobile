@@ -2,6 +2,7 @@ package org.openforis.collect.android;
 
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
 
 import java.util.Map;
 
@@ -15,4 +16,6 @@ public interface SurveyListener {
     void onNodeChanging(UiNode node);
 
     void onNodeChanged(NodeEvent event, UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
+
+    void onRecordEditLockChange(UiRecord record, boolean locked);
 }

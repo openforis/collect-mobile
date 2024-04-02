@@ -42,20 +42,44 @@ public class Dialogs {
         return showDialog(context, context.getResources().getString(titleKey), message, android.R.drawable.ic_dialog_info, runOnPositiveButtonClick);
     }
 
-    private static AlertDialog showDialog(Context context, String title, String message, int icon, final Runnable runOnPositiveButtonClick) {
-        AlertDialog dialog = new AlertDialog.Builder(context)
+    public static AlertDialog info(Context context, int titleKey, int messageKey,
+                                   final RunnableWithDoNotShowAgain runOnPositiveButtonClick, boolean showDoNotShowAgainOption) {
+        return showDialog(context, context.getResources().getString(titleKey), context.getString(messageKey),
+                android.R.drawable.ic_dialog_info, runOnPositiveButtonClick, showDoNotShowAgainOption);
+    }
+
+    private static AlertDialog showDialog(Context context, String title, String message, int icon, Runnable runOnPositiveButtonClick) {
+        return showDialog(context, title, message, icon, runOnPositiveButtonClick, false);
+    }
+
+    private static AlertDialog showDialog(Context context, String title, String message, int icon,
+                                          final Runnable runOnPositiveButtonClick, final boolean showDoNotShowAgainOption) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setCancelable(false)
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (runOnPositiveButtonClick != null) {
                             runOnPositiveButtonClick.run();
                         }
                     }
                 })
-                .setIcon(icon)
-                .create();
+                .setIcon(icon);
+        if (showDoNotShowAgainOption) {
+            builder.setNeutralButton(R.string.do_not_show_again, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (runOnPositiveButtonClick == null) return;
+
+                    if (runOnPositiveButtonClick instanceof RunnableWithDoNotShowAgain) {
+                        ((RunnableWithDoNotShowAgain) runOnPositiveButtonClick).run(true);
+                    } else {
+                        runOnPositiveButtonClick.run();
+                    }
+                }
+            });
+        }
+        AlertDialog dialog = builder.create();
         dialog.show();
         return dialog;
     }
@@ -135,5 +159,14 @@ public class Dialogs {
             };
             Tasks.runDelayed(predicateVerifier, 100);
         }
+    }
+
+    public abstract static class RunnableWithDoNotShowAgain implements Runnable {
+        @Override
+        public void run() {
+            run(false);
+        }
+
+        public abstract void run(boolean doNotShowAgain);
     }
 }

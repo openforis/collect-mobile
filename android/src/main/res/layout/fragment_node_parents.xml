@@ -1,29 +1,51 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView
             android:id="@+id/node_parents_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_width="0dp"
+            app:layout_constraintHorizontal_weight="1"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toStartOf="@id/record_lock_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+            <LinearLayout
                 android:id="@+id/node_parents_container"
-                android:orientation="horizontal"
+                style="@style/BreadCrumbs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingLeft="?attr/standardPadding"
-                android:paddingRight="?attr/standardPadding"
-                style="@style/BreadCrumbs">
+                android:paddingRight="?attr/standardPadding"/>
+        </org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView>
 
-
-        </LinearLayout>
-    </org.openforis.collect.android.gui.util.RightFocusedHorizontalScrollView>
+        <androidx.appcompat.widget.AppCompatToggleButton
+            android:id="@+id/record_lock_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:background="@null"
+            app:layout_constraintStart_toEndOf="@id/node_parents_scroll_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text=""
+            android:textOn=""
+            android:textOff=""
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="?attr/entityListHeaderBorderColor"/>
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="?attr/entityListHeaderBorderColor" />
 </LinearLayout>

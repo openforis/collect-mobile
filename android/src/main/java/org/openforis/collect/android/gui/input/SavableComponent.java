@@ -63,6 +63,17 @@ public abstract class SavableComponent {
 
     public abstract void onNodeChange(UiNode node, Map<UiNode, UiNodeChange> nodeChanges);
 
+    public void onRecordEditLockChange(boolean locked) {
+        if (locked) {
+            hideKeyboard();
+        }
+        updateEditableState();
+    }
+
+    protected void updateEditableState() {
+        // to be extended by subclasses
+    }
+
     public abstract boolean hasChanged();
 
     protected abstract void resetValidationErrors();
@@ -209,6 +220,9 @@ public abstract class SavableComponent {
         protected void resetValidationErrors() {
 
         }
+
+        @Override
+        protected void updateEditableState() {}
     }
 
     private static class UnsupportedAttributeComponent extends AttributeComponent<UiAttribute> {
@@ -234,5 +248,9 @@ public abstract class SavableComponent {
         protected View toInputView() {
             return view;
         }
+
+        @Override
+        protected void updateEditableState() {}
+
     }
 }

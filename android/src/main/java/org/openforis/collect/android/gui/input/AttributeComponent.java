@@ -13,6 +13,7 @@ import org.openforis.collect.android.gui.util.Tasks;
 import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Iterator;
@@ -151,6 +152,11 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
         Set<UiValidationError> validationErrors = attribute.getValidationErrors();
         if (validationErrors != null)
             setValidationError(validationErrors);
+    }
+    
+    protected boolean isRecordEditLocked() {
+        UiRecord record = attribute == null ? null : attribute.getUiRecord();
+        return record == null ? true: record.isEditLocked();
     }
 
     public String toString() {

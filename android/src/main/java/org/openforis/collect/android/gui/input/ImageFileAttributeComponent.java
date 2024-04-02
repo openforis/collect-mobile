@@ -36,6 +36,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private static final int MAX_DISPLAY_HEIGHT = 500;
 
     private final View inputView;
+    private Button captureButton;
+    private Button galleryButton;
     private ImageButton removeButton;
     private ImageButton rotateImageButton;
     private ImageView thumbnailImageView;
@@ -112,9 +114,9 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupCaptureButton() {
-        Button button = inputView.findViewById(R.id.file_attribute_capture);
+        captureButton = inputView.findViewById(R.id.file_attribute_capture);
         if (canCapture()) {
-            button.setOnClickListener(new View.OnClickListener() {
+            captureButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Runnable captureImageRunnable = new Runnable() {
                         public void run() {
@@ -130,7 +132,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
                 }
             });
         } else {
-            button.setVisibility(View.GONE);
+            captureButton.setVisibility(View.GONE);
         }
     }
 
@@ -166,16 +168,16 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupGalleryButton() {
-        Button button = inputView.findViewById(R.id.file_attribute_select);
+        galleryButton = inputView.findViewById(R.id.file_attribute_select);
         if (canShowGallery()) {
-            button.setCompoundDrawablesWithIntrinsicBounds(null, new Attrs(context).drawable(R.attr.openIcon), null, null);
-            button.setOnClickListener(new View.OnClickListener() {
+            galleryButton.setCompoundDrawablesWithIntrinsicBounds(null, new Attrs(context).drawable(R.attr.openIcon), null, null);
+            galleryButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     showGallery();
                 }
             });
         } else {
-            button.setVisibility(View.GONE);
+            galleryButton.setVisibility(View.GONE);
         }
     }
 
@@ -252,8 +254,13 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         } else {
             hideThumbnail();
         }
-        Views.toggleVisibility(removeButton, file.exists());
-        Views.toggleVisibility(rotateImageButton, file.exists());
+        boolean canAddNew = !isRecordEditLocked();
+        Views.toggleVisibility(captureButton, canAddNew);
+        Views.toggleVisibility(galleryButton, canAddNew);
+
+        boolean canDeleteOrModify = file.exists() && !isRecordEditLocked();
+        Views.toggleVisibility(removeButton, canDeleteOrModify);
+        Views.toggleVisibility(rotateImageButton, canDeleteOrModify);
     }
 
     private File createTempImageFile() {
@@ -271,4 +278,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         }
     }
 
+    @Override
+    protected void updateEditableState() {
+        updateViewState();
+    }
 }

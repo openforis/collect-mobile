@@ -182,6 +182,9 @@ class CodeListTest extends Specification {
             changeEvents.add(node: node, changes: changes)
         }
 
-
+        @Override
+        void onRecordEditLockChange(UiRecord uiRecord, boolean locked) {
+            // Do nothing
+        }
     }
 }

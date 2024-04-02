@@ -7,6 +7,7 @@ import android.widget.EditText;
 import androidx.fragment.app.FragmentActivity;
 
 import org.openforis.collect.android.SurveyService;
+import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.viewmodel.UiTextAttribute;
 import org.openforis.collect.android.viewmodel.UiTextAttributeDefinition;
 
@@ -30,10 +31,18 @@ public class TextAttributeComponent extends EditTextAttributeComponent<UiTextAtt
     protected void onEditTextCreated(EditText input) {
         super.onEditTextCreated(input);
         UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
-        int inputType = def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
-        input.setInputType(inputType);
         if (def.isAutoUppercase()) {
             input.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
         }
+    }
+
+    @Override
+    protected int determineInputType() {
+        if (isRecordEditLocked()) {
+            Keyboard.hide(getContext());
+            return InputType.TYPE_NULL;
+        }
+        UiTextAttributeDefinition def = (UiTextAttributeDefinition) attribute.getDefinition();
+        return def.isAutoUppercase() ? InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS : InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
     }
 }

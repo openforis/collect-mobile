@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -40,6 +41,9 @@ import org.openforis.collect.android.viewmodel.UiSpatialReferenceSystem;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
@@ -61,6 +65,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         super(attribute, surveyService, context);
         vh = new ViewHolder();
         locationProvider = new LocationProvider(new UpdateListener(context), context, true);
+        updateEditableState();
     }
 
     @Override
@@ -170,6 +175,25 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         if (!(vh.xView.hasFocus() || vh.yView.hasFocus())) {
             super.focusOnMessageContainerView();
         }
+    }
+
+    @Override
+    protected void updateEditableState() {
+        List<TextView> editableInputFields = Arrays.asList(vh.xView, vh.yView, vh.accuracyView, vh.altitudeView);
+        for (TextView editableInputField : editableInputFields) {
+            if (editableInputField != null) {
+                editableInputField.setInputType(getNumericFieldInputType());
+            }
+        }
+        boolean editable = !isRecordEditLocked();
+        vh.srsSpinner.setEnabled(editable);
+        Views.toggleVisibility(vh.startStopButton, editable);
+    }
+
+    private int getNumericFieldInputType() {
+        return isRecordEditLocked() || attribute.getDefinition().onlyChangedByDevice
+                ? InputType.TYPE_NULL
+                : TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL;
     }
 
     private class ViewHolder {
@@ -306,11 +330,11 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             final TextView input = new AppCompatEditText(context);
 
             input.setSingleLine();
-            input.setMinWidth(100);
+            input.setMinWidth(150);
 
             if (value != null)
                 input.setText(formatDouble(value));
-            input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+            input.setInputType(getNumericFieldInputType());
 
             input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -348,7 +372,7 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
             output.setSingleLine();
             if (value != null)
                 output.setText(formatDouble(value));
-            output.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
+            output.setInputType(getNumericFieldInputType());
             return output;
         }
 

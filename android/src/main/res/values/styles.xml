@@ -11,6 +11,8 @@
         <item name="surveyListIcon">@drawable/ic_list_white_24dp</item>
         <item name="settingsIcon">@drawable/ic_settings_white_24dp</item>
         <item name="exitIcon">@drawable/ic_exit_to_app_white_24dp</item>
+        <item name="lockIcon">@drawable/ic_lock_white_24dp</item>
+        <item name="lockOpenIcon">@drawable/ic_lock_open_white_24dp</item>
 
         <item name="standardPadding">16dp</item>
         <item name="standardLargePadding">32dp</item>
@@ -59,6 +61,8 @@
         <item name="surveyListIcon">@drawable/ic_list_black_24dp</item>
         <item name="settingsIcon">@drawable/ic_settings_black_24dp</item>
         <item name="exitIcon">@drawable/ic_exit_to_app_black_24dp</item>
+        <item name="lockIcon">@drawable/ic_lock_black_24dp</item>
+        <item name="lockOpenIcon">@drawable/ic_lock_open_black_24dp</item>
 
         <item name="relevantTextColor">@android:color/black</item>
         <item name="irrelevantTextColor">@color/light_disabled_color</item>

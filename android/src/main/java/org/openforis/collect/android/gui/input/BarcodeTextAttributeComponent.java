@@ -32,6 +32,8 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
 
     private View view;
     private boolean editEnabled = false;
+    private Button captureBtn;
+    private Switch textEditSwitch;
 
     public BarcodeTextAttributeComponent(UiTextAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -41,7 +43,7 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
     protected void initializeInputView() {
         view = context.getLayoutInflater().inflate(R.layout.barcode_attribute, null);
 
-        Button captureBtn = view.findViewById(R.id.barcode_capture_btn);
+        captureBtn = view.findViewById(R.id.barcode_capture_btn);
         captureBtn.setOnClickListener(new View.OnClickListener() {
                                           public void onClick(View v) {
                                               ((SurveyNodeActivity) getContext()).setBarcodeCaptureListener(BarcodeTextAttributeComponent.this);
@@ -59,10 +61,12 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
         textContainer.addView(editText, 0);
 
         initializeEnableTextEditSwitch();
+
+        updateEditableState();
     }
 
     private void initializeEnableTextEditSwitch() {
-        Switch textEditSwitch = view.findViewById(R.id.barcode_text_edit_switch);
+        textEditSwitch = view.findViewById(R.id.barcode_text_edit_switch);
         textEditSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editEnabled = isChecked;
@@ -101,6 +105,15 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
     }
 
     private void updateViewState() {
-        editText.setEnabled(editEnabled);
+        boolean editable = !isRecordEditLocked();
+        editText.setEnabled(editable && editEnabled);
+        captureBtn.setEnabled(editable);
+        textEditSwitch.setEnabled(editable);
+    }
+
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        updateViewState();
     }
 }

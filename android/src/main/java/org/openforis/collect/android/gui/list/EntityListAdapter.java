@@ -154,10 +154,13 @@ public class EntityListAdapter extends NodeListAdapter {
     protected void onPrepareView(final UiNode node, View row) {
         final CheckBox checkbox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
         Definition parentDef = node.getParent().getDefinition();
-        if (parentDef instanceof UiEntityCollectionDefinition &&
-                ((UiEntityCollectionDefinition) parentDef).isEnumerated()) {
+        if (!isSelectionEnabled() ||
+                (parentDef instanceof UiEntityCollectionDefinition &&
+                ((UiEntityCollectionDefinition) parentDef).isEnumerated())
+        ) {
             Views.hide(checkbox);
         } else {
+            Views.show(checkbox);
             checkbox.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (checkbox.isChecked()) {

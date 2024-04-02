@@ -235,4 +235,13 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
         Views.toggleVisibility(deleteBtn, file.exists() && !recording && !playing);
         Views.toggleVisibility(selectFileBtn, !recording && !playing);
     }
+
+    @Override
+    protected void updateEditableState() {
+        boolean canEdit = !isRecordEditLocked();
+        recordBtn.setEnabled(canEdit);
+        stopBtn.setEnabled(canEdit);
+        deleteBtn.setEnabled(canEdit);
+        selectFileBtn.setEnabled(canEdit);
+    }
 }

@@ -110,6 +110,12 @@ public class NodePagerFragment extends Fragment {
             nodePathDetailsFragment.nodeChanged(node);
     }
 
+    synchronized public void onRecordEditLockChange(boolean locked) {
+        for (NodeDetailFragment fragment : fragmentsByNode.values()) {
+            fragment.onRecordEditLockChange(locked);
+        }
+    }
+
     private void setupPager(View view) {
         pager = view.findViewById(R.id.attributePager);
         pagerAdapter = new NodePagerAdapter(getChildFragmentManager(), fragmentsByNode);

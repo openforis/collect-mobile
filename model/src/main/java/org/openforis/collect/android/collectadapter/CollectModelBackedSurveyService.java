@@ -99,6 +99,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
         });
         // update CollectModelManager internal variables
         collectModelManager.recordSelected(record);
+
+        if (recordWillBeUpdated) {
+            uiRecord.setEditLocked(true);
+        }
         return uiRecord;
     }
 
@@ -263,6 +267,17 @@ public class CollectModelBackedSurveyService implements SurveyService {
         if (listener == null)
             return;
         listener.onNodeChanging(attribute);
+    }
+
+    @Override
+    public void notifyRecordEditLockChange(boolean locked) {
+        if (listener == null) return;
+
+        UiNode selectedNode = selectedNode();
+        if (selectedNode == null) return;
+
+        UiRecord record = selectedNode.getUiRecord();
+        listener.onRecordEditLockChange(record, locked);
     }
 
     public void updateAttributes(Set<UiAttribute> attributes) {

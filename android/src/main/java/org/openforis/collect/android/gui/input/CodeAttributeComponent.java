@@ -1,7 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -52,7 +51,7 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
 
     protected abstract UiCode selectedCode();
 
-    public final void onAttributeChange(UiAttribute changedAttribute) {
+    public void onAttributeChange(UiAttribute changedAttribute) {
         if (changedAttribute != attribute && codeListService.isParentCodeAttribute(changedAttribute, attribute)) {
             UiCode newParentCode = ((UiCodeAttribute) changedAttribute).getCode();
             if (newParentCode == parentCode) return;
@@ -145,6 +144,15 @@ public abstract class CodeAttributeComponent extends AttributeComponent<UiCodeAt
         editText.setSingleLine();
         editText.setHint(R.string.hint_code_qualifier_specify);
         return editText;
+    }
+
+    protected static TextView createQualifierReadonlyText(Activity context, String text) {
+        TextView textView = new TextView(context);
+        textView.setTextSize(20);
+        if (text != null) {
+            textView.setText(text);
+        }
+        return textView;
     }
 }
 

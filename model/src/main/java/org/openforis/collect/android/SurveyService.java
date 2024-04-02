@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,6 +38,8 @@ public interface SurveyService {
     UiCodeAttribute addCodeAttribute(UiCode code, String qualifier);
 
     void notifyAttributeChanging(UiAttribute attribute);
+
+    void notifyRecordEditLockChange(boolean locked);
 
     void updateAttributes(Set<UiAttribute> attributes);
 

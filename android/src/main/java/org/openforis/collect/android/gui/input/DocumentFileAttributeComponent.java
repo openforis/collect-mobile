@@ -27,6 +27,7 @@ import java.io.File;
 public class DocumentFileAttributeComponent extends FileAttributeComponent {
 
     private final View inputView;
+    private Button galleryButton;
     private Button viewSelectedFileButton;
     private ImageButton removeButton;
 
@@ -83,16 +84,16 @@ public class DocumentFileAttributeComponent extends FileAttributeComponent {
     }
 
     private void setupGalleryButton() {
-        Button button = inputView.findViewById(R.id.file_attribute_select);
+        galleryButton = inputView.findViewById(R.id.file_attribute_select);
         if (canShowGallery()) {
-            button.setCompoundDrawablesWithIntrinsicBounds(null, new Attrs(context).drawable(R.attr.openIcon), null, null);
-            button.setOnClickListener(new View.OnClickListener() {
+            galleryButton.setCompoundDrawablesWithIntrinsicBounds(null, new Attrs(context).drawable(R.attr.openIcon), null, null);
+            galleryButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     showGallery();
                 }
             });
         } else {
-            button.setVisibility(View.GONE);
+            galleryButton.setVisibility(View.GONE);
         }
     }
 
@@ -121,6 +122,13 @@ public class DocumentFileAttributeComponent extends FileAttributeComponent {
 
     protected void updateViewState() {
         Views.toggleVisibility(viewSelectedFileButton, file.exists());
-        Views.toggleVisibility(removeButton, file.exists());
+        boolean canEdit = !isRecordEditLocked();
+        Views.toggleVisibility(galleryButton, canEdit);
+        Views.toggleVisibility(removeButton, file.exists() && canEdit);
+    }
+
+    @Override
+    protected void updateEditableState() {
+        updateViewState();
     }
 }

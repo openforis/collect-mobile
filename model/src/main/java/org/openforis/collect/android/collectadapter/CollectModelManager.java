@@ -171,6 +171,7 @@ public class CollectModelManager implements DefinitionProvider, CodeListService,
     public UiRecord addRecord(String entityName, UiSurvey survey) {
         CollectRecord record = recordManager.create(selectedSurvey, entityName, user, latestSurveyVersion(), null, CollectRecord.Step.CLEANSING);
         UiRecord uiRecord = modelConverter.toUiRecord(record, survey);
+        uiRecord.setNewRecord(true);
         recordNodes = new RecordNodes(record);
         return uiRecord;
     }

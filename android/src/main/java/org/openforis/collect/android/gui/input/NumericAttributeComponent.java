@@ -95,7 +95,16 @@ public abstract class NumericAttributeComponent<A extends UiAttribute, T extends
     @Override
     protected void afterEditTextCreated(EditText input) {
         super.afterEditTextCreated(input);
-        input.addTextChangedListener(numberTextWatcher);
+        updateEditableState();
+    }
+
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        editText.removeTextChangedListener(numberTextWatcher);
+        if (!isRecordEditLocked()) {
+            editText.addTextChangedListener(numberTextWatcher);
+        }
     }
 
     private void setNotANumberError() {

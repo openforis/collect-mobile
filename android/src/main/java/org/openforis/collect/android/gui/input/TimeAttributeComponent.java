@@ -65,7 +65,6 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         super.onEditTextCreated(input);
         selectedTimeView = input;
         selectedTimeView.setHint(context.getResources().getString(R.string.hint_time_pattern) + " ");
-        selectedTimeView.setInputType(InputType.TYPE_NULL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedTimeView.setLayoutParams(params);
         selectedTimeView.setOnClickListener(new View.OnClickListener() {
@@ -75,11 +74,18 @@ public class TimeAttributeComponent extends EditTextAttributeComponent<UiTimeAtt
         });
     }
 
+    @Override
+    protected int determineInputType() {
+        return InputType.TYPE_NULL;
+    }
+
     protected View toInputView() {
         return view;
     }
 
     private void openTimePicker() {
+        if (isRecordEditLocked()) return;
+
         saveNode();
         hideKeyboard();
         TimePickerFragment newFragment = new TimePickerFragment();

@@ -63,7 +63,6 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
 
     protected void afterEditTextCreated(EditText input) {
         selectedDateView = input;
-        selectedDateView.setInputType(InputType.TYPE_NULL);
         selectedDateView.setHint(context.getResources().getString(R.string.hint_date_pattern) + " ");
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         selectedDateView.setLayoutParams(params);
@@ -72,6 +71,11 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
                 openDatePicker();
             }
         });
+    }
+
+    @Override
+    protected int determineInputType() {
+        return InputType.TYPE_NULL;
     }
 
     protected View toInputView() {
@@ -83,6 +87,8 @@ public class DateAttributeComponent extends EditTextAttributeComponent<UiDateAtt
     }
 
     private void openDatePicker() {
+        if (isRecordEditLocked()) return;
+
         saveNode();
         hideKeyboard();
         DatePickerFragment newFragment = new DatePickerFragment();

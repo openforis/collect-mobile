@@ -1,6 +1,7 @@
 package org.openforis.collect.android.gui.input;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,6 +35,7 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
 
     protected EditText initializeEditText() {
         editText = createEditText();
+        afterEditTextCreated(editText);
         return editText;
     }
 
@@ -106,6 +108,8 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
     protected EditText createEditText() {
         final EditText editText = new AppCompatEditText(context);
 
+        editText.setInputType(determineInputType());
+
         onEditTextCreated(editText);
 
         editText.setSingleLine();
@@ -140,7 +144,18 @@ public abstract class EditTextAttributeComponent<T extends UiAttribute> extends 
                 }
             }
         });
-        afterEditTextCreated(editText);
         return editText;
+    }
+
+    protected int determineInputType() {
+        return InputType.TYPE_CLASS_TEXT;
+    }
+
+    @Override
+    protected void updateEditableState() {
+        editText.setInputType(determineInputType());
+        if (isRecordEditLocked()) {
+            hideKeyboard();
+        }
     }
 }

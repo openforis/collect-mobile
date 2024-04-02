@@ -11,6 +11,7 @@ import org.openforis.collect.android.viewmodel.UiAttribute;
 import org.openforis.collect.android.viewmodel.UiAttributeCollection;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
+import org.openforis.collect.android.viewmodel.UiRecord;
 import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Set;
  */
 public abstract class AttributeCollectionComponent extends SavableComponent {
     protected final UiAttributeCollection attributeCollection;
+    private View addAttributeButton;
 
     protected AttributeCollectionComponent(UiAttributeCollection attributeCollection, SurveyService surveyService, FragmentActivity context) {
         super(surveyService, context);
@@ -71,11 +73,20 @@ public abstract class AttributeCollectionComponent extends SavableComponent {
         if (addListener == null)
             return;
 
-        final View addAttributeButton = view.findViewById(R.id.action_add_node);
+        addAttributeButton = view.findViewById(R.id.action_add_node);
         if (addAttributeButton == null)
             throw new IllegalStateException(getClass().getSimpleName() +
                     " specifies onAddAttribute, but view doesn't contain button with id action_add_node");
         addAttributeButton.setOnClickListener(addListener);
+    }
+
+    protected boolean isRecordEditLocked() {
+        UiRecord record = attributeCollection == null ? null : attributeCollection.getUiRecord();
+        return record == null ? true: record.isEditLocked();
+    }
+    @Override
+    protected void updateEditableState() {
+
     }
 
     protected final void notifyAboutAttributeCollectionChange(Set<UiAttribute> changedAttributes) {

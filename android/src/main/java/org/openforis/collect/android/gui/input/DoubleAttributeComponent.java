@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.text.InputType;
 import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
@@ -35,9 +36,21 @@ public class DoubleAttributeComponent extends NumericAttributeComponent<UiDouble
         attribute.setValue(value);
     }
 
-    protected void afterEditTextCreated(EditText input) {
-        super.afterEditTextCreated(input);
-        input.setInputType(TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL);
-        input.setKeyListener(new DecimalSeparatorAwareKeyListener());
+    @Override
+    protected void updateEditableState() {
+        super.updateEditableState();
+        if (isRecordEditLocked()) {
+            editText.setKeyListener(null);
+        } else {
+            editText.setKeyListener(new DecimalSeparatorAwareKeyListener());
+        }
+    }
+
+    @Override
+    protected int determineInputType() {
+        if (isRecordEditLocked()) {
+            return InputType.TYPE_NULL;
+        }
+        return TYPE_CLASS_NUMBER | TYPE_NUMBER_FLAG_SIGNED | TYPE_NUMBER_FLAG_DECIMAL;
     }
 }

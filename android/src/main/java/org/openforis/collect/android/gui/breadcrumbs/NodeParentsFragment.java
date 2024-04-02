@@ -5,14 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatToggleButton;
 import androidx.fragment.app.Fragment;
 
 import org.openforis.collect.R;
@@ -22,6 +26,7 @@ import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.viewmodel.UiEntityCollection;
 import org.openforis.collect.android.viewmodel.UiInternalNode;
 import org.openforis.collect.android.viewmodel.UiNode;
+import org.openforis.collect.android.viewmodel.UiRecord;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +39,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * A fragment representing the parents of a node.
  */
 public class NodeParentsFragment extends Fragment {
+    public static final String AVOID_NOTIFICATION_TAG = "avoidNotification";
     private Attrs attrs;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,8 +61,55 @@ public class NodeParentsFragment extends Fragment {
                 ? createSurveySelectedView()
                 : createCurrentNodeView(node);
         parentsContainer.addView(currentNodeView);
-        super.onViewCreated(view, savedInstanceState);
+
+        ViewHolder viewHolder = new ViewHolder();
+        viewHolder.recordLockButton = initRecordLockButton(view);
+        view.setTag(viewHolder);
+
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        updateRecordLockButtonView(view);
+    }
+
+    private AppCompatToggleButton initRecordLockButton(View view) {
+        final AppCompatToggleButton recordLockButton = view.findViewById(R.id.record_lock_button);
+
+        UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
+        final UiRecord record = selectedNode.getUiRecord();
+
+        recordLockButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton button, boolean checked) {
+                if (AVOID_NOTIFICATION_TAG.equals((button.getTag()))) return;
+
+                record.setEditLocked(checked);
+                updateRecordLockButtonView(null);
+                ServiceLocator.surveyService().notifyRecordEditLockChange(checked);
+            }
+        });
+        return recordLockButton;
+    }
+
+    private void updateRecordLockButtonView(View view) {
+        ViewHolder viewHolder = (ViewHolder) (view == null ? getView() : view).getTag();
+        AppCompatToggleButton recordLockButton = viewHolder.recordLockButton;
+        UiNode selectedNode = ServiceLocator.surveyService().selectedNode();
+        UiInternalNode node = selectedNode.getParent();
+        final UiRecord record = selectedNode.getUiRecord();
+        boolean checked = record != null ? record.isEditLocked() : false;
+        if (node.getParent() == null || record == null || record.isNewRecord()) {
+            recordLockButton.setVisibility(View.GONE);
+        } else {
+            recordLockButton.setTag(AVOID_NOTIFICATION_TAG);
+            recordLockButton.setChecked(checked);
+            recordLockButton.setTag(null);
+        }
+        int iconKey = checked ? R.attr.lockIcon : R.attr.lockOpenIcon;
+        recordLockButton.setButtonDrawable(attrs.resourceId(iconKey));
     }
 
     private View createSurveySelectedView() {
@@ -131,5 +184,9 @@ public class NodeParentsFragment extends Fragment {
             label += " [" + (node.getIndexInParent() + 1) + "]";
         }
         return label;
+    }
+
+    private class ViewHolder {
+        AppCompatToggleButton recordLockButton;
     }
 }

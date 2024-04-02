@@ -6,6 +6,9 @@ import java.util.*;
  * @author Daniel Wiell
  */
 public class UiRecord extends UiEntity {
+
+    private boolean newRecord = false;
+    private boolean editLocked = false;
     private Map<Integer, UiNode> nodeById = new HashMap<Integer, UiNode>();
 
     public UiRecord(int id, Definition definition, UiRecordCollection recordCollection, Placeholder placeholder) {
@@ -89,5 +92,21 @@ public class UiRecord extends UiEntity {
         public List<UiAttribute> getKeyAttributes() {
             return Collections.unmodifiableList(keyAttributes);
         }
+    }
+
+    public boolean isNewRecord() {
+        return newRecord;
+    }
+
+    public void setNewRecord(boolean newRecord) {
+        this.newRecord = newRecord;
+    }
+
+    public boolean isEditLocked() {
+        return editLocked;
+    }
+
+    public void setEditLocked(boolean editLocked) {
+        this.editLocked = editLocked;
     }
 }

@@ -16,6 +16,7 @@ import org.openforis.collect.R;
 import org.openforis.collect.android.CodeListService;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.util.ClearableAutoCompleteTextView;
+import org.openforis.collect.android.gui.util.Views;
 import org.openforis.collect.android.viewmodel.UiCode;
 import org.openforis.collect.android.viewmodel.UiCodeAttribute;
 
@@ -30,9 +31,11 @@ import java.util.concurrent.Executors;
  */
 class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     private final ClearableAutoCompleteTextView autoComplete;
+    private final TextView readonlyTextView;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final LinearLayout layout;
-    private EditText qualifierInput;
+    private final EditText qualifierInput;
+    private final TextView qualifierReadonlyText;
 
     private Map<String, UiCode> uiCodeByValue = new HashMap<String, UiCode>();
     private UiCode selectedCode;
@@ -42,7 +45,6 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
         layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         autoComplete = new ClearableAutoCompleteTextView(context);
-        layout.addView(autoComplete);
         autoComplete.setThreshold(1);
         autoComplete.setSingleLine();
         autoComplete.setHint(R.string.hint_code_autocomplete);
@@ -83,6 +85,12 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
                 saveNode();
             }
         });
+        // init readonly textview (visible when attribute is not editable)
+        readonlyTextView = new TextView(context);
+        readonlyTextView.setTextSize(20);
+
+        qualifierReadonlyText = createQualifierReadonlyText(context, attribute.getQualifier());
+
         initOptions();
     }
 
@@ -92,10 +100,7 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
 
     protected void setSelectedCode(UiCode code) {
         this.selectedCode = code;
-        if (codeList.isQualifiable(selectedCode))
-            showQualifier();
-        else
-            hideQualifier();
+        updateEditableState();
     }
 
     protected UiCode selectedCode() {
@@ -136,34 +141,34 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
     }
 
     private void setText(String text) {
-        if (text.equals(autoComplete.getText().toString()))
+        if (!text.equals(autoComplete.getText().toString())) {
+            // Hack to prevent pop-up from opening when setting text
+            // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
+            UiCodeAdapter adapter = (UiCodeAdapter) autoComplete.getAdapter();
+            autoComplete.setAdapter(null);
+            autoComplete.setText(text);
+            autoComplete.setAdapter(adapter);
+        }
+        if (!text.equals(readonlyTextView.getText().toString())) {
+            readonlyTextView.setText(text);
+        }
+    }
+
+    @Override
+    protected void updateEditableState() {
+        boolean editable = !isRecordEditLocked();
+        boolean editableOld = Views.hasChild(layout, autoComplete);
+        boolean qualifiable = attribute != null  && codeList.isQualifiable(attribute.getCode());
+        boolean qualifiableOld = Views.hasChild(layout, editable ? qualifierInput: qualifierReadonlyText);
+        if (editable == editableOld && qualifiable != qualifiableOld) {
+            // do nothing
             return;
-        // Hack to prevent pop-up from opening when setting text
-        // http://www.grokkingandroid.com/how-androids-autocompletetextview-nearly-drove-me-nuts/
-        UiCodeAdapter adapter = (UiCodeAdapter) autoComplete.getAdapter();
-        autoComplete.setAdapter(null);
-        autoComplete.setText(text);
-        autoComplete.setAdapter(adapter);
-    }
-
-    private void showQualifier() {
-        uiHandler.post(new Runnable() {
-            public void run() {
-                if (layout.getChildCount() == 1) {
-                    layout.addView(qualifierInput);
-                    showKeyboard(qualifierInput);
-                }
-            }
-        });
-    }
-
-    private void hideQualifier() {
-        uiHandler.post(new Runnable() {
-            public void run() {
-                hideKeyboard();
-                layout.removeView(qualifierInput);
-            }
-        });
+        }
+        layout.removeAllViews();
+        layout.addView(editable ? autoComplete : readonlyTextView);
+        if (qualifiable) {
+            layout.addView(editable ? qualifierInput: qualifierReadonlyText);
+        }
     }
 
     private class LoadCodesTask implements Runnable {
@@ -179,14 +184,13 @@ class AutoCompleteCodeAttributeComponent extends CodeAttributeComponent {
             for (UiCode code : codes)
                 uiCodeByValue.put(code.getValue(), code);
             setAdapter(codes, uiHandler);
-            if (codeList.isQualifiable(attribute.getCode()))
-                showQualifier();
         }
 
         private void setAdapter(final List<UiCode> codes, Handler uiHandler) {
             uiHandler.post(new Runnable() {
                 public void run() {
                     autoComplete.setAdapter(new UiCodeAdapter(context, codes));
+                    updateEditableState();
                 }
             });
         }

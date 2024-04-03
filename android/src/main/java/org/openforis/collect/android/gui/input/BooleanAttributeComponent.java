@@ -84,6 +84,10 @@ public class BooleanAttributeComponent extends AttributeComponent<UiBooleanAttri
 
     @Override
     protected void updateEditableState() {
-        radioGroup.setEnabled(!isRecordEditLocked());
+        super.updateEditableState();
+        boolean editable = !isRecordEditLocked();
+        for (int i = 0; i < radioGroup.getChildCount(); i++) {
+            radioGroup.getChildAt(i).setEnabled(editable);
+        }
     }
 }

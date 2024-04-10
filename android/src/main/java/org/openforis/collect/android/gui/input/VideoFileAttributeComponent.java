@@ -24,12 +24,6 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
     }
 
     @Override
-    protected boolean canCapture() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        return takePictureIntent.resolveActivity(context.getPackageManager()) != null;
-    }
-
-    @Override
     protected void capture() {
         if (Permissions.checkCameraPermissionOrRequestIt(context)) {
             //TODO find nicer solution to prevent FileUriExposedException

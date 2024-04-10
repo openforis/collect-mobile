@@ -115,55 +115,50 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
 
     private void setupCaptureButton() {
         captureButton = inputView.findViewById(R.id.file_attribute_capture);
-        if (canCapture()) {
-            captureButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Runnable captureImageRunnable = new Runnable() {
-                        public void run() {
-                            capture();
-                        }
-                    };
-                    if (file != null && file.exists()) {
-                        Dialogs.confirm(context, R.string.warning, R.string.file_attribute_captured_file_overwrite_confirm_message,
-                                captureImageRunnable, null, R.string.overwrite_label, android.R.string.cancel);
-                    } else {
-                        captureImageRunnable.run();
+        captureButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Runnable captureImageRunnable = new Runnable() {
+                    public void run() {
+                        capture();
                     }
+                };
+                if (file != null && file.exists()) {
+                    Dialogs.confirm(context, R.string.warning, R.string.file_attribute_captured_file_overwrite_confirm_message,
+                            captureImageRunnable, null, R.string.overwrite_label, android.R.string.cancel);
+                } else {
+                    captureImageRunnable.run();
                 }
-            });
-        } else {
-            captureButton.setVisibility(View.GONE);
-        }
-    }
-
-    protected boolean canCapture() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        return takePictureIntent.resolveActivity(context.getPackageManager()) != null;
+            }
+        });
     }
 
     protected void capture() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null &&
-                Permissions.checkCameraPermissionOrRequestIt(context)) {
-            ((SurveyNodeActivity) context).setImageChangedListener(this);
-            Uri imageUri;
-            if (AndroidVersion.greaterThan20()) {
-                // Create temp file and store image there
-                File imageFile = createTempImageFile();
-                if (imageFile == null) {
-                    Toast.makeText(context, R.string.file_attribute_capture_image_error_creating_temp_file, Toast.LENGTH_SHORT).show();
-                    return;
+        try {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (Permissions.checkCameraPermissionOrRequestIt(context)) {
+                ((SurveyNodeActivity) context).setImageChangedListener(this);
+                Uri imageUri;
+                if (AndroidVersion.greaterThan20()) {
+                    // Create temp file and store image there
+                    File imageFile = createTempImageFile();
+                    if (imageFile == null) {
+                        Toast.makeText(context, R.string.file_attribute_capture_image_error_creating_temp_file, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    imageUri = AndroidFiles.getUriForFile(context, imageFile);
+                } else {
+                    // Store image directly to "file"
+                    //TODO find nicer solution to prevent FileUriExposedException
+                    StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                    StrictMode.setVmPolicy(builder.build());
+                    imageUri = Uri.fromFile(file);
                 }
-                imageUri = AndroidFiles.getUriForFile(context, imageFile);
-            } else {
-                // Store image directly to "file"
-                //TODO find nicer solution to prevent FileUriExposedException
-                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                StrictMode.setVmPolicy(builder.build());
-                imageUri = Uri.fromFile(file);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
             }
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            context.startActivityForResult(takePictureIntent, SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE);
+        } catch (Exception e) {
+            String errorMessage = context.getString(R.string.file_attribute_capture_image_error, e.getMessage());
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
         }
     }
 

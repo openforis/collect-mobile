@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.12] - build 225 2024-04-10
+### Fixed
+- Fixed cannot delete records from records list;
+
+## [1.7.12] - build 224 2024-04-03
+### Added
+- Record edit lock;
+- Improved backup/restore;
+
 ## [1.7.12] - build 223 2023-08-23
 ### Fixed
 - Smart next button: navigate only to relevant nodes;

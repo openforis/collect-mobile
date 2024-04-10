@@ -107,6 +107,14 @@ public class EntityListAdapter extends NodeListAdapter {
         return row;
     }
 
+    @Override
+    public void setSelectionEnabled(boolean selectionEnabled) {
+        super.setSelectionEnabled(selectionEnabled);
+        if (!selectionEnabled && actionMode != null) {
+            actionMode.finish();
+        }
+    }
+
     public List<UiAttribute> getSummaryAttributes(UiNode node) {
         return UiNodes.getSummaryAttributes(node);
     }
@@ -152,9 +160,9 @@ public class EntityListAdapter extends NodeListAdapter {
     }
 
     protected void onPrepareView(final UiNode node, View row) {
-        final CheckBox checkbox = (CheckBox) row.findViewById(R.id.nodeSelectedForAction);
+        final CheckBox checkbox = row.findViewById(R.id.nodeSelectedForAction);
         Definition parentDef = node.getParent().getDefinition();
-        if (!isSelectionEnabled() ||
+        if ((!(node instanceof UiRecord.Placeholder) && !isSelectionEnabled()) ||
                 (parentDef instanceof UiEntityCollectionDefinition &&
                 ((UiEntityCollectionDefinition) parentDef).isEnumerated())
         ) {

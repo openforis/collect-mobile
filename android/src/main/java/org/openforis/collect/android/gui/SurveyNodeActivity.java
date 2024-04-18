@@ -24,6 +24,7 @@ import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
 import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
+import org.openforis.collect.android.gui.detail.SendDataToCollectDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
 import org.openforis.collect.android.gui.input.AudioFileAttributeComponent;
 import org.openforis.collect.android.gui.input.BarcodeTextAttributeComponent;
@@ -273,9 +274,8 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         navigateDown();
     }
 
-    public void exportDialog(MenuItem item) {
+    public void openExportDialog(MenuItem item) {
         if (Permissions.checkStoragePermissionOrRequestIt(this)) {
-
             new ExportDialogFragment().show(getSupportFragmentManager(), "export-dialog");
         }
     }
@@ -478,21 +478,16 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         }
     }
 
-    public void navigateToSendDataToCollect(MenuItem menuItem) {
-        navigateToSendDataToCollect();
+    public void openSendDataToCollectDialog(MenuItem menuItem) {
+        openSendDataToCollectDialog();
     }
 
-    private void navigateToSendDataToCollect() {
+    private void openSendDataToCollectDialog() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean remoteSyncEnabled = preferences.getBoolean(SettingsActivity.REMOTE_SYNC_ENABLED, false);
         if (remoteSyncEnabled) {
             if (Permissions.checkInternetPermissionOrRequestIt(this)) {
-                Dialogs.confirm(this, R.string.submit_to_collect_confirm_title, R.string.submit_to_collect_confirm_message, new Runnable() {
-                    public void run() {
-                        Keyboard.hide(SurveyNodeActivity.this);
-                        SurveyNodeActivity.this.startActivity(new Intent(SurveyNodeActivity.this, SubmitDataToCollectActivity.class));
-                    }
-                });
+                new SendDataToCollectDialogFragment().show(getSupportFragmentManager(), "send-data-to-collect-dialog");
             }
         } else {
             Toast.makeText(this, R.string.submit_to_collect_remote_sync_not_configured, Toast.LENGTH_SHORT).show();

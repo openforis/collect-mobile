@@ -17,13 +17,13 @@
                 android:title="@string/action_export"
                 android:icon="?attr/exportIcon"
                 app:showAsAction="never"
-                android:onClick="exportDialog"/>
+                android:onClick="openExportDialog"/>
             <item
                 android:id="@+id/action_send_to_collect"
                 android:title="@string/action_submit_data_to_collect"
                 android:icon="?attr/submitToCollectIcon"
                 app:showAsAction="never"
-                android:onClick="navigateToSendDataToCollect"/>
+                android:onClick="openSendDataToCollectDialog"/>
             <item
                 android:id="@+id/action_survey_list"
                 android:title="@string/action_survey_list"

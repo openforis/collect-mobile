@@ -1,5 +1,10 @@
 package org.openforis.collect.android.gui;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static org.openforis.collect.android.gui.CollectMobileApplication.LOG_TAG;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +27,7 @@ import org.openforis.collect.android.SurveyDataExportParameters;
 import org.openforis.collect.android.collectadapter.SurveyExporter;
 import org.openforis.collect.android.gui.settings.SettingsActivity;
 import org.openforis.collect.android.gui.util.AppDirs;
+import org.openforis.collect.android.util.Collections;
 import org.openforis.collect.android.util.HttpConnectionHelper;
 import org.openforis.collect.android.util.MultipartUtility;
 import org.openforis.collect.android.util.ProgressHandler;
@@ -31,12 +37,9 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static org.openforis.collect.android.gui.CollectMobileApplication.LOG_TAG;
-
 public class SubmitDataToCollectActivity extends BaseActivity {
 
+    public static final String EXTRA_ONLY_RECORD_IDS = "only_current_record";
     private static final String DATA_RESTORE_ENDPOINT = "/api/surveys/restore/data";
     private static final String DATA_RESTORE_JOB_ENDPOINT = "/api/surveys/data/restorejobs/%s/status.json";
     private static final long RESTORE_DATA_JOB_MONITOR_PERIOD = 3000L;
@@ -209,8 +212,14 @@ public class SubmitDataToCollectActivity extends BaseActivity {
         @Override
         protected File doInBackground(Void... voids) {
             SubmitDataToCollectActivity context = SubmitDataToCollectActivity.this;
+            Intent intent = context.getIntent();
+            int[] recordIds = intent.hasExtra(EXTRA_ONLY_RECORD_IDS) ? intent.getIntArrayExtra(SubmitDataToCollectActivity.EXTRA_ONLY_RECORD_IDS) : new int[0];
             try {
-                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context), new SurveyDataExportParameters());
+                SurveyDataExportParameters parameters = new SurveyDataExportParameters();
+                if (recordIds.length > 0) {
+                   parameters.filterRecordIds = Collections.intArrayToList(recordIds);
+                }
+                return ServiceLocator.surveyService().exportSurvey(AppDirs.surveysDir(context), parameters);
             } catch (SurveyExporter.AllRecordKeysNotSpecified e) {
                 handleError(AllRecordKeysNotSpecifiedDialog.generateMessage(context));
             } catch (Exception e) {

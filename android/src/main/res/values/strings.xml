@@ -136,8 +136,8 @@
     <string name="hint_date_pattern">dd MMMM yyyy</string>
     <string name="hint_time_pattern">hh:mm</string>
 
-    <string name="submit_to_collect_confirm_title">Send records to Collect</string>
-    <string name="submit_to_collect_confirm_message">Send all collected records to Collect server?</string>
+    <string name="submit_to_collect_confirm_title">Confirm submit data to Collect</string>
+    <string name="submit_to_collect_confirm_message">Submit all collected records to Collect server?</string>
     <string name="submit_to_collect_remote_sync_not_configured">Collect server not configured in Settings</string>
 
     <string name="submit_to_collect_exporting_data_title">1/3 Exporting data</string>
@@ -213,6 +213,7 @@
     <string name="import_text_unsupported_file_type_selected">Please select a valid Collect Mobile survey file (.%s)</string>
 
     <string name="export_dialog_title">Export survey data</string>
+    <string name="export_dialog_option_all_records">All records</string>
     <string name="export_dialog_option_only_current_record">Only current record</string>
     <string name="export_dialog_option_only_selected_records">Only selected records</string>
     <string name="export_dialog_option_exclude_binary_file">Exclude image files</string>

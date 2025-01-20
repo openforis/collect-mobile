@@ -3,10 +3,10 @@ buildscript {
         mavenCentral()
         google()
         jcenter()
-        maven { url "http://www.openforis.org/nexus/content/groups/public/" }
+        maven { url "https://www.openforis.org/nexus/content/groups/public/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
@@ -47,9 +47,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 
     // page indicator
-    implementation 'com.romandanylyk:pageindicatorview:1.0.3'
+//    implementation 'com.romandanylyk:pageindicatorview:1.0.3'
+    implementation 'com.github.romandanylyk:PageIndicatorView:master-SNAPSHOT'
     // file chooser (survey import)
-    implementation 'com.nononsenseapps:filepicker:4.1.0'
+    implementation 'com.nononsenseapps:filepicker:4.2.1'
 
     // storage chooser (working directory chooser)
 //    implementation 'com.github.codekidX:storage-chooser:2.0.4.4'
@@ -96,7 +97,6 @@ if (isRelease) {
 
 android {
     compileSdkVersion 33
-    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId 'org.openforis.collect'
         minSdkVersion 16
@@ -106,8 +106,8 @@ android {
         multiDexEnabled true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_11
     }
     if (isRelease)
         signingConfigs {
@@ -140,18 +140,19 @@ android {
         }
     }
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/spring.*'
-    }
-    lintOptions {
-        disable 'InvalidPackage'
-        abortOnError false
+        jniLibs {
+            excludes += ['META-INF/spring.*']
+        }
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/license.txt', 'META-INF/LICENSE.txt', 'META-INF/notice.txt', 'META-INF/NOTICE.txt', 'META-INF/spring.*']
+        }
     }
     productFlavors {
+    }
+    namespace 'org.openforis.collect'
+    lint {
+        abortOnError false
+        disable 'InvalidPackage'
     }
 }
 //

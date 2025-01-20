@@ -96,11 +96,11 @@ if (isRelease) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     defaultConfig {
         applicationId 'org.openforis.collect'
-        minSdkVersion 16
-        targetSdkVersion 33
+        minSdkVersion 21
+        targetSdkVersion 34
         versionCode actualVersionCode
         versionName actualVersionName
         multiDexEnabled true

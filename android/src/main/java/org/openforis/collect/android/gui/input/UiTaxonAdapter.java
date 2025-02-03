@@ -94,7 +94,7 @@ public class UiTaxonAdapter extends BaseAdapter implements Filterable {
 
                 constraint = ((String) constraint).trim();
                 List<UiTaxon> values = taxonService.find(constraint.toString(), attribute.getDefinition().taxonomy, MAX_RESULTS);
-                if (values.isEmpty()) {
+                if (values.isEmpty() && attribute.getDefinition().allowUnlisted) {
                     values.addAll(UNKNOWN_UNLISTED_TAXON_ITEMS);
                 }
                 results.values = values;

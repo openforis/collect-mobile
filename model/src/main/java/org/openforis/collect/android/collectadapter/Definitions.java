@@ -139,7 +139,8 @@ public class Definitions {
                 def = new UiTaxonDefinition(id, name, label, keyOfDefinitionId,
                         calculated, calculatedOnlyOneTime, hidden,
                         ((TaxonAttributeDefinition) nodeDef).getTaxonomy(),
-                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required);
+                        nodeDescription(nodeDef), nodePrompt(nodeDef), interviewLabel, required,
+                        annotations.isAllowUnlisted((TaxonAttributeDefinition) nodeDef));
             else if (nodeDef instanceof CoordinateAttributeDefinition) {
                 CoordinateAttributeDefinition coordinateDefn = (CoordinateAttributeDefinition) nodeDef;
                 def = new UiCoordinateDefinition(id, name, label, keyOfDefinitionId,

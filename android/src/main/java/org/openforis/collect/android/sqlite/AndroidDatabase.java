@@ -1,13 +1,19 @@
 package org.openforis.collect.android.sqlite;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+
 import org.openforis.collect.android.gui.util.AndroidFiles;
+import org.openforis.collect.android.gui.util.AndroidVersion;
 import org.openforis.collect.android.util.persistence.ConnectionCallback;
 import org.openforis.collect.android.util.persistence.Database;
 import org.openforis.collect.android.util.persistence.PersistenceException;
@@ -66,12 +72,15 @@ public class AndroidDatabase implements Database {
     private void listenToPrepareEjectionBroadcasts(Context context) {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_PREPARE_EJECT);
-        context.getApplicationContext().registerReceiver(new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                Log.i("android_database", "Received storage ejection request for " + dataSource);
-                close();
-            }
-        }, filter);
+        if (AndroidVersion.greaterEqualThan33()) {
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    Log.i("android_database", "Received storage ejection request for " + dataSource);
+                    close();
+                }
+            };
+            context.getApplicationContext().registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        }
     }
 
     private void setupDatabase(File databasePath) {

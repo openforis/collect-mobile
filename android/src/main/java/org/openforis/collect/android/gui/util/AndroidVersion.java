@@ -55,4 +55,8 @@ public class AndroidVersion {
         return greaterEqualThan(VERSION_CODES.TIRAMISU);
     }
 
+    public static boolean greaterEqualThan34() {
+        return greaterEqualThan(VERSION_CODES.UPSIDE_DOWN_CAKE);
+    }
+
 }

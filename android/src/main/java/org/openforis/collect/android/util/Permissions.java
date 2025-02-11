@@ -62,6 +62,9 @@ public abstract class Permissions {
         if (AndroidVersion.greaterEqualThan33()) {
             readStoragePermissionsList.addAll(Arrays.asList(
                     Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO));
+            if (AndroidVersion.greaterEqualThan34()) {
+                readStoragePermissionsList.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED);
+            }
         } else {
             readStoragePermissionsList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }

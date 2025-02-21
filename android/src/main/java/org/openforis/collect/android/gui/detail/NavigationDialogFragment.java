@@ -170,6 +170,7 @@ public class NavigationDialogFragment extends DialogFragment {
             vh.destinationBearing.setText(String.valueOf(Math.round(bearing)) + "°");
 
             navigationCircle.setRotation((float) -compassBearing);
+            navigationCircle.setMinimumHeight((int) (radius * 2));
 
             view.requestLayout();
             navigationCircle.requestLayout();

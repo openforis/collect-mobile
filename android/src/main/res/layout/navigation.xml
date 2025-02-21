@@ -9,60 +9,54 @@
 
 
     <RelativeLayout
-            android:id="@+id/navigationCircle"
+        android:id="@+id/navigationCircle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/navigation_circle">
+
+
+        <View
+            android:id="@+id/destinationCircle"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/navigation_destination"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/navigationN"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/navigation_circle">
+            android:text="N"
+            android:visibility="invisible" />
 
+        <TextView
+            android:id="@+id/navigationE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/navigationS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="S"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/navigationW"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="W"
+            android:visibility="invisible" />
 
         <View
-                android:id="@+id/destinationCircle"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/navigation_destination"
-                android:visibility="invisible"
-        />
-
-        <TextView
-                android:id="@+id/navigationN"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="N"
-                android:visibility="invisible"
-        />
-
-        <TextView
-                android:id="@+id/navigationE"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="E"
-                android:visibility="invisible"
-        />
-
-        <TextView
-                android:id="@+id/navigationS"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="S"
-                android:visibility="invisible"
-        />
-
-        <TextView
-                android:id="@+id/navigationW"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="W"
-                android:visibility="invisible"
-        />
-
-        <View
-                android:id="@+id/currentLocationCircle"
-                android:layout_width="4dp"
-                android:layout_height="4dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/navigation_center"
-        />
+            android:id="@+id/currentLocationCircle"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/navigation_center" />
     </RelativeLayout>
 
 

@@ -187,8 +187,12 @@ public class CoordinateAttributeComponent extends AttributeComponent<UiCoordinat
         }
         boolean editable = !isRecordEditLocked();
         vh.srsSpinner.setEnabled(editable);
-        Views.toggleVisibility(vh.startStopButton, editable);
-        Views.toggleVisibility(vh.navigateButton, editable);
+        if (vh.startStopButton != null) {
+            Views.toggleVisibility(vh.startStopButton, editable);
+        }
+        if (vh.navigateButton != null) {
+            Views.toggleVisibility(vh.navigateButton, editable);
+        }
     }
 
     private int getNumericFieldInputType() {

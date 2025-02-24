@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [1.7.15] - build 230 2025-02-25
+### Fixed
+- Coordinate attribute: fixed error editing coordinate;
+
 ## [1.7.14] - build 229 2025-02-21
 ### Fixed
 - Coordinate attribute: fixed "Navigate to target" dialog layout;

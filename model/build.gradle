@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    api("org.xerial:sqlite-jdbc:3.50.3.0")
     api('org.openforis.collect:collect-core:4.0.92') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'

@@ -100,13 +100,11 @@ public class SurveyListAdapter extends SurveyBaseAdapter {
         }
 
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.delete_selected_nodes:
-                    deleteCheckedSurveys();
-                    return true;
-                default:
-                    return false;
+            if (item.getItemId() == R.id.delete_selected_nodes) {
+                deleteCheckedSurveys();
+                return true;
             }
+            return false;
         }
 
         public void onDestroyActionMode(ActionMode mode) {

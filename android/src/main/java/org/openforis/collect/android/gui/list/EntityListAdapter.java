@@ -210,13 +210,11 @@ public class EntityListAdapter extends NodeListAdapter {
             ArrayList<Integer> nodeIdsToRemove = new ArrayList<Integer>();
             for (UiNode uiNode : nodesToEdit)
                 nodeIdsToRemove.add(uiNode.getId());
-            switch (item.getItemId()) {
-                case R.id.delete_selected_nodes:
-                    DeleteConfirmationFragment.show(nodeIdsToRemove, records, activity);
-                    return true;
-                default:
-                    return false;
+            if (item.getItemId() == R.id.delete_selected_nodes) {
+                DeleteConfirmationFragment.show(nodeIdsToRemove, records, activity);
+                return true;
             }
+            return false;
         }
 
         public void onDestroyActionMode(ActionMode mode) {

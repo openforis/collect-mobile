@@ -61,11 +61,11 @@ dependencies {
     implementation 'com.github.medyo:android-about-page:1.2.5'
 
     // logging
-    implementation 'org.slf4j:slf4j-android:1.6.1-RC1'
+    implementation 'org.slf4j:slf4j-android:1.7.36'
     // log4j: last version working with Java 6 is 2.3
-    implementation 'org.apache.logging.log4j:log4j-api:2.3'
-    implementation 'org.apache.logging.log4j:log4j-core:2.3'
-    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.1'
+//    implementation 'org.apache.logging.log4j:log4j-core:2.25.1'
+    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.25.1'
 }
 
 // load properties from local.properties file

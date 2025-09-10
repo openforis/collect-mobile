@@ -1,8 +1,5 @@
 package org.openforis.collect.android.sqlite;
 
-
-import org.sqldroid.SQLDroidDriver;
-
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.PrintWriter;
@@ -79,7 +76,8 @@ class AndroidDataSource implements DataSource {
 
     private void registerDriver() {
         try {
-            Class.forName(SQLDroidDriver.class.getName());
+            Class.forName("org.sqldroid.SQLDroidDriver");
+//            Class.forName(SQLDroidDriver.class.getName());
         } catch (ClassNotFoundException e) {
             throw new AssertionError(e); // Should never happen
         }

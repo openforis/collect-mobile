@@ -111,7 +111,7 @@ public class ExpandableTextView extends AppCompatTextView {
                 @Override
                 public void updateDrawState(@NonNull TextPaint ds) {
                     ds.setUnderlineText(true);
-                    ds.setColor(context.getResources().getColor(R.color.colorPrimary));
+                    ds.setColor(context.getResources().getColor(R.color.button_background_color));
 //                    ds.setTypeface(Typeface.createFromAsset(context.getAssets(), "GothamMedium.ttf"));
                 }
             }, string.indexOf(expandText), string.length(), 0);

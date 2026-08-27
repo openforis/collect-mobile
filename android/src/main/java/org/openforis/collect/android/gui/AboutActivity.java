@@ -4,6 +4,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import org.openforis.collect.Collect;
 import org.openforis.collect.R;
@@ -36,6 +40,17 @@ public class AboutActivity extends AppCompatActivity {
                 .create();
 
         setContentView(aboutPage);
+
+        // the page background is always white, regardless of the app's dark/light theme setting,
+        // so the status bar icons must be dark to stay visible against it (edge-to-edge content
+        // draws behind the now-transparent status bar on Android 15+)
+        new WindowInsetsControllerCompat(getWindow(), aboutPage).setAppearanceLightStatusBars(true);
+
+        ViewCompat.setOnApplyWindowInsetsListener(aboutPage, (v, windowInsets) -> {
+            Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
     }
 
 }

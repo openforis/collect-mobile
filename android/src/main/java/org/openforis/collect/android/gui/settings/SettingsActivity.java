@@ -75,10 +75,11 @@ public class SettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ThemeInitializer.init(this);
+        setContentView(R.layout.activity_settings);
         // Display the fragment as the main content.
         SettingsFragment settingsFragment = new SettingsFragment();
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, settingsFragment)
+                .replace(R.id.settingsContainer, settingsFragment)
                 .commit();
     }
 

@@ -52,10 +52,8 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
 
     @Override
     protected void showGallery() {
-        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-            ((SurveyNodeActivity) context).setVideoChangedListener(this);
-            startFileChooserActivity("Select video", SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE, getMediaType());
-        }
+        ((SurveyNodeActivity) context).setVideoChangedListener(this);
+        startFileChooserActivity("Select video", SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE, getMediaType());
     }
 
     public void videoCaptured(Uri uri) {

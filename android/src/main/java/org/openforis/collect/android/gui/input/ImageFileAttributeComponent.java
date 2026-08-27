@@ -181,10 +181,8 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void showGallery() {
-        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-            ((SurveyNodeActivity) context).setImageChangedListener(this);
-            startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
-        }
+        ((SurveyNodeActivity) context).setImageChangedListener(this);
+        startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
     }
 
     public void imageCaptured() {

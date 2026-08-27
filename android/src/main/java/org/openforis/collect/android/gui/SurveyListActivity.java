@@ -23,7 +23,6 @@ import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Keyboard;
 import org.openforis.collect.android.gui.util.SlowAsyncTask;
-import org.openforis.collect.android.util.Permissions;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,9 +125,7 @@ public class SurveyListActivity extends BaseActivity {
     }
 
     protected static void showImportDialog(Activity context) {
-        if (Permissions.checkStoragePermissionOrRequestIt(context)) {
-            AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE, R.string.select_survey_to_import);
-        }
+        AndroidFiles.showFileChooseActivity(context, IMPORT_SURVEY_REQUEST_CODE, R.string.select_survey_to_import);
     }
 
     protected void importSurvey(Uri surveyUri) {

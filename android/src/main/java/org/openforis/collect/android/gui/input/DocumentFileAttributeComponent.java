@@ -19,7 +19,6 @@ import org.openforis.collect.android.gui.util.Attrs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.Files;
 import org.openforis.collect.android.gui.util.Views;
-import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.viewmodel.UiFileAttribute;
 
 import java.io.File;
@@ -102,10 +101,8 @@ public class DocumentFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void showGallery() {
-        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-            ((SurveyNodeActivity) context).setFileDocumentChangeListener(this);
-            startFileChooserActivity("Select document", SurveyNodeActivity.FILE_DOCUMENT_SELECTED_REQUEST_CODE, getMediaType());
-        }
+        ((SurveyNodeActivity) context).setFileDocumentChangeListener(this);
+        startFileChooserActivity("Select document", SurveyNodeActivity.FILE_DOCUMENT_SELECTED_REQUEST_CODE, getMediaType());
     }
 
     public void documentSelected(Uri uri) {

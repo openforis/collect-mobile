@@ -60,11 +60,9 @@ public abstract class Permissions {
     static {
         List<String> readStoragePermissionsList = new ArrayList<String>();
         if (AndroidVersion.greaterEqualThan33()) {
-            readStoragePermissionsList.addAll(Arrays.asList(
-                    Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO));
-            if (AndroidVersion.greaterEqualThan34()) {
-                readStoragePermissionsList.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED);
-            }
+            // Images/videos are selected via the system picker (ACTION_GET_CONTENT), which
+            // doesn't require READ_MEDIA_IMAGES/READ_MEDIA_VIDEO.
+            readStoragePermissionsList.add(Manifest.permission.READ_MEDIA_AUDIO);
         } else {
             readStoragePermissionsList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }

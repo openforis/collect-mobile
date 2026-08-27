@@ -16,7 +16,6 @@ import org.openforis.collect.android.gui.util.App;
 import org.openforis.collect.android.gui.util.AppDirs;
 import org.openforis.collect.android.gui.util.Dialogs;
 import org.openforis.collect.android.gui.util.SlowJob;
-import org.openforis.collect.android.util.Permissions;
 import org.openforis.collect.android.util.Unzipper;
 import org.openforis.commons.versioning.Version;
 
@@ -35,15 +34,13 @@ public class Restore {
     }
 
     private static void selectFileToRestore(final Activity context) {
-        if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-            ((SettingsActivity) context).setRestoreFileSelectedListener(new RestoreFileSelectedListener() {
-                @Override
-                public void fileSelected(Uri fileUri) {
-                    onFileSelected(fileUri, context);
-                }
-            });
-            Activities.startFileChooserActivity(context, "Select file to restore", SettingsActivity.RESTORE_FILE_SELECTED_REQUEST_CODE, "*/*");
-        }
+        ((SettingsActivity) context).setRestoreFileSelectedListener(new RestoreFileSelectedListener() {
+            @Override
+            public void fileSelected(Uri fileUri) {
+                onFileSelected(fileUri, context);
+            }
+        });
+        Activities.startFileChooserActivity(context, "Select file to restore", SettingsActivity.RESTORE_FILE_SELECTED_REQUEST_CODE, "*/*");
     }
 
     private static void onFileSelected(final Uri fileUri, final Activity context) {

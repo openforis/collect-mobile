@@ -41,7 +41,6 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     private ImageButton removeButton;
     private ImageButton rotateImageButton;
     private ImageView thumbnailImageView;
-    private String tempImagePath;
 
     ImageFileAttributeComponent(UiFileAttribute attribute, SurveyService surveyService, FragmentActivity context) {
         super(attribute, surveyService, context);
@@ -136,7 +135,7 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         try {
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (Permissions.checkCameraPermissionOrRequestIt(context)) {
-                ((SurveyNodeActivity) context).setImageChangedListener(this);
+                ((SurveyNodeActivity) context).setActivityResultListener(this);
                 Uri imageUri;
                 if (AndroidVersion.greaterThan20()) {
                     // Create temp file and store image there
@@ -181,23 +180,34 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void showGallery() {
-        ((SurveyNodeActivity) context).setImageChangedListener(this);
+        ((SurveyNodeActivity) context).setActivityResultListener(this);
         startFileChooserActivity("Select image", SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE, getMediaType());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case SurveyNodeActivity.IMAGE_CAPTURE_REQUEST_CODE:
+                imageCaptured();
+                break;
+            case SurveyNodeActivity.IMAGE_SELECTED_REQUEST_CODE:
+                if (data != null)
+                    imageSelected(data.getData());
+                break;
+        }
     }
 
     public void imageCaptured() {
         if (AndroidVersion.greaterThan20()) {
             // Copy image from temp file
-            File tempFile = null;
+            File tempFile = tempImageFile();
             try {
-                tempFile = new File(tempImagePath);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.fromFile(tempFile));
                 saveImageIntoFile(bitmap);
             } catch (IOException e) {
                 Dialogs.alert(context, context.getString(R.string.warning),
                         context.getString(R.string.file_attribute_capture_image_error, e.getMessage()));
             } finally {
-                tempImagePath = null;
                 FileUtils.deleteQuietly(tempFile);
             }
         } else {
@@ -256,13 +266,21 @@ public class ImageFileAttributeComponent extends FileAttributeComponent {
         Views.toggleVisibility(rotateImageButton, canDeleteOrModify);
     }
 
+    /**
+     * The temp file path depends only on the attribute, so that it can be determined again
+     * if this component is recreated while the camera app is in the foreground
+     * (e.g. after a device rotation or process death).
+     */
+    private File tempImageFile() {
+        return new File(context.getCacheDir(), "temp_image_" + attribute.getId() + ".jpg");
+    }
+
     private File createTempImageFile() {
         try {
-            // Create an image file name
-            File storageDir = context.getCacheDir();
-            File image = File.createTempFile("temp_image_", ".jpg", storageDir );
-            // Save a file: path for use with ACTION_VIEW intents
-            tempImagePath = image.getAbsolutePath();
+            File image = tempImageFile();
+            FileUtils.deleteQuietly(image);
+            if (!image.createNewFile())
+                throw new IOException("Cannot create file " + image.getAbsolutePath());
             return image;
         } catch (IOException e) {
             Dialogs.alert(context, context.getString(R.string.warning),

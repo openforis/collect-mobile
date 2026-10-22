@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -15,22 +17,15 @@ import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.vision.barcode.Barcode;
-
 import org.apache.commons.io.FilenameUtils;
 import org.openforis.collect.R;
 import org.openforis.collect.android.NodeEvent;
 import org.openforis.collect.android.SurveyListener;
 import org.openforis.collect.android.SurveyService;
-import org.openforis.collect.android.gui.barcode.BarcodeCaptureActivity;
 import org.openforis.collect.android.gui.detail.ExportDialogFragment;
 import org.openforis.collect.android.gui.detail.SendDataToCollectDialogFragment;
 import org.openforis.collect.android.gui.entitytable.EntityTableDialogFragment;
-import org.openforis.collect.android.gui.input.AudioFileAttributeComponent;
-import org.openforis.collect.android.gui.input.BarcodeTextAttributeComponent;
-import org.openforis.collect.android.gui.input.DocumentFileAttributeComponent;
-import org.openforis.collect.android.gui.input.ImageFileAttributeComponent;
-import org.openforis.collect.android.gui.input.VideoFileAttributeComponent;
+import org.openforis.collect.android.gui.input.AttributeComponent;
 import org.openforis.collect.android.gui.list.SimpleNodeListFragment;
 import org.openforis.collect.android.gui.pager.NodePagerFragment;
 import org.openforis.collect.android.gui.settings.SettingsActivity;
@@ -48,6 +43,7 @@ import org.openforis.collect.android.viewmodel.UiValidationError;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,6 +64,11 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
 
     private static final String ARG_NODE_ID = "node_id";
     private static final String ARG_RECORD_ID = "record_id";
+    private static final String STATE_ACTIVITY_RESULT_ATTRIBUTE_ID = "activity_result_attribute_id";
+    private static final String STATE_PENDING_ACTIVITY_RESULT_REQUEST_CODE = "pending_activity_result_request_code";
+    private static final String STATE_PENDING_ACTIVITY_RESULT_DATA = "pending_activity_result_data";
+    private static final int NO_ATTRIBUTE_ID = -1;
+    private static final int NO_REQUEST_CODE = -1;
     private static final int TWO_PANE_MIN_SCREEN_WIDTH = 600;
 
     private static final String NODE_PAGER_FRAGMENT_TAG = "nodePagerFragment";
@@ -76,11 +77,13 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     private SurveyService surveyService;
 
     private UiNode selectedNode;
-    private ImageFileAttributeComponent imageListener;
-    private AudioFileAttributeComponent audioListener;
-    private VideoFileAttributeComponent videoListener;
-    private DocumentFileAttributeComponent fileDocumentListener;
-    private BarcodeTextAttributeComponent barcodeCaptureListener;
+    // Attribute components are tracked by attribute id, not by reference: when the activity is recreated
+    // while an external activity (camera, file chooser, barcode scanner) is in the foreground
+    // (e.g. after a device rotation or process death), the components are recreated too.
+    private final Map<Integer, AttributeComponent<?>> attributeComponentsById = new HashMap<Integer, AttributeComponent<?>>();
+    private int activityResultAttributeId = NO_ATTRIBUTE_ID;
+    private int pendingActivityResultRequestCode = NO_REQUEST_CODE;
+    private Intent pendingActivityResultData;
     private boolean twoPane;
 
     public static void startClearSurveyNodeActivity(Context context) {
@@ -99,6 +102,7 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
     }
 
     public void onCreate(Bundle savedState) {
+        restoreActivityResultState(savedState);
         super.onCreate(savedState);
 
         if (ServiceLocator.init(this)) {
@@ -395,66 +399,85 @@ public class SurveyNodeActivity extends BaseActivity implements SurveyListener, 
         return (NodePagerFragment) getSupportFragmentManager().findFragmentByTag(NODE_PAGER_FRAGMENT_TAG);
     }
 
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_ACTIVITY_RESULT_ATTRIBUTE_ID, activityResultAttributeId);
+        outState.putInt(STATE_PENDING_ACTIVITY_RESULT_REQUEST_CODE, pendingActivityResultRequestCode);
+        outState.putParcelable(STATE_PENDING_ACTIVITY_RESULT_DATA, pendingActivityResultData);
+    }
+
+    private void restoreActivityResultState(Bundle savedState) {
+        if (savedState == null)
+            return;
+        activityResultAttributeId = savedState.getInt(STATE_ACTIVITY_RESULT_ATTRIBUTE_ID, NO_ATTRIBUTE_ID);
+        pendingActivityResultRequestCode = savedState.getInt(STATE_PENDING_ACTIVITY_RESULT_REQUEST_CODE, NO_REQUEST_CODE);
+        pendingActivityResultData = savedState.getParcelable(STATE_PENDING_ACTIVITY_RESULT_DATA);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case IMAGE_CAPTURE_REQUEST_CODE:
-                    if (imageListener != null)
-                        imageListener.imageCaptured();
-                    break;
-                case IMAGE_SELECTED_REQUEST_CODE:
-                    if (imageListener != null && data != null)
-                        imageListener.imageSelected(data.getData());
-                    break;
-                case AUDIO_SELECTED_REQUEST_CODE:
-                    if (audioListener != null) {
-                        audioListener.audioSelected(data.getData());
-                    }
-                    break;
-                case VIDEO_CAPTURE_REQUEST_CODE:
-                    if (videoListener != null) {
-                        videoListener.videoCaptured(data.getData());
-                    }
-                    break;
-                case VIDEO_SELECTED_REQUEST_CODE:
-                    if (videoListener != null) {
-                        videoListener.videoSelected(data.getData());
-                    }
-                    break;
-                case BARCODE_CAPTURE_REQUEST_CODE:
-                    if (barcodeCaptureListener != null) {
-                        Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-                        barcodeCaptureListener.barcodeCaptured(barcode);
-                    }
-                    break;
-                case FILE_DOCUMENT_SELECTED_REQUEST_CODE:
-                    if (fileDocumentListener != null && data != null) {
-                        fileDocumentListener.documentSelected(data.getData());
-                    }
-                    break;
+        if (resultCode == RESULT_OK && isAttributeComponentRequestCode(requestCode)) {
+            if (activityResultAttributeId == NO_ATTRIBUTE_ID) {
+                Toast.makeText(this, R.string.attribute_activity_result_not_stored, Toast.LENGTH_LONG).show();
+            } else {
+                pendingActivityResultRequestCode = requestCode;
+                pendingActivityResultData = data;
+                AttributeComponent<?> component = attributeComponentsById.get(activityResultAttributeId);
+                if (component != null)
+                    deliverPendingActivityResult(component);
+                // otherwise the result is delivered when the component for the attribute is (re)created
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void setImageChangedListener(ImageFileAttributeComponent listener) {
-        imageListener = listener;
+    private static boolean isAttributeComponentRequestCode(int requestCode) {
+        switch (requestCode) {
+            case IMAGE_CAPTURE_REQUEST_CODE:
+            case IMAGE_SELECTED_REQUEST_CODE:
+            case AUDIO_SELECTED_REQUEST_CODE:
+            case VIDEO_CAPTURE_REQUEST_CODE:
+            case VIDEO_SELECTED_REQUEST_CODE:
+            case BARCODE_CAPTURE_REQUEST_CODE:
+            case FILE_DOCUMENT_SELECTED_REQUEST_CODE:
+                return true;
+            default:
+                return false;
+        }
     }
 
-    public void setAudioChangedListener(AudioFileAttributeComponent listener) {
-        audioListener = listener;
+    /**
+     * Sets the component that will receive the result of the next activity started for result.
+     */
+    public void setActivityResultListener(AttributeComponent<?> component) {
+        attributeComponentsById.put(component.getAttributeId(), component);
+        activityResultAttributeId = component.getAttributeId();
+        pendingActivityResultRequestCode = NO_REQUEST_CODE;
+        pendingActivityResultData = null;
     }
 
-    public void setVideoChangedListener(VideoFileAttributeComponent listener) {
-        videoListener = listener;
+    public void onAttributeComponentCreated(AttributeComponent<?> component) {
+        attributeComponentsById.put(component.getAttributeId(), component);
+        if (pendingActivityResultRequestCode != NO_REQUEST_CODE && component.getAttributeId() == activityResultAttributeId)
+            deliverPendingActivityResult(component);
     }
 
-    public void setFileDocumentChangeListener(DocumentFileAttributeComponent listener) {
-        fileDocumentListener = listener;
+    public void onAttributeComponentDestroyed(AttributeComponent<?> component) {
+        if (attributeComponentsById.get(component.getAttributeId()) == component)
+            attributeComponentsById.remove(component.getAttributeId());
     }
 
-    public void setBarcodeCaptureListener(BarcodeTextAttributeComponent barcodeCaptureListener) {
-        this.barcodeCaptureListener = barcodeCaptureListener;
+    private void deliverPendingActivityResult(final AttributeComponent<?> component) {
+        final int requestCode = pendingActivityResultRequestCode;
+        final Intent data = pendingActivityResultData;
+        activityResultAttributeId = NO_ATTRIBUTE_ID;
+        pendingActivityResultRequestCode = NO_REQUEST_CODE;
+        pendingActivityResultData = null;
+        // Post it: a just (re)created component view may not be attached to the fragment yet
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            public void run() {
+                component.onActivityResult(requestCode, data);
+            }
+        });
     }
 
     public void showEntityTable(MenuItem menuItem) {

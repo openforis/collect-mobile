@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -38,6 +39,19 @@ public abstract class AttributeComponent<T extends UiAttribute> extends SavableC
                                  FragmentActivity context) {
         super(surveyService, context);
         this.attribute = attribute;
+    }
+
+    public int getAttributeId() {
+        return attribute.getId();
+    }
+
+    /**
+     * Handles the (successful) result of an activity started for result for this attribute.
+     * The component instance may differ from the one that started the activity,
+     * if the activity has been recreated in the meantime.
+     */
+    public void onActivityResult(int requestCode, Intent data) {
+        // to be extended by subclasses
     }
 
     protected TextView errorMessageContainerView() {

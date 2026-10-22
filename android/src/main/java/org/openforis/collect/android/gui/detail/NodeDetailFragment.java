@@ -47,6 +47,7 @@ import androidx.fragment.app.Fragment;
 public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     private static final String ARG_RECORD_ID = "record_id";
     private static final String ARG_NODE_ID = "node_id";
+    private static final String ARG_RECORD_COLLECTION_NAME = "record_collection_name";
     private static final int TEXT_MAX_LINES_TWO_PANE = 8;
     private static final int TEXT_MAX_LINES_SINGLE_PANE = 4;
 
@@ -62,7 +63,8 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
                 throw new IllegalStateException("Missing argument: " + ARG_NODE_ID);
             int recordId = getArguments().getInt(ARG_RECORD_ID);
             int nodeId = getArguments().getInt(ARG_NODE_ID);
-            node = lookupNode(recordId, nodeId);
+            String recordCollectionName = getArguments().getString(ARG_RECORD_COLLECTION_NAME);
+            node = lookupNode(recordId, nodeId, recordCollectionName);
         }
     }
 
@@ -268,8 +270,13 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
     }
 
     @SuppressWarnings("unchecked")
-    private T lookupNode(int recordId, int nodeId) {
+    private T lookupNode(int recordId, int nodeId, String recordCollectionName) {
         SurveyService surveyService = ServiceLocator.surveyService();
+        if (recordCollectionName != null) {
+            // Record collection ids are generated when the survey is loaded and are not persisted:
+            // after the process is recreated, the id stored in the arguments could be stale.
+            return (T) surveyService.lookupRecordCollection(recordCollectionName);
+        }
         if (recordId > 0 && !surveyService.isRecordSelected(recordId))
             surveyService.selectRecord(recordId);
         UiNode uiNode = surveyService.lookupNode(nodeId);
@@ -294,7 +301,9 @@ public abstract class NodeDetailFragment<T extends UiNode> extends Fragment {
 
     public static NodeDetailFragment<?> create(UiNode node) {
         Bundle arguments = new Bundle();
-        if (!(node instanceof UiRecordCollection)) // TODO: Ugly
+        if (node instanceof UiRecordCollection) // TODO: Ugly
+            arguments.putString(ARG_RECORD_COLLECTION_NAME, node.getName());
+        else
             arguments.putInt(ARG_RECORD_ID, node.getUiRecord().getId());
         arguments.putInt(ARG_NODE_ID, node.getId());
         NodeDetailFragment<?> fragment = createInstance(node);

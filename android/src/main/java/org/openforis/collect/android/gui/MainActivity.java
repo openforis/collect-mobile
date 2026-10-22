@@ -105,7 +105,10 @@ public class MainActivity extends BaseActivity {
         }
 
         if (requestCode == Permissions.Request.STORAGE.getCode()) {
-            initialize();
+            // Recreate the activity instead of initializing it in place: the content view set this late
+            // would not receive the window insets (edge-to-edge since Android 15), so the action bar
+            // would cover the top of the page; the theme set this late would not be applied either.
+            recreate();
         }
     }
 

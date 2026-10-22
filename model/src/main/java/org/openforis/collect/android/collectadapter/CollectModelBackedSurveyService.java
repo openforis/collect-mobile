@@ -152,6 +152,10 @@ public class CollectModelBackedSurveyService implements SurveyService {
         return viewModelManager.lookupNode(nodeId);
     }
 
+    public UiRecordCollection lookupRecordCollection(String name) {
+        return viewModelManager.lookupRecordCollection(name);
+    }
+
     public UiEntity addEntity() {
         this.updating = true;
         try {

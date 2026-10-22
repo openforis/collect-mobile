@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [Unreleased]
+
+## [1.7.16] - build 235 2026-10-22
+### Fixed
+- Fixed crash when reopening the app on the records list after Android closed it in the background;
+- Fixed home screen logo covered by the top bar after granting the storage permission on first launch;
+
 ## [1.7.15] - build 230 2025-02-25
 ### Fixed
 - Coordinate attribute: fixed error editing coordinate;

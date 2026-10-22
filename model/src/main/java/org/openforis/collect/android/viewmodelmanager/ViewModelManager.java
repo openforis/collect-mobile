@@ -105,6 +105,13 @@ public class ViewModelManager {
         return node;
     }
 
+    public UiRecordCollection lookupRecordCollection(String name) {
+        UiRecordCollection recordCollection = selectedSurvey.lookupRecordCollection(name);
+        if (recordCollection == null)
+            throw new IllegalStateException("Record collection not found: " + name);
+        return recordCollection;
+    }
+
     public UiAttributeCollection selectedAttributeCollection() {
         if (!(selectedNode instanceof UiAttributeCollection))
             throw new IllegalStateException("Selected node is not an attribute collection: " + selectedNode);

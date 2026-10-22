@@ -31,6 +31,8 @@ public interface SurveyService {
 
     UiNode lookupNode(int nodeId);
 
+    UiRecordCollection lookupRecordCollection(String name);
+
     UiNode selectedNode();
 
     UiAttribute addAttribute();

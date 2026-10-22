@@ -17,6 +17,8 @@
 #}
 
 -dontobfuscate
+# proguard-android.txt (no longer supported by AGP 9) used to disable optimizations: keep that behavior
+-dontoptimize
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 
 -ignorewarnings

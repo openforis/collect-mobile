@@ -1,23 +1,15 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+plugins {
+    id 'java-library'
+    id 'groovy'
 }
 
-apply plugin: 'java-library'
-apply plugin: 'groovy'
-sourceCompatibility = 1.9
-targetCompatibility = 11
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://jitpack.io" }
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
-    api('org.openforis.collect:collect-core:4.0.92') {
+    api('org.openforis.collect:collect-core:4.0.110') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'
         exclude group: 'org.liquibase'
@@ -40,9 +32,11 @@ dependencies {
     testImplementation 'com.h2database:h2:1.4.189'
 }
 
-task copyTestResources(type: Copy) {
-    from "${projectDir}/src/test/resources"
-    into "${buildDir}/classes/test"
+tasks.register('copyTestResources', Copy) {
+    from layout.projectDirectory.dir('src/test/resources')
+    into layout.buildDirectory.dir('classes/test')
 }
 
-processTestResources.dependsOn copyTestResources
+tasks.named('processTestResources') {
+    dependsOn 'copyTestResources'
+}

@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.openforis.collect.android.gui.ServiceLocator;
+import org.openforis.collect.android.gui.SurveyNodeActivity;
+import org.openforis.collect.android.gui.input.AttributeComponent;
 import org.openforis.collect.android.gui.input.SavableComponent;
 import org.openforis.collect.android.viewmodel.UiNode;
 import org.openforis.collect.android.viewmodel.UiNodeChange;
@@ -24,7 +26,15 @@ public class SavableNodeDetailFragment<T extends UiNode> extends NodeDetailFragm
         if (view == null)
             throw new IllegalStateException("View is null");
         savableComponent.setupView(view);
+        if (savableComponent instanceof AttributeComponent && getActivity() instanceof SurveyNodeActivity)
+            ((SurveyNodeActivity) getActivity()).onAttributeComponentCreated((AttributeComponent<?>) savableComponent);
         return view;
+    }
+
+    public void onDestroyView() {
+        if (savableComponent instanceof AttributeComponent && getActivity() instanceof SurveyNodeActivity)
+            ((SurveyNodeActivity) getActivity()).onAttributeComponentDestroyed((AttributeComponent<?>) savableComponent);
+        super.onDestroyView();
     }
 
     protected View getDefaultFocusedView() {

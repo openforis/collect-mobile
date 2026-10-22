@@ -46,7 +46,7 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
         captureBtn = view.findViewById(R.id.barcode_capture_btn);
         captureBtn.setOnClickListener(new View.OnClickListener() {
                                           public void onClick(View v) {
-                                              ((SurveyNodeActivity) getContext()).setBarcodeCaptureListener(BarcodeTextAttributeComponent.this);
+                                              ((SurveyNodeActivity) getContext()).setActivityResultListener(BarcodeTextAttributeComponent.this);
                                               // launch barcode capture activity.
                                               Intent intent = new Intent(getContext(), BarcodeCaptureActivity.class);
                                               intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
@@ -97,6 +97,15 @@ public class BarcodeTextAttributeComponent extends TextAttributeComponent {
     @Override
     protected void onEditTextCreated(EditText input) {
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == SurveyNodeActivity.BARCODE_CAPTURE_REQUEST_CODE && data != null) {
+            Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+            if (barcode != null)
+                barcodeCaptured(barcode);
+        }
     }
 
     public void barcodeCaptured(Barcode barcode) {

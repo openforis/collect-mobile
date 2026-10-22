@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.content.Intent;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -197,10 +198,16 @@ public class AudioFileAttributeComponent extends FileAttributeComponent {
 
     private void selectFile() {
         if (Permissions.checkReadExternalStoragePermissionOrRequestIt(context)) {
-            ((SurveyNodeActivity) context).setAudioChangedListener(this);
+            ((SurveyNodeActivity) context).setActivityResultListener(this);
             startFileChooserActivity("Select audio file", SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE,
                     "*/*");
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == SurveyNodeActivity.AUDIO_SELECTED_REQUEST_CODE && data != null)
+            audioSelected(data.getData());
     }
 
     public void audioSelected(Uri uri) {

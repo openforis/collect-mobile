@@ -1,5 +1,6 @@
 package org.openforis.collect.android.gui.input;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Button;
@@ -101,8 +102,14 @@ public class DocumentFileAttributeComponent extends FileAttributeComponent {
     }
 
     protected void showGallery() {
-        ((SurveyNodeActivity) context).setFileDocumentChangeListener(this);
+        ((SurveyNodeActivity) context).setActivityResultListener(this);
         startFileChooserActivity("Select document", SurveyNodeActivity.FILE_DOCUMENT_SELECTED_REQUEST_CODE, getMediaType());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        if (requestCode == SurveyNodeActivity.FILE_DOCUMENT_SELECTED_REQUEST_CODE && data != null)
+            documentSelected(data.getData());
     }
 
     public void documentSelected(Uri uri) {

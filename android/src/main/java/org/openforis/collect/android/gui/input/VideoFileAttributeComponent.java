@@ -30,7 +30,7 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
 
-            ((SurveyNodeActivity) context).setVideoChangedListener(this);
+            ((SurveyNodeActivity) context).setActivityResultListener(this);
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             // TODO: Check out http://stackoverflow.com/questions/1910608/android-action-image-capture-intent
             //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -52,12 +52,24 @@ public class VideoFileAttributeComponent extends ImageFileAttributeComponent {
 
     @Override
     protected void showGallery() {
-        ((SurveyNodeActivity) context).setVideoChangedListener(this);
+        ((SurveyNodeActivity) context).setActivityResultListener(this);
         startFileChooserActivity("Select video", SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE, getMediaType());
     }
 
+    @Override
+    public void onActivityResult(int requestCode, Intent data) {
+        switch (requestCode) {
+            case SurveyNodeActivity.VIDEO_CAPTURE_REQUEST_CODE:
+                videoCaptured(data == null ? null : data.getData());
+                break;
+            case SurveyNodeActivity.VIDEO_SELECTED_REQUEST_CODE:
+                videoSelected(data == null ? null : data.getData());
+                break;
+        }
+    }
+
     public void videoCaptured(Uri uri) {
-        if (AndroidFiles.copyUriContentToFile(context, uri, file)) {
+        if (uri != null && AndroidFiles.copyUriContentToFile(context, uri, file)) {
             fileChanged();
         } else {
             Dialogs.alert(context, R.string.warning, R.string.file_attribute_capture_video_error);

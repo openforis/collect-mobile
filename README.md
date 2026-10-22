@@ -12,4 +12,4 @@
 * Execute `./release`. You can optionally specify the version name as an argument, if you want it to be different then previous release: `./release 1.1`
 *
 * Follow the on-screen instructions
-* Once the release finishes, the signed APK is located at `android/build/outputs/apk/Collect.apk`
+* Once the release finishes, the signed APK is located at `android/build/release/Collect.apk`

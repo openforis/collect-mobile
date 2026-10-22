@@ -1,23 +1,6 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-        jcenter()
-        maven { url "https://www.openforis.org/nexus/content/groups/public/" }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.0'
-    }
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'maven-publish'
-
-repositories {
-    mavenCentral()
-    google()
-    jcenter()
-    maven { url "https://jitpack.io" }
+plugins {
+    id 'com.android.application'
+    id 'maven-publish'
 }
 
 dependencies {
@@ -35,7 +18,7 @@ dependencies {
         exclude group: 'org.apache.lucene'
     }
     // commons-lang: version > 3.4 require Java 7
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    implementation 'org.apache.commons:commons-lang3:3.21.0'
     implementation 'org.sqldroid:sqldroid:1.0.3'
 
     // - app
@@ -63,9 +46,9 @@ dependencies {
     // logging
     implementation 'org.slf4j:slf4j-android:1.7.36'
     // log4j: last version working with Java 6 is 2.3
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.1'
-//    implementation 'org.apache.logging.log4j:log4j-core:2.25.1'
-    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.25.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.26.1'
+//    implementation 'org.apache.logging.log4j:log4j-core:2.26.1'
+    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.26.1'
 }
 
 // load properties from local.properties file
@@ -96,18 +79,18 @@ if (isRelease) {
 }
 
 android {
-    compileSdkVersion 36
+    compileSdk = 36
     defaultConfig {
         applicationId 'org.openforis.collect'
-        minSdkVersion 21
-        targetSdkVersion 36
-        versionCode actualVersionCode
-        versionName actualVersionName
-        multiDexEnabled true
+        minSdk = 21
+        targetSdk = 36
+        versionCode = actualVersionCode
+        versionName = actualVersionName
+        multiDexEnabled = true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_9
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_9
+        targetCompatibility = JavaVersion.VERSION_11
     }
     if (isRelease)
         signingConfigs {
@@ -120,26 +103,18 @@ android {
         }
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             if (isRelease) {
-                signingConfig signingConfigs.release
-                applicationVariants.all { variant ->
-                    variant.outputs.all { output ->
-                        def outputFileName = output.outputFileName
-                        if (outputFileName != null && outputFileName.endsWith('.apk')) {
-                            output.outputFileName = 'Collect.apk'
-                        }
-                    }
-                }
+                signingConfig = signingConfigs.release
             }
         }
         debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
     }
-    packagingOptions {
+    packaging {
         jniLibs {
             excludes += ['META-INF/spring.*']
         }
@@ -149,10 +124,26 @@ android {
     }
     productFlavors {
     }
-    namespace 'org.openforis.collect'
+    namespace = 'org.openforis.collect'
     lint {
-        abortOnError false
-        disable 'InvalidPackage'
+        abortOnError = false
+        disable += 'InvalidPackage'
+    }
+}
+
+if (isRelease) {
+    // copy the signed release APK to build/release/Collect.apk
+    androidComponents {
+        onVariants(selector().withBuildType('release')) { variant ->
+            def copyReleaseApk = tasks.register('copyReleaseApk', Copy) {
+                from(variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.APK.INSTANCE)) {
+                    include '*.apk'
+                    rename '.*\\.apk', 'Collect.apk'
+                }
+                into layout.buildDirectory.dir('release')
+            }
+            tasks.matching { it.name == 'assembleRelease' }.configureEach { finalizedBy copyReleaseApk }
+        }
     }
 }
 //

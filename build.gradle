@@ -1,9 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-wrapper {
-    gradleVersion = '8.5' //version required
+plugins {
+    id 'com.android.application' version '9.4.1' apply false
 }
-buildscript {
-    repositories {
-        google()
-    }
+
+wrapper {
+    gradleVersion = '9.8.2' //version required
 }

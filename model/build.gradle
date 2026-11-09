@@ -9,7 +9,7 @@ java {
 }
 
 dependencies {
-    api('org.openforis.collect:collect-core:4.1.0') {
+    api('org.openforis.collect:collect-core:4.0.111') {
         exclude group: 'org.apache.poi'
         exclude group: 'org.springframework'
         exclude group: 'org.liquibase'

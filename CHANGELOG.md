@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
+### Changed
+- Updated Open Foris Collect core to 4.1.0: surveys exported from Collect 4.1 can now be imported;
 
 ## [1.7.16] - build 235 2026-10-22
 ### Fixed
